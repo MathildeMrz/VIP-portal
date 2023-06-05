@@ -1,0 +1,32 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: VIP Java CI with Maven
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  
+  build_and_test:
+  
+    steps:
+        - name: Trigger GitLab Pipeline
+          env:
+            GITLAB_API_TOKEN: ${{ secrets.GITLAB_API_TOKEN }}
+          run: |
+            curl -X POST \
+            --fail \
+            -F token=glptt-5e6bd5f1f6e9218c8a72a9b2017b31046f4864a8 \
+            -F ref=main \
+            https://gitlab.in2p3.fr/api/v4/projects/21872/trigger/pipeline
+            
+    runs-on: ubuntu-latest 
