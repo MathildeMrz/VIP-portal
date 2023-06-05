@@ -23,7 +23,7 @@ jobs:
           run: |
             curl -X POST \
             --fail \
-            -F token=glptt-5e6bd5f1f6e9218c8a72a9b2017b31046f4864a8 \
+            -F token=${{ secrets.GITLAB_API_TOKEN}} \
             -F ref=main \
             https://gitlab.in2p3.fr/api/v4/projects/21872/trigger/pipeline
             
