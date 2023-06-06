@@ -19,13 +19,12 @@ jobs:
   build_and_test:
   
     steps:
-    
-      - name: Trigger GitLab Pipeline
-        run:
-          curl -X POST \
-          --fail \
-          -F token=${{ secrets.GITLAB_API_TOKEN}} \
-          -F ref=main \
-          https://gitlab.in2p3.fr/api/v4/projects/21872/trigger/pipeline
+        - name: Trigger GitLab Pipeline
+          run: |
+            curl -X POST \
+            --fail \
+            -F token=${{ secrets.GITLAB_API_TOKEN}} \
+            -F ref=main \
+            https://gitlab.in2p3.fr/api/v4/projects/21872/trigger/pipeline
             
     runs-on: ubuntu-latest 
