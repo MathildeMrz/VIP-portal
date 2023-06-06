@@ -5,7 +5,13 @@
     <offline/>
     <pluginGroups/>
     <servers/>
-    <mirrors/>
+    <mirrors>
+        <mirror>
+          <id>maven-default-http-blocker</id>
+          <mirrorOf>external:http:*</mirrorOf>
+          <url>http://0.0.0.0/</url>
+        </mirror>
+      </mirrors>
     <proxies/>
     <profiles/>
     <activeProfiles/>
