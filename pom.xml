@@ -274,10 +274,6 @@ knowledge of the CeCILL-B license and that you accept its terms.
                     </execution>
                 </executions>
             </plugin>
-	   <plugin>
-	      <groupId>org.jacoco</groupId>
-	      <artifactId>jacoco-maven-plugin</artifactId>
-	      <version>0.8.10</version>
-	    </plugin>
+
     </build>
 </project>
