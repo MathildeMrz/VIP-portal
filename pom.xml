@@ -274,11 +274,10 @@ knowledge of the CeCILL-B license and that you accept its terms.
                     </execution>
                 </executions>
             </plugin>
-           <!-- Code Coverage report generation -->
-	  <plugin>
+	   <plugin>
 	      <groupId>org.jacoco</groupId>
 	      <artifactId>jacoco-maven-plugin</artifactId>
 	      <version>0.8.11-SNAPSHOT</version>
-	  </plugin>
+	    </plugin>
     </build>
 </project>
