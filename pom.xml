@@ -95,6 +95,7 @@ knowledge of the CeCILL-B license and that you accept its terms.
         <module>vip-api</module>
         <module>vip-visualization</module>
         <module>vip-local</module>
+        <module>coverage</module>
     </modules>
 
     <dependencyManagement>
@@ -111,7 +112,7 @@ knowledge of the CeCILL-B license and that you accept its terms.
                 <artifactId>smartgwt-lgpl</artifactId>
                 <version>12.0p</version>
             </dependency>
-            
+
             <!-- empty jars to ensure commons logging and log4j is not
               used in project and not present in final war -->
             <dependency>
@@ -197,6 +198,7 @@ knowledge of the CeCILL-B license and that you accept its terms.
         </dependency>
     </dependencies>
 
+
     <repositories>
 
         <repository>
@@ -204,7 +206,7 @@ knowledge of the CeCILL-B license and that you accept its terms.
             <name>Creatis Insa Lyon repository [creatis]</name>
             <url>https://vip.creatis.insa-lyon.fr:9007/nexus/repository/public</url>
         </repository>
-        
+
         <!-- repo used to get empty jar for commons logging and log4j -->
         <repository>
             <id>version99</id>
@@ -232,29 +234,29 @@ knowledge of the CeCILL-B license and that you accept its terms.
         <plugins>
             <plugin>
                 <!-- needed to replace the artifact version when calling install or deploy -->
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>flatten-maven-plugin</artifactId>
-              <version>1.1.0</version>
-              <configuration>
-                <updatePomFile>true</updatePomFile>
-                <flattenMode>resolveCiFriendliesOnly</flattenMode>
-              </configuration>
-              <executions>
-                <execution>
-                  <id>flatten</id>
-                  <phase>process-resources</phase>
-                  <goals>
-                    <goal>flatten</goal>
-                  </goals>
-                </execution>
-                <execution>
-                  <id>flatten.clean</id>
-                  <phase>clean</phase>
-                  <goals>
-                    <goal>clean</goal>
-                  </goals>
-                </execution>
-              </executions>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -275,10 +277,17 @@ knowledge of the CeCILL-B license and that you accept its terms.
                 </executions>
             </plugin>
             <plugin>
-              <groupId>org.jacoco</groupId>
-              <artifactId>jacoco-maven-plugin</artifactId>
-              <version>0.8.10</version>
-	        </plugin>
-	    </plugins>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
