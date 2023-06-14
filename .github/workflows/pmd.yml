@@ -58,5 +58,3 @@ jobs:
           repository: MathildeMrz/vip-portal
           sarifReportDir: results
           
-
-        
