@@ -40,6 +40,7 @@ jobs:
               ls -la results              
               cp -r pmd-report.sarif results
               echo "Artifacts pushed to results"
+              git config --global --add safe.directory /github/workspace
 
       - name: Push Artifacts
         uses: ad-m/github-push-action@v0.5.0
