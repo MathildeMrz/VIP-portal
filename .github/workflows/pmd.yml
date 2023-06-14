@@ -36,6 +36,7 @@ jobs:
                               
       - name: Create results
         run: |
+              ls -la ${{ github.workspace }}
               mkdir -p ${{ github.workspace }}/results
               cp -r pmd-report.sarif ${{ github.workspace }}/results
               echo "Artifacts pushed to ${{ github.workspace }}/results"
