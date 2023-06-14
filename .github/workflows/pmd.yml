@@ -7,9 +7,9 @@ name: pmd
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
   schedule:
     - cron: '40 1 * * 0'
 
@@ -32,8 +32,3 @@ jobs:
       - uses: pmd/pmd-github-action@v1
         with:
           rulesets: 'ruleset.xml'
-          analyzeModifiedFilesOnly: false
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: pmd-report.sarif
