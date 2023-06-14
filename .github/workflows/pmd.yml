@@ -36,8 +36,8 @@ jobs:
                               
       - name: Create results
         run: |
-              ls -la results
               mkdir -p results
+              ls -la results              
               cp -r pmd-report.sarif results
               echo "Artifacts pushed to results"
 
