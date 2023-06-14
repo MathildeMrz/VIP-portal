@@ -40,7 +40,7 @@ jobs:
           sarif_file: pmd-report.sarif
           
       - name: Generate Security Report
-        uses: vip-portal/github-security-report-action@v2
+        uses: MathildeMrz/vip-portal//github-security-report-action@v2
         with:
           token: ${{ secrets.SECURITY_TOKEN }}
           repository: MathildeMrz/vip-portal
