@@ -33,12 +33,7 @@ jobs:
         with:
           rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
-          
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          path: ''
-                    
+                              
       - name: Create results
         run: |
           ls
