@@ -2,7 +2,7 @@ name: PMD Source Code Analyzer on Push
 
 on: [push]
 
-jobs:
+jobs: 
   pmd:
   
     runs-on: ubuntu-latest
