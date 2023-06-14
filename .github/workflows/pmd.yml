@@ -29,11 +29,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
-      - uses: pmd/pmd-github-action@v3
+      - uses: pmd/pmd-github-action@v2
         with:
           rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: pmd-report.sarif
