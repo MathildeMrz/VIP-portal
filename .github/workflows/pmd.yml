@@ -36,10 +36,10 @@ jobs:
                               
       - name: Create results
         run: |
-              ls -la ${{ github.workspace }}
-              mkdir -p ${{ github.workspace }}/results
-              cp -r pmd-report.sarif ${{ github.workspace }}/results
-              echo "Artifacts pushed to ${{ github.workspace }}/results"
+              ls -la results
+              mkdir -p results
+              cp -r pmd-report.sarif results
+              echo "Artifacts pushed to results"
 
       - name: Push Artifacts
         uses: ad-m/github-push-action@v0.5.0
@@ -47,12 +47,12 @@ jobs:
           branch: master
           github_token: ${{secrets.SECURITY_TOKEN}}
           force: true
-          directory:  ${{ github.workspace }}/results
+          directory: results
           
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
         with:
           token: ${{secrets.SECURITY_TOKEN}}
           repository: MathildeMrz/vip-portal
-          sarifReportDir:  ${{ github.workspace }}/results
+          sarifReportDir:  results
           
