@@ -34,7 +34,7 @@ jobs:
           rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
           
-      - name: Convert SARIF to HTML
-        run: |
-          curl -LO https://github.com/sarif-standard/sarif-multitool/releases/latest/download/sarif-multitool.jar
-          java -jar sarif-multitool.jar transform -i pmd_results.sarif -o pmd_results.html
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: pmd-report.sarif
