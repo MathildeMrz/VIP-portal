@@ -38,3 +38,10 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: pmd-report.sarif
+
+
+      - name: Archive PMD report
+        uses: actions/upload-artifact@v2
+        with:
+          name: pmd-report
+          path: pmd-report.sarif
