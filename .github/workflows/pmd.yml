@@ -39,9 +39,7 @@ jobs:
         with:
           sarif_file: pmd-report.sarif
           
-          
       - name: Generate Security Report
         uses: MathildeMrz/github-security-report-action@v2
         with:
           token: ${{secrets.GITLAB_API_TOKEN}}
-
