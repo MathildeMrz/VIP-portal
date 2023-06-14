@@ -32,3 +32,7 @@ jobs:
     - uses: pmd/pmd-github-action@v1
       with:
         rulesets: 'ruleset.xml'
+        
+    - name: Push PMD report
+      uses: jwgmeligmeyling/pmd-github-action@v1.2
+
