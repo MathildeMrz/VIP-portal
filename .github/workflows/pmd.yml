@@ -33,4 +33,19 @@ jobs:
         with:
           rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
+          
+           # Ajouter une étape pour créer un dossier temporaire et copier l'artifact
+      - name: Copy artifact to temporary directory
+        run: |
+          mkdir temp_artifact
+          cp path/to/your/artifact temp_artifact/
+
+      # Ajouter une étape pour configurer Git et pousser l'artifact vers la branche master
+      - name: Push artifact to repository
+        uses: ad-m/github-push-action@master
+        with:
+          branch: master
+          directory: temp_artifact
+          github_token: ${{ secrets.GITHUB_TOKEN }}
               
+
