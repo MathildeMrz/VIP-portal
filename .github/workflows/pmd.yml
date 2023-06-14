@@ -34,16 +34,24 @@ jobs:
           rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
                     
-      - name: Push sarif file to github
+      - name: Create results
         run: |
           mkdir -p ../results
           cp -r pmd-report.sarif ../results
           echo "Artifacts pushed to ../results"
+
+      - name: Push Artifacts
+        uses: ad-m/github-push-action@v0.5.0
+        with:
+          branch: main
+          github_token: ${{secrets.SECURITY_TOKEN}}
+          force: true
+          directory: ../results
           
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
         with:
-          token: ${{ secrets.SECURITY_TOKEN }}
+          token: ${{secrets.SECURITY_TOKEN}}
           repository: MathildeMrz/vip-portal
           
 
