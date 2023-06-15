@@ -50,7 +50,7 @@ jobs:
 
       - name: Push Artifacts
         run: |
-              git config --global user.name "$GITHUB_ACTOR"
+              git config --global user.name "MathildeMrz"
               git config --global user.email "mathilde.marza@insa-lyon.fr"
               git add results
               git commit -m "Push results folder"
