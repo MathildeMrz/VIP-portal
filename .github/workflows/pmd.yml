@@ -56,13 +56,34 @@ jobs:
               cp -r "${newFileName}" results/
               echo "Sarif code quality report created"
               echo "SARIF_PATH=${{ env.newFileName }}" >> $GITHUB_ENV
+              
+   commit-folder:
+      needs: pmd-code-scan
+      runs-on: ubuntu-latest
+      steps:
+        - name: Commit files
+          run: | 
+                ls results
+                git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
+                git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
+                git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
+                ls results
+                git add results
+                git commit -m "Push results folder"
+
+
+        - name: Push changes
+          uses: ad-m/github-push-action@master
+          with:
+            github_token: ${{ secrets.SECURITY_TOKEN }}
+            branch: ${{ github.ref }}   
 
   ###########################################################################################################################################
   ######################################################## Security report generation #######################################################
   ###########################################################################################################################################
              
    security-report-generation:
-    needs: pmd-code-scan
+    needs: commit-folder
     runs-on: windows-latest
     steps:
       - name: Generate Security Report
@@ -74,26 +95,7 @@ jobs:
           outputDir: aaaa
 
           
-   commit-report:
-    needs: security-report-generation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Commit files
-        run: | 
-              ls results
-              git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
-              git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
-              git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-              ls results
-              git add results
-              git commit -m "Push results folder"
-              
-      
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.SECURITY_TOKEN }}
-          branch: ${{ github.ref }}   
+   
           
   ###########################################################################################################################################
   ############################################################### Maven build ###############################################################
