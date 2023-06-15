@@ -72,10 +72,6 @@ jobs:
   ######################################################## Security report generation #######################################################
   ###########################################################################################################################################
              
-   security-report-generation:
-    needs: pmd-code-scan
-    runs-on: ubuntu-latest
-    steps:
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
         with:
