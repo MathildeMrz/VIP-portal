@@ -44,7 +44,7 @@ jobs:
 
       - name: Build with Maven
         run: |
-            mvn clean install
+            mvn verify
             
       - name: Testt
         run: |
