@@ -46,9 +46,7 @@ jobs:
               ls -la results              
               cp -r pmd-report.sarif results
               echo "Artifacts pushed to results"
-              
-
-                 
+                               
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
         with:
@@ -56,6 +54,20 @@ jobs:
           repository: MathildeMrz/vip-portal
           sarifReportDir: results
           outputDir: results
+          
+      - name: Commit files
+        run: | 
+              git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
+              git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
+              git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
+              git add results
+              git commit -m "Push results folder"
+              
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.SECURITY_TOKEN }}
+          branch: ${{ github.ref }}
           
           
       
