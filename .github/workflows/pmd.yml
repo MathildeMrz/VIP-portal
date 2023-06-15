@@ -45,7 +45,10 @@ jobs:
         run: |
               mkdir -m 777 -p results
               ls results      
-              cp -r pmd-report.sarif results
+              currentDate=$(date +%Y-%m-%d)
+              newFileName="results-${currentDate}.sarif"
+              mv pmd-report.sarif "${newFileName}"
+              cp -r "${newFileName}" results/
               echo "Sarif code quality report created"
                                
       - name: Generate Security Report
