@@ -61,18 +61,20 @@ jobs:
   ###########################################################################################################################################
              
    security-report-generation:
+    needs: pmd-code-scan
     runs-on: windows-latest
     steps:
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
         with:
-          token: ${{secrets.SECURITY_TOKEN}}
+          token: ${{ secrets.SECURITY_TOKEN }}
           repository: MathildeMrz/vip-portal
           sarifReportDir: results/${{ env.newFileName }}
           outputDir: aaaa
 
           
    commit-report:
+    needs: security-report-generation
     runs-on: ubuntu-latest
     steps:
       - name: Commit files
