@@ -69,17 +69,17 @@ knowledge of the CeCILL-B license and that you accept its terms.
 
     <description>VIP</description>
     <inceptionYear>2010</inceptionYear>
-    <url>https://vip.creatis.insa-lyon.fr:9002/projects/vip</url>
+    <url>http://vip.creatis.insa-lyon.fr:9002/projects/vip</url>
     <licenses>
         <license>
             <name>CeCILL-B, Version 1.0</name>
-            <url>https://www.cecill.info/</url>
+            <url>http://www.cecill.info/</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
     <organization>
         <name>CREATIS</name>
-        <url>https://www.creatis.insa-lyon.fr/</url>
+        <url>http://www.creatis.insa-lyon.fr/</url>
     </organization>
 
     <modules>
