@@ -12,6 +12,8 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+    paths-ignore:
+      - '.github/workflows/**'
   schedule:
     - cron: '40 1 * * 0'
 
@@ -57,7 +59,7 @@ jobs:
           token: ${{secrets.SECURITY_TOKEN}}
           repository: MathildeMrz/vip-portal
           sarifReportDir: results/${{ env.newFileName }}
-          outputDir: results
+          outputDir: results/
           
       - name: Commit files
         run: | 
