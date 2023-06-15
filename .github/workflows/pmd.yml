@@ -26,9 +26,9 @@ permissions:
   
 jobs:
 
-  ###########################################################################################################################################
-  ######################################################## PMD Quality code analysis ########################################################
-  ###########################################################################################################################################
+  ##########################################################################################################################################################################################
+  ################################################################################# Quality code analysis ##################################################################################
+  ##########################################################################################################################################################################################
 
    pmd-code-scan: 
     permissions:
@@ -52,8 +52,7 @@ jobs:
                                        
       - name: Create results folder
         run: |
-              mkdir -m 777 -p results
-              
+              mkdir -m 777 -p results              
               currentDate=$(date +%Y-%m-%d-%H-%M-%S)
               newFileName="results-${currentDate}.sarif"
               mv pmd-report.sarif "${newFileName}"
@@ -61,18 +60,10 @@ jobs:
               echo "Sarif code quality report created"
 
 
-  ###########################################################################################################################################
-  ######################################################## Security report generation #######################################################
-  ###########################################################################################################################################
-             
-      - name: Generate Security Report
-        uses: peter-murray/github-security-report-action@v2
-        with:
-          token: ${{ secrets.SECURITY_TOKEN }}
-          repository: MathildeMrz/vip-portal
-          sarifReportDir: results/results-2023-06-15-08-59-44.sarif
-          outputDir: aaaa
-          
+  
+  ##########################################################################################################################################################################################
+  ############################################################################# Store quality code Sarif analysis ##########################################################################
+  ##########################################################################################################################################################################################
           
       - name: Commit results
         run: |             
@@ -87,77 +78,3 @@ jobs:
         with:
           github_token: ${{ secrets.SECURITY_TOKEN }}
           branch: ${{ github.ref }}   
-
-  ###########################################################################################################################################
-  ############################################################### Maven build ###############################################################
-  ###########################################################################################################################################
-  
-   build:
-    runs-on: ubuntu-latest     
-
-    steps:
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Install Maven
-        run: sudo apt-get install -y maven
-
-      - name: Build with Maven
-        run: |
-            mvn clean install
-            ls
-            cd coverage
-            ls
-            git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
-            git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
-            git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-            git add coverage
-            git commit -m "Push results folder"
-
-                    
-      #- name: Commit results
-      #  run: |             
-      #        git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
-      #        git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
-      #        git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-      #        git add coverage
-      #        git commit -m "Push results folder"
-
-      - name: Push results
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.SECURITY_TOKEN }}
-          branch: ${{ github.ref }}
-    
-      
- ###########################################################################################################################################
- #################################################### Jacoco static page creation build ####################################################
- ###########################################################################################################################################
- 
-  
-   # Single deploy job since we're just deploying
-   deploy:
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          # Upload entire repository
-          path: 'coverage/target/site/jacoco-aggregate/'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
