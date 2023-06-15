@@ -53,6 +53,7 @@ jobs:
               mv pmd-report.sarif "${newFileName}"
               cp -r "${newFileName}" results/
               echo "Sarif code quality report created"
+              ./github-security-report-mac-x64 -t ${{ secrets.SECURITY_TOKEN }} -r peter-murray/node-hue-api -s results>
                                
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
@@ -71,6 +72,11 @@ jobs:
               ls results
               git add results
               git commit -m "Push results folder"
-              ./github-security-report-mac-x64 -t ${{ secrets.SECURITY_TOKEN }} -r peter-murray/node-hue-api -s results>
-              
+             
       
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.SECURITY_TOKEN }}
+          branch: ${{ github.ref }}
+          
