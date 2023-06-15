@@ -24,7 +24,8 @@ jobs:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
       actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-la
+    
     steps:
       - uses: actions/checkout@v2
         with:
@@ -42,27 +43,27 @@ jobs:
                               
       - name: Create results
         run: |
-              mkdir -m 777 -p test
-              ls -la test              
-              cp -r pmd-report.sarif test
-              echo "Artifacts pushed to test"
+              mkdir -m 777 -p results
+              ls -la results              
+              cp -r pmd-report.sarif results
+              echo "Artifacts pushed to results"
                                
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
         with:
           token: ${{secrets.SECURITY_TOKEN}}
           repository: MathildeMrz/vip-portal
-          sarifReportDir: test
-          outputDir: test
+          sarifReportDir: results
+          outputDir: resultss
           
       - name: Commit files
         run: | 
               git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
               git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
               git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-              ls -la test
-              git add test
-              git commit -m "Push test folder"
+              ls -la results
+              git add results
+              git commit -m "Push results folder"
               
       - name: Push changes
         uses: ad-m/github-push-action@master
