@@ -5,7 +5,7 @@
 env:
   PRE_BUILD_COMMAND: git config --global --add safe.directory /github/workspace
   
-name: reports
+name: code_quality_pmd
 
 on:
   push:
