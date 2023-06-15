@@ -1,86 +1,80 @@
 env:
   PRE_BUILD_COMMAND: git config --global --add safe.directory /github/workspace
-  
-name: tests_coverage_jacoco 
+
+name: tests_coverage_jacoco
 
 on:
   push:
-    branches: [ "master" ] 
+    branches: ["master"]
     #paths-ignore:
-    #  - '**.github/workflows/**' 
-   
+    #  - '**.github/workflows/**'
+
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
     paths-ignore:
-      - '**.github/workflows/**'
-     
+      - "**.github/workflows/**"
+
   schedule:
-    - cron: '40 1 * * 0'
+    - cron: "40 1 * * 0"
 
 permissions:
   contents: read
-  
-jobs:
 
+jobs:
   ##########################################################################################################################################################################################
   ################################################################################# Tests coverage analysis ################################################################################
   ##########################################################################################################################################################################################
-  
-   build:
-    runs-on: ubuntu-latest     
+
+  build:
+    runs-on: ubuntu-latest
 
     steps:
-    
       - name: Check out code
         uses: actions/checkout@v3
-        
+
       - name: Set up JDK
       - uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '11'
-
-
+          distribution: "temurin"
+          java-version: "11"
 
       - name: Install Maven
         run: sudo apt-get install -y maven
 
       - name: Build with Maven
         run: |
-            mvn verify
-            
+          mvn verify
+
       - name: Testt
         run: |
-              git config --global user.email "mathilde.marza@insa-lyon.fr"
-              git config --global user.name "MathildeMrz"
-              git add .
-              git commit -m "Push results folder"
-            
+          git config --global user.email "mathilde.marza@insa-lyon.fr"
+          git config --global user.name "MathildeMrz"
+          git add .
+          git commit -m "Push results folder"
+
       - name: Commit results
-        run: |  
-              ls
-              ls $GITHUB_WORKSPACE
-              cd $GITHUB_WORKSPACE/coverage
-              git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
-              git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
-              git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-              git add coverage
-              git commit -m "Push results folder"
+        run: |
+          ls
+          ls $GITHUB_WORKSPACE
+          cd $GITHUB_WORKSPACE/coverage
+          git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
+          git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
+          git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
+          git add coverage
+          git commit -m "Push results folder"
 
       - name: Push results
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.SECURITY_TOKEN }}
           branch: ${{ github.ref }}
-    
-      
- ###########################################################################################################################################
- #################################################### Jacoco static page creation build ####################################################
- ###########################################################################################################################################
- 
-  
-   # Single deploy job since we're just deploying
-   deploy:
+
+  ###########################################################################################################################################
+  #################################################### Jacoco static page creation build ####################################################
+  ###########################################################################################################################################
+
+  # Single deploy job since we're just deploying
+  deploy:
     needs: build
     environment:
       name: github-pages
@@ -95,7 +89,7 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload entire repository
-          path: 'coverage/target/site/jacoco-aggregate/'
+          path: "coverage/target/site/jacoco-aggregate/"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
