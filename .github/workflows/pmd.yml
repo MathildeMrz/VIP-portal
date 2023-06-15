@@ -47,7 +47,7 @@ jobs:
         run: |
               mkdir -m 777 -p results
               ls results      
-              currentDate=$(date +%Y-%m-%d)
+              currentDate=$(date +%Y-%m-%d-%H-%M-%S)
               newFileName="results-${currentDate}.sarif"
               mv pmd-report.sarif "${newFileName}"
               cp -r "${newFileName}" results/
