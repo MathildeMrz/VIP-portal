@@ -23,95 +23,49 @@ permissions:
 jobs:
   
           
-  build_maven:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: qcastel/github-actions-maven/actions/maven@master
         with:
-          java-version: '11'
-      
-      - name: Build
-        run: mvn clean install
-        
-        
-  visualize_code_coverage:
-    needs: build_maven
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Copy Jacoco report
-        run: cp -r VIP-portal/coverage/target/site/jacoco-aggregate/ public
-
-      - name: Publish Code Coverage
+          maven-repo-server-id: ${{ secrets.MVN_REPO_PRIVATE_REPO_USER }}
+          maven-repo-server-username: ${{ secrets.MVN_REPO_PRIVATE_REPO_USER }}
+          maven-repo-server-password: ${{ secrets.MVN_REPO_PRIVATE_REPO_PASSWORD }}
+          maven-args: "clean install"
+          
+      - name: Upload site to Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Code Coverage Report
-          path: public    
-          
-  pmd-code-scan: 
-    permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+          name: _site
+          path: _site
+          # La tâche ne sera pas exécutée si aucun fichier n'est généré
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy
+    # La tâche 'deploy' est exécutée après la tâche 'build'
+    needs: build
     runs-on: ubuntu-latest
-    
     steps:
-      - uses: actions/checkout@v2
-        with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-      - uses: pmd/pmd-github-action@v1
-        with:
-          rulesets: 'ruleset.xml'
-          analyzeModifiedFilesOnly: false
-      
-                              
-      - name: Create results
-        run: |
-              mkdir -m 777 -p results
-              ls results      
-              currentDate=$(date +%Y-%m-%d-%H-%M-%S)
-              newFileName="results-${currentDate}.sarif"
-              mv pmd-report.sarif "${newFileName}"
-              cp -r "${newFileName}" results/
-              echo "Sarif code quality report created"
-                               
-      - name: Generate Security Report
-        uses: peter-murray/github-security-report-action@v2
-        with:
-          token: ${{secrets.SECURITY_TOKEN}}
-          repository: MathildeMrz/vip-portal
-          sarifReportDir: results/${{ env.newFileName }}
-          outputDir: aaaa
-          
-      - name: Commit files
-        run: | 
-              ls results
-              git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
-              git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
-              git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-              ls results
-              git add results
-              git commit -m "Push results folder"
-              
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.SECURITY_TOKEN }}
-          branch: ${{ github.ref }}
+
+    - name: Download site from Artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: _site
+        path: _site
+
+    - name: Deploy site to GitHub Pages
+      uses: Cecilapp/GitHub-Pages-deploy@v3
+      env:
+        # Accès en écriture à la branche cible (`gh-pages`)
+        GITHUB_TOKEN: ${{ secrets.SECURITY_TOKEN }}
+      with:
+        # Adresse e-mail valide sur GitHub
+        email: mathilde.marza@insa-lyon.fr
+
+  
   
       
           
