@@ -48,6 +48,8 @@ jobs:
             
       - name: Testt
         run: |
+              git config --global user.email "mathilde.marza@insa-lyon.fr"
+              git config --global user.name "MathildeMrz"
               git add .
               git commit -m "Push results folder"
             
