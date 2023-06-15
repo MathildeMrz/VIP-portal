@@ -21,6 +21,32 @@ permissions:
   contents: read
   
 jobs:
+  
+          
+  coverage-measure:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Pull the base image
+        run: docker pull python:3.8-buster
+
+      - name: Build the new image
+        run: docker build -t python:security-test -f example/Dockerfile .
+
+      - name: "Security reports"
+        uses: dreamquark-ai/ci-security-report@main
+        env:
+          GITHUB_PAT: ${{secrets.SECURITY_TOKEN}}
+        with:
+          image: 'python'
+          base-tag: '3.8-buster'
+          new-tag: 'security-test'
+          orga: 'PaulBarrie'
+          repo: 'ci-security-report-example'
+          pr-nb: ${{ github.event.number }}
+          topic: 'github-example'
+          
   pmd-code-scan: 
     permissions:
       contents: read # for actions/checkout to fetch code
@@ -59,7 +85,7 @@ jobs:
           token: ${{secrets.SECURITY_TOKEN}}
           repository: MathildeMrz/vip-portal
           sarifReportDir: results/${{ env.newFileName }}
-          outputDir: fedd
+          outputDir: aaaa
           
       - name: Commit files
         run: | 
@@ -76,7 +102,5 @@ jobs:
         with:
           github_token: ${{ secrets.SECURITY_TOKEN }}
           branch: ${{ github.ref }}
-          
-          
       
           
