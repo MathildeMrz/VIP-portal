@@ -70,7 +70,7 @@ jobs:
         with:
           token: ${{ secrets.SECURITY_TOKEN }}
           repository: MathildeMrz/vip-portal
-          sarifReportDir: results
+          sarifReportDir: results/results-2023-06-15-08-59-44.sarif
           outputDir: aaaa
           
           
