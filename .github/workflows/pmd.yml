@@ -45,12 +45,12 @@ jobs:
               
 
       - name: Push Artifacts
-        uses: ad-m/github-push-action@v0.5.0
-        with:
-          branch: master
-          github_token: ${{secrets.SECURITY_TOKEN}}
-          force: true
-          directory: results
+      - run: |
+              git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+              git config --global user.email "mathilde.marza@insa-lyon.fr"
+              git commit -a -m "Push results folder"
+              git push
+
           
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
