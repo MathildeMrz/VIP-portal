@@ -31,6 +31,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
+          token: ${{secrets.SECURITY_TOKEN}}
       - uses: pmd/pmd-github-action@v1
         with:
           rulesets: 'ruleset.xml'
@@ -51,8 +52,7 @@ jobs:
               git add results
               git commit -m "Push results folder"
               git push
-
-          
+                  
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
         with:
