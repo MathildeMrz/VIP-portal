@@ -45,9 +45,8 @@ jobs:
         run: |
               mkdir -m 777 -p results
               ls -la results      
-              git mv pmd-report.sarif pmd-report_$(date +"%Y%m%d").sarif
               cp -r pmd-report.sarif results
-              echo "Artifacts pushed to results"
+              echo "Sarif code quality report created"
                                
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
