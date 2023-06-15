@@ -56,7 +56,7 @@ jobs:
         with:
           token: ${{secrets.SECURITY_TOKEN}}
           repository: MathildeMrz/vip-portal
-          sarifReportDir: results
+          sarifReportDir: results/${{ env.newFileName }}
           outputDir: results
           
       - name: Commit files
