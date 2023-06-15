@@ -34,13 +34,14 @@ jobs:
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
           fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-node@v2
         with:
-          distribution: 'temurin'
-          java-version: '11'
+          node-version: '16'
+
+
       - uses: pmd/pmd-github-action@v1
         with:
-          rulesets: 'ruleset.xml'       
+          rulesets: 'ruleset.xml'
           
                              
       - name: Create results folder
