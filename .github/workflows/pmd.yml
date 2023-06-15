@@ -71,11 +71,6 @@ jobs:
               ls results
               git add results
               git commit -m "Push results folder"
-              ./github-security-report-mac-x64 -t <GitHub PAT Token> -r peter-murray/node-hue-api -s <directory containing CodeQL SARIF file(s)>
+              ./github-security-report-mac-x64 -t ${{ secrets.SECURITY_TOKEN }} -r peter-murray/node-hue-api -s results>
               
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.SECURITY_TOKEN }}
-          branch: ${{ github.ref }}
-          
+      
