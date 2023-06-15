@@ -115,6 +115,21 @@ jobs:
       - name: test
         run: |     
           ls
+          
+                
+      - name: Commit results
+        run: |             
+              git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
+              git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
+              git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
+              git add coverage
+              git commit -m "Push results folder"
+
+      - name: Push results
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.SECURITY_TOKEN }}
+          branch: ${{ github.ref }}
     
       
  ###########################################################################################################################################
@@ -124,6 +139,7 @@ jobs:
   
    # Single deploy job since we're just deploying
    deploy:
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
