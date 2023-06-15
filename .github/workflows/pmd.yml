@@ -23,84 +23,39 @@ permissions:
 jobs:
   
           
-  coverage-measure:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@master
-
-      - name: Pull the base image
-        run: docker pull python:3.8-buster
-
-      - name: Build the new image
-        run: docker build -t python:security-test -f example/Dockerfile .
-
-      - name: "Security reports"
-        uses: dreamquark-ai/ci-security-report@main
-        env:
-          GITHUB_PAT: ${{secrets.SECURITY_TOKEN}}
-        with:
-          image: 'python'
-          base-tag: '3.8-buster'
-          new-tag: 'security-test'
-          orga: 'PaulBarrie'
-          repo: 'ci-security-report-example'
-          pr-nb: ${{ github.event.number }}
-          topic: 'github-example'
-          
-  pmd-code-scan: 
-    permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+  build_maven:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
         with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
           java-version: '11'
-      - uses: pmd/pmd-github-action@v1
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Build with Maven
+        run: mvn clean install
+
+  visualize_code_coverage:
+    needs: build_maven
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Copy Jacoco report
+        run: cp -r VIP-portal/coverage/target/site/jacoco-aggregate/ public
+
+      - name: Publish Code Coverage
+        uses: actions/upload-artifact@v2
         with:
-          rulesets: 'ruleset.xml'
-          analyzeModifiedFilesOnly: false
-      
-                              
-      - name: Create results
-        run: |
-              mkdir -m 777 -p results
-              ls results      
-              currentDate=$(date +%Y-%m-%d-%H-%M-%S)
-              newFileName="results-${currentDate}.sarif"
-              mv pmd-report.sarif "${newFileName}"
-              cp -r "${newFileName}" results/
-              echo "Sarif code quality report created"
-                               
-      - name: Generate Security Report
-        uses: peter-murray/github-security-report-action@v2
-        with:
-          token: ${{secrets.SECURITY_TOKEN}}
-          repository: MathildeMrz/vip-portal
-          sarifReportDir: results/${{ env.newFileName }}
-          outputDir: aaaa
+          name: Code Coverage Report
+          path: public    
           
-      - name: Commit files
-        run: | 
-              ls results
-              git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
-              git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
-              git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-              ls results
-              git add results
-              git commit -m "Push results folder"
-              
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.SECURITY_TOKEN }}
-          branch: ${{ github.ref }}
+  
       
           
