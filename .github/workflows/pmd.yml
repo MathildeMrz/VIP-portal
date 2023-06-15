@@ -55,7 +55,8 @@ jobs:
               mv pmd-report.sarif "${newFileName}"
               cp -r "${newFileName}" results/
               echo "Sarif code quality report created"
-              
+              echo "SARIF_PATH=${{ env.newFileName }}" >> $GITHUB_ENV
+
   ###########################################################################################################################################
   ######################################################## Security report generation #######################################################
   ###########################################################################################################################################
@@ -69,7 +70,7 @@ jobs:
         with:
           token: ${{ secrets.SECURITY_TOKEN }}
           repository: MathildeMrz/vip-portal
-          sarifReportDir: results/${{ env.newFileName }}
+          sarifReportDir: ${{ env.SARIF_PATH }}
           outputDir: aaaa
 
           
@@ -86,7 +87,7 @@ jobs:
               ls results
               git add results
               git commit -m "Push results folder"
-             
+              
       
       - name: Push changes
         uses: ad-m/github-push-action@master
