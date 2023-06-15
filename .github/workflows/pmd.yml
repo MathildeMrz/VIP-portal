@@ -44,7 +44,7 @@ jobs:
       - name: Create results
         run: |
               mkdir -m 777 -p results
-              ls -la results      
+              ls results      
               cp -r pmd-report.sarif results
               echo "Sarif code quality report created"
                                
@@ -54,15 +54,15 @@ jobs:
           token: ${{secrets.SECURITY_TOKEN}}
           repository: MathildeMrz/vip-portal
           sarifReportDir: results
-          outputDir: resultss
+          outputDir: results
           
       - name: Commit files
         run: | 
-              git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
+              
               git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
               git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-              ls -la results
-              git add .
+              ls results
+              git add results
               git commit -m "Push results folder"
               
       - name: Push changes
