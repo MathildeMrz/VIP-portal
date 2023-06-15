@@ -47,16 +47,6 @@ jobs:
               cp -r pmd-report.sarif results
               echo "Artifacts pushed to results"
               
-                 
-      - name: Generate Security Report
-        uses: peter-murray/github-security-report-action@v2
-        with:
-          token: ${{secrets.SECURITY_TOKEN}}
-          repository: MathildeMrz/vip-portal
-          sarifReportDir: results
-          outputDir: results
-          
-          
       - name: Commit files
         run: | 
               git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
@@ -70,4 +60,15 @@ jobs:
         with:
           github_token: ${{ secrets.SECURITY_TOKEN }}
           branch: ${{ github.ref }}
+                 
+      - name: Generate Security Report
+        uses: peter-murray/github-security-report-action@v2
+        with:
+          token: ${{secrets.SECURITY_TOKEN}}
+          repository: MathildeMrz/vip-portal
+          sarifReportDir: results
+          outputDir: results
+          
+          
+      
           
