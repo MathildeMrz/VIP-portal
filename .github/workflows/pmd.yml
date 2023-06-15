@@ -10,8 +10,8 @@ name: reports
 on:
   push:
     branches: [ "master" ]
-    paths-ignore:
-      - '**.github/workflows/**'
+    #paths-ignore:
+    #  - '**.github/workflows/**'
    
   pull_request:
     branches: [ "master" ]
