@@ -45,7 +45,7 @@ jobs:
               
 
       - name: Push Artifacts
-      - run: |
+        run: |
               git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
               git config --global user.email "mathilde.marza@insa-lyon.fr"
               git commit -a -m "Push results folder"
