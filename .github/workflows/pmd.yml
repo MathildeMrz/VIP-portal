@@ -74,7 +74,7 @@ jobs:
              
    security-report-generation:
     needs: pmd-code-scan
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
@@ -84,9 +84,6 @@ jobs:
           sarifReportDir: results
           outputDir: aaaa
 
-          
-   
-          
   ###########################################################################################################################################
   ############################################################### Maven build ###############################################################
   ###########################################################################################################################################
