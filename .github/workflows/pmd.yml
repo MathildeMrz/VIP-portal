@@ -34,9 +34,10 @@ jobs:
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
           fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '16'
+
 
 
       - uses: pmd/pmd-github-action@v1
@@ -55,12 +56,13 @@ jobs:
               echo "Sarif code quality report created"
                                
       - name: Generate Security Report
-        uses: peter-murray/github-security-report-action@v2
+        uses: peter-murray/github-security-report-action@v3
         with:
           token: ${{secrets.SECURITY_TOKEN}}
           repository: MathildeMrz/vip-portal
           sarifReportDir: results/${{ env.newFileName }}
           outputDir: aaaa
+
           
       - name: Commit files
         run: | 
