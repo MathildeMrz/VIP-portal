@@ -62,7 +62,7 @@ jobs:
               git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
               git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
               git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-              git add results
+              git add results/*
               git commit -m "Push results folder"
               
       - name: Push changes
