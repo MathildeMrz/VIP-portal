@@ -51,13 +51,14 @@ jobs:
       - name: Generate Security Report
         uses: peter-murray/github-security-report-action@v2
         with:
-          token: testt
+          token: ${{secrets.SECURITY_TOKEN}}
           repository: MathildeMrz/vip-portal
           sarifReportDir: results
           outputDir: results
           
       - name: Commit files
         run: | 
+              ls results
               git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
               git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
               git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
