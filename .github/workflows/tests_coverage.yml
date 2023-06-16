@@ -38,13 +38,23 @@ jobs:
           distribution: "temurin"
       - name: Build Maven
         run: mvn clean install
+             ls
+             ls coverage
+             ls coverage/target
+             ls coverage/target/site
+             ls coverage/target/site/jacoco-aggregate
         
       - name: Testt
         run: |
-          git config --global user.email "mathilde.marza@insa-lyon.fr"
-          git config --global user.name "MathildeMrz"
-          git add .
-          git commit -m "Push results folder"
+             ls
+             ls coverage
+             ls coverage/target
+             ls coverage/target/site
+             ls coverage/target/site/jacoco-aggregate
+             git config --global user.email "mathilde.marza@insa-lyon.fr"
+             git config --global user.name "MathildeMrz"
+             git add .
+             git commit -m "Push results folder"
 
       - name: Commit results
         run: |
