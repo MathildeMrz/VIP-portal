@@ -30,22 +30,15 @@ jobs:
 
     steps:
     
-      - name: Set up JDK
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'adopt'
-
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Install Maven
-        run: sudo apt-get install -y maven
-
+          java-version: '17'
+          distribution: 'temurin'
       - name: Build with Maven
-        run: |
-              mvn clean install
-
+        run: mvn clean install
+      
       - name: Testt
         run: |
           git config --global user.email "mathilde.marza@insa-lyon.fr"
