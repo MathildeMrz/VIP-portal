@@ -2,7 +2,7 @@ env:
   PRE_BUILD_COMMAND: git config --global --add safe.directory /github/workspace
 
 name: tests_coverage_jacoco
-
+ 
 on:
   push:
     branches: ["master"]
