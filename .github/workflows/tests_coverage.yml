@@ -38,11 +38,6 @@ jobs:
           distribution: "temurin"
       - name: Build Maven
         run: mvn clean install
-             ls
-             ls coverage
-             ls coverage/target
-             ls coverage/target/site
-             ls coverage/target/site/jacoco-aggregate
         
       - name: Testt
         run: |
