@@ -5,7 +5,7 @@ name: tests_coverage_jacoco
  
 on:
   push:
-    branches: ["master"]
+    branches: ["master"] 
     #paths-ignore:
     #  - '**.github/workflows/**'
 
