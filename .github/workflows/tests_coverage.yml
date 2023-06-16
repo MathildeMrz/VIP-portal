@@ -36,15 +36,7 @@ jobs:
           java-version: "11"
           distribution: "temurin"
       - name: Build Maven
-        run: mvn --batch-mode --update-snapshots package
-          
-
-      #- name: Install Maven
-      #  run: sudo apt-get install -y maven
-
-      #- name: Build with Maven
-      #  run: |
-      #    mvn verify
+        run: mvn clean install
 
       - name: Testt
         run: |
