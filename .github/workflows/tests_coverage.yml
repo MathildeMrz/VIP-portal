@@ -45,6 +45,10 @@ jobs:
       - name: Build with Maven
         run: |
               mvn clean install
+              
+      - name: Generate Jacoco report
+        run: |
+              mvn jacoco:report-aggregate
 
       - name: Testt
         run: |
