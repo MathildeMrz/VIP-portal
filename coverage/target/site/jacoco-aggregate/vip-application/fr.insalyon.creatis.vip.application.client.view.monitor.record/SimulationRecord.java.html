@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimulationRecord.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.record</a> &gt; <span class="el_source">SimulationRecord.java</span></div><h1>SimulationRecord.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.record;
+
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+import java.util.Date;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class SimulationRecord extends ListGridRecord {
+
+<span class="nc" id="L44">    public SimulationRecord() {</span>
+<span class="nc" id="L45">    }</span>
+
+    public SimulationRecord(String simulationName, String application,
+            String applicationVersion, String applicationClass,
+<span class="nc" id="L49">            SimulationStatus status, String simulationId, String user, Date date) {</span>
+
+<span class="nc" id="L51">        setAttribute(&quot;statusIco&quot;, &quot;ico_&quot; + status.name().toLowerCase());</span>
+<span class="nc" id="L52">        setAttribute(&quot;application&quot;, application);</span>
+<span class="nc" id="L53">        setAttribute(&quot;applicationVersion&quot;, applicationVersion);</span>
+<span class="nc" id="L54">        setAttribute(&quot;applicationClass&quot;, applicationClass);</span>
+<span class="nc" id="L55">        setAttribute(&quot;status&quot;, status.name());</span>
+<span class="nc" id="L56">        setAttribute(&quot;simulationId&quot;, simulationId);</span>
+<span class="nc" id="L57">        setAttribute(&quot;user&quot;, user);</span>
+<span class="nc" id="L58">        setAttribute(&quot;date&quot;, date);</span>
+<span class="nc bnc" id="L59" title="All 6 branches missed.">        if (simulationName == null || simulationName.equals(&quot;null&quot;) || simulationName.isEmpty()) {</span>
+<span class="nc" id="L60">            setAttribute(&quot;simulationName&quot;, simulationId);</span>
+        } else {
+<span class="nc" id="L62">            setAttribute(&quot;simulationName&quot;, simulationName);</span>
+        }
+<span class="nc" id="L64">    }</span>
+
+    public String getStatusIco() {
+<span class="nc" id="L67">        return getAttributeAsString(&quot;statusIco&quot;);</span>
+    }
+
+    public String getApplication() {
+<span class="nc" id="L71">        return getAttributeAsString(&quot;application&quot;);</span>
+    }
+
+    public String getStatus() {
+<span class="nc" id="L75">        return getAttributeAsString(&quot;status&quot;);</span>
+    }
+
+    public String getSimulationId() {
+<span class="nc" id="L79">        return getAttributeAsString(&quot;simulationId&quot;);</span>
+    }
+
+    public String getUser() {
+<span class="nc" id="L83">        return getAttributeAsString(&quot;user&quot;);</span>
+    }
+
+    public String getDate() {
+<span class="nc" id="L87">        return getAttributeAsString(&quot;date&quot;);</span>
+    }
+
+    public String getSimulationName() {
+<span class="nc" id="L91">        return getAttributeAsString(&quot;simulationName&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

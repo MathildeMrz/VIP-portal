@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>WorkflowServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.server.rpc</a> &gt; <span class="el_source">WorkflowServiceImpl.java</span></div><h1>WorkflowServiceImpl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.server.rpc;
+
+import fr.insalyon.creatis.devtools.FileUtils;
+import fr.insalyon.creatis.moteur.plugins.workflowsdb.dao.WorkflowsDBDAOException;
+import fr.insalyon.creatis.vip.application.client.bean.*;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.view.ApplicationException;
+import fr.insalyon.creatis.vip.application.server.business.BoutiquesBusiness;
+import fr.insalyon.creatis.vip.application.server.business.InputBusiness;
+import fr.insalyon.creatis.vip.application.server.business.WorkflowBusiness;
+import fr.insalyon.creatis.vip.application.server.business.simulation.ParameterSweep;
+import fr.insalyon.creatis.vip.application.server.dao.ApplicationInputDAO;
+import fr.insalyon.creatis.vip.core.client.bean.Group;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.CoreException;
+import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import fr.insalyon.creatis.vip.core.server.rpc.AbstractRemoteServiceServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.ServletException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+<span class="nc" id="L70">public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements WorkflowService {</span>
+
+<span class="nc" id="L72">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+
+    private WorkflowBusiness workflowBusiness;
+    private InputBusiness inputBusiness;
+    private ConfigurationBusiness configurationBusiness;
+    private ApplicationInputDAO applicationInputDAO;
+    private BoutiquesBusiness boutiquesBusiness;
+
+    @Override
+    public void init() throws ServletException {
+<span class="nc" id="L82">        super.init();</span>
+<span class="nc" id="L83">        inputBusiness = getBean(InputBusiness.class);</span>
+<span class="nc" id="L84">        applicationInputDAO = getBean(ApplicationInputDAO.class);</span>
+<span class="nc" id="L85">        configurationBusiness = getBean(ConfigurationBusiness.class);</span>
+<span class="nc" id="L86">        workflowBusiness = getBean(WorkflowBusiness.class);</span>
+<span class="nc" id="L87">        boutiquesBusiness = getBean(BoutiquesBusiness.class);</span>
+<span class="nc" id="L88">    }</span>
+
+    /**
+     * Gets a list of recently launched simulations.
+     *
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public List&lt;Simulation&gt; getSimulations() throws ApplicationException {
+
+        try {
+<span class="nc bnc" id="L100" title="All 2 branches missed.">            if (isSystemAdministrator()) {</span>
+<span class="nc" id="L101">                return workflowBusiness.getSimulations(null, null);</span>
+            } else {
+<span class="nc" id="L103">                return workflowBusiness.getSimulations(getSessionUser(), null);</span>
+            }
+<span class="nc" id="L105">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L106">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     * Gets a list of recently launched simulations from a date.
+     *
+     * @param lastDate
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public List&lt;Simulation&gt; getSimulations(Date lastDate) throws ApplicationException {
+
+        try {
+<span class="nc bnc" id="L121" title="All 2 branches missed.">            if (isSystemAdministrator()) {</span>
+<span class="nc" id="L122">                return workflowBusiness.getSimulations(null, lastDate);</span>
+            } else {
+<span class="nc" id="L124">                return workflowBusiness.getSimulations(getSessionUser(), lastDate);</span>
+            }
+<span class="nc" id="L126">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L127">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param applicationName
+     * @param applicationVersion
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public Descriptor getApplicationDescriptor(String applicationName, String applicationVersion) throws ApplicationException {
+        try {
+<span class="nc" id="L141">            return workflowBusiness.getApplicationDescriptor(</span>
+<span class="nc" id="L142">                    getSessionUser(),</span>
+                    applicationName,
+                    applicationVersion);
+<span class="nc" id="L145">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L146">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param applicationName
+     * @param applicationVersion
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public String getApplicationDescriptorString(String applicationName, String applicationVersion)
+            throws ApplicationException {
+        try {
+<span class="nc" id="L161">            return boutiquesBusiness.getApplicationDescriptorString(getSessionUser(), applicationName,</span>
+                                                                    applicationVersion);
+<span class="nc" id="L163">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L164">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     * Launches a simulation.
+     *
+     * @param parametersMap Simulation parameters map
+     * @param applicationName Application name
+     * @param applicationVersion Application version
+     * @param applicationClass Application class
+     * @param simulationName Simulation name
+     * @throws ApplicationException
+     */
+    @Override
+    public void launchSimulation(Map&lt;String, String&gt; parametersMap,
+            String applicationName, String applicationVersion,
+            String applicationClass, String simulationName) throws ApplicationException {
+
+        try {
+<span class="nc" id="L184">            trace(logger, &quot;Launching simulation '&quot; + simulationName + &quot;' (&quot; + applicationName + &quot;).&quot;);</span>
+<span class="nc" id="L185">            User user = getSessionUser();</span>
+
+<span class="nc" id="L187">            List&lt;String&gt; groups = new ArrayList&lt;String&gt;();</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            for (Group group : getUserGroupsFromSession().keySet()) {</span>
+<span class="nc" id="L189">                groups.add(group.getName());</span>
+<span class="nc" id="L190">            }</span>
+
+<span class="nc bnc" id="L192" title="All 2 branches missed.">            for (Map.Entry&lt;String,String&gt; p : parametersMap.entrySet()) {</span>
+<span class="nc" id="L193">                logger.info(&quot;received param {} : {}&quot;, p.getKey(), p.getValue());</span>
+<span class="nc" id="L194">            }</span>
+
+<span class="nc" id="L196">            String simulationID = workflowBusiness.launch(</span>
+                user, groups,
+                parametersMap, applicationName, applicationVersion,
+                applicationClass, simulationName);
+
+<span class="nc" id="L201">            trace(logger, &quot;Simulation '&quot; + simulationName + &quot;' launched with ID '&quot; + simulationID + &quot;'.&quot;);</span>
+
+<span class="nc" id="L203">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L204">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L205">        }</span>
+<span class="nc" id="L206">    }</span>
+
+    /**
+     *
+     * @param name
+     * @param appName
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public SimulationInput getInputByNameUserApp(String name, String appName)
+        throws ApplicationException {
+        try {
+<span class="nc" id="L219">            return inputBusiness.getInputByUserAndName(</span>
+<span class="nc" id="L220">                getSessionUser().getEmail(), name, appName);</span>
+<span class="nc" id="L221">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L222">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param simulationInput
+     * @throws ApplicationException
+     */
+    public void addSimulationInput(SimulationInput simulationInput)
+            throws ApplicationException {
+        try {
+<span class="nc" id="L234">            inputBusiness.addSimulationInput(</span>
+<span class="nc" id="L235">                getSessionUser().getEmail(), simulationInput);</span>
+<span class="nc" id="L236">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L237">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L238">        }</span>
+<span class="nc" id="L239">    }</span>
+
+    /**
+     *
+     * @param simulationInput
+     * @throws ApplicationException
+     */
+    public void updateSimulationInput(SimulationInput simulationInput)
+            throws ApplicationException {
+        try {
+<span class="nc" id="L249">            inputBusiness.updateSimulationInput(</span>
+<span class="nc" id="L250">                getSessionUser().getEmail(), simulationInput);</span>
+<span class="nc" id="L251">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L252">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L253">        }</span>
+<span class="nc" id="L254">    }</span>
+
+    /**
+     *
+     * @param fileName
+     * @return
+     */
+    public String loadSimulationInput(String fileName) throws ApplicationException {
+
+        try {
+<span class="nc" id="L264">            return inputBusiness.loadSimulationInput(fileName);</span>
+
+<span class="nc" id="L266">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L267">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param inputName
+     * @param applicationName
+     * @throws ApplicationException
+     */
+    public void removeSimulationInput(String inputName, String applicationName)
+            throws ApplicationException {
+        try {
+<span class="nc" id="L280">            inputBusiness.removeSimulationInput(</span>
+<span class="nc" id="L281">                getSessionUser().getEmail(), inputName, applicationName);</span>
+<span class="nc" id="L282">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L283">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L284">        }</span>
+<span class="nc" id="L285">    }</span>
+
+    /**
+     *
+     * @param inputName
+     * @param applicationName
+     * @throws ApplicationException
+     */
+    public void removeSimulationInputExample(
+        String inputName, String applicationName)
+        throws ApplicationException {
+        try {
+<span class="nc" id="L297">            inputBusiness.removeSimulationInputExample(</span>
+                inputName, applicationName);
+<span class="nc" id="L299">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L300">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L301">        }</span>
+<span class="nc" id="L302">    }</span>
+
+    /**
+     *
+     * @return @throws ApplicationException
+     */
+    public List&lt;SimulationInput&gt; getSimulationInputByUser()
+        throws ApplicationException {
+        try {
+<span class="nc" id="L311">            return inputBusiness.getSimulationInputByUser(</span>
+<span class="nc" id="L312">                getSessionUser().getEmail());</span>
+<span class="nc" id="L313">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L314">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param simulationInput
+     * @throws ApplicationException
+     */
+    public void saveInputsAsExamples(SimulationInput simulationInput)
+        throws ApplicationException {
+        try {
+<span class="nc" id="L326">            inputBusiness.saveSimulationInputAsExample(</span>
+                simulationInput);
+<span class="nc" id="L328">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L329">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L330">        }</span>
+<span class="nc" id="L331">    }</span>
+
+    /**
+     *
+     * @param applicationName
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public List&lt;SimulationInput&gt; getSimulationInputExamples(
+        String applicationName) throws ApplicationException {
+        try {
+<span class="nc" id="L343">            return inputBusiness.getSimulationInputExamples(</span>
+                applicationName);
+<span class="nc" id="L345">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L346">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param simulationIDs
+     * @throws ApplicationException
+     */
+    @Override
+    public void killSimulations(List&lt;String&gt; simulationIDs) throws ApplicationException {
+
+        try {
+<span class="nc" id="L359">            trace(logger, &quot;Killing simulations: &quot; + simulationIDs);</span>
+<span class="nc" id="L360">            StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L361" title="All 2 branches missed.">            for (String simulationID : simulationIDs) {</span>
+                try {
+<span class="nc" id="L363">                    workflowBusiness.kill(simulationID);</span>
+
+<span class="nc" id="L365">                } catch (BusinessException ex) {</span>
+<span class="nc bnc" id="L366" title="All 2 branches missed.">                    if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L367">                        sb.append(&quot;, &quot;);</span>
+                    }
+<span class="nc" id="L369">                    sb.append(simulationID);</span>
+<span class="nc" id="L370">                }</span>
+<span class="nc" id="L371">            }</span>
+<span class="nc bnc" id="L372" title="All 2 branches missed.">            if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L373">                logger.error(&quot;Unable to kill the following simulations: {}&quot;, sb.toString());</span>
+<span class="nc" id="L374">                throw new ApplicationException(&quot;Unable to kill the following &quot;</span>
+<span class="nc" id="L375">                        + &quot;simulations: &quot; + sb.toString());</span>
+            }
+<span class="nc" id="L377">        } catch (CoreException ex) {</span>
+<span class="nc" id="L378">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L379">        }</span>
+<span class="nc" id="L380">    }</span>
+
+    /**
+     *
+     * @param simulationIDs
+     * @throws ApplicationException
+     */
+    @Override
+    public void cleanSimulations(List&lt;String&gt; simulationIDs) throws ApplicationException {
+
+        try {
+<span class="nc" id="L391">            trace(logger, &quot;Cleaning simulations: &quot; + simulationIDs);</span>
+<span class="nc" id="L392">            StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L393" title="All 2 branches missed.">            for (String simulationID : simulationIDs) {</span>
+                try {
+<span class="nc" id="L395">                    workflowBusiness.clean(simulationID, getSessionUser().getEmail());</span>
+
+<span class="nc" id="L397">                } catch (BusinessException ex) {</span>
+<span class="nc bnc" id="L398" title="All 2 branches missed.">                    if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L399">                        sb.append(&quot;, &quot;);</span>
+                    }
+<span class="nc" id="L401">                    sb.append(simulationID);</span>
+<span class="nc" id="L402">                } catch (CoreException ex) {</span>
+<span class="nc" id="L403">                    throw new ApplicationException(ex);</span>
+<span class="nc" id="L404">                }</span>
+<span class="nc" id="L405">            }</span>
+
+<span class="nc bnc" id="L407" title="All 2 branches missed.">            if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L408">                logger.error(&quot;Unable to clean the following simulations: {}&quot;, sb.toString());</span>
+<span class="nc" id="L409">                throw new ApplicationException(&quot;Unable to clean the following &quot;</span>
+<span class="nc" id="L410">                        + &quot;simulations: &quot; + sb.toString());</span>
+            }
+<span class="nc" id="L412">        } catch (CoreException ex) {</span>
+<span class="nc" id="L413">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L414">        }</span>
+<span class="nc" id="L415">    }</span>
+
+    /**
+     *
+     * @param simulationIDs
+     * @throws ApplicationException
+     */
+    public void purgeSimulations(List&lt;String&gt; simulationIDs) throws ApplicationException {
+        try {
+<span class="nc" id="L424">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L425">            trace(logger, &quot;Purging simulations: &quot; + simulationIDs);</span>
+<span class="nc" id="L426">            StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L427" title="All 2 branches missed.">            for (String simulationID : simulationIDs) {</span>
+                try {
+<span class="nc" id="L429">                    workflowBusiness.purge(simulationID);</span>
+<span class="nc" id="L430">                } catch (BusinessException ex) {</span>
+<span class="nc bnc" id="L431" title="All 2 branches missed.">                    if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L432">                        sb.append(&quot;, &quot;);</span>
+                    }
+<span class="nc" id="L434">                    sb.append(simulationID);</span>
+<span class="nc" id="L435">                }</span>
+<span class="nc" id="L436">            }</span>
+
+<span class="nc bnc" id="L438" title="All 2 branches missed.">            if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L439">                logger.error(&quot;Unable to purge the following simulations: {}&quot;, sb.toString());</span>
+<span class="nc" id="L440">                throw new ApplicationException(&quot;Unable to purge the following &quot;</span>
+<span class="nc" id="L441">                        + &quot;simulations: &quot; + sb.toString());</span>
+            }
+<span class="nc" id="L443">        } catch (CoreException ex) {</span>
+<span class="nc" id="L444">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L445">        }</span>
+<span class="nc" id="L446">    }</span>
+
+    /**
+     *
+     * @param simulationID
+     * @throws ApplicationException
+     */
+    @Override
+    public void killWorkflow(String simulationID) throws ApplicationException {
+
+        try {
+<span class="nc" id="L457">            trace(logger, &quot;Killing simulation '&quot; + simulationID + &quot;'.&quot;);</span>
+<span class="nc" id="L458">            workflowBusiness.kill(simulationID);</span>
+
+<span class="nc" id="L460">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L461">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L462">        }</span>
+<span class="nc" id="L463">    }</span>
+
+    /**
+     *
+     * @param simulationID
+     * @throws ApplicationException
+     */
+    public void cleanWorkflow(String simulationID) throws ApplicationException {
+
+        try {
+<span class="nc" id="L473">            trace(logger, &quot;Cleaning simulation '&quot; + simulationID + &quot;'.&quot;);</span>
+<span class="nc" id="L474">            workflowBusiness.clean(simulationID, getSessionUser().getEmail());</span>
+
+<span class="nc" id="L476">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L477">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L478">        }</span>
+<span class="nc" id="L479">    }</span>
+
+    /**
+     *
+     * @param simulationID
+     * @throws ApplicationException
+     */
+    @Override
+    public void purgeWorkflow(String simulationID) throws ApplicationException {
+
+        try {
+<span class="nc" id="L490">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L491">            trace(logger, &quot;Purging simulation '&quot; + simulationID + &quot;'.&quot;);</span>
+<span class="nc" id="L492">            workflowBusiness.purge(simulationID);</span>
+
+<span class="nc" id="L494">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L495">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L496">        }</span>
+<span class="nc" id="L497">    }</span>
+
+    /**
+     *
+     * @param simulationID
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public Map&lt;String, String&gt; relaunchSimulation(String simulationID) throws ApplicationException {
+        try {
+<span class="nc" id="L508">            trace(logger, &quot;Relaunching simulation '&quot; + simulationID + &quot;'.&quot;);</span>
+<span class="nc" id="L509">            return workflowBusiness.relaunch(</span>
+<span class="nc" id="L510">                simulationID, getSessionUser().getFolder());</span>
+<span class="nc" id="L511">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L512">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param userName
+     * @param application
+     * @param status
+     * @param startDate
+     * @param endDate
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public List&lt;Simulation&gt; getSimulations(String userName, String application,
+            String status, String appClass, Date startDate, Date endDate) throws ApplicationException {
+        try {
+<span class="nc" id="L530">            User user = getSessionUser();</span>
+<span class="nc bnc" id="L531" title="All 2 branches missed.">            if (user.isSystemAdministrator()) {</span>
+<span class="nc" id="L532">                return workflowBusiness.getSimulations(userName, application,</span>
+                        status, appClass, startDate, endDate);
+
+            } else {
+
+<span class="nc bnc" id="L537" title="All 2 branches missed.">                if (userName != null) {</span>
+<span class="nc" id="L538">                    return workflowBusiness.getSimulations(userName,</span>
+                            application, status, appClass, startDate, endDate);
+
+                } else {
+<span class="nc" id="L542">                    List&lt;String&gt; users = configurationBusiness</span>
+<span class="nc" id="L543">                        .getUserNames(user.getEmail(), true);</span>
+
+<span class="nc" id="L545">                    return workflowBusiness.getSimulations(users,</span>
+                            application, status, appClass, startDate, endDate);
+                }
+            }
+<span class="nc" id="L549">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L550">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param simulationID
+     * @return
+     * @throws ApplicationException
+     */
+    public Simulation getSimulation(String simulationID) throws ApplicationException {
+
+        try {
+<span class="nc" id="L563">            return workflowBusiness.getSimulation(simulationID);</span>
+
+<span class="nc" id="L565">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L566">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    public String getFile(String baseDir, String fileName) {
+        try {
+<span class="nc" id="L572">            FileReader fr = new FileReader(</span>
+<span class="nc" id="L573">                    server.getWorkflowsPath() + &quot;/&quot;</span>
+                    + baseDir + &quot;/&quot; + fileName);
+
+<span class="nc" id="L576">            BufferedReader br = new BufferedReader(fr);</span>
+
+            String strLine;
+<span class="nc" id="L579">            StringBuilder sb = new StringBuilder();</span>
+
+<span class="nc bnc" id="L581" title="All 2 branches missed.">            while ((strLine = br.readLine()) != null) {</span>
+<span class="nc" id="L582">                sb.append(strLine);</span>
+<span class="nc" id="L583">                sb.append(&quot;\n&quot;);</span>
+            }
+
+<span class="nc" id="L586">            br.close();</span>
+<span class="nc" id="L587">            fr.close();</span>
+<span class="nc" id="L588">            return sb.toString();</span>
+
+<span class="nc" id="L590">        } catch (IOException ex) {</span>
+<span class="nc" id="L591">            logger.error(&quot;Error getting workflow file {}&quot;, fileName, ex);</span>
+        }
+<span class="nc" id="L593">        return null;</span>
+    }
+
+    public String getFileURL(String baseDir, String fileName) {
+<span class="nc" id="L597">        return &quot;https://&quot; + server.getApacheHost() + &quot;:&quot;</span>
+<span class="nc" id="L598">                + server.getApacheSSLPort()</span>
+                + &quot;/workflows&quot;
+                + baseDir + &quot;/&quot; + fileName;
+    }
+
+    public List&lt;String&gt; getLogs(String baseDir) {
+<span class="nc" id="L604">        List&lt;String&gt; list = new ArrayList&lt;String&gt;();</span>
+
+<span class="nc" id="L606">        File folder = new File(server.getWorkflowsPath()</span>
+                + &quot;/&quot; + baseDir);
+
+<span class="nc bnc" id="L609" title="All 2 branches missed.">        for (File f : folder.listFiles()) {</span>
+<span class="nc bnc" id="L610" title="All 2 branches missed.">            if (f.isDirectory()) {</span>
+<span class="nc" id="L611">                list.add(f.getName() + &quot;-#-Folder&quot;);</span>
+            } else {
+<span class="nc" id="L613">                String fileSize = FileUtils.parseFileSize(f.length());</span>
+<span class="nc" id="L614">                String info = f.getName() + &quot;##&quot; + fileSize</span>
+<span class="nc" id="L615">                        + &quot;##&quot; + new Date(f.lastModified());</span>
+<span class="nc" id="L616">                list.add(info + &quot;-#-File&quot;);</span>
+            }
+        }
+<span class="nc" id="L619">        return list;</span>
+    }
+
+    /**
+     *
+     * @param path
+     * @throws ApplicationException
+     */
+    public void deleteLogData(String path) throws ApplicationException {
+
+        try {
+<span class="nc" id="L630">            workflowBusiness.deleteLogData(path);</span>
+
+<span class="nc" id="L632">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L633">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L634">        }</span>
+<span class="nc" id="L635">    }</span>
+
+    public List&lt;SimulationInput&gt; getWorkflowsInputByUserAndAppName(
+        String user, String appName) {
+        try {
+<span class="nc" id="L640">            return applicationInputDAO.getWorkflowInputByUserAndAppName(user, appName);</span>
+<span class="nc" id="L641">        } catch (DAOException ex) {</span>
+<span class="nc" id="L642">            logger.error(&quot;Error in getWorkflowsInputByUserAndAppName. Ignoring&quot;, ex);</span>
+<span class="nc" id="L643">            return null;</span>
+        }
+    }
+
+    /**
+     *
+     * @param simulationList
+     * @param type
+     * @return
+     * @throws ApplicationException
+     */
+    public List&lt;String&gt; getPerformanceStats(List&lt;Simulation&gt; simulationList, int type) throws ApplicationException {
+
+        try {
+<span class="nc" id="L657">            return workflowBusiness.getPerformanceStats(simulationList, type);</span>
+<span class="nc" id="L658">        } catch (WorkflowsDBDAOException ex) {</span>
+<span class="nc" id="L659">            logger.error(&quot;Error getting perf stats for {}&quot;, simulationList, ex);</span>
+<span class="nc" id="L660">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L661">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L662">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param simulationID
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public List&lt;InOutData&gt; getOutputData(String simulationID) throws ApplicationException {
+        try {
+<span class="nc" id="L675">            return workflowBusiness.getOutputData(</span>
+<span class="nc" id="L676">                simulationID, getSessionUser().getFolder());</span>
+<span class="nc" id="L677">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L678">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param simulationID
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public List&lt;InOutData&gt; getInputData(String simulationID) throws ApplicationException {
+        try {
+<span class="nc" id="L691">            return workflowBusiness.getInputData(</span>
+<span class="nc" id="L692">                simulationID, getSessionUser().getFolder());</span>
+<span class="nc" id="L693">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L694">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param simulationID
+     * @return
+     * @throws ApplicationException
+     */
+    public List&lt;Activity&gt; getProcessors(String simulationID) throws ApplicationException {
+
+        try {
+<span class="nc" id="L707">            return workflowBusiness.getProcessors(simulationID);</span>
+
+<span class="nc" id="L709">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L710">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    /**
+     *
+     * @param inputs
+     * @throws ApplicationException
+     */
+    @Override
+    public void validateInputs(List&lt;String&gt; inputs) throws ApplicationException {
+        try {
+<span class="nc" id="L722">            workflowBusiness.validateInputs(getSessionUser(), inputs);</span>
+<span class="nc" id="L723">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L724">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L725">        }</span>
+<span class="nc" id="L726">    }</span>
+
+    /**
+     *
+     * @param currentUser
+     * @param newUser
+     * @throws ApplicationException
+     */
+    public void updateUser(String currentUser, String newUser) throws ApplicationException {
+
+        try {
+<span class="nc" id="L737">            trace(logger, &quot;Updating user '&quot; + currentUser + &quot;' to '&quot; + newUser + &quot;'.&quot;);</span>
+<span class="nc" id="L738">            workflowBusiness.updateUser(currentUser, newUser);</span>
+
+<span class="nc" id="L740">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L741">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L742">        }</span>
+<span class="nc" id="L743">    }</span>
+
+    @Override
+    public void markSimulationsCompleted(List&lt;String&gt; simulationIDs) throws ApplicationException {
+        try {
+<span class="nc" id="L748">            trace(logger, &quot;Marking simulations completed: &quot; + simulationIDs);</span>
+<span class="nc" id="L749">            StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L750" title="All 2 branches missed.">            for (String simulationID : simulationIDs) {</span>
+                try {
+<span class="nc" id="L752">                    workflowBusiness.markCompleted(simulationID);</span>
+<span class="nc" id="L753">                } catch (BusinessException ex) {</span>
+<span class="nc bnc" id="L754" title="All 2 branches missed.">                    if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L755">                        sb.append(&quot;, &quot;);</span>
+                    }
+<span class="nc" id="L757">                    sb.append(simulationID);</span>
+<span class="nc" id="L758">                }</span>
+<span class="nc" id="L759">            }</span>
+
+<span class="nc bnc" id="L761" title="All 2 branches missed.">            if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L762">                logger.error(&quot;Unable to mark completed the following simulations: {}&quot;, sb.toString());</span>
+<span class="nc" id="L763">                throw new ApplicationException(&quot;Unable to mark completed the following &quot;</span>
+<span class="nc" id="L764">                        + &quot;simulations: &quot; + sb.toString());</span>
+            }
+<span class="nc" id="L766">        } catch (CoreException ex) {</span>
+<span class="nc" id="L767">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L768">        }</span>
+<span class="nc" id="L769">    }</span>
+
+    @Override
+    public void markWorkflowCompleted(String simulationID) throws ApplicationException {
+         try {
+<span class="nc" id="L774">            trace(logger, &quot;Marking simulation '&quot; + simulationID + &quot;' completed.&quot;);</span>
+<span class="nc" id="L775">            workflowBusiness.markCompleted(simulationID);</span>
+
+<span class="nc" id="L777">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L778">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L779">        }</span>
+<span class="nc" id="L780">    }</span>
+
+    @Override
+    public void changeSimulationUser(String simulationId, String user) throws ApplicationException {
+         try {
+<span class="nc" id="L785">            trace(logger, &quot;Changing user of simulation '&quot; + simulationId + &quot;' to &quot;+user+&quot;.&quot;);</span>
+<span class="nc" id="L786">            workflowBusiness.changeSimulationUser(simulationId,user);</span>
+
+<span class="nc" id="L788">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L789">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L790">        }</span>
+<span class="nc" id="L791">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

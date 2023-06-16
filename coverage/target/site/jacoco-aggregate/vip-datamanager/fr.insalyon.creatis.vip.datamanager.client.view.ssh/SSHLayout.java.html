@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SSHLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client.view.ssh</a> &gt; <span class="el_source">SSHLayout.java</span></div><h1>SSHLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client.view.ssh;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.SelectionAppearance;
+import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.ImgButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.common.LabelButton;
+import fr.insalyon.creatis.vip.core.client.view.common.ToolstripLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.bean.SSH;
+import fr.insalyon.creatis.vip.datamanager.client.bean.TransferType;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author glatard, 
+ * @author Nouha Boujelben
+ */
+public class SSHLayout extends VLayout {
+
+    private ModalWindow modal;
+    private ListGrid grid;
+    private HLayout rollOverCanvas;
+    private ListGridRecord rollOverRecord;
+
+<span class="nc" id="L80">    public SSHLayout() {</span>
+
+<span class="nc" id="L82">        this.setWidth100();</span>
+<span class="nc" id="L83">        this.setHeight100();</span>
+<span class="nc" id="L84">        this.setOverflow(Overflow.AUTO);</span>
+
+<span class="nc" id="L86">        configureActions();</span>
+<span class="nc" id="L87">        configureGrid();</span>
+<span class="nc" id="L88">        modal = new ModalWindow(grid);</span>
+
+<span class="nc" id="L90">        loadData();</span>
+<span class="nc" id="L91">    }</span>
+
+    private void configureActions() {
+
+<span class="nc" id="L95">        ToolstripLayout toolstrip = new ToolstripLayout();</span>
+
+<span class="nc" id="L97">        toolstrip.addMember(WidgetUtil.getSpaceLabel(15));</span>
+
+<span class="nc" id="L99">        LabelButton resetButton = new LabelButton(&quot;Reset connections&quot;, CoreConstants.ICON_RESET);</span>
+<span class="nc" id="L100">        resetButton.setWidth(150);</span>
+<span class="nc" id="L101">        resetButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L104">                resetSSHConnections();</span>
+<span class="nc" id="L105">            }</span>
+        });
+<span class="nc" id="L107">        toolstrip.addMember(resetButton);</span>
+
+<span class="nc" id="L109">        LabelButton addButton = new LabelButton(&quot;Add SSH Connection&quot;, CoreConstants.ICON_ADD);</span>
+<span class="nc" id="L110">        addButton.setWidth(150);</span>
+<span class="nc" id="L111">        addButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L114">                ManageSSHTab sshTab = (ManageSSHTab) Layout.getInstance().</span>
+<span class="nc" id="L115">                        getTab(DataManagerConstants.TAB_MANAGE_SSH);</span>
+<span class="nc" id="L116">                sshTab.setSSH(null,null, null, null, null, null, null, null, null,false, false, true);</span>
+<span class="nc" id="L117">            }</span>
+        });
+<span class="nc" id="L119">        toolstrip.addMember(addButton);</span>
+
+<span class="nc" id="L121">        LabelButton refreshButton = new LabelButton(&quot;Refresh&quot;, CoreConstants.ICON_REFRESH);</span>
+<span class="nc" id="L122">        refreshButton.setWidth(150);</span>
+<span class="nc" id="L123">        refreshButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L126">                loadData();</span>
+<span class="nc" id="L127">            }</span>
+        });
+<span class="nc" id="L129">        toolstrip.addMember(refreshButton);</span>
+
+<span class="nc" id="L131">        this.addMember(toolstrip);</span>
+<span class="nc" id="L132">    }</span>
+
+    private void configureGrid() {
+
+<span class="nc" id="L136">        grid = new ListGrid() {</span>
+            @Override
+            protected Canvas getRollOverCanvas(Integer rowNum, Integer colNum) {
+<span class="nc" id="L139">                rollOverRecord = this.getRecord(rowNum);</span>
+
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                if (rollOverCanvas == null) {</span>
+<span class="nc" id="L142">                    rollOverCanvas = new HLayout(3);</span>
+<span class="nc" id="L143">                    rollOverCanvas.setSnapTo(&quot;TR&quot;);</span>
+<span class="nc" id="L144">                    rollOverCanvas.setWidth(50);</span>
+<span class="nc" id="L145">                    rollOverCanvas.setHeight(22);</span>
+
+<span class="nc" id="L147">                    ImgButton loadImg = getImgButton(CoreConstants.ICON_EDIT, &quot;Edit&quot;);</span>
+<span class="nc" id="L148">                    loadImg.addClickHandler(new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L151">                            edit(rollOverRecord.getAttribute(&quot;name&quot;),</span>
+<span class="nc" id="L152">                                    rollOverRecord.getAttribute(&quot;lfcDir&quot;),</span>
+<span class="nc" id="L153">                                    rollOverRecord.getAttribute(&quot;email&quot;),</span>
+<span class="nc" id="L154">                                    rollOverRecord.getAttribute(&quot;user&quot;),</span>
+<span class="nc" id="L155">                                    rollOverRecord.getAttribute(&quot;host&quot;),</span>
+<span class="nc" id="L156">                                    rollOverRecord.getAttribute(&quot;port&quot;),</span>
+<span class="nc" id="L157">                                    rollOverRecord.getAttribute(&quot;transferType&quot;),</span>
+<span class="nc" id="L158">                                    rollOverRecord.getAttribute(&quot;directory&quot;),</span>
+<span class="nc" id="L159">                                    rollOverRecord.getAttribute(&quot;status&quot;),</span>
+<span class="nc" id="L160">                                    rollOverRecord.getAttributeAsBoolean(&quot;checkFilesContent&quot;),</span>
+<span class="nc" id="L161">                                    rollOverRecord.getAttributeAsBoolean(&quot;deleteFilesFromSource&quot;),</span>
+<span class="nc" id="L162">                                    rollOverRecord.getAttributeAsBoolean(&quot;active&quot;)</span>
+                            );
+<span class="nc" id="L164">                        }</span>
+                    });
+<span class="nc" id="L166">                    ImgButton deleteImg = getImgButton(CoreConstants.ICON_DELETE, &quot;Delete&quot;);</span>
+<span class="nc" id="L167">                    deleteImg.addClickHandler(new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L170">                            final String name = rollOverRecord.getAttribute(&quot;name&quot;);</span>
+<span class="nc" id="L171">                            final String email = rollOverRecord.getAttribute(&quot;email&quot;);</span>
+<span class="nc" id="L172">                            SC.ask(&quot;Do you really want to remove the SSH connection \&quot;&quot;</span>
+<span class="nc" id="L173">                                    + name + &quot;\&quot;?&quot;, new BooleanCallback() {</span>
+                                        @Override
+                                        public void execute(Boolean value) {
+<span class="nc bnc" id="L176" title="All 2 branches missed.">                                            if (value) {</span>
+<span class="nc" id="L177">                                                remove(name, email);</span>
+                                            }
+<span class="nc" id="L179">                                        }</span>
+                                    });
+<span class="nc" id="L181">                        }</span>
+                    });
+<span class="nc" id="L183">                    rollOverCanvas.addMember(loadImg);</span>
+<span class="nc" id="L184">                    rollOverCanvas.addMember(deleteImg);</span>
+                }
+<span class="nc" id="L186">                return rollOverCanvas;</span>
+            }
+
+            private ImgButton getImgButton(String imgSrc, String prompt) {
+<span class="nc" id="L190">                ImgButton button = new ImgButton();</span>
+<span class="nc" id="L191">                button.setShowDown(false);</span>
+<span class="nc" id="L192">                button.setShowRollOver(false);</span>
+<span class="nc" id="L193">                button.setLayoutAlign(Alignment.CENTER);</span>
+<span class="nc" id="L194">                button.setSrc(imgSrc);</span>
+<span class="nc" id="L195">                button.setPrompt(prompt);</span>
+<span class="nc" id="L196">                button.setHeight(16);</span>
+<span class="nc" id="L197">                button.setWidth(16);</span>
+<span class="nc" id="L198">                return button;</span>
+            }
+        };
+<span class="nc" id="L201">        grid.setWidth100();</span>
+<span class="nc" id="L202">        grid.setHeight100();</span>
+<span class="nc" id="L203">        grid.setShowRollOverCanvas(true);</span>
+<span class="nc" id="L204">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L205">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L206">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L207">        grid.setSelectionType(SelectionStyle.SIMPLE);</span>
+<span class="nc" id="L208">        grid.setSelectionAppearance(SelectionAppearance.CHECKBOX);</span>
+<span class="nc" id="L209">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+        
+<span class="nc" id="L211">        ListGridField checkFilesContentField = new ListGridField(&quot;checkFilesContent&quot;, &quot;Check File Content&quot;);</span>
+<span class="nc" id="L212">        checkFilesContentField.setType(ListGridFieldType.BOOLEAN);</span>
+  
+<span class="nc" id="L214">        ListGridField deleteFilesFromSourceField = new ListGridField(&quot;deleteFilesFromSource&quot;, &quot;Delete Files&quot;);</span>
+<span class="nc" id="L215">        ListGridField lfcDir = new ListGridField(&quot;lfcDir&quot;, &quot;LFC Dir&quot;);</span>
+<span class="nc" id="L216">        deleteFilesFromSourceField.setType(ListGridFieldType.BOOLEAN);</span>
+<span class="nc" id="L217">        ListGridField active = new ListGridField(&quot;active&quot;, &quot;active&quot;);</span>
+<span class="nc" id="L218">        ListGridField status = new ListGridField(&quot;status&quot;, &quot;Status&quot;);</span>
+<span class="nc" id="L219">        grid.setFields(FieldUtil.getIconGridField(&quot;activeIcon&quot;,&quot;Active&quot;),</span>
+<span class="nc" id="L220">                FieldUtil.getIconGridField(&quot;statusIcon&quot;,&quot;Status&quot;),</span>
+                new ListGridField(&quot;name&quot;, &quot;Name&quot;),
+                new ListGridField(&quot;email&quot;, &quot;VIP User&quot;),
+                lfcDir,
+                new ListGridField(&quot;user&quot;, &quot;SSH user&quot;),
+                new ListGridField(&quot;host&quot;, &quot;SSH host&quot;),
+                new ListGridField(&quot;port&quot;, &quot;SSH port&quot;),
+                new ListGridField(&quot;directory&quot;, &quot;SSH directory&quot;),
+                new ListGridField(&quot;transferType&quot;, &quot;Transfer Type&quot;),
+                checkFilesContentField,
+                deleteFilesFromSourceField,
+                status,
+                new ListGridField(&quot;theEarliestNextSynchronistation&quot;, &quot;Earliest Next Synchronization&quot;),
+                new ListGridField(&quot;numberSynchronizationFailed&quot;, &quot;Failed Synchronization&quot;),
+                active,
+                new ListGridField(&quot;sshFiles&quot;, &quot;SSH Files&quot;),
+                new ListGridField(&quot;lfcFiles&quot;, &quot;LFC Files&quot;)
+        );
+        
+<span class="nc" id="L239">        lfcDir.setHidden(true);</span>
+<span class="nc" id="L240">        active.setHidden(true);</span>
+<span class="nc" id="L241">        status.setHidden(true);</span>
+<span class="nc" id="L242">        grid.setSortField(&quot;name&quot;);</span>
+<span class="nc" id="L243">        grid.setSortDirection(SortDirection.ASCENDING);</span>
+<span class="nc" id="L244">        grid.addCellClickHandler(new CellClickHandler() {</span>
+            @Override
+            public void onCellClick(CellClickEvent event) {
+
+<span class="nc" id="L248">                edit(event.getRecord().getAttribute(&quot;name&quot;),</span>
+<span class="nc" id="L249">                        event.getRecord().getAttribute(&quot;lfcDir&quot;),</span>
+<span class="nc" id="L250">                        event.getRecord().getAttribute(&quot;email&quot;),</span>
+<span class="nc" id="L251">                        event.getRecord().getAttribute(&quot;user&quot;),</span>
+<span class="nc" id="L252">                        event.getRecord().getAttribute(&quot;host&quot;),</span>
+<span class="nc" id="L253">                        event.getRecord().getAttribute(&quot;port&quot;),</span>
+<span class="nc" id="L254">                        event.getRecord().getAttribute(&quot;transferType&quot;),</span>
+<span class="nc" id="L255">                        event.getRecord().getAttribute(&quot;directory&quot;),</span>
+<span class="nc" id="L256">                        event.getRecord().getAttribute(&quot;status&quot;),</span>
+<span class="nc" id="L257">                        event.getRecord().getAttributeAsBoolean(&quot;checkFilesContent&quot;),</span>
+<span class="nc" id="L258">                        event.getRecord().getAttributeAsBoolean(&quot;deleteFilesFromSource&quot;),</span>
+<span class="nc" id="L259">                        event.getRecord().getAttributeAsBoolean(&quot;active&quot;)</span>
+                );
+<span class="nc" id="L261">            }</span>
+        });
+<span class="nc" id="L263">        this.addMember(grid);</span>
+<span class="nc" id="L264">    }</span>
+
+    private void remove(String name, String email) {
+
+<span class="nc" id="L268">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L271">                modal.hide();</span>
+<span class="nc" id="L272">                Layout.getInstance().setWarningMessage(&quot;Unable to remove SSH connection:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L273">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L277">                modal.hide();</span>
+<span class="nc" id="L278">                Layout.getInstance().setNoticeMessage(&quot;The SSH connection was successfully removed!&quot;);</span>
+<span class="nc" id="L279">                loadData();</span>
+<span class="nc" id="L280">            }</span>
+        };
+<span class="nc" id="L282">        modal.show(&quot;Removing ssh connection '&quot; + name + &quot;'...&quot;, true);</span>
+<span class="nc" id="L283">        DataManagerService.Util.getInstance().removeSSH(email, name, callback);</span>
+<span class="nc" id="L284">    }</span>
+
+    private void edit(String name,String lfcDir, String email, String user, String host, String port, String transferType, String directory, String status,boolean checkFilesContent, boolean deleteFilesFromSource, boolean active) {
+
+<span class="nc" id="L288">        ManageSSHTab sshTab = (ManageSSHTab) Layout.getInstance().</span>
+<span class="nc" id="L289">                getTab(DataManagerConstants.TAB_MANAGE_SSH);</span>
+
+<span class="nc" id="L291">        sshTab.setSSH(name,lfcDir, email, user, host, port, TransferType.valueOf(transferType), directory, status,checkFilesContent, deleteFilesFromSource, active);</span>
+<span class="nc" id="L292">    }</span>
+
+    public void loadData() {
+
+<span class="nc" id="L296">        final AsyncCallback&lt;List&lt;SSH&gt;&gt; callback = new AsyncCallback&lt;List&lt;SSH&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L299">                modal.hide();</span>
+<span class="nc" id="L300">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of SSH connections:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L301">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;SSH&gt; result) {
+<span class="nc" id="L305">                modal.hide();</span>
+<span class="nc" id="L306">                List&lt;SSHRecord&gt; dataList = new ArrayList&lt;SSHRecord&gt;();</span>
+
+<span class="nc bnc" id="L308" title="All 2 branches missed.">                for (SSH ssh : result) {</span>
+<span class="nc" id="L309">                    dataList.add(new SSHRecord(ssh.getName(),ssh.getLfcDir(), ssh.getEmail(), ssh.getUser(), ssh.getHost(), ssh.getPort(), ssh.getTransferType(), ssh.getDirectory(), ssh.getStatus(), String.valueOf(ssh.getTheEarliestNextSynchronistation()).split(&quot;\\.&quot;)[0], ssh.getNumberSynchronizationFailed(),ssh.isCheckFilesContent(), ssh.isDeleteFilesFromSource(), ssh.isActive(),ssh.getSshFiles(),ssh.getLfcFiles()));</span>
+<span class="nc" id="L310">                }</span>
+<span class="nc" id="L311">                grid.setData(dataList.toArray(new SSHRecord[]{}));</span>
+<span class="nc" id="L312">            }</span>
+        };
+<span class="nc" id="L314">        modal.show(&quot;Loading ssh connections...&quot;, true);</span>
+<span class="nc" id="L315">        DataManagerService.Util.getInstance().getSSHConnections(callback);</span>
+<span class="nc" id="L316">    }</span>
+
+    private void resetSSHConnections() {
+<span class="nc" id="L319">        ListGridRecord[] records = grid.getSelectedRecords();</span>
+<span class="nc" id="L320">        List&lt;List&lt;String&gt;&gt; sshConnections = new ArrayList&lt;List&lt;String&gt;&gt;();</span>
+
+<span class="nc bnc" id="L322" title="All 2 branches missed.">        for (ListGridRecord record : records) {</span>
+<span class="nc" id="L323">            List&lt;String&gt; input = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L324">            SSHRecord sshRecord = (SSHRecord) record;</span>
+<span class="nc" id="L325">            input.add(sshRecord.getAttribute(&quot;email&quot;));</span>
+<span class="nc" id="L326">            input.add(sshRecord.getAttribute(&quot;name&quot;));</span>
+<span class="nc" id="L327">            sshConnections.add(input);</span>
+        }
+
+<span class="nc" id="L330">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L333">                modal.hide();</span>
+<span class="nc" id="L334">                Layout.getInstance().setWarningMessage(&quot;Unable to reset SSH connection:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L335">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L339">                modal.hide();</span>
+<span class="nc" id="L340">                loadData();</span>
+<span class="nc" id="L341">            }</span>
+        };
+<span class="nc" id="L343">        modal.show(&quot;Reset ssh connections...&quot;, true);</span>
+<span class="nc" id="L344">        DataManagerService.Util.getInstance().resetSSHConnections(sshConnections, callback);</span>
+
+<span class="nc" id="L346">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

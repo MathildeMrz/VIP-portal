@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimulationsTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor</a> &gt; <span class="el_source">SimulationsTab.java</span></div><h1>SimulationsTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor;
+
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.SelectionAppearance;
+import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.types.VisibilityMode;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.RowContextClickEvent;
+import com.smartgwt.client.widgets.grid.events.RowContextClickHandler;
+import com.smartgwt.client.widgets.grid.events.RowMouseDownEvent;
+import com.smartgwt.client.widgets.grid.events.RowMouseDownHandler;
+import com.smartgwt.client.widgets.layout.SectionStack;
+import com.smartgwt.client.widgets.layout.SectionStackSection;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.Simulation;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.view.monitor.menu.SimulationsContextMenu;
+import fr.insalyon.creatis.vip.application.client.view.monitor.record.SimulationRecord;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class SimulationsTab extends Tab {
+
+    protected ModalWindow modal;
+    protected ListGrid grid;
+<span class="nc" id="L72">    protected String user = null;</span>
+<span class="nc" id="L73">    protected String app = null;</span>
+<span class="nc" id="L74">    protected String status = null;</span>
+<span class="nc" id="L75">    protected String appClass = null;</span>
+<span class="nc" id="L76">    protected Date startDate = null;</span>
+<span class="nc" id="L77">    protected Date endDate = null;</span>
+    protected HandlerRegistration rowMouseDownHandler;
+    protected HandlerRegistration rowContextClickHandler;
+    private SectionStackSection searchSection;
+    private List&lt;Simulation&gt; simulationsList;
+
+<span class="nc" id="L83">    public SimulationsTab() {</span>
+
+<span class="nc" id="L85">        this.setTitle(Canvas.imgHTML(ApplicationConstants.ICON_MONITOR) + &quot; Executions&quot;);</span>
+<span class="nc" id="L86">        this.setID(ApplicationConstants.TAB_MONITOR);</span>
+<span class="nc" id="L87">        this.setCanClose(true);</span>
+<span class="nc" id="L88">        this.setAttribute(&quot;paneMargin&quot;, 0);</span>
+
+<span class="nc" id="L90">        configureGrid();</span>
+<span class="nc" id="L91">        modal = new ModalWindow(grid);</span>
+
+<span class="nc" id="L93">        VLayout vLayout = new VLayout();</span>
+<span class="nc" id="L94">        vLayout.addMember(new SimulationsToolStrip(modal));</span>
+
+<span class="nc" id="L96">        SectionStack sectionStack = new SectionStack();</span>
+<span class="nc" id="L97">        sectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);</span>
+<span class="nc" id="L98">        sectionStack.setAnimateSections(true);</span>
+
+<span class="nc" id="L100">        SectionStackSection gridSection = new SectionStackSection();</span>
+<span class="nc" id="L101">        gridSection.setCanCollapse(false);</span>
+<span class="nc" id="L102">        gridSection.setShowHeader(false);</span>
+<span class="nc" id="L103">        gridSection.addItem(grid);</span>
+
+<span class="nc" id="L105">        searchSection = new SearchStackSection();</span>
+
+<span class="nc" id="L107">        sectionStack.setSections(gridSection, searchSection);</span>
+<span class="nc" id="L108">        vLayout.addMember(sectionStack);</span>
+
+<span class="nc" id="L110">        this.setPane(vLayout);</span>
+
+<span class="nc" id="L112">        loadData();</span>
+<span class="nc" id="L113">    }</span>
+
+    private void configureGrid() {
+
+<span class="nc" id="L117">        grid = new ListGrid();</span>
+<span class="nc" id="L118">        grid.setWidth100();</span>
+<span class="nc" id="L119">        grid.setHeight100();</span>
+<span class="nc" id="L120">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L121">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L122">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L123">        grid.setSelectionType(SelectionStyle.SIMPLE);</span>
+<span class="nc" id="L124">        grid.setSelectionAppearance(SelectionAppearance.CHECKBOX);</span>
+<span class="nc" id="L125">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+<span class="nc" id="L126">        grid.setFields(</span>
+<span class="nc" id="L127">                FieldUtil.getIconGridField(&quot;statusIco&quot;),</span>
+                new ListGridField(&quot;simulationName&quot;, &quot;Execution Name&quot;),
+                new ListGridField(&quot;status&quot;, &quot;Status&quot;),
+                new ListGridField(&quot;application&quot;, &quot;Application&quot;),
+                new ListGridField(&quot;applicationVersion&quot;, &quot;Version&quot;),
+                new ListGridField(&quot;user&quot;, &quot;User&quot;),
+<span class="nc" id="L133">                FieldUtil.getDateField());</span>
+
+<span class="nc" id="L135">        rowContextClickHandler = grid.addRowContextClickHandler(new RowContextClickHandler() {</span>
+            @Override
+            public void onRowContextClick(RowContextClickEvent event) {
+<span class="nc" id="L138">                event.cancel();</span>
+<span class="nc" id="L139">                new SimulationsContextMenu(modal,</span>
+<span class="nc" id="L140">                        event.getRecord().getAttribute(&quot;simulationId&quot;),</span>
+<span class="nc" id="L141">                        event.getRecord().getAttribute(&quot;simulationName&quot;),</span>
+<span class="nc" id="L142">                        SimulationStatus.valueOf(event.getRecord().getAttribute(&quot;status&quot;)),</span>
+<span class="nc" id="L143">                        event.getRecord().getAttribute(&quot;application&quot;),</span>
+<span class="nc" id="L144">                        event.getRecord().getAttribute(&quot;applicationVersion&quot;),</span>
+<span class="nc" id="L145">                        event.getRecord().getAttribute(&quot;applicationClass&quot;),</span>
+<span class="nc" id="L146">                        event.getRecord().getAttribute(&quot;user&quot;)).showContextMenu();</span>
+<span class="nc" id="L147">            }</span>
+        });
+<span class="nc" id="L149">        rowMouseDownHandler = grid.addRowMouseDownHandler(new RowMouseDownHandler() {</span>
+            @Override
+            public void onRowMouseDown(RowMouseDownEvent event) {
+<span class="nc bnc" id="L152" title="All 2 branches missed.">                if (event.getColNum() != 1) {</span>
+                    Layout.TabFactoryAndId factoryAndId =
+<span class="nc" id="L154">                        MonitorParser.getInstance().parse(</span>
+<span class="nc" id="L155">                            event.getRecord().getAttribute(&quot;simulationId&quot;),</span>
+<span class="nc" id="L156">                            event.getRecord().getAttribute(&quot;simulationName&quot;),</span>
+<span class="nc" id="L157">                            event.getRecord().getAttribute(&quot;application&quot;),</span>
+<span class="nc" id="L158">                            SimulationStatus.valueOf(</span>
+<span class="nc" id="L159">                                event.getRecord().getAttribute(&quot;status&quot;)),</span>
+<span class="nc" id="L160">                            event.getRecord().getAttributeAsDate(&quot;date&quot;));</span>
+<span class="nc" id="L161">                    Layout.getInstance().addTab(</span>
+                        factoryAndId.id, factoryAndId.factory);
+                }
+<span class="nc" id="L164">            }</span>
+        });
+<span class="nc" id="L166">    }</span>
+
+    public void loadData() {
+
+<span class="nc" id="L170">        final AsyncCallback&lt;List&lt;Simulation&gt;&gt; callback = new AsyncCallback&lt;List&lt;Simulation&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L173">                Layout.getInstance().setWarningMessage(&quot;Unable to get simulations list:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L174">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Simulation&gt; result) {
+
+<span class="nc" id="L179">                List&lt;SimulationRecord&gt; dataList = new ArrayList&lt;SimulationRecord&gt;();</span>
+
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                for (Simulation simulation : result) {</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">                    if (simulation.getStatus() != SimulationStatus.Cleaned</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">                            || CoreModule.user.isSystemAdministrator()</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                            || CoreModule.user.isGroupAdmin()) {</span>
+
+<span class="nc" id="L186">                        dataList.add(new SimulationRecord(</span>
+<span class="nc" id="L187">                                simulation.getSimulationName(),</span>
+<span class="nc" id="L188">                                simulation.getApplicationName(),</span>
+<span class="nc" id="L189">                                simulation.getApplicationVersion(),</span>
+<span class="nc" id="L190">                                simulation.getApplicationClass(),</span>
+<span class="nc" id="L191">                                simulation.getStatus(),</span>
+<span class="nc" id="L192">                                simulation.getID(),</span>
+<span class="nc" id="L193">                                simulation.getUserName(),</span>
+<span class="nc" id="L194">                                simulation.getDate()));</span>
+                    }
+<span class="nc" id="L196">                }</span>
+<span class="nc" id="L197">                grid.setData(dataList.toArray(new SimulationRecord[]{}));</span>
+<span class="nc" id="L198">                StatsTab statsTab = (StatsTab) Layout.getInstance().getTab(ApplicationConstants.TAB_STATS);</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">                if (statsTab != null) {</span>
+<span class="nc" id="L200">                    statsTab.setSimulationsList(result);</span>
+                }
+<span class="nc" id="L202">                simulationsList = result;</span>
+<span class="nc" id="L203">                modal.hide();</span>
+<span class="nc" id="L204">            }</span>
+        };
+<span class="nc" id="L206">        modal.show(&quot;Loading Executions...&quot;, true);</span>
+<span class="nc" id="L207">        WorkflowService.Util.getInstance().getSimulations(user, app, status, appClass, startDate, endDate, callback);</span>
+<span class="nc" id="L208">        Layout.getInstance().setActiveCenterTab(ApplicationConstants.TAB_MONITOR);</span>
+<span class="nc" id="L209">    }</span>
+
+    public ListGridRecord[] getGridSelection() {
+<span class="nc" id="L212">        return grid.getSelectedRecords();</span>
+    }
+
+    public void expandSearchSection() {
+<span class="nc" id="L216">        this.searchSection.setExpanded(true);</span>
+<span class="nc" id="L217">    }</span>
+
+    public List&lt;Simulation&gt; getSimulationsList() {
+<span class="nc" id="L220">        return simulationsList;</span>
+    }
+
+    public void setApp(String app) {
+<span class="nc" id="L224">        this.app = app;</span>
+<span class="nc" id="L225">    }</span>
+
+    public void setEndDate(Date endDate) {
+<span class="nc" id="L228">        this.endDate = endDate;</span>
+<span class="nc" id="L229">    }</span>
+
+    public void setStartDate(Date startDate) {
+<span class="nc" id="L232">        this.startDate = startDate;</span>
+<span class="nc" id="L233">    }</span>
+
+    public void setStatus(String status) {
+<span class="nc" id="L236">        this.status = status;</span>
+<span class="nc" id="L237">    }</span>
+
+    public void setUser(String user) {
+<span class="nc" id="L240">        this.user = user;</span>
+<span class="nc" id="L241">    }</span>
+    
+     public void setAppClass(String appClass) {
+<span class="nc" id="L244">        this.appClass = appClass;</span>
+<span class="nc" id="L245">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

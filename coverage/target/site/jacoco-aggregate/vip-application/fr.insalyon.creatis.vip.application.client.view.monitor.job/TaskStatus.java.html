@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TaskStatus.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.job</a> &gt; <span class="el_source">TaskStatus.java</span></div><h1>TaskStatus.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.job;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+<span class="nc" id="L38">public enum TaskStatus {</span>
+
+<span class="nc" id="L40">    SUCCESSFULLY_SUBMITTED(&quot;#CC9933&quot;, &quot;Submitted&quot;),</span>
+<span class="nc" id="L41">    QUEUED(&quot;#DBA400&quot;, &quot;Queued&quot;),</span>
+<span class="nc" id="L42">    RUNNING(&quot;#8CC653&quot;, &quot;Running&quot;),</span>
+<span class="nc" id="L43">    COMPLETED(&quot;#287fd6&quot;, &quot;Completed&quot;),</span>
+<span class="nc" id="L44">    DELETED(&quot;#FF8575&quot;, &quot;Deleted&quot;),</span>
+<span class="nc" id="L45">    DELETED_REPLICA(&quot;#287fd6&quot;, &quot;Deleted (Replica)&quot;),</span>
+<span class="nc" id="L46">    CANCELLED(&quot;#FF8575&quot;, &quot;Cancelled&quot;),</span>
+<span class="nc" id="L47">    CANCELLED_REPLICA(&quot;#287fd6&quot;, &quot;Cancelled (Replica)&quot;),</span>
+<span class="nc" id="L48">    ERROR_FINISHING(&quot;#d64949&quot;, &quot;Failed&quot;), // not yet in gasw</span>
+<span class="nc" id="L49">    ERROR_RESUBMITTING(&quot;#d64949&quot;, &quot;Failed&quot;), // not yet in gasw</span>
+<span class="nc" id="L50">    ERROR(&quot;#d64949&quot;, &quot;Failed&quot;),</span>
+<span class="nc" id="L51">    STALLED(&quot;#1A767F&quot;, &quot;Stalled&quot;),</span>
+<span class="nc" id="L52">    STALLED_FINISHING(&quot;#1A767F&quot;, &quot;Stalled&quot;), // not yet in gasw</span>
+<span class="nc" id="L53">    STALLED_RESUBMITTING(&quot;#1A767F&quot;, &quot;Stalled&quot;), // not yet in gasw</span>
+<span class="nc" id="L54">    REPLICATE(&quot;#8CC653&quot;, &quot;Replicate&quot;),</span>
+<span class="nc" id="L55">    REPLICATING(&quot;#8CC653&quot;, &quot;Replicating&quot;), // not yet in gasw</span>
+<span class="nc" id="L56">    REPLICATED(&quot;#8CC653&quot;, &quot;Replicated&quot;), // not yet in gasw</span>
+<span class="nc" id="L57">    KILL(&quot;#8CC653&quot;, &quot;Kill&quot;),</span>
+<span class="nc" id="L58">    KILL_REPLICA(&quot;#8CC653&quot;, &quot;Kill&quot;),</span>
+<span class="nc" id="L59">    RESCHEDULE(&quot;#8CC653&quot;, &quot;Reschedule&quot;),</span>
+<span class="nc" id="L60">    ERROR_HELD(&quot;#9CAB4C&quot;, &quot;Held&quot;),</span>
+<span class="nc" id="L61">    STALLED_HELD(&quot;#9CAB4C&quot;, &quot;Held&quot;),</span>
+<span class="nc" id="L62">    UNHOLD_ERROR(&quot;#9CAB4C&quot;, &quot;Unhold&quot;),</span>
+<span class="nc" id="L63">    UNHOLD_STALLED(&quot;#9CAB4C&quot;, &quot;Unhold&quot;);</span>
+    //
+    private String color;
+    private String description;
+
+<span class="nc" id="L68">    private TaskStatus(String color, String description) {</span>
+
+<span class="nc" id="L70">        this.color = color;</span>
+<span class="nc" id="L71">        this.description = description;</span>
+<span class="nc" id="L72">    }</span>
+
+    public String getColor() {
+<span class="nc" id="L75">        return color;</span>
+    }
+
+    public String getDescription() {
+<span class="nc" id="L79">        return description;</span>
+    }
+
+    /**
+     * Checks if the status is a running state.
+     *
+     * @return
+     */
+    public boolean isRunningState() {
+
+<span class="nc bnc" id="L89" title="All 18 branches missed.">        if (this == SUCCESSFULLY_SUBMITTED</span>
+                || this == QUEUED
+                || this == RUNNING
+                || this == REPLICATE
+                || this == REPLICATED
+                || this == REPLICATING
+                || this == KILL
+                || this == KILL_REPLICA
+                || this == RESCHEDULE) {
+<span class="nc" id="L98">            return true;</span>
+        }
+<span class="nc" id="L100">        return false;</span>
+    }
+
+    /**
+     * Checks if the status is a completed state with outputs.
+     *
+     * @return
+     */
+    public boolean isCompletedStateWithOutputs() {
+
+<span class="nc bnc" id="L110" title="All 4 branches missed.">        if (this == COMPLETED</span>
+                || this == ERROR) {
+<span class="nc" id="L112">            return true;</span>
+        }
+<span class="nc" id="L114">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

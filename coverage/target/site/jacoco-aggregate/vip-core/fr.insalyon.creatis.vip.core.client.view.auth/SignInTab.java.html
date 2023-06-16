@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SignInTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.auth</a> &gt; <span class="el_source">SignInTab.java</span></div><h1>SignInTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.auth;
+
+import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.HTMLPane;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.CheckboxItem;
+import com.smartgwt.client.widgets.form.fields.LinkItem;
+import com.smartgwt.client.widgets.form.fields.PasswordItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva, glatard
+ */
+public class SignInTab extends Tab {
+
+    private VLayout signinLayout;
+    private Label infoWelcomeVipLayout;
+    private Label infoSpace;
+    private Label infoVipNews;
+    private Label infoVipLayout;
+    private Label infoVipLog;
+    private Label infoContactlayout;
+    private Label infoPrivacyPolicy;
+    private Label infoCodeSource;
+    private Label infoContactus;
+    private Label infoMail;
+    private DynamicForm newForm;
+    private DynamicForm newFormAppLayout;
+    private DynamicForm newFormPubliLayout;
+    private TextItem emailField;
+    private PasswordItem passwordField;
+    private CheckboxItem remembermeField;
+    private IButton signinButton;
+    private IButton createAnAccountButton;
+    private HTMLPane egiButton;
+
+<span class="nc" id="L86">    public SignInTab() {</span>
+
+<span class="nc" id="L88">        this.setID(CoreConstants.TAB_SIGNIN);</span>
+<span class="nc" id="L89">        this.setTitle(&quot;Sign In&quot;);</span>
+
+
+
+<span class="nc" id="L93">        VLayout loginVLayout = new VLayout(15);</span>
+<span class="nc" id="L94">        loginVLayout.setWidth100();</span>
+<span class="nc" id="L95">        loginVLayout.setHeight100();</span>
+<span class="nc" id="L96">        loginVLayout.setLayoutTopMargin(1);</span>
+<span class="nc" id="L97">        loginVLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L98">        loginVLayout.setAlign(Alignment.CENTER);</span>
+<span class="nc" id="L99">        loginVLayout.setDefaultLayoutAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L101">        VLayout hautLayout = new VLayout(15);</span>
+<span class="nc" id="L102">        hautLayout.setWidth100();</span>
+<span class="nc" id="L103">        hautLayout.setHeight(200);</span>
+<span class="nc" id="L104">        hautLayout.setLayoutLeftMargin(100);</span>
+<span class="nc" id="L105">        hautLayout.setLayoutRightMargin(100);</span>
+<span class="nc" id="L106">        hautLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L107">        hautLayout.setAlign(Alignment.CENTER);</span>
+<span class="nc" id="L108">        hautLayout.setDefaultLayoutAlign(Alignment.CENTER);</span>
+<span class="nc" id="L109">        hautLayout.setCanSelectText(true);</span>
+
+<span class="nc" id="L111">        VLayout middleLayout = new VLayout(5);</span>
+<span class="nc" id="L112">        middleLayout.setWidth100();</span>
+<span class="nc" id="L113">        middleLayout.setHeight(360);</span>
+<span class="nc" id="L114">        middleLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L115">        middleLayout.setAlign(Alignment.CENTER);</span>
+<span class="nc" id="L116">        middleLayout.setDefaultLayoutAlign(Alignment.CENTER);</span>
+<span class="nc" id="L117">        middleLayout.setCanSelectText(true);</span>
+
+<span class="nc" id="L119">        VerticalPanel middlePanel = new VerticalPanel();</span>
+<span class="nc" id="L120">        middlePanel.setSize(&quot;10%&quot;, &quot;5%&quot;);</span>
+<span class="nc" id="L121">        middlePanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);</span>
+<span class="nc" id="L122">        middlePanel.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);</span>
+
+<span class="nc" id="L124">        VerticalPanel egiPanel = new VerticalPanel();</span>
+<span class="nc" id="L125">        egiPanel.setSpacing(5);</span>
+<span class="nc" id="L126">        egiPanel.setSize(&quot;10%&quot;, &quot;5%&quot;);</span>
+<span class="nc" id="L127">        egiPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);</span>
+<span class="nc" id="L128">        egiPanel.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);</span>
+
+<span class="nc" id="L130">        VLayout basLayout = new VLayout(15);</span>
+<span class="nc" id="L131">        basLayout.setWidth100();</span>
+<span class="nc" id="L132">        basLayout.setHeight(100);</span>
+<span class="nc" id="L133">        basLayout.setLayoutLeftMargin(100);</span>
+<span class="nc" id="L134">        basLayout.setCanSelectText(true);</span>
+
+<span class="nc" id="L136">        configureSigninLayout();</span>
+<span class="nc" id="L137">        testLayoutInfo();</span>
+<span class="nc" id="L138">        hautLayout.addMember(infoWelcomeVipLayout);</span>
+<span class="nc" id="L139">        hautLayout.addMember(infoSpace);</span>
+<span class="nc" id="L140">        hautLayout.addMember(infoVipLayout);</span>
+<span class="nc" id="L141">        hautLayout.addMember(infoContactus);</span>
+<span class="nc" id="L142">        hautLayout.addMember(infoVipLog);</span>
+<span class="nc" id="L143">        hautLayout.addMember(infoContactlayout);</span>
+<span class="nc" id="L144">        loginVLayout.addMember(hautLayout);</span>
+<span class="nc" id="L145">        middlePanel.add(signinLayout);</span>
+<span class="nc" id="L146">        egiPanel.add(egiButton);</span>
+<span class="nc" id="L147">        middleLayout.addMember(middlePanel);</span>
+<span class="nc" id="L148">        middleLayout.addMember(egiPanel);</span>
+<span class="nc" id="L149">        loginVLayout.addMember(middleLayout);</span>
+<span class="nc" id="L150">        basLayout.addMember(infoContactlayout);</span>
+<span class="nc" id="L151">        basLayout.addMember(infoPrivacyPolicy);</span>
+<span class="nc" id="L152">        basLayout.addMember(newFormAppLayout);</span>
+<span class="nc" id="L153">        basLayout.addMember(newFormPubliLayout);</span>
+<span class="nc" id="L154">        basLayout.addMember(infoCodeSource);</span>
+<span class="nc" id="L155">        basLayout.addMember(infoVipNews);</span>
+<span class="nc" id="L156">        basLayout.addMember(infoMail);</span>
+<span class="nc" id="L157">        loginVLayout.addMember(basLayout);</span>
+<span class="nc" id="L158">        loginVLayout.setCanSelectText(true);</span>
+
+<span class="nc" id="L160">        this.setPane(loginVLayout);</span>
+<span class="nc" id="L161">    }</span>
+
+    private void configureSigninLayout() {
+
+<span class="nc" id="L165">        emailField = FieldUtil.getTextItem(230, false, &quot;&quot;, &quot;[a-zA-Z0-9_.\\-+@]&quot;);</span>
+<span class="nc" id="L166">        emailField.addKeyPressHandler(event -&gt; {</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">            if (event.getKeyName().equals(&quot;Enter&quot;)) {</span>
+<span class="nc" id="L168">                signin();</span>
+            }
+<span class="nc" id="L170">        });</span>
+
+<span class="nc" id="L172">        passwordField = new PasswordItem(&quot;password&quot;, &quot;&quot;);</span>
+<span class="nc" id="L173">        passwordField.setWidth(230);</span>
+<span class="nc" id="L174">        passwordField.setLength(32);</span>
+<span class="nc" id="L175">        passwordField.setShowTitle(false);</span>
+<span class="nc" id="L176">        passwordField.setRequired(true);</span>
+<span class="nc" id="L177">        passwordField.addKeyPressHandler(event -&gt; {</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">            if (event.getKeyName().equals(&quot;Enter&quot;)) {</span>
+<span class="nc" id="L179">                signin();</span>
+            }
+<span class="nc" id="L181">        });</span>
+
+<span class="nc" id="L183">        remembermeField = new CheckboxItem(&quot;rememberme&quot;, &quot;&lt;font color=\&quot;#808080\&quot;&gt;Keep me logged in&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L184">        remembermeField.setWidth(230);</span>
+<span class="nc" id="L185">        remembermeField.setValue(true);</span>
+<span class="nc" id="L186">        remembermeField.setAlign(Alignment.LEFT);</span>
+
+<span class="nc" id="L188">        signinButton = new IButton(&quot;Sign in&quot;);</span>
+<span class="nc" id="L189">        signinButton.addClickHandler(event -&gt; signin());</span>
+
+<span class="nc" id="L191">        LinkItem recoverAccount = FieldUtil.getLinkItem(&quot;link_reset&quot;, &quot;Forgot your password?&quot;,</span>
+<span class="nc" id="L192">                event -&gt; Layout.getInstance().addTab(</span>
+                        CoreConstants.TAB_RECOVERY, RecoveryTab::new));
+
+<span class="nc" id="L195">        createAnAccountButton = new IButton(&quot;Create an account&quot;);</span>
+<span class="nc" id="L196">        createAnAccountButton.addClickHandler(event -&gt; Layout.getInstance().addTab(</span>
+                CoreConstants.TAB_SIGNUP, SignUpTab::new));
+
+<span class="nc" id="L199">        HorizontalPanel siginPanel = new HorizontalPanel();</span>
+<span class="nc" id="L200">        siginPanel.setSpacing(10);</span>
+<span class="nc" id="L201">        siginPanel.setSize(&quot;10%&quot;, &quot;10%&quot;);</span>
+<span class="nc" id="L202">        siginPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);</span>
+<span class="nc" id="L203">        siginPanel.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);</span>
+
+<span class="nc" id="L205">        newForm = FieldUtil.getForm(recoverAccount);</span>
+
+<span class="nc" id="L207">        signinLayout = WidgetUtil.getVIPLayout(250, 110);</span>
+<span class="nc" id="L208">        WidgetUtil.addFieldToVIPLayout(signinLayout, &quot;Email&quot;, emailField);</span>
+<span class="nc" id="L209">        WidgetUtil.addFieldToVIPLayout(signinLayout, &quot;Password&quot;, passwordField);</span>
+<span class="nc" id="L210">        signinLayout.addMember(newForm);</span>
+<span class="nc" id="L211">        signinLayout.addMember(FieldUtil.getForm(remembermeField));</span>
+<span class="nc" id="L212">        siginPanel.add(signinButton);</span>
+<span class="nc" id="L213">        siginPanel.add(createAnAccountButton);</span>
+<span class="nc" id="L214">        signinLayout.addMember(siginPanel);</span>
+
+<span class="nc" id="L216">        egiButton = new HTMLPane();</span>
+        // add html code to use egi checkid custom css
+        // add a empty line with &lt;br/&gt; otherwise the top is cropped
+<span class="nc" id="L219">        egiButton.setContents(&quot;&lt;br /&gt;&lt;a href=\&quot;/oauth2/authorize-client/egi\&quot; class=\&quot;button-blue-border\&quot;&gt;Sign up with EGI Check-in&lt;/a&gt;&quot;);</span>
+<span class="nc" id="L220">        egiButton.setWidth(400);</span>
+<span class="nc" id="L221">        egiButton.setHeight(80);</span>
+<span class="nc" id="L222">        egiButton.setAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L224">    }</span>
+
+    private void signin() {
+
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        if (emailField.validate() &amp; passwordField.validate()) {</span>
+
+<span class="nc" id="L230">            ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L231">            final AsyncCallback&lt;User&gt; callback = new AsyncCallback&lt;User&gt;() {</span>
+                @Override
+                public void onFailure(Throwable caught) {
+<span class="nc" id="L234">                    WidgetUtil.resetIButton(signinButton, &quot;Sign in&quot;, null);</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">                    if (caught.getMessage().contains(&quot;Authentication failed&quot;)) {</span>
+<span class="nc" id="L236">                        Layout.getInstance().setWarningMessage(&quot;The username or password you entered is incorrect.&quot;, 10);</span>
+                    } else {
+<span class="nc" id="L238">                        Layout.getInstance().setWarningMessage(&quot;Unable to signing in:\n&quot; + caught.getMessage(), 10);</span>
+                    }
+<span class="nc" id="L240">                }</span>
+
+                @Override
+                public void onSuccess(User result) {
+<span class="nc" id="L244">                    WidgetUtil.resetIButton(signinButton, &quot;Sign in&quot;, null);</span>
+<span class="nc" id="L245">                    Layout.getInstance().removeTab(CoreConstants.TAB_SIGNIN);</span>
+<span class="nc" id="L246">                    Layout.getInstance().removeTab(CoreConstants.TAB_SIGNUP);</span>
+
+<span class="nc bnc" id="L248" title="All 2 branches missed.">                    if (remembermeField.getValueAsBoolean()) {</span>
+
+<span class="nc" id="L250">                        Cookies.setCookie(CoreConstants.COOKIES_USER,</span>
+<span class="nc" id="L251">                                result.getEmail(), CoreConstants.COOKIES_EXPIRATION_DATE,</span>
+                                null, &quot;/&quot;, false);
+<span class="nc" id="L253">                        Cookies.setCookie(CoreConstants.COOKIES_SESSION,</span>
+<span class="nc" id="L254">                                result.getSession(), CoreConstants.COOKIES_EXPIRATION_DATE,</span>
+                                null, &quot;/&quot;, false);
+
+
+                    } else {
+<span class="nc" id="L259">                        Cookies.removeCookie(CoreConstants.COOKIES_USER, &quot;/&quot;);</span>
+<span class="nc" id="L260">                        Cookies.removeCookie(CoreConstants.COOKIES_SESSION, &quot;/&quot;);</span>
+                    }
+
+<span class="nc" id="L263">                    Layout.getInstance().authenticate(result);</span>
+<span class="nc" id="L264">                }</span>
+            };
+<span class="nc" id="L266">            service.signin(emailField.getValueAsString().trim(),</span>
+<span class="nc" id="L267">                    passwordField.getValueAsString(), callback);</span>
+<span class="nc" id="L268">            WidgetUtil.setLoadingIButton(signinButton, &quot;Signing in...&quot;);</span>
+        }
+<span class="nc" id="L270">    }</span>
+
+    private void testLayoutInfo(){
+<span class="nc" id="L273">        infoWelcomeVipLayout = WidgetUtil.getLabel(&quot;&lt;font size=\&quot;6\&quot;&gt;&lt;b&gt;Welcome on VIP, the Virtual Imaging Platform!&lt;/b&gt;&lt;/font&gt;&quot;,20);</span>
+<span class="nc" id="L274">        infoWelcomeVipLayout.setWidth(900);</span>
+<span class="nc" id="L275">        infoWelcomeVipLayout.setStyleName(&quot;title&quot;);</span>
+<span class="nc" id="L276">        infoWelcomeVipLayout.setCanSelectText(true);</span>
+<span class="nc" id="L277">        infoSpace = WidgetUtil.getLabel(&quot; &quot;,20);</span>
+<span class="nc" id="L278">        infoVipLayout= WidgetUtil.getLabel(&quot;&lt;font size=\&quot;3\&quot;&gt;&lt;b&gt;VIP is a web portal for medical imaging applications. &quot; +</span>
+                &quot;It allows you to access scientific applications as a service (directly through your web browser with no installation required), &quot; +
+                &quot;as well as distributed computing resources in a transparent manner.&lt;/b&gt;&lt;/font&gt;&quot;, 20);
+<span class="nc" id="L281">        infoVipLog = WidgetUtil.getLabel(&quot;&lt;font size=\&quot;3\&quot;&gt;&lt;b&gt;Please log in using the form below or the link &quot; +</span>
+                &quot;to the EGI Checkin federated authentication service, or create a new account if you don't have one.&lt;/b&gt;&lt;/font&gt;&quot;,20);
+<span class="nc" id="L283">        infoContactlayout = WidgetUtil.getLabel(&quot;&lt;font size=\&quot;3\&quot;&gt;&lt;b&gt;Documentation of the Virtual &quot; +</span>
+                &quot;Imaging Platform and its embedded applications is available here:  &lt;a href=\&quot;https://vip.creatis.insa-lyon.fr/documentation/\&quot;&gt;&quot; +
+                &quot;VIP Documentation&lt;/a&gt;&lt;/b&gt;&lt;/font&gt;&quot;,20);
+<span class="nc" id="L286">        infoPrivacyPolicy = WidgetUtil.getLabel(&quot;&lt;font size=\&quot;3\&quot;&gt;&lt;b&gt;The Virtual Imaging Platform Privacy Policy: &quot; +</span>
+                &quot; &lt;a href=\&quot;https://vip.creatis.insa-lyon.fr/documentation/privacypolicy.html\&quot;&gt;VIP Privacy Policy&lt;/a&gt;&quot;,20);
+
+<span class="nc" id="L289">        LinkItem infoAppLayout = new LinkItem();</span>
+<span class="nc" id="L290">        infoAppLayout.setLinkTitle(&quot;&lt;font size=\&quot;3\&quot;&gt;&lt;b&gt;The list of Applications related to the Virtual Imaging Platform &lt;/b&gt;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L291">        infoAppLayout.setShowTitle(false);</span>
+<span class="nc" id="L292">        infoAppLayout.addClickHandler((com.smartgwt.client.widgets.form.fields.events.ClickHandler) event -&gt; {</span>
+<span class="nc" id="L293">            CoreModule.getHomePageActions().get(CoreConstants.HOME_ACTION_SHOW_APPLICATIONS).run();            </span>
+<span class="nc" id="L294">        });</span>
+
+<span class="nc" id="L296">        LinkItem infoPubliLayout = new LinkItem();</span>
+<span class="nc" id="L297">        infoPubliLayout.setLinkTitle(&quot;&lt;font size=\&quot;3\&quot;&gt;&lt;b&gt;The list of Publications related to the Virtual Imaging Platform &lt;/b&gt;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L298">        infoPubliLayout.setShowTitle(false);</span>
+<span class="nc" id="L299">        infoPubliLayout.addClickHandler((com.smartgwt.client.widgets.form.fields.events.ClickHandler) event -&gt; {</span>
+<span class="nc" id="L300">            CoreModule.getHomePageActions().get(CoreConstants.HOME_ACTION_SHOW_PUBLICATIONS).run();</span>
+<span class="nc" id="L301">        });</span>
+
+<span class="nc" id="L303">        newFormPubliLayout = FieldUtil.getForm(infoPubliLayout);</span>
+
+
+<span class="nc" id="L306">        newFormAppLayout = FieldUtil.getForm(infoAppLayout);</span>
+<span class="nc" id="L307">        infoCodeSource = WidgetUtil.getLabel(&quot;&lt;font size=\&quot;3\&quot;&gt;&lt;b&gt;The Virtual Imaging Platform source code: &quot; +</span>
+                &quot; &lt;a href=\&quot;https://github.com/virtual-imaging-platform\&quot;&gt;VIP Github&lt;/a&gt;&quot;,20);
+<span class="nc" id="L309">        infoContactus = WidgetUtil.getLabel(&quot;&lt;font size=\&quot;3\&quot;&gt;&lt;b&gt;This portal is exclusively dedicated to non-commercial academic use, &quot; +</span>
+                &quot;as indicated in the &lt;a href=\&quot;https://vip.creatis.insa-lyon.fr/documentation/terms.html\&quot;&gt;terms of use.&lt;/a&gt; &quot; +
+                &quot;For commercial use, please contact us at &lt;a href=\&quot;mailto:vip-support@creatis.insa-lyon.fr\&quot;&gt;&quot; +
+                &quot;vip-support@creatis.insa-lyon.fr&lt;/a&gt;.&lt;/b&gt;&lt;/font&gt;&quot;,20);
+<span class="nc" id="L313">        infoMail = WidgetUtil.getLabel(&quot;&lt;font size=\&quot;3\&quot;&gt;&lt;b&gt;Contact: &lt;a href=\&quot;mailto:vip-support@creatis.insa-lyon.fr\&quot;&gt;&quot; +</span>
+                &quot;vip-support@creatis.insa-lyon.fr&lt;/a&gt;&lt;/b&gt;&lt;/font&gt;&quot;,20);
+<span class="nc" id="L315">        infoVipNews = WidgetUtil.getLabel(&quot;&lt;font size=\&quot;3\&quot;&gt;&lt;b&gt;VIP News: &lt;a href=\&quot;https://www.creatis.insa-lyon.fr/vip/news.html\&quot;&gt;&quot; +</span>
+                &quot;https://www.creatis.insa-lyon.fr/vip/news.html&lt;/a&gt;&quot;,20);
+
+<span class="nc" id="L318">        infoMail.setCanSelectText(true);</span>
+<span class="nc" id="L319">        infoContactus.setCanSelectText(true);</span>
+<span class="nc" id="L320">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

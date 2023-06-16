@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractSimulationTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.common</a> &gt; <span class="el_source">AbstractSimulationTab.java</span></div><h1>AbstractSimulationTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.common;
+
+import com.google.gwt.user.client.Timer;
+import com.smartgwt.client.types.Side;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.tab.TabSet;
+import com.smartgwt.client.widgets.tab.events.TabDeselectedEvent;
+import com.smartgwt.client.widgets.tab.events.TabDeselectedHandler;
+import com.smartgwt.client.widgets.tab.events.TabSelectedEvent;
+import com.smartgwt.client.widgets.tab.events.TabSelectedHandler;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public abstract class AbstractSimulationTab extends Tab {
+
+    protected TabSet tabSet;
+    protected boolean completed;
+    private Timer timer;
+
+<span class="nc" id="L57">    public AbstractSimulationTab(String simulationID, String simulationName, SimulationStatus status) {</span>
+
+<span class="nc" id="L59">        this.setTitle(Canvas.imgHTML(ApplicationConstants.ICON_APPLICATION_MONITOR) + &quot; &quot; + simulationName);</span>
+<span class="nc" id="L60">        this.setID(tabIdFrom(simulationID));</span>
+<span class="nc" id="L61">        this.setCanClose(true);</span>
+
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        this.completed = status == SimulationStatus.Running ? false : true;</span>
+
+<span class="nc" id="L65">        VLayout vLayout = new VLayout();</span>
+<span class="nc" id="L66">        tabSet = new TabSet();</span>
+<span class="nc" id="L67">        tabSet.setTabBarPosition(Side.LEFT);</span>
+<span class="nc" id="L68">        tabSet.setWidth100();</span>
+<span class="nc" id="L69">        tabSet.setHeight100();</span>
+
+<span class="nc" id="L71">        vLayout.addMember(tabSet);</span>
+
+<span class="nc" id="L73">        this.setPane(vLayout);</span>
+
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (!completed) {</span>
+<span class="nc" id="L76">            timer = new Timer() {</span>
+
+                @Override
+                public void run() {
+<span class="nc" id="L80">                    updateData();</span>
+<span class="nc" id="L81">                }</span>
+            };
+<span class="nc" id="L83">            timer.scheduleRepeating(30000);</span>
+        }
+
+<span class="nc" id="L86">        this.addTabDeselectedHandler(new TabDeselectedHandler() {</span>
+
+            @Override
+            public void onTabDeselected(TabDeselectedEvent event) {
+<span class="nc bnc" id="L90" title="All 2 branches missed.">                if (!completed) {</span>
+<span class="nc" id="L91">                    timer.cancel();</span>
+                }
+<span class="nc" id="L93">            }</span>
+        });
+<span class="nc" id="L95">        this.addTabSelectedHandler(new TabSelectedHandler() {</span>
+
+            @Override
+            public void onTabSelected(TabSelectedEvent event) {
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                if (!completed) {</span>
+<span class="nc" id="L100">                    updateData();</span>
+<span class="nc" id="L101">                    timer.scheduleRepeating(30000);</span>
+                }
+<span class="nc" id="L103">            }</span>
+        });
+
+<span class="nc" id="L106">        tabSet.addTabSelectedHandler(new TabSelectedHandler() {</span>
+
+            @Override
+            public void onTabSelected(TabSelectedEvent event) {
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                if (!completed) {</span>
+<span class="nc" id="L111">                    ((AbstractCornerTab) tabSet.getSelectedTab()).update();</span>
+                }
+<span class="nc" id="L113">            }</span>
+        });
+<span class="nc" id="L115">    }</span>
+
+    protected void updateData() {
+<span class="nc" id="L118">        ((AbstractCornerTab) tabSet.getSelectedTab()).update();</span>
+<span class="nc" id="L119">    }</span>
+
+    public void destroy() {
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (!completed) {</span>
+<span class="nc" id="L123">            timer.cancel();</span>
+        }
+<span class="nc" id="L125">    }</span>
+
+    public static String tabIdFrom(String simulationId) {
+<span class="nc" id="L128">        return simulationId.replaceAll(&quot;[ -]&quot;, &quot;_&quot;).toLowerCase() + &quot;_tab&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

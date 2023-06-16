@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Layout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.layout</a> &gt; <span class="el_source">Layout.java</span></div><h1>Layout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.layout;
+
+import com.google.gwt.core.client.Callback;
+import com.google.gwt.core.client.ScriptInjector;
+import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.VisibilityMode;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.SectionStack;
+import com.smartgwt.client.widgets.layout.SectionStackSection;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import fr.insalyon.creatis.vip.core.client.Modules;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.auth.ActivationTab;
+import fr.insalyon.creatis.vip.core.client.view.auth.SignInTab;
+import fr.insalyon.creatis.vip.core.client.view.common.MessageWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.toolstrip.MainToolStrip;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class Layout {
+
+<span class="nc" id="L67">    private static Logger logger = Logger.getLogger(Layout.class.getName());</span>
+
+    private static Layout instance;
+    private VLayout vLayout;
+    private CenterTabSet centerTabSet;
+    private SectionStack mainSectionStack;
+    private ModalWindow modal;
+    private MessageWindow messageWindow;
+
+    public static Layout getInstance() {
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (instance == null) {</span>
+<span class="nc" id="L78">            instance = new Layout();</span>
+        }
+<span class="nc" id="L80">        return instance;</span>
+    }
+
+<span class="nc" id="L83">    private Layout() {</span>
+
+<span class="nc" id="L85">        vLayout = new VLayout();</span>
+<span class="nc" id="L86">        vLayout.setWidth100();</span>
+<span class="nc" id="L87">        vLayout.setHeight100();</span>
+
+<span class="nc" id="L89">        messageWindow = new MessageWindow(vLayout);</span>
+
+<span class="nc" id="L91">        vLayout.addMember(MainToolStrip.getInstance());</span>
+
+<span class="nc" id="L93">        mainSectionStack = new SectionStack();</span>
+<span class="nc" id="L94">        mainSectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);</span>
+<span class="nc" id="L95">        mainSectionStack.setAnimateSections(true);</span>
+<span class="nc" id="L96">        mainSectionStack.setCanResizeSections(true);</span>
+
+<span class="nc" id="L98">        SectionStackSection mainTabSection = new SectionStackSection();</span>
+<span class="nc" id="L99">        mainTabSection.setCanCollapse(false);</span>
+<span class="nc" id="L100">        mainTabSection.setShowHeader(false);</span>
+
+<span class="nc" id="L102">        centerTabSet = CenterTabSet.getInstance();</span>
+<span class="nc" id="L103">        mainTabSection.addItem(centerTabSet);</span>
+
+<span class="nc" id="L105">        mainSectionStack.setSections(mainTabSection);</span>
+
+<span class="nc" id="L107">        vLayout.addMember(mainSectionStack);</span>
+
+<span class="nc" id="L109">        modal = new ModalWindow(vLayout);</span>
+
+<span class="nc" id="L111">        vLayout.draw();</span>
+<span class="nc" id="L112">    }</span>
+
+    public Canvas getLayoutCanvas() {
+<span class="nc" id="L115">        return vLayout;</span>
+    }
+
+    public ModalWindow getModal() {
+<span class="nc" id="L119">        return modal;</span>
+    }
+
+    /**
+     * Authenticates a user.
+     *
+     */
+    public void authenticate(User user) {
+<span class="nc bnc" id="L127" title="All 4 branches missed.">        if (user != null &amp;&amp; Cookies.isCookieEnabled()) {</span>
+<span class="nc" id="L128">            Cookies.setCookie(CoreConstants.COOKIES_USER, user.getEmail(),</span>
+                              CoreConstants.COOKIES_EXPIRATION_DATE, null, &quot;/&quot;, false);
+<span class="nc" id="L130">            Cookies.setCookie(CoreConstants.COOKIES_SESSION, user.getSession(),</span>
+                              CoreConstants.COOKIES_EXPIRATION_DATE, null, &quot;/&quot;, false);
+
+<span class="nc bnc" id="L133" title="All 2 branches missed.">            if (user.isConfirmed()) {</span>
+<span class="nc" id="L134">                Modules.getInstance().initializeModules(user);</span>
+            } else {
+<span class="nc" id="L136">                addTab(CoreConstants.TAB_ACTIVATION, ActivationTab::new);</span>
+            }
+        } else {
+<span class="nc bnc" id="L139" title="All 2 branches missed.">            if (Cookies.isCookieEnabled()) {</span>
+                // delete cookies to not lock the user in case they are wrong
+<span class="nc" id="L141">                Cookies.removeCookie(CoreConstants.COOKIES_USER, &quot;/&quot;);</span>
+<span class="nc" id="L142">                Cookies.removeCookie(CoreConstants.COOKIES_SESSION, &quot;/&quot;);</span>
+            } else {
+<span class="nc" id="L144">                setWarningMessage(</span>
+                        &quot;Unable to sign in: cookies must be enabled.&quot;);
+            }
+<span class="nc" id="L147">            addTab(CoreConstants.TAB_SIGNIN, SignInTab::new);</span>
+        }
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Signs out.
+     *
+     */
+    public void signout() {
+
+<span class="nc" id="L157">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L160">                setWarningMessage(&quot;Error while signing out:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L161">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+
+<span class="nc" id="L166">                Cookies.removeCookie(CoreConstants.COOKIES_USER, &quot;/&quot;);</span>
+<span class="nc" id="L167">                Cookies.removeCookie(CoreConstants.COOKIES_SESSION, &quot;/&quot;);</span>
+
+<span class="nc" id="L169">                Window.Location.replace(&quot;index.html&quot;);</span>
+<span class="nc" id="L170">            }</span>
+        };
+<span class="nc" id="L172">        ConfigurationService.Util.getInstance().signout(callback);</span>
+<span class="nc" id="L173">    }</span>
+
+    public Tab addTab(String id, Supplier&lt;Tab&gt; factory) {
+<span class="nc" id="L176">        Tab tab = centerTabSet.getTab(id);</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        if (tab == null) {</span>
+<span class="nc" id="L178">            tab = factory.get();</span>
+<span class="nc" id="L179">            centerTabSet.addTab(tab);</span>
+        }
+<span class="nc" id="L181">        centerTabSet.selectTab(id);</span>
+<span class="nc" id="L182">        return tab;</span>
+    }
+
+    public void setActiveCenterTab(String id) {
+<span class="nc" id="L186">        centerTabSet.selectTab(id);</span>
+<span class="nc" id="L187">    }</span>
+
+    public Tab getTab(String id) {
+<span class="nc" id="L190">        return centerTabSet.getTab(id);</span>
+    }
+
+    public void addMainSection(SectionStackSection section) {
+<span class="nc" id="L194">        mainSectionStack.addSection(section);</span>
+<span class="nc" id="L195">    }</span>
+
+    public void removeMainSection(String sectionID) {
+<span class="nc" id="L198">        mainSectionStack.removeSection(sectionID);</span>
+<span class="nc" id="L199">    }</span>
+
+    public SectionStackSection getMainSection(String sectionID) {
+<span class="nc" id="L202">        return mainSectionStack.getSection(sectionID);</span>
+    }
+
+    public void removeTab(String id) {
+<span class="nc" id="L206">        Tab tab = centerTabSet.getTab(id);</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        if (tab != null) {</span>
+<span class="nc" id="L208">            centerTabSet.removeTab(tab);</span>
+        }
+<span class="nc" id="L210">    }</span>
+
+    /**
+     *
+     * @param message
+     * @param delay
+     */
+    public void setMessage(String message, int delay) {
+<span class="nc" id="L218">        messageWindow.setMessage(message, &quot;#FFFFFF&quot;, null, delay);</span>
+<span class="nc" id="L219">    }</span>
+
+    /**
+     *
+     * @param message
+     */
+    public void setNoticeMessage(String message) {
+<span class="nc" id="L226">        setNoticeMessage(message, 15);</span>
+<span class="nc" id="L227">    }</span>
+
+    /**
+     *
+     * @param message
+     * @param delay
+     */
+    public void setNoticeMessage(String message, int delay) {
+<span class="nc" id="L235">        messageWindow.setMessage(message, &quot;#B3CC99&quot;, CoreConstants.ICON_SUCCESS, delay);</span>
+<span class="nc" id="L236">    }</span>
+
+    /**
+     *
+     * @param message
+     */
+    public void setWarningMessage(String message) {
+<span class="nc" id="L243">        setWarningMessage(message, 0);</span>
+<span class="nc" id="L244">    }</span>
+
+    /**
+     *
+     * @param message
+     * @param delay
+     */
+    public void setWarningMessage(String message, int delay) {
+<span class="nc" id="L252">        messageWindow.setMessage(message, &quot;#F79191&quot;, CoreConstants.ICON_WARNING, delay);</span>
+<span class="nc" id="L253">    }</span>
+
+    public void hideMessage() {
+<span class="nc" id="L256">        messageWindow.hideMessage();</span>
+<span class="nc" id="L257">    }</span>
+
+    //-------------------------------------------------------------------- Make
+    // some function for showing messages accessible from code written in
+    // javascript.  Examples:
+    //    window.setWarningMessage(msg)
+    //    window.setNoticeMessage(msg)
+    //    window.hideMessage()
+
+    // The default delay is used, so the warning automatically disappears after
+    // some time.
+    public static void setWarningMessageFromJS(String error) {
+<span class="nc" id="L269">        Layout.getInstance().setWarningMessage(error);</span>
+<span class="nc" id="L270">    }</span>
+
+    // The delay is set to 0, so the message stays until it is overwritten by a
+    // new message or the hideMessage function is called.  This behavior is
+    // different from the warning case.  This is what is currently needed by the
+    // javascript code.
+    public static void setNoticeMessageFromJS(String message) {
+<span class="nc" id="L277">        Layout.getInstance().setNoticeMessage(message, 0);</span>
+<span class="nc" id="L278">    }</span>
+
+    public static void hideMessageFromJS() {
+<span class="nc" id="L281">        Layout.getInstance().hideMessage();</span>
+<span class="nc" id="L282">    }</span>
+
+    public static native void exportMessageFunctionsToJS() /*-{
+        $wnd.setWarningMessage = $entry(
+           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::setWarningMessageFromJS(Ljava/lang/String;));
+        $wnd.setNoticeMessage = $entry(
+           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::setNoticeMessageFromJS(Ljava/lang/String;));
+        $wnd.hideMessage = $entry(
+           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::hideMessageFromJS());
+    }-*/;
+
+    static {
+<span class="nc" id="L294">        Layout.exportMessageFunctionsToJS();</span>
+<span class="nc" id="L295">    }</span>
+
+    //--------------------------------------------------------------------
+
+    public static class TabFactoryAndId {
+        public final Supplier&lt;Tab&gt; factory;
+        public final String id;
+
+<span class="nc" id="L303">        public TabFactoryAndId(Supplier&lt;Tab&gt; factory, String id) {</span>
+<span class="nc" id="L304">            this.factory = factory;</span>
+<span class="nc" id="L305">            this.id = id;</span>
+<span class="nc" id="L306">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationsTileGrid.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.application</a> &gt; <span class="el_source">ApplicationsTileGrid.java</span></div><h1>ApplicationsTileGrid.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.application;
+
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.tile.TileGrid;
+import com.smartgwt.client.widgets.tile.events.*;
+import com.smartgwt.client.widgets.viewer.*;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public abstract class ApplicationsTileGrid extends TileGrid {
+
+<span class="nc" id="L49">    private static Logger logger = Logger.getLogger(ApplicationsTileGrid.class.getName());</span>
+
+    protected String tileName;
+
+<span class="nc" id="L53">    public ApplicationsTileGrid(String tileName) {</span>
+
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (tileName.length() == 0)</span>
+<span class="nc" id="L56">            throw new IllegalArgumentException(&quot;ApplicationsTileGrid: tileName is empty&quot;);</span>
+<span class="nc" id="L57">        this.setID(CoreConstants.getTileGridId(tileName));</span>
+<span class="nc" id="L58">        this.tileName = tileName;</span>
+<span class="nc" id="L59">        this.setTileWidth(120);</span>
+<span class="nc" id="L60">        this.setTileHeight(130);</span>
+<span class="nc" id="L61">        this.setWidth(&quot;100%&quot;);</span>
+<span class="nc" id="L62">        this.setHeight(&quot;100%&quot;);</span>
+<span class="nc" id="L63">        this.setOverflow(Overflow.VISIBLE);</span>
+<span class="nc" id="L64">        this.setBorder(&quot;0px&quot;);</span>
+<span class="nc" id="L65">        this.setCanReorderTiles(true);</span>
+<span class="nc" id="L66">        this.setAnimateTileChange(true);</span>
+<span class="nc" id="L67">        this.setShowEdges(false);</span>
+        // The message can be seen even if there are tiles, maybe because tiles
+        // are addes later, after the grid is created.  So we remove it
+        // completely.
+<span class="nc" id="L71">        this.setEmptyMessage(&quot;&quot;);</span>
+
+<span class="nc" id="L73">        DetailViewerField imageField = new DetailViewerField(&quot;picture&quot;);</span>
+<span class="nc" id="L74">        imageField.setType(&quot;image&quot;);</span>
+
+<span class="nc" id="L76">        DetailViewerField commonNameField = new DetailViewerField(&quot;applicationName&quot;);</span>
+<span class="nc" id="L77">        commonNameField.setCellStyle(&quot;normal&quot;);</span>
+<span class="nc" id="L78">        commonNameField.setCanHilite(false);</span>
+
+
+<span class="nc" id="L81">        DetailViewerField applicationVersion = new DetailViewerField(&quot;applicationVersion&quot;);</span>
+<span class="nc" id="L82">        applicationVersion.setCellStyle(&quot;normal&quot;);</span>
+
+<span class="nc" id="L84">        commonNameField.setDetailFormatter(new DetailFormatter() {</span>
+
+<span class="nc" id="L86">            private int LINE_MAX_CHAR = 18;</span>
+
+            public String format(Object value, Record record, DetailViewerField field) {
+
+<span class="nc" id="L90">                String[] words = value.toString().split(&quot; &quot;);</span>
+<span class="nc" id="L91">                StringBuilder finalName = new StringBuilder();</span>
+<span class="nc" id="L92">                StringBuilder currentLine = new StringBuilder();</span>
+<span class="nc" id="L93">                int lineNumber = 0;</span>
+<span class="nc" id="L94">                int wordIndex = 0;</span>
+<span class="nc bnc" id="L95" title="All 4 branches missed.">                while (lineNumber &lt; 3 &amp;&amp; wordIndex &lt; words.length) {</span>
+<span class="nc" id="L96">                    String s = words[wordIndex];</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">                    if (currentLine.length() + s.length() &gt; (LINE_MAX_CHAR - 1)) {</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">                        if (currentLine.length() &gt; 0) {</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                            if (lineNumber &gt; 0) {</span>
+<span class="nc" id="L100">                                finalName.append(&quot;&lt;br/&gt;&quot;);</span>
+                            }
+<span class="nc" id="L102">                            finalName.append(buildLine(currentLine));</span>
+<span class="nc" id="L103">                            lineNumber++;</span>
+                        }
+<span class="nc" id="L105">                        currentLine = new StringBuilder(s);</span>
+                    } else {
+<span class="nc" id="L107">                        currentLine.append(&quot; &quot;);</span>
+<span class="nc" id="L108">                        currentLine.append(s);</span>
+                    }
+<span class="nc" id="L110">                    wordIndex++;</span>
+<span class="nc" id="L111">                }</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                if (lineNumber &lt; 3) {</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                    if (lineNumber &gt; 0) {</span>
+<span class="nc" id="L114">                        finalName.append(&quot;&lt;br/&gt;&quot;);</span>
+                    }
+<span class="nc" id="L116">                    finalName.append(buildLine(currentLine));</span>
+                }
+<span class="nc" id="L118">                return finalName.toString();</span>
+            }
+
+            private String buildLine(StringBuilder stringBuilder) {
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                if (stringBuilder.length() &gt; (LINE_MAX_CHAR)) {</span>
+<span class="nc" id="L123">                    stringBuilder.setLength(LINE_MAX_CHAR - 1);</span>
+<span class="nc" id="L124">                    stringBuilder.append('\u2026');</span>
+                }
+<span class="nc" id="L126">                return stringBuilder.toString();</span>
+            }
+        });
+
+
+<span class="nc" id="L131">        this.setFields(imageField, commonNameField, applicationVersion);</span>
+<span class="nc" id="L132">        this.setData(new ApplicationTileRecord[]{});</span>
+
+<span class="nc" id="L134">        this.addRecordClickHandler(new RecordClickHandler() {</span>
+            @Override
+            public void onRecordClick(RecordClickEvent event) {
+<span class="nc" id="L137">                ApplicationTileRecord record = (ApplicationTileRecord) event.getRecord();</span>
+
+<span class="nc" id="L139">                parse(record.getApplicationName(), record.getApplicationVersion());</span>
+<span class="nc" id="L140">            }</span>
+        });
+<span class="nc" id="L142">    }</span>
+
+    protected void addApplication(String applicationName, String applicationImage) {
+
+<span class="nc" id="L146">        addApplication(new ApplicationTileRecord(applicationName, applicationImage));</span>
+        //this.setHeight(&quot;100%&quot;);
+        //test with redraw
+       // redraw();
+
+<span class="nc" id="L151">    }</span>
+
+    protected void addApplication(String applicationName, String version, String applicationImage) {
+
+<span class="nc" id="L155">        addApplication(new ApplicationTileRecord(applicationName, version, applicationImage));</span>
+       //this.setHeight(&quot;100%&quot;);
+
+
+<span class="nc" id="L159">    }</span>
+
+    protected void addApplication(ApplicationTileRecord record) {
+
+<span class="nc" id="L163">        this.addData(record);</span>
+         //this.setHeight(&quot;100%&quot;);
+
+<span class="nc" id="L166">    }</span>
+
+    public abstract void parse(String applicationName, String version);
+
+    public String getTileName() {
+<span class="nc" id="L171">        return tileName;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

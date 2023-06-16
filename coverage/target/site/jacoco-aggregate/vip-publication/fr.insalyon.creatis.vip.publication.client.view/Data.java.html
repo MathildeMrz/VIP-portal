@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Data.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-publication</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.publication.client.view</a> &gt; <span class="el_source">Data.java</span></div><h1>Data.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.publication.client.view;
+
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.fields.DataSourceIntegerField;
+import com.smartgwt.client.data.fields.DataSourceTextField;
+
+/**
+ *
+ * @author Nouha Boujelben
+ */
+public class Data extends DataSource {
+
+<span class="nc" id="L45">    public Data() {</span>
+
+<span class="nc" id="L47">        DataSourceIntegerField id = new DataSourceIntegerField(&quot;id&quot;, &quot;Id&quot;);</span>
+<span class="nc" id="L48">        id.setPrimaryKey(true);</span>
+<span class="nc" id="L49">        id.setHidden(true);</span>
+        
+<span class="nc" id="L51">        DataSourceTextField title = new DataSourceTextField(&quot;title&quot;, &quot;Title&quot;);</span>
+        
+<span class="nc" id="L53">        DataSourceTextField type = new DataSourceTextField(&quot;type&quot;, &quot;type&quot;);</span>
+        
+<span class="nc" id="L55">        DataSourceTextField typeName = new DataSourceTextField(&quot;typeName&quot;, &quot;typeName&quot;);</span>
+        
+<span class="nc" id="L57">        DataSourceTextField date = new DataSourceTextField(&quot;date&quot;, &quot;date&quot;);</span>
+        
+<span class="nc" id="L59">        DataSourceTextField authors = new DataSourceTextField(&quot;authors&quot;, &quot;authors&quot;);</span>
+
+<span class="nc" id="L61">        DataSourceTextField vipApplication = new DataSourceTextField(&quot;VipApplication&quot;, &quot;VipApplication&quot;);</span>
+        
+<span class="nc" id="L63">        DataSourceTextField doi = new DataSourceTextField(&quot;doi&quot;, &quot;doi&quot;);</span>
+             
+<span class="nc" id="L65">        setFields(id,title,type,typeName, date,authors,vipApplication,doi );</span>
+<span class="nc" id="L66">        setClientOnly(true);</span>
+
+
+<span class="nc" id="L69">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

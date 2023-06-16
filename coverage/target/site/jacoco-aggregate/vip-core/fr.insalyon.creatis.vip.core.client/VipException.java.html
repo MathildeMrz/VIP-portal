@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>VipException.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client</a> &gt; <span class="el_source">VipException.java</span></div><h1>VipException.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.core.client;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+public abstract class VipException extends Exception implements IsSerializable {
+
+    /*
+        to override to return internal error code
+        reserved codes for vip-modules:
+        - 1xxx : vip-core
+        - 2xxx : vip-application
+        - 3xxx : vip-application-importer
+        - 4xxx : vip-data-management
+        - 5xxx : vip-gatelab
+        - 6xxx : vip-social
+        - 7xxx : vip-visualization
+        - 8xxx : vip-api
+     */
+
+    /* to extends as an enum */
+    public interface VipError {
+        Integer getCode();
+    }
+
+    private static class VipErrorMessage {
+        String messageFormat;
+        Integer paramsNb;
+
+<span class="fc" id="L33">        private VipErrorMessage(String messageFormat, Integer paramsNb) {</span>
+<span class="fc" id="L34">            this.messageFormat = messageFormat;</span>
+<span class="fc" id="L35">            this.paramsNb = paramsNb;</span>
+<span class="fc" id="L36">        }</span>
+    }
+
+<span class="fc" id="L39">    private static final Map&lt;VipError, VipErrorMessage&gt; apiErrors = new HashMap&lt;&gt;();</span>
+
+    protected static void addMessage(VipError vipError, String messageFormat, Integer paramsNb) {
+<span class="fc" id="L42">        apiErrors.put(</span>
+                vipError,
+                new VipErrorMessage(messageFormat, paramsNb)
+        );
+<span class="fc" id="L46">    }</span>
+
+    public static Optional&lt;String&gt; getRawMessage(VipError vipError) {
+<span class="fc" id="L49">        return Optional.ofNullable(apiErrors.get(vipError)).map(</span>
+<span class="fc" id="L50">                vipErrorMessage -&gt; vipErrorMessage.messageFormat</span>
+        );
+    }
+
+    protected static String formatMessage(
+            VipError vipError,
+            Object ...params )
+    {
+<span class="nc" id="L58">        Optional&lt;VipErrorMessage&gt; vipErrorMessage =</span>
+<span class="nc" id="L59">                Optional.ofNullable( apiErrors.get(vipError) );</span>
+
+        String message;
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if ( ! vipErrorMessage.isPresent()) {</span>
+            // cannot use slf4j as we are in a gwt client class
+<span class="nc" id="L64">            System.err.println(format(&quot;Wrong use of vip exception with code {}, No message &quot; +</span>
+                            &quot;configured. Ignoring and using a general message&quot;,
+<span class="nc" id="L66">                    vipError.getCode()));</span>
+<span class="nc" id="L67">            message = &quot;VIP Internal error&quot;;</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        } else if (params.length != vipErrorMessage.get().paramsNb) {</span>
+<span class="nc" id="L69">            System.err.println(format(&quot;Wrong parameters list for a vip exception message.&quot; +</span>
+                    &quot;expected {}, got {}. Exception code : {}.&quot; +
+                    &quot; Ignoring and using non-formatted message&quot;,
+<span class="nc" id="L72">                    vipErrorMessage.get().paramsNb, params.length,</span>
+<span class="nc" id="L73">                    vipError.getCode()));</span>
+<span class="nc" id="L74">            message = vipErrorMessage.get().messageFormat;</span>
+        } else {
+<span class="nc" id="L76">            message = vipErrorMessage</span>
+<span class="nc" id="L77">                    .map( vem -&gt; format(vem.messageFormat, params) )</span>
+<span class="nc" id="L78">                    .get();</span>
+        }
+<span class="nc" id="L80">        return message + &quot; (Error code &quot; + vipError.getCode() + &quot;)&quot;;</span>
+    }
+
+    /*
+     need to re-implement a String.format like method as GWT does not support it
+     */
+    private static String format(String format, Object... args) {
+<span class="nc" id="L87">        String[] split = format.split(&quot;\\{\\}&quot;, -1);</span>
+<span class="nc" id="L88">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        for (int i = 0; i &lt; split.length - 1; i += 1) {</span>
+<span class="nc" id="L90">            sb.append(split[i]);</span>
+<span class="nc" id="L91">            sb.append(args[i].toString());</span>
+        }
+<span class="nc" id="L93">        sb.append(split[split.length - 1]);</span>
+<span class="nc" id="L94">        return sb.toString();</span>
+    }
+
+<span class="pc" id="L97">    private Integer vipErrorCode = null;</span>
+    public Optional&lt;Integer&gt; getVipErrorCode() {
+<span class="nc" id="L99">        return Optional.ofNullable(vipErrorCode);</span>
+    }
+
+    // Allow all exception constructors to be used
+
+<span class="nc" id="L104">    public VipException() {</span>
+<span class="nc" id="L105">    }</span>
+
+    public VipException(String message) {
+<span class="fc" id="L108">        super(message);</span>
+<span class="fc" id="L109">    }</span>
+
+    public VipException(String message, Throwable cause) {
+<span class="nc" id="L112">        super(message, cause);</span>
+<span class="nc" id="L113">    }</span>
+
+    public VipException(Throwable cause) {
+<span class="fc" id="L116">        super(cause);</span>
+<span class="fc" id="L117">    }</span>
+
+    // VIP error constructors
+
+    public VipException(VipError vipError, Object ...params) {
+<span class="nc" id="L122">        super(formatMessage(vipError, params));</span>
+<span class="nc" id="L123">        this.vipErrorCode = vipError.getCode();</span>
+<span class="nc" id="L124">    }</span>
+
+    public VipException(VipError vipError, Throwable cause, Object ...params) {
+<span class="nc" id="L127">        super(formatMessage(vipError, params), cause);</span>
+<span class="nc" id="L128">        this.vipErrorCode = vipError.getCode();</span>
+<span class="nc" id="L129">    }</span>
+
+    public VipException(String message, VipError vipError) {
+<span class="nc" id="L132">        super(message);</span>
+<span class="nc" id="L133">        this.vipErrorCode = vipError.getCode();</span>
+<span class="nc" id="L134">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

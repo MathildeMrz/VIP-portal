@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DisplayTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application-importer</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.applicationimporter.client.view.applicationdisplay</a> &gt; <span class="el_source">DisplayTab.java</span></div><h1>DisplayTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.applicationimporter.client.view.applicationdisplay;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
+import fr.insalyon.creatis.vip.application.client.view.boutiquesParsing.BoutiquesParser;
+import fr.insalyon.creatis.vip.application.client.view.boutiquesParsing.InvalidBoutiquesDescriptorException;
+import fr.insalyon.creatis.vip.applicationimporter.client.ApplicationImporterException;
+import fr.insalyon.creatis.vip.applicationimporter.client.rpc.ApplicationImporterService;
+import fr.insalyon.creatis.vip.applicationimporter.client.view.Constants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+public class DisplayTab extends Tab {
+
+    // Layouts
+    private VLayout globalLayout;
+    private GeneralLayout generalLayout;
+    private InputLayout inputsLayout;
+    private OutputLayout outputsLayout;
+    private VIPLayout vipLayout;
+    private final ModalWindow modal;
+    private BoutiquesApplication boutiquesTool;
+
+<span class="nc" id="L63">    public DisplayTab(String tabIcon, String tabId, String tabName) {</span>
+<span class="nc" id="L64">        this.setTitle(Canvas.imgHTML(tabIcon) + &quot; &quot; + tabName.trim());</span>
+<span class="nc" id="L65">        this.setID(tabId);</span>
+<span class="nc" id="L66">        this.setCanClose(true);</span>
+<span class="nc" id="L67">        this.setAttribute(&quot;paneMargin&quot;, 0);</span>
+<span class="nc" id="L68">        configure();</span>
+<span class="nc" id="L69">        modal = new ModalWindow(globalLayout);</span>
+<span class="nc" id="L70">        this.setPane(globalLayout);</span>
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Creates the general layout of the tab.
+     */
+    private void configure() {
+<span class="nc" id="L77">        globalLayout = new VLayout();</span>
+<span class="nc" id="L78">        globalLayout.setWidth100();</span>
+<span class="nc" id="L79">        globalLayout.setHeight100();</span>
+<span class="nc" id="L80">        globalLayout.setMargin(6);</span>
+<span class="nc" id="L81">        globalLayout.setMembersMargin(5);</span>
+
+<span class="nc" id="L83">        generalLayout = new GeneralLayout(&quot;50%&quot;, &quot;100%&quot;);</span>
+
+<span class="nc" id="L85">        inputsLayout = new InputLayout(&quot;50%&quot;, &quot;100%&quot;);</span>
+<span class="nc" id="L86">        outputsLayout = new OutputLayout(&quot;50%&quot;, &quot;100%&quot;);</span>
+<span class="nc" id="L87">        vipLayout = new VIPLayout(&quot;50%&quot;, &quot;100%&quot;);</span>
+
+<span class="nc" id="L89">        HLayout hLayout1 = new HLayout();</span>
+<span class="nc" id="L90">        hLayout1.setMembersMargin(10);</span>
+<span class="nc" id="L91">        hLayout1.setHeight(&quot;50%&quot;);</span>
+<span class="nc" id="L92">        hLayout1.addMember(generalLayout);</span>
+<span class="nc" id="L93">        hLayout1.addMember(outputsLayout);</span>
+<span class="nc" id="L94">        globalLayout.addMember(hLayout1);</span>
+
+<span class="nc" id="L96">        HLayout hLayout2 = new HLayout();</span>
+<span class="nc" id="L97">        hLayout2.setMembersMargin(10);</span>
+<span class="nc" id="L98">        hLayout2.setHeight(&quot;50%&quot;);</span>
+<span class="nc" id="L99">        hLayout2.addMember(inputsLayout);</span>
+<span class="nc" id="L100">        hLayout2.addMember(vipLayout);</span>
+<span class="nc" id="L101">        globalLayout.addMember(hLayout2);</span>
+
+<span class="nc" id="L103">        globalLayout.addMember(hLayout2);</span>
+        IButton createApplicationButton;
+<span class="nc" id="L105">        createApplicationButton = WidgetUtil.getIButton(&quot;Create application&quot;, Constants.ICON_LAUNCH, new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L108" title="All 2 branches missed.">                if (vipLayout.getApplicationType() == null){</span>
+<span class="nc" id="L109">                    Layout.getInstance().setWarningMessage(&quot;Select type of Application is empty, please choose one.&quot;);</span>
+                } else {
+<span class="nc" id="L111">                    boutiquesTool.setApplicationLFN(vipLayout.getApplicationLocation() + &quot;/&quot; + boutiquesTool.getName());</span>
+<span class="nc" id="L112">                    createApplication();</span>
+                }
+<span class="nc" id="L114">            }</span>
+        });
+<span class="nc" id="L116">        createApplicationButton.setWidth(120);</span>
+<span class="nc" id="L117">        globalLayout.addMember(createApplicationButton);</span>
+<span class="nc" id="L118">    }</span>
+
+    public static BoutiquesApplication parseJSON(String jsonDescriptor)
+        throws ApplicationImporterException {
+
+<span class="nc" id="L123">        BoutiquesApplication boutiquesApplication = null;</span>
+        try {
+<span class="nc" id="L125">            boutiquesApplication = new BoutiquesParser().parseApplication(jsonDescriptor);</span>
+<span class="nc" id="L126">            verifyBoutiquesTool(boutiquesApplication);</span>
+<span class="nc" id="L127">        } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L128">            throw new ApplicationImporterException(exception.getMessage(), exception);</span>
+<span class="nc" id="L129">        }</span>
+<span class="nc" id="L130">        return boutiquesApplication;</span>
+    }
+
+    /**
+     * Populates the class with instance variables containing values in the JSON
+     * object, and refreshes the display.
+     * @param boutiquesTool BoutiquesApplication
+     */
+    public void setBoutiqueTool(BoutiquesApplication boutiquesTool) {
+<span class="nc" id="L139">        this.boutiquesTool = boutiquesTool;</span>
+<span class="nc" id="L140">        this.setTitle(boutiquesTool.getName());</span>
+<span class="nc" id="L141">        generalLayout.setTool(boutiquesTool);</span>
+<span class="nc" id="L142">        inputsLayout.setInputs(boutiquesTool.getInputs());</span>
+<span class="nc" id="L143">        outputsLayout.setOutputFiles(boutiquesTool.getOutputFiles());</span>
+<span class="nc" id="L144">    }</span>
+
+    private static void verifyBoutiquesTool(BoutiquesApplication boutiquesTool)
+        throws ApplicationImporterException {
+
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        if (boutiquesTool.getName() == null) {</span>
+<span class="nc" id="L150">            throw new ApplicationImporterException(&quot;Boutiques file must have a name property&quot;);</span>
+        }
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        if (boutiquesTool.getName().matches(&quot;.*\\s.*&quot;)) {</span>
+<span class="nc" id="L153">            throw new ApplicationImporterException(&quot;Application name should not have a space in it&quot;);</span>
+        }
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        if (boutiquesTool.getToolVersion() == null) {</span>
+<span class="nc" id="L156">            throw new ApplicationImporterException(&quot;Boutiques file must have a tool-version property&quot;);</span>
+        }
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (boutiquesTool.getAuthor() == null) {</span>
+<span class="nc" id="L159">            throw new ApplicationImporterException(&quot;Boutiques file must have an author&quot;);</span>
+        }
+<span class="nc" id="L161">    }</span>
+
+    /**
+     * Creates a standalone application
+     *
+     */
+    private void createApplication() {
+<span class="nc" id="L168">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L172">                modal.hide();</span>
+<span class="nc" id="L173">                Layout.getInstance().setWarningMessage(caught.getLocalizedMessage());</span>
+<span class="nc" id="L174">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L178">                modal.hide();</span>
+<span class="nc" id="L179">                Layout.getInstance().setNoticeMessage(&quot;Application successfully created.&quot;);</span>
+<span class="nc" id="L180">            }</span>
+        };
+<span class="nc" id="L182">        modal.show(&quot;Creating application...&quot;, true);</span>
+<span class="nc" id="L183">        ApplicationImporterService.Util.getInstance().createApplication(</span>
+            boutiquesTool,
+<span class="nc" id="L185">            vipLayout.getApplicationType(),</span>
+<span class="nc" id="L186">            vipLayout.getTag(),</span>
+<span class="nc" id="L187">            vipLayout.getIsRunOnGrid(),</span>
+<span class="nc" id="L188">            vipLayout.getOverwrite(),</span>
+<span class="nc" id="L189">            vipLayout.getFileAccessProtocol(),</span>
+            callback);
+<span class="nc" id="L191">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EditEngineLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.system.engine</a> &gt; <span class="el_source">EditEngineLayout.java</span></div><h1>EditEngineLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.system.engine;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.Engine;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class EditEngineLayout extends AbstractFormLayout {
+
+<span class="nc" id="L57">    private boolean newEngine = true;</span>
+    private TextItem nameField;
+    private TextItem endpointField;
+    private IButton saveButton;
+    private IButton removeButton;
+    private SelectItem statusPickList;
+<span class="nc" id="L63">    private String[] statusList = {&quot;enabled&quot;, &quot;disabled&quot;};</span>
+
+    public EditEngineLayout() {
+
+<span class="nc" id="L67">        super(480, 200);</span>
+<span class="nc" id="L68">        addTitle(&quot;Add/Edit Engine&quot;, ApplicationConstants.ICON_ENGINE);</span>
+
+<span class="nc" id="L70">        configure();</span>
+<span class="nc" id="L71">    }</span>
+
+    private void configure() {
+
+<span class="nc" id="L75">        nameField = FieldUtil.getTextItem(450, null);</span>
+<span class="nc" id="L76">        endpointField = FieldUtil.getTextItem(450, null);</span>
+<span class="nc" id="L77">        statusPickList = new SelectItem();</span>
+<span class="nc" id="L78">        statusPickList.setShowTitle(false);</span>
+<span class="nc" id="L79">        statusPickList.setWidth(350);</span>
+
+<span class="nc" id="L81">        saveButton = WidgetUtil.getIButton(&quot;Save&quot;, CoreConstants.ICON_SAVED,</span>
+<span class="nc" id="L82">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                        if (nameField.validate() &amp; endpointField.validate()) {</span>
+
+<span class="nc" id="L87">                            save(new Engine(nameField.getValueAsString().trim(),</span>
+<span class="nc" id="L88">                                    endpointField.getValueAsString().trim(), </span>
+<span class="nc" id="L89">                                    statusPickList.getValueAsString()));</span>
+                        }
+<span class="nc" id="L91">                    }</span>
+                });
+
+<span class="nc" id="L94">        removeButton = WidgetUtil.getIButton(&quot;Remove&quot;, CoreConstants.ICON_DELETE,</span>
+<span class="nc" id="L95">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L98">                        SC.ask(&quot;Do you really want to remove this engine?&quot;, new BooleanCallback() {</span>
+                            @Override
+                            public void execute(Boolean value) {
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                                if (value) {</span>
+<span class="nc" id="L102">                                    remove(nameField.getValueAsString().trim());</span>
+                                }
+<span class="nc" id="L104">                            }</span>
+                        });
+<span class="nc" id="L106">                    }</span>
+                });
+<span class="nc" id="L108">        removeButton.setDisabled(true);</span>
+
+<span class="nc" id="L110">        addField(&quot;Name&quot;, nameField);</span>
+<span class="nc" id="L111">        addField(&quot;End-Point&quot;, endpointField);</span>
+<span class="nc" id="L112">        addField(&quot;Status&quot;, statusPickList);</span>
+<span class="nc" id="L113">        addButtons(saveButton, removeButton);</span>
+        
+<span class="nc" id="L115">        statusPickList.setValueMap(statusList);</span>
+<span class="nc" id="L116">    }</span>
+
+    /**
+     * Sets an engine to edit or creates a blank form.
+     * 
+     * @param name Engine name
+     * @param endpoint Engine endpoint
+     */
+    public void setEngine(String name, String endpoint, String status) {
+
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (name != null) {</span>
+<span class="nc" id="L127">            this.nameField.setValue(name);</span>
+<span class="nc" id="L128">            this.nameField.setDisabled(true);</span>
+<span class="nc" id="L129">            this.endpointField.setValue(endpoint);</span>
+<span class="nc" id="L130">            this.statusPickList.setValue(status);</span>
+<span class="nc" id="L131">            this.newEngine = false;</span>
+<span class="nc" id="L132">            this.removeButton.setDisabled(false);</span>
+
+        } else {
+<span class="nc" id="L135">            this.nameField.setValue(&quot;&quot;);</span>
+<span class="nc" id="L136">            this.nameField.setDisabled(false);</span>
+<span class="nc" id="L137">            this.endpointField.setValue(&quot;&quot;);</span>
+<span class="nc" id="L138">            this.statusPickList.setValue(&quot;&quot;);</span>
+<span class="nc" id="L139">            this.newEngine = true;</span>
+<span class="nc" id="L140">            this.removeButton.setDisabled(true);</span>
+        }
+<span class="nc" id="L142">    }</span>
+
+    /**
+     *  Adds or updates an engine.
+     * 
+     * @param engine
+     */
+    private void save(Engine engine) {
+
+<span class="nc" id="L151">        WidgetUtil.setLoadingIButton(saveButton, &quot;Saving...&quot;);</span>
+
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (newEngine) {</span>
+<span class="nc" id="L154">            ApplicationService.Util.getInstance().addEngine(engine, getCallback(&quot;add&quot;));</span>
+        } else {
+<span class="nc" id="L156">            ApplicationService.Util.getInstance().updateEngine(engine, getCallback(&quot;update&quot;));</span>
+        }
+<span class="nc" id="L158">    }</span>
+
+    /**
+     * Removes an engine.
+     *
+     * @param name Engine name
+     */
+    private void remove(String name) {
+
+<span class="nc" id="L167">        WidgetUtil.setLoadingIButton(removeButton, &quot;Removing...&quot;);</span>
+<span class="nc" id="L168">        ApplicationService.Util.getInstance().removeEngine(name, getCallback(&quot;remove&quot;));</span>
+<span class="nc" id="L169">    }</span>
+
+    /**
+     *
+     * @param text
+     * @return
+     */
+    private AsyncCallback&lt;Void&gt; getCallback(final String text) {
+
+<span class="nc" id="L178">        return new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L181">                WidgetUtil.resetIButton(saveButton, &quot;Save&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L182">                WidgetUtil.resetIButton(removeButton, &quot;Remove&quot;, CoreConstants.ICON_DELETE);</span>
+<span class="nc" id="L183">                Layout.getInstance().setWarningMessage(&quot;Unable to &quot; + text + &quot; engine:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L184">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L188">                WidgetUtil.resetIButton(saveButton, &quot;Save&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L189">                WidgetUtil.resetIButton(removeButton, &quot;Remove&quot;, CoreConstants.ICON_DELETE);</span>
+<span class="nc" id="L190">                setEngine(null, null, null);</span>
+<span class="nc" id="L191">                ManageEnginesTab tab = (ManageEnginesTab) Layout.getInstance().</span>
+<span class="nc" id="L192">                        getTab(ApplicationConstants.TAB_MANAGE_ENGINE);</span>
+<span class="nc" id="L193">                tab.loadEngines();</span>
+<span class="nc" id="L194">            }</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

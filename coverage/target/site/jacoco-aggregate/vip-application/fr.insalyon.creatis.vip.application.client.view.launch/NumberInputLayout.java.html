@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>NumberInputLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.launch</a> &gt; <span class="el_source">NumberInputLayout.java</span></div><h1>NumberInputLayout.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.launch;
+
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.validator.CustomValidator;
+import com.smartgwt.client.widgets.form.validator.RequiredIfValidator;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesNumberInput;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+/**
+ * Representation of a number input. Notably allows validation of constraints on the number (integer, minimum, maximum),
+ * as well as providing a range instead of a list of values
+ *
+ * @author Guillaume Vanel
+ * @version %I%, %G%
+ */
+public class NumberInputLayout extends InputLayout {
+    private SelectItem typeSelector; // Range / List layout selection
+    // Validators for client-side validation logic
+    private CustomValidator numberValidator; // For checking we have a valid number
+    private CustomValidator rangeValidator; // For checking this number is between allowed minimum and maximum
+<span class="nc" id="L31">    public enum FormLayout {</span>
+<span class="nc" id="L32">        LIST, RANGE;</span>
+<span class="nc" id="L33">        public static List&lt;String&gt; names = camelNames(values());</span>
+    }
+<span class="nc" id="L35">    public enum RangeItem {</span>
+<span class="nc" id="L36">        START, STEP, STOP;</span>
+<span class="nc" id="L37">        public static List&lt;String&gt; names = camelNames(values());</span>
+    }
+
+    /**
+     * Return given enum value's name with only first letter in uppercase (used for displaying values)
+     *
+     * @param enumValue Enum value
+     * @return          Formatted name as String
+     */
+    public static String camelName(Enum&lt;?&gt; enumValue) {
+<span class="nc" id="L47">        String enumName = enumValue.name();</span>
+<span class="nc" id="L48">        return enumName.charAt(0) + enumName.substring(1).toLowerCase();</span>
+    }
+
+    /**
+     * Take an array of enum values and return an array of their names with only first letter in uppercase
+     *
+     * @param enumValues    Array of Enum values
+     * @return              Array of Strings representing enumValues formatted names
+     */
+    public static List&lt;String&gt; camelNames(Enum&lt;?&gt;[] enumValues) {
+<span class="nc" id="L58">        return Arrays.stream(enumValues).map(NumberInputLayout::camelName).collect(Collectors.toList());</span>
+    }
+
+    /**
+     * @param value Object representing a field value
+     * @return      Float representing the same value, or null if value is not the representation of a Float
+     */
+    public static Float valueAsFloat(Object value) throws NumberFormatException{
+        try{
+<span class="nc" id="L67">            return Float.parseFloat(String.valueOf(value));</span>
+<span class="nc" id="L68">        } catch (NumberFormatException exception){</span>
+<span class="nc" id="L69">            return null;</span>
+        }
+    }
+
+    /**
+     * Initialise graphical labels and main input form, which contains one value field and a SelectItem to display
+     * instead a range layout (three value fields: start, step and end)
+     *
+     * @param parsedInput   BoutiquesInputNumber to be represented
+     * @param parentLayout  LaunchFormLayout containing this
+     */
+    public NumberInputLayout(final BoutiquesNumberInput parsedInput, LaunchFormLayout parentLayout) {
+<span class="nc" id="L81">        super(parsedInput, parentLayout);</span>
+<span class="nc" id="L82">    }</span>
+
+    /**
+     * Configure validators for client-side validation (checking the value is a valid number between maximum and minimum
+     * allowed values).
+     */
+    private void configureValidators() {
+<span class="nc" id="L89">        final BoutiquesNumberInput numberInput = (BoutiquesNumberInput) this.input;</span>
+        // Check that input is filled if non optional and is a valid number / integer.
+<span class="nc" id="L91">        this.numberValidator = new CustomValidator() {</span>
+            @Override
+            protected boolean condition(Object value) {
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                if (value == null) {</span>
+<span class="nc" id="L95">                    this.setErrorMessage(&quot;Field is required&quot;);</span>
+<span class="nc" id="L96">                    this.getFormItem().setShowErrorIcon(false);</span>
+<span class="nc" id="L97">                    return numberInput.isOptional();</span>
+                }
+                try {
+<span class="nc" id="L100">                    double doubleValue = Double.parseDouble(String.valueOf(value));</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                    if (numberInput.isInteger()) {</span>
+<span class="nc" id="L102">                        this.setErrorMessage(&quot;Must be an integer.&quot;);</span>
+<span class="nc" id="L103">                        this.getFormItem().setShowErrorIcon(true);</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                        return ((doubleValue % 1) == 0);</span>
+                    }
+<span class="nc" id="L106">                    return true;</span>
+<span class="nc" id="L107">                } catch (NumberFormatException e) {</span>
+<span class="nc" id="L108">                    this.setErrorMessage(&quot;Must be a number.&quot;);</span>
+<span class="nc" id="L109">                    this.getFormItem().setShowErrorIcon(true);</span>
+<span class="nc" id="L110">                    return false;</span>
+                }
+            }
+        };
+        // Check that provided value is between input minimum and maximum.
+<span class="nc" id="L115">        this.rangeValidator = new CustomValidator() {</span>
+            @Override
+            protected boolean condition(Object value) {
+                try {
+<span class="nc" id="L119">                    double doubleValue = Double.parseDouble(String.valueOf(value));</span>
+<span class="nc" id="L120">                    Double maximum = numberInput.getMaximum();</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">                    if (maximum != null) {</span>
+<span class="nc bnc" id="L122" title="All 4 branches missed.">                        if (numberInput.isExclusiveMaximum() &amp;&amp; (doubleValue &gt;= maximum)) {</span>
+<span class="nc" id="L123">                            this.setErrorMessage(&quot;Must be strictly less than &quot; + maximum);</span>
+<span class="nc" id="L124">                            this.getFormItem().setShowErrorIcon(true);</span>
+<span class="nc" id="L125">                            return false;</span>
+                        } else {
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                            if (doubleValue &gt; maximum) {</span>
+<span class="nc" id="L128">                                this.setErrorMessage(&quot;Must be at most &quot; + maximum);</span>
+<span class="nc" id="L129">                                this.getFormItem().setShowErrorIcon(true);</span>
+<span class="nc" id="L130">                                return false;</span>
+                            }
+                        }
+                    }
+<span class="nc" id="L134">                    Double minimum = numberInput.getMinimum();</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">                    if (minimum != null) {</span>
+<span class="nc bnc" id="L136" title="All 4 branches missed.">                        if (numberInput.isExclusiveMinimum() &amp;&amp; (doubleValue &lt;= minimum)) {</span>
+<span class="nc" id="L137">                            this.setErrorMessage(&quot;Must be strictly greater than &quot; + minimum);</span>
+<span class="nc" id="L138">                            this.getFormItem().setShowErrorIcon(true);</span>
+<span class="nc" id="L139">                            return false;</span>
+                        } else {
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                            if (doubleValue &lt; minimum) {</span>
+<span class="nc" id="L142">                                this.setErrorMessage(&quot;Must be at least &quot; + minimum);</span>
+<span class="nc" id="L143">                                this.getFormItem().setShowErrorIcon(true);</span>
+<span class="nc" id="L144">                                return false;</span>
+                            }
+                        }
+                    }
+<span class="nc" id="L148">                } catch (NumberFormatException ignored) {</span>
+<span class="nc" id="L149">                }</span>
+<span class="nc" id="L150">                return true;</span>
+            }
+        };
+<span class="nc" id="L153">    }</span>
+
+    /**
+     * @return FormItem representing an input field for this input
+     * @see InputLayout#getFormItem()
+     */
+    @Override
+    protected FormItem getFormItem() {
+<span class="nc" id="L161">        TextItem inputField = new TextItem();</span>
+<span class="nc" id="L162">        inputField.setWidth(330);</span>
+<span class="nc" id="L163">        inputField.setShowTitle(false);</span>
+<span class="nc" id="L164">        inputField.setKeyPressFilter(&quot;[0-9.\\-]&quot;);</span>
+<span class="nc" id="L165">        inputField.setValue(this.getDefaultValue());</span>
+<span class="nc" id="L166">        return inputField;</span>
+    }
+
+    /**
+     * Create an additional input field for current layout
+     * @see InputLayout#createAdditionalForm()
+     */
+    @Override
+    protected void createAdditionalForm() {
+<span class="nc" id="L175">        final DynamicForm inputForm = this.newForm(this.removeValueIcon);</span>
+<span class="nc" id="L176">        inputForm.getField(MAIN_FIELD_NAME).setValidators(this.numberValidator, this.rangeValidator);</span>
+        // Size adjustment to align with main field, which contains an additional SelectItem
+<span class="nc" id="L178">        inputForm.setWidth(400);</span>
+<span class="nc" id="L179">        inputForm.setNumCols(1);</span>
+<span class="nc" id="L180">        inputForm.getField(MAIN_FIELD_NAME).setAlign(Alignment.RIGHT);</span>
+<span class="nc" id="L181">        this.additionalForms.add(inputForm);</span>
+<span class="nc" id="L182">        this.onValueChanged();</span>
+<span class="nc" id="L183">    }</span>
+
+    /**
+     * @return boolean: true if all additional fields in this have valid values, else otherwise. When range layout
+     *         is selected, additional fields are hidden and ignored, thus considered valid (true is returned)
+     * @see InputLayout#validateAdditionalForms()
+     */
+    @Override
+    protected boolean validateAdditionalForms() {
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if(this.isRange()){</span>
+<span class="nc" id="L193">            return true;</span>
+        }
+<span class="nc" id="L195">        return super.validateAdditionalForms();</span>
+    }
+
+    /**
+     * Overwrite current values with given valueSet
+     *
+     * @param valueList ValueSet containing values to write
+     * @see InputLayout#overwriteValues(ValueSet)
+     */
+    @Override
+    public void overwriteValues(ValueSet valueList) {
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        if (valueList instanceof ValueRange) {</span>
+<span class="nc" id="L207">            this.setLayout(FormLayout.RANGE);</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">            LaunchFormLayout.assertCondition(!this.masterForm.getField(MAIN_FIELD_NAME).isVisible(),</span>
+                    &quot;Invalid state: main field should not be visible in range layout.&quot;);
+<span class="nc" id="L210">            List&lt;Float&gt; rangeLimits = ((ValueRange) valueList).getRangeLimits();</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            for (int k = 0; k &lt; 3; k++) {</span>
+<span class="nc" id="L212">                this.masterForm.getField(RangeItem.names.get(k)).setValue(rangeLimits.get(k));</span>
+            }
+<span class="nc" id="L214">            this.onValueChanged();</span>
+<span class="nc" id="L215">        } else {</span>
+<span class="nc" id="L216">            this.setLayout(FormLayout.LIST);</span>
+<span class="nc" id="L217">            LaunchFormLayout.assertCondition(this.masterForm.getField(MAIN_FIELD_NAME).isVisible(),</span>
+                    &quot;Invalid state: main field should be visible in list layout.&quot;);
+<span class="nc" id="L219">            super.overwriteValues(valueList);</span>
+        }
+<span class="nc" id="L221">    }</span>
+
+    /**
+     * @return ValueSet representing current values of this input
+     * @see InputLayout#getValueList()
+     */
+    @Override
+    public ValueSet getValueList() {
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        if (this.isRange()) {</span>
+<span class="nc" id="L230">            return new ValueRange(this.masterForm);</span>
+        }
+<span class="nc" id="L232">        return super.getValueList();</span>
+    }
+
+    /**
+     * @return boolean: true if this input currently displays only one input field (unique value).
+     * @see InputLayout#hasUniqueValue()
+     */
+    @Override
+    public boolean hasUniqueValue() {
+<span class="nc bnc" id="L241" title="All 4 branches missed.">        return super.hasUniqueValue() &amp;&amp; !this.isRange();</span>
+    }
+
+    /**
+     * Configure this.typeSelector, the SelectItem allowing user to chose between entering a list of values or a range
+     */
+    private void configureLayoutSelector() {
+<span class="nc" id="L248">        this.typeSelector = new SelectItem();</span>
+<span class="nc" id="L249">        this.typeSelector.setWidth(70);</span>
+<span class="nc" id="L250">        this.typeSelector.setShowTitle(false);</span>
+<span class="nc" id="L251">        this.typeSelector.setValueMap(FormLayout.names.toArray(new String[]{}));</span>
+<span class="nc" id="L252">        this.typeSelector.setValue(camelName(FormLayout.LIST));</span>
+<span class="nc" id="L253">        this.typeSelector.addChangedHandler(changedEvent -&gt; this.setLayout(this.getSelectedFormLayout()));</span>
+<span class="nc" id="L254">    }</span>
+
+    /**
+     * Create main input field. This master form contains a SelectItem to select List or Range
+     * layout, as well as fields for both layouts. Should be called only once by constructor
+     *
+     * Note that validators for client-side validation logic are initialized here.
+     * @see #configureValidators()
+     */
+    @Override
+    protected void createMasterForm() {
+        // Configure validators for client-side validation logic
+<span class="nc" id="L266">        configureValidators();</span>
+        // Configure List/Range layout selector
+<span class="nc" id="L268">        this.configureLayoutSelector();</span>
+        // Initialize master form
+<span class="nc" id="L270">        this.masterForm = new DynamicForm();</span>
+        // Fields for master form
+<span class="nc" id="L272">        final List&lt;FormItem&gt; inputFields = new ArrayList&lt;&gt;();</span>
+        // List/Range selection
+<span class="nc" id="L274">        inputFields.add(this.typeSelector);</span>
+        // Value
+<span class="nc" id="L276">        final FormItem valueItem = this.getFormItem();</span>
+<span class="nc" id="L277">        valueItem.setName(MAIN_FIELD_NAME);</span>
+<span class="nc" id="L278">        this.addValueChangeHandler(valueItem);</span>
+<span class="nc" id="L279">        valueItem.setValidators(this.numberValidator, this.rangeValidator);</span>
+<span class="nc" id="L280">        inputFields.add(valueItem);</span>
+        // Range
+<span class="nc bnc" id="L282" title="All 2 branches missed.">        for (String rangeItemName : RangeItem.names) {</span>
+<span class="nc" id="L283">            FormItem currentRangeItem = this.getFormItem();</span>
+<span class="nc" id="L284">            currentRangeItem.setWidth(80);</span>
+<span class="nc" id="L285">            currentRangeItem.setTitle(rangeItemName);</span>
+<span class="nc" id="L286">            currentRangeItem.setShowTitle(true);</span>
+<span class="nc" id="L287">            currentRangeItem.setName(rangeItemName);</span>
+<span class="nc" id="L288">            currentRangeItem.hide(); // Default to List layout</span>
+<span class="nc" id="L289">            inputFields.add(currentRangeItem);</span>
+<span class="nc" id="L290">        }</span>
+        // Range validation logic
+        // Required
+<span class="nc" id="L293">        RequiredIfValidator requiredValidator = new RequiredIfValidator((formItem, value) -&gt; true);</span>
+        // Start
+<span class="nc" id="L295">        CustomValidator rangeStartValidator = new CustomValidator() {</span>
+            @Override
+            protected boolean condition(Object value) {
+                // Check that start is less than end
+<span class="nc" id="L299">                Float maxValue = valueAsFloat(getRangeItem(RangeItem.STOP).getValue());</span>
+<span class="nc" id="L300">                Float floatValue = valueAsFloat((value));</span>
+<span class="nc bnc" id="L301" title="All 4 branches missed.">                if ((maxValue != null) &amp;&amp; (floatValue != null)) {</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">                    return (floatValue &lt; maxValue);</span>
+                }
+<span class="nc" id="L304">                return true;</span>
+            }
+        };
+<span class="nc" id="L307">        rangeStartValidator.setErrorMessage(&quot;Must be less than range end&quot;);</span>
+        // End
+<span class="nc" id="L309">        CustomValidator rangeEndValidator = new CustomValidator() {</span>
+            @Override
+            protected boolean condition(Object value) {
+                // Check that end is greater than start
+<span class="nc" id="L313">                Float minValue = valueAsFloat(getRangeItem(RangeItem.START).getValue());</span>
+<span class="nc" id="L314">                Float floatValue = valueAsFloat((value));</span>
+<span class="nc bnc" id="L315" title="All 4 branches missed.">                if ((minValue != null) &amp;&amp; (floatValue != null)) {</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">                    return (floatValue &gt; minValue);</span>
+                }
+<span class="nc" id="L318">                return true;</span>
+            }
+        };
+<span class="nc" id="L321">        rangeEndValidator.setErrorMessage(&quot;Must be more than range start&quot;);</span>
+        // Step
+<span class="nc" id="L323">        CustomValidator rangeStepValidator = new CustomValidator() {</span>
+            @Override
+            protected boolean condition(Object value) {
+<span class="nc" id="L326">                Float floatValue = valueAsFloat((value));</span>
+<span class="nc bnc" id="L327" title="All 2 branches missed.">                if(floatValue != null){</span>
+                    // Check that step is strictly positive
+<span class="nc bnc" id="L329" title="All 2 branches missed.">                    if (floatValue &lt;= 0) {</span>
+<span class="nc" id="L330">                        this.setErrorMessage(&quot;Must be strictly positive.&quot;);</span>
+<span class="nc" id="L331">                        return false;</span>
+                    }
+                    // Check that step is smaller than the difference between end and start
+<span class="nc" id="L334">                    Float minValue = valueAsFloat(getRangeItem(RangeItem.START).getValue());</span>
+<span class="nc" id="L335">                    Float maxValue = valueAsFloat(getRangeItem(RangeItem.STOP).getValue());</span>
+<span class="nc bnc" id="L336" title="All 4 branches missed.">                    if ((minValue != null) &amp;&amp; (maxValue != null)) {</span>
+<span class="nc" id="L337">                        this.setErrorMessage(&quot;Must be less than range size.&quot;);</span>
+<span class="nc bnc" id="L338" title="All 2 branches missed.">                        return (floatValue &lt; (maxValue - minValue));</span>
+                    }
+                }
+<span class="nc" id="L341">                return true;</span>
+            }
+        };
+        // Setup and add master form to this
+<span class="nc" id="L345">        this.masterForm.setFields(inputFields.toArray(new FormItem[]{}));</span>
+<span class="nc" id="L346">        this.addMember(this.masterForm);</span>
+<span class="nc" id="L347">        getRangeItem(RangeItem.START).setValidators(this.numberValidator, this.rangeValidator, rangeStartValidator,</span>
+                requiredValidator);
+<span class="nc" id="L349">        getRangeItem(RangeItem.STOP).setValidators(this.numberValidator, this.rangeValidator, rangeEndValidator,</span>
+                requiredValidator);
+<span class="nc" id="L351">        getRangeItem(RangeItem.STEP).setValidators(rangeStepValidator, this.numberValidator,</span>
+                requiredValidator);
+<span class="nc" id="L353">        this.masterForm.addItemChangedHandler(itemChangedEvent -&gt; this.onValueChanged(itemChangedEvent.getItem()));</span>
+<span class="nc" id="L354">        valueItem.addIcon(this.addValueIcon); // If placed before call to setFields, the icon don't show</span>
+<span class="nc" id="L355">    }</span>
+
+    /**
+     * Set input layout to List (one or more value fields) or Range (three fields: Start, Step, End)
+     *
+     * @param layoutType FormLayout indicating the layout to set
+     */
+    private void setLayout(FormLayout layoutType) {
+<span class="nc" id="L363">        this.typeSelector.setValue(camelName(layoutType)); // Redundant only when called from typeSelector changedEvent</span>
+<span class="nc" id="L364">        FormItem valueField = this.masterForm.getField(MAIN_FIELD_NAME);</span>
+<span class="nc bnc" id="L365" title="All 3 branches missed.">        switch (layoutType) {</span>
+            case LIST:
+                // Show value fields, hide range fields
+<span class="nc" id="L368">                this.rangeItemAction(FormItem::hide);</span>
+<span class="nc" id="L369">                this.additionalForms.forEach(DynamicForm::show);</span>
+<span class="nc" id="L370">                valueField.show();</span>
+<span class="nc" id="L371">                this.masterForm.setColWidths(0, 0);</span>
+<span class="nc" id="L372">                this.masterForm.setNumCols(2);</span>
+<span class="nc" id="L373">                break;</span>
+            case RANGE:
+                // Hide value fields, show range fields
+<span class="nc" id="L376">                this.rangeItemAction(FormItem::show);</span>
+<span class="nc" id="L377">                this.additionalForms.forEach(DynamicForm::hide);</span>
+<span class="nc" id="L378">                valueField.hide();</span>
+<span class="nc" id="L379">                this.masterForm.setNumCols(7);</span>
+<span class="nc" id="L380">                this.masterForm.setColWidths(0, 32, 0, 30, 0, 28, 0);</span>
+<span class="nc" id="L381">                this.masterForm.setFixedColWidths(true);</span>
+<span class="nc" id="L382">                break;</span>
+            default:
+<span class="nc" id="L384">                throw new IllegalStateException(&quot;Unexpected value: &quot; + layoutType);</span>
+        }
+<span class="nc" id="L386">        this.onValueChanged();</span>
+<span class="nc" id="L387">    }</span>
+
+    private FormItem getRangeItem(RangeItem type){
+<span class="nc" id="L390">        return this.masterForm.getField(camelName(type));</span>
+    }
+    /**
+     * Perform given action on each Range field (Start value, Step value and End value)
+     *
+     * @param action Consumer&lt;FormItem&gt; to apply to Range fields
+     */
+    private void rangeItemAction(Consumer&lt;FormItem&gt; action){
+<span class="nc" id="L398">        RangeItem.names.stream()</span>
+<span class="nc" id="L399">                .map(this.masterForm::getField)</span>
+<span class="nc" id="L400">                .forEach(action);</span>
+<span class="nc" id="L401">    }</span>
+
+    /**
+     * @return FormLayout representing currently selected
+     * @throws IllegalStateException if selected value does not correspond to an existing FormLayout
+     */
+    public FormLayout getSelectedFormLayout() throws IllegalStateException{
+<span class="nc" id="L408">        String selectedValue = ((String) this.typeSelector.getValue());</span>
+<span class="nc bnc" id="L409" title="All 2 branches missed.">        if(FormLayout.names.contains(selectedValue)){</span>
+<span class="nc" id="L410">            return FormLayout.valueOf(selectedValue.toUpperCase());</span>
+        } else {
+<span class="nc" id="L412">            throw new IllegalStateException(&quot;Unknown selected layout type. Only allowed values are &quot;</span>
+                    + FormLayout.names);
+        }
+    }
+
+    /**
+     * @return boolean: true if Range layout is selected, false otherwise
+     */
+    public boolean isRange() {
+<span class="nc" id="L421">        return this.getSelectedFormLayout().equals(FormLayout.RANGE);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ActivationTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.auth</a> &gt; <span class="el_source">ActivationTab.java</span></div><h1>ActivationTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.auth;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.LinkItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class ActivationTab extends Tab {
+
+    private ModalWindow modal;
+    private VLayout validateLayout;
+    private DynamicForm resendForm;
+    private TextItem codeField;
+    private IButton validateButton;
+
+<span class="nc" id="L68">    public ActivationTab() {</span>
+
+<span class="nc" id="L70">        this.setID(CoreConstants.TAB_ACTIVATION);</span>
+<span class="nc" id="L71">        this.setTitle(&quot;Account Activation&quot;);</span>
+
+<span class="nc" id="L73">        VLayout vLayout = new VLayout(10);</span>
+<span class="nc" id="L74">        vLayout.setWidth100();</span>
+<span class="nc" id="L75">        vLayout.setHeight100();</span>
+<span class="nc" id="L76">        vLayout.setMargin(5);</span>
+<span class="nc" id="L77">        vLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L78">        vLayout.setAlign(Alignment.CENTER);</span>
+<span class="nc" id="L79">        vLayout.setDefaultLayoutAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L81">        modal = new ModalWindow(vLayout);</span>
+
+<span class="nc" id="L83">        configureValidateLayout();</span>
+<span class="nc" id="L84">        configureResendForm();</span>
+
+<span class="nc" id="L86">        vLayout.addMember(validateLayout);</span>
+<span class="nc" id="L87">        vLayout.addMember(resendForm);</span>
+
+<span class="nc" id="L89">        this.setPane(vLayout);</span>
+<span class="nc" id="L90">    }</span>
+
+    private void configureValidateLayout() {
+
+<span class="nc" id="L94">        validateLayout = WidgetUtil.getVIPLayout(300, 120);</span>
+
+<span class="nc" id="L96">        codeField = FieldUtil.getTextItem(280, false, &quot;&quot;, &quot;[a-zA-Z0-9\\-]&quot;);</span>
+<span class="nc" id="L97">        codeField.addKeyPressHandler(new KeyPressHandler() {</span>
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+<span class="nc bnc" id="L100" title="All 2 branches missed.">                if (event.getKeyName().equals(&quot;Enter&quot;)) {</span>
+<span class="nc" id="L101">                    validateCode();</span>
+                }
+<span class="nc" id="L103">            }</span>
+        });
+
+<span class="nc" id="L106">        validateButton = new IButton(&quot;Activate&quot;);</span>
+<span class="nc" id="L107">        validateButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L110">                validateCode();</span>
+<span class="nc" id="L111">            }</span>
+        });
+
+<span class="nc" id="L114">        WidgetUtil.addFieldToVIPLayout(validateLayout, &quot;Activation Code&quot;, codeField);</span>
+<span class="nc" id="L115">        validateLayout.addMember(validateButton);</span>
+<span class="nc" id="L116">    }</span>
+
+    /**
+     * Validates the code and activates user account.
+     */
+    private void validateCode() {
+
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (codeField.validate()) {</span>
+
+<span class="nc" id="L125">            ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L126">            final AsyncCallback&lt;User&gt; callback = new AsyncCallback&lt;User&gt;() {</span>
+                @Override
+                public void onFailure(Throwable caught) {
+<span class="nc" id="L129">                    WidgetUtil.resetIButton(validateButton, &quot;Activate&quot;, null);</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                    if (caught.getMessage().contains(&quot;Activation failed&quot;)) {</span>
+<span class="nc" id="L131">                        Layout.getInstance().setWarningMessage(&quot;Unable to activate account.&lt;br /&gt;The code you entered is incorrect.&quot;, 10);</span>
+                    } else {
+<span class="nc" id="L133">                        Layout.getInstance().setWarningMessage(&quot;Unable to activate account:&lt;br /&gt;&quot; + caught.getMessage(), 10);</span>
+                    }
+<span class="nc" id="L135">                }</span>
+
+                @Override
+                public void onSuccess(User result) {
+<span class="nc" id="L139">                    WidgetUtil.resetIButton(validateButton, &quot;Activate&quot;, null);</span>
+<span class="nc" id="L140">                    Layout.getInstance().removeTab(CoreConstants.TAB_ACTIVATION);</span>
+<span class="nc" id="L141">                    Layout.getInstance().authenticate(result);</span>
+<span class="nc" id="L142">                }</span>
+            };
+<span class="nc" id="L144">            service.activate(codeField.getValueAsString().trim(), callback);</span>
+<span class="nc" id="L145">            WidgetUtil.setLoadingIButton(validateButton, &quot;Activating...&quot;);</span>
+        }
+<span class="nc" id="L147">    }</span>
+
+    private void configureResendForm() {
+
+<span class="nc" id="L151">        LinkItem resendLink = FieldUtil.getLinkItem(&quot;link_resend&quot;,</span>
+                &quot;Lost your code? Click here and we will resend it to you.&quot;,
+<span class="nc" id="L153">                new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {</span>
+                    @Override
+                    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+<span class="nc" id="L156">                        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L157">                        final AsyncCallback&lt;String&gt; callback = new AsyncCallback&lt;String&gt;() {</span>
+                            @Override
+                            public void onFailure(Throwable caught) {
+<span class="nc" id="L160">                                modal.hide();</span>
+<span class="nc" id="L161">                                Layout.getInstance().setWarningMessage(&quot;Unable to resend activation code:&lt;br /&gt;&quot; + caught.getMessage(), 10);</span>
+<span class="nc" id="L162">                            }</span>
+
+                            @Override
+                            public void onSuccess(String result) {
+<span class="nc" id="L166">                                modal.hide();</span>
+<span class="nc" id="L167">                                Layout.getInstance().setNoticeMessage(&quot;An activation code was sent to:&lt;br /&gt;&lt;b&gt;&quot; + result + &quot;&lt;/b&gt;&quot;, 10);</span>
+<span class="nc" id="L168">                            }</span>
+                        };
+<span class="nc" id="L170">                        modal.show(&quot;Resending activation code...&quot;, true);</span>
+<span class="nc" id="L171">                        service.sendActivationCode(callback);</span>
+<span class="nc" id="L172">                    }</span>
+                });
+<span class="nc" id="L174">        resendLink.setWidth(300);</span>
+
+<span class="nc" id="L176">        resendForm = FieldUtil.getForm(resendLink);</span>
+<span class="nc" id="L177">        resendForm.setWidth(300);</span>
+<span class="nc" id="L178">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

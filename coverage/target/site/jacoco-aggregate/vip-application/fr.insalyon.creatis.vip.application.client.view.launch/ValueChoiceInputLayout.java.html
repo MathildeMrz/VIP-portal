@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ValueChoiceInputLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.launch</a> &gt; <span class="el_source">ValueChoiceInputLayout.java</span></div><h1>ValueChoiceInputLayout.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.launch;
+
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.validator.CustomValidator;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesInput;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ * Representation of a multiple choice input (can be Number, String or File)
+ *
+ * @author Guillaume Vanel
+ * @version %I%, %G%
+ */
+public class ValueChoiceInputLayout extends InputLayout{
+<span class="nc" id="L20">    protected final Map&lt;InputLayout, Set&lt;String&gt;&gt; valueDisables = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L21">    protected final Map&lt;InputLayout, Set&lt;String&gt;&gt; valueRequires = new HashMap&lt;&gt;();</span>
+    protected final Map&lt;String, String&gt; labels;
+
+    /**
+     * Initialises graphical labels and input field
+     *
+     * @param input        BoutiquesInput to be represented
+     * @param parentLayout LaunchFormLayout containing this
+     */
+    public ValueChoiceInputLayout(BoutiquesInput input, LaunchFormLayout parentLayout, Map&lt;String, String&gt; labels) {
+        // must not create the master form in the parent constructor to create and analyse labels first
+<span class="nc" id="L32">        super(input, parentLayout, false);</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        if (labels != null) {</span>
+<span class="nc" id="L34">            LaunchFormLayout.assertCondition(input.getPossibleValues().equals(labels.keySet()),</span>
+<span class="nc" id="L35">                    &quot;The labels for the {&quot; + input.getId() + &quot;} input do not have the good values&quot;);</span>
+        }
+<span class="nc" id="L37">        this.labels = labels;</span>
+<span class="nc" id="L38">        createMasterForm();</span>
+<span class="nc" id="L39">    }</span>
+
+    /**
+     * @return FormItem representing an input field for this input
+     * @see InputLayout#getFormItem()
+     */
+    @Override
+    protected FormItem getFormItem() {
+<span class="nc" id="L47">        SelectItem inputField = new SelectItem();</span>
+<span class="nc" id="L48">        inputField.setWidth(400);</span>
+<span class="nc" id="L49">        inputField.setShowTitle(false);</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        if (labels != null) {</span>
+<span class="nc" id="L51">            inputField.setValueMap(labels);</span>
+        } else {
+<span class="nc" id="L53">            inputField.setValueMap(this.input.getPossibleValues().toArray(new String[]{}));</span>
+        }
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (this.getDefaultValue() != null) {</span>
+<span class="nc" id="L56">            inputField.setValue(this.getDefaultValue());</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        } else if ( ! this.input.getPossibleValues().isEmpty()){</span>
+<span class="nc" id="L58">            inputField.setValue(this.input.getPossibleValues().iterator().next());</span>
+        }
+<span class="nc" id="L60">        return inputField;</span>
+    }
+
+    /**
+     * Enable, disable and validate this as well as dependant inputs. Meant to be called each time a modification
+     * happens on the values tracked by this (value changed by user, addition or removal of an additional form...)
+     *
+     * @see InputLayout#onValueChanged()
+     */
+    @Override
+    protected void onValueChanged(){
+<span class="nc" id="L71">        super.onValueChanged();</span>
+<span class="nc" id="L72">        this.valueDisables.keySet().forEach(InputLayout::checkDependencies);</span>
+<span class="nc" id="L73">    }</span>
+
+    /**
+     * Make all InputLayouts in disabledInputSet disabled when provided value is selected in this
+     *
+     * @param value             String representing the disabling value
+     * @param disabledInputSet  Set of InputLayouts to disable when value is selected
+     */
+    public void addValueDisables(String value, Set&lt;InputLayout&gt; disabledInputSet){
+<span class="nc" id="L82">        disabledInputSet.forEach(disabledInput -&gt; {</span>
+<span class="nc" id="L83">            addToSetInMap(this.valueDisables, disabledInput, value);</span>
+<span class="nc" id="L84">            disabledInput.addDisabledByValue(this, value);</span>
+<span class="nc" id="L85">            disabledInput.checkDependencies();</span>
+<span class="nc" id="L86">        });</span>
+<span class="nc" id="L87">    }</span>
+
+    /**
+     * Make specified values invalid if specified InputLayouts are empty. A validation error will
+     * appear to inform user they selected an invalid value
+     *
+     * @param valueRequiresInputs Map from input values as Strings to Set of InputLayouts required by corresponding
+     *                            value.
+     */
+    public void addValueRequires(Map&lt;String, Set&lt;InputLayout&gt;&gt; valueRequiresInputs){
+<span class="nc" id="L97">        valueRequiresInputs.forEach((value, requiredInputSet) -&gt; {</span>
+<span class="nc" id="L98">            requiredInputSet.forEach(requiredInput -&gt; {</span>
+<span class="nc" id="L99">                addToSetInMap(this.valueRequires, requiredInput, value);</span>
+<span class="nc" id="L100">                requiredInput.addRequiredByValue(this, value);</span>
+<span class="nc" id="L101">            });</span>
+<span class="nc" id="L102">        });</span>
+        // Update main value field validator to reflect the dependency
+<span class="nc" id="L104">        FormItem inputField = this.masterForm.getField(MAIN_FIELD_NAME);</span>
+<span class="nc" id="L105">        final ValueChoiceInputLayout layoutInstance = this;</span>
+<span class="nc" id="L106">        inputField.setValidators(new CustomValidator() {</span>
+            @Override
+            protected boolean condition(Object value) {
+                // Dependencies are ignored when input has multiple values, thus any value is considered valid
+                // Empty value cannot require another input, thus it is always considered valid
+<span class="nc bnc" id="L111" title="All 4 branches missed.">                if(layoutInstance.hasUniqueValue() &amp;&amp; (value != null)) {</span>
+                    // Identify all inputs required by current value that are empty, and collect their names
+<span class="nc" id="L113">                    Set&lt;String&gt; emptyRequiredInputNames = layoutInstance.valueRequires.entrySet()</span>
+<span class="nc" id="L114">                            .stream()</span>
+<span class="nc" id="L115">                            .filter(entry -&gt; entry.getValue().contains(value.toString()))</span>
+<span class="nc" id="L116">                            .filter(entry -&gt; entry.getKey().isUniqueEmpty())</span>
+<span class="nc" id="L117">                            .map(entry -&gt; entry.getKey().getInputName())</span>
+<span class="nc" id="L118">                            .collect(Collectors.toSet());</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                    if (emptyRequiredInputNames.size() &gt; 0) {</span>
+<span class="nc" id="L120">                        this.setErrorMessage(&quot;This value requires following inputs to be non empty: &quot;</span>
+                                + emptyRequiredInputNames);
+<span class="nc" id="L122">                        return false;</span>
+                    }
+                }
+<span class="nc" id="L125">                return true;</span>
+            }
+        });
+<span class="nc" id="L128">    }</span>
+
+    /**
+     * @return Map of InputLayouts disabled when certain values of this are selected. Keys are dependant InputLayouts
+     *         and values are Sets of Strings representing disabling values
+     */
+    public Map&lt;InputLayout, Set&lt;String&gt;&gt; getValueDisables() {
+<span class="nc" id="L135">        return this.valueDisables;</span>
+    }
+
+    /**
+     * @return Map of InputLayouts that need to be non empty for certain values of this to be valid when selected. Keys
+     *         are required InputLayouts and values are Sets of Strings representing dependant values
+     */
+    public Map&lt;InputLayout, Set&lt;String&gt;&gt; getValueRequires() {
+<span class="nc" id="L143">        return this.valueRequires;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

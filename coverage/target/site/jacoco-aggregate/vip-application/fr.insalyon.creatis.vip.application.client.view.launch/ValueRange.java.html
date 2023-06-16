@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ValueRange.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.launch</a> &gt; <span class="el_source">ValueRange.java</span></div><h1>ValueRange.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.launch;
+
+import com.smartgwt.client.widgets.form.DynamicForm;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+/**
+ * Helper class to handle a range of values entered by user for one input
+ *
+ * @author Guillaume Vanel
+ * @version %I%, %G%
+ */
+public class ValueRange extends ValueSet {
+    protected final List&lt;Float&gt; rangeLimits; // start, step, end
+
+    /**
+     * @param value String to convert to float
+     * @return      Float representing value, or null if value is ApplicationConstants.INPUT_WITHOUT_VALUE
+     * @throws NumberFormatException if value is neither ApplicationConstants.INPUT_WITHOUT_VALUE nor a valid
+     *                               representation of a float
+     */
+    public static Float floatValue(String value) throws NumberFormatException{
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if(value.equals(ApplicationConstants.INPUT_WITHOUT_VALUE)){</span>
+<span class="nc" id="L28">            return null;</span>
+        }
+<span class="nc" id="L30">        return Float.parseFloat(value);</span>
+    }
+
+    /**
+     * Populate represented list of values from the range represented by masterForm
+     *
+     * @param masterForm        DynamicForm containing range values (Start, Step and End values)
+     * @throws RuntimeException if masterForm does not have three non-empty fields with names
+     *                          NumberInputLayout.RangeItem.names
+     */
+<span class="nc" id="L40">    public ValueRange(DynamicForm masterForm) throws RuntimeException{</span>
+<span class="nc" id="L41">        this.rangeLimits = NumberInputLayout.RangeItem.names.stream()</span>
+<span class="nc" id="L42">                .map(masterForm::getField)</span>
+<span class="nc" id="L43">                .filter(Objects::nonNull)</span>
+<span class="nc" id="L44">                .map(item -&gt; NumberInputLayout.valueAsFloat(item.getValue()))</span>
+<span class="nc" id="L45">                .filter(Objects::nonNull)</span>
+<span class="nc" id="L46">                .collect(Collectors.toList());</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        if(this.rangeLimits.size() &lt; 3){</span>
+<span class="nc" id="L48">            throw new RuntimeException(&quot;Cannot create value range: please ensure provided form has fields with names &quot;</span>
+                                       + NumberInputLayout.RangeItem.names + &quot; and numeric values.&quot;);
+        }
+<span class="nc" id="L51">        initializeValues();</span>
+<span class="nc" id="L52">    }</span>
+
+    /**
+     * Initialized this from start, stop and step values represented as Strings
+     *
+     * @param start String
+     * @param stop String
+     * @param step String
+     * @throws NumberFormatException if at least one of the values is neither a float nor
+     * ApplicationConstants.INPUT_WITHOUT_VALUE
+     */
+<span class="nc" id="L63">    public ValueRange(String start, String stop, String step) throws NumberFormatException{</span>
+<span class="nc" id="L64">        this.rangeLimits = new ArrayList&lt;&gt;();</span>
+        try{
+<span class="nc" id="L66">            this.rangeLimits.add(floatValue(start));</span>
+<span class="nc" id="L67">            this.rangeLimits.add(floatValue(step));</span>
+<span class="nc" id="L68">            this.rangeLimits.add(floatValue(stop));</span>
+<span class="nc" id="L69">        } catch (NumberFormatException exception){</span>
+<span class="nc" id="L70">            throw new NumberFormatException(&quot;At least one of range limits is not a valid representation of a float &quot; +</span>
+                    &quot;or of an empty value.&lt;/br&gt;&quot; + &quot;Received range limits: &quot; + start + &quot;, &quot; + step + &quot; and &quot; + stop);
+<span class="nc" id="L72">        }</span>
+<span class="nc" id="L73">        initializeValues();</span>
+<span class="nc" id="L74">    }</span>
+
+    /**
+     * Initialize all values from range limits
+     */
+    private void initializeValues() {
+<span class="nc" id="L80">        float previousValue = this.rangeLimits.get(0);</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        while(previousValue &lt;= this.rangeLimits.get(2)){</span>
+<span class="nc" id="L82">            this.values.add(previousValue);</span>
+<span class="nc" id="L83">            this.valuesAsStrings.add(String.valueOf(previousValue));</span>
+<span class="nc" id="L84">            previousValue += this.rangeLimits.get(1);</span>
+        }
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        boolean correctSize = this.values.size() == ((int) ((this.rangeLimits.get(2) - this.rangeLimits.get(0)) / this.rangeLimits.get(1)) + 1);</span>
+<span class="nc" id="L87">        LaunchFormLayout.assertCondition(correctSize,</span>
+                &quot;Populating range failed: incorrect number of computed values&quot;);
+<span class="nc" id="L89">    }</span>
+
+    /**
+     * @param comparedValueSet ValueSet to compare this to
+     * @return                 boolean: true if comparedValueSet represents the same value range as this. Return value
+     *                         is always false if comparedValueSet is not a non-null ValueRange. Return value can be
+     *                         true even if comparedValueSet has a slightly different range end value, as long as all
+     *                         values inside the range are equal to those in this
+     */
+    @Override
+    public boolean isEqualTo(ValueSet comparedValueSet) {
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (comparedValueSet instanceof ValueRange) {</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">            if (comparedValueSet.getNValues() == this.getNValues()) {</span>
+<span class="nc" id="L102">                List&lt;Float&gt; comparedRange = ((ValueRange) comparedValueSet).getRangeLimits();</span>
+                // If start and step are the same, end can differ as long as there is the same number of values.
+<span class="nc bnc" id="L104" title="All 4 branches missed.">                return (comparedRange.get(0).equals(this.rangeLimits.get(0))) &amp;&amp; (comparedRange.get(1).equals(this.rangeLimits.get(1)));</span>
+            }
+        }
+<span class="nc" id="L107">        return false;</span>
+    }
+
+    /**
+     * @return Float array containing Start, Step and End value of the range represented by this
+     */
+    public List&lt;Float&gt; getRangeLimits() {
+<span class="nc" id="L114">        return this.rangeLimits;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

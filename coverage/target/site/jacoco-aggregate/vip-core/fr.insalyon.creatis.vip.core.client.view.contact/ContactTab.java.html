@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ContactTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.contact</a> &gt; <span class="el_source">ContactTab.java</span></div><h1>ContactTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.contact;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.RichTextEditor;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.TextAreaItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import java.util.LinkedHashMap;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class ContactTab extends Tab {
+
+    private VLayout contactLayout;
+    private TextItem nameField;
+    private TextItem emailField;
+    private SelectItem categoryItem;
+    private TextItem subjectField;
+    private RichTextEditor commentEditor;
+    private IButton submitButton;
+
+<span class="nc" id="L71">    public ContactTab() {</span>
+
+<span class="nc" id="L73">        this.setID(CoreConstants.TAB_CONTACT);</span>
+<span class="nc" id="L74">        this.setTitle(Canvas.imgHTML(CoreConstants.ICON_HELP) + &quot; Contact&quot;);</span>
+<span class="nc" id="L75">        this.setCanClose(true);</span>
+
+<span class="nc" id="L77">        VLayout vLayout = new VLayout(10);</span>
+<span class="nc" id="L78">        vLayout.setWidth100();</span>
+<span class="nc" id="L79">        vLayout.setHeight100();</span>
+<span class="nc" id="L80">        vLayout.setMargin(5);</span>
+<span class="nc" id="L81">        vLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L82">        vLayout.setDefaultLayoutAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L84">        configure();</span>
+<span class="nc" id="L85">        vLayout.addMember(contactLayout);</span>
+
+<span class="nc" id="L87">        this.setPane(vLayout);</span>
+<span class="nc" id="L88">    }</span>
+
+    private void configure() {
+
+<span class="nc" id="L92">        nameField = FieldUtil.getTextItem(300, null, true);</span>
+<span class="nc" id="L93">        nameField.setValue(CoreModule.user.getFullName());</span>
+
+<span class="nc" id="L95">        emailField = FieldUtil.getTextItem(300, null, true);</span>
+<span class="nc" id="L96">        emailField.setValue(CoreModule.user.getEmail());</span>
+
+<span class="nc" id="L98">        categoryItem = new SelectItem(&quot;category&quot;, &quot;Category&quot;);</span>
+<span class="nc" id="L99">        LinkedHashMap&lt;String, String&gt; map = new LinkedHashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L100">        map.put(&quot;General contact&quot;, &quot;General contact&quot;);</span>
+<span class="nc" id="L101">        map.put(&quot;General question&quot;, &quot;General question&quot;);</span>
+<span class="nc" id="L102">        map.put(&quot;Report bug&quot;, &quot;Report bug&quot;);</span>
+<span class="nc" id="L103">        map.put(&quot;Report missing term in ontologies&quot;, &quot;Report missing term in ontologies&quot;);</span>
+<span class="nc" id="L104">        categoryItem.setValueMap(map);</span>
+<span class="nc" id="L105">        categoryItem.setValue(&quot;General contact&quot;);</span>
+<span class="nc" id="L106">        categoryItem.setShowTitle(false);</span>
+
+<span class="nc" id="L108">        subjectField = FieldUtil.getTextItem(300, null);</span>
+
+<span class="nc" id="L110">        commentEditor = new RichTextEditor();</span>
+<span class="nc" id="L111">        commentEditor.setWidth(300);</span>
+<span class="nc" id="L112">        commentEditor.setHeight(200);</span>
+<span class="nc" id="L113">        commentEditor.setOverflow(Overflow.HIDDEN);</span>
+<span class="nc" id="L114">        commentEditor.setShowEdges(true);</span>
+<span class="nc" id="L115">        commentEditor.setControlGroups(&quot;styleControls&quot;, &quot;editControls&quot;, </span>
+                &quot;colorControls&quot;, &quot;insertControls&quot;);        
+
+<span class="nc" id="L118">        submitButton = new IButton(&quot;Submit&quot;);</span>
+<span class="nc" id="L119">        submitButton.addClickHandler(new ClickHandler() {</span>
+
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                if (subjectField.validate()) {</span>
+
+<span class="nc" id="L125">                    ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L126">                    final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+<span class="nc" id="L130">                            WidgetUtil.resetIButton(submitButton, &quot;Submit&quot;, null);</span>
+<span class="nc" id="L131">                            Layout.getInstance().setWarningMessage(&quot;Unable to send contact email:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L132">                        }</span>
+
+                        @Override
+                        public void onSuccess(Void result) {
+<span class="nc" id="L136">                            WidgetUtil.resetIButton(submitButton, &quot;Submit&quot;, null);</span>
+<span class="nc" id="L137">                            Layout.getInstance().setNoticeMessage(&quot;Contact successfully sent.&quot;);</span>
+<span class="nc" id="L138">                            subjectField.clearValue();</span>
+<span class="nc" id="L139">                            commentEditor.setValue(&quot;&quot;);</span>
+<span class="nc" id="L140">                        }</span>
+                    };
+<span class="nc" id="L142">                    service.sendContactMail(</span>
+<span class="nc" id="L143">                            categoryItem.getValueAsString(),</span>
+<span class="nc" id="L144">                            subjectField.getValueAsString().trim(),</span>
+<span class="nc" id="L145">                            commentEditor.getValue(), callback);</span>
+<span class="nc" id="L146">                    WidgetUtil.setLoadingIButton(submitButton, &quot;Sending messsage...&quot;);</span>
+                }
+<span class="nc" id="L148">            }</span>
+        });
+
+<span class="nc" id="L151">        contactLayout = WidgetUtil.getVIPLayout(330, 370);</span>
+<span class="nc" id="L152">        addField(&quot;Name&quot;, nameField);</span>
+<span class="nc" id="L153">        addField(&quot;E-mail&quot;, emailField);</span>
+<span class="nc" id="L154">        addField(&quot;Category&quot;, categoryItem);</span>
+<span class="nc" id="L155">        addField(&quot;Subject&quot;, subjectField);</span>
+<span class="nc" id="L156">        contactLayout.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;Comments&lt;/b&gt;&quot;, 15));</span>
+<span class="nc" id="L157">        contactLayout.addMember(commentEditor);</span>
+<span class="nc" id="L158">        contactLayout.addMember(submitButton);</span>
+<span class="nc" id="L159">    }</span>
+
+    private void addField(String title, FormItem item) {
+
+<span class="nc" id="L163">        contactLayout.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;&quot; + title + &quot;&lt;/b&gt;&quot;, 15));</span>
+<span class="nc" id="L164">        contactLayout.addMember(FieldUtil.getForm(item));</span>
+<span class="nc" id="L165">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

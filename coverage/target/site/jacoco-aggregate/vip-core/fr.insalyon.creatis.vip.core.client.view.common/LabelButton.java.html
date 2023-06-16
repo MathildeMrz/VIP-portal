@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LabelButton.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.common</a> &gt; <span class="el_source">LabelButton.java</span></div><h1>LabelButton.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.common;
+
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.MouseOutEvent;
+import com.smartgwt.client.widgets.events.MouseOutHandler;
+import com.smartgwt.client.widgets.events.MouseOverEvent;
+import com.smartgwt.client.widgets.events.MouseOverHandler;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class LabelButton extends Label {
+
+    private String label;
+    private boolean selected;
+
+<span class="nc" id="L51">    public LabelButton(String label, String icon) {</span>
+
+<span class="nc" id="L53">        this.label = label;</span>
+<span class="nc" id="L54">        this.selected = false;</span>
+<span class="nc" id="L55">        this.setIcon(icon);</span>
+<span class="nc" id="L56">        this.setHeight(16);</span>
+<span class="nc" id="L57">        this.setPadding(3);</span>
+<span class="nc" id="L58">        this.setBorder(&quot;1px solid #E2E2E2&quot;);</span>
+<span class="nc" id="L59">        this.setAlign(Alignment.CENTER);</span>
+<span class="nc" id="L60">        this.setDisabled(false);</span>
+<span class="nc" id="L61">        this.addMouseOverHandler(new MouseOverHandler() {</span>
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">                if (!isDisabled()) {</span>
+<span class="nc" id="L65">                    setBackgroundColor(&quot;#DEDEDE&quot;);</span>
+                }
+<span class="nc" id="L67">            }</span>
+        });
+<span class="nc" id="L69">        this.addMouseOutHandler(new MouseOutHandler() {</span>
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+<span class="nc bnc" id="L72" title="All 2 branches missed.">                if (!isDisabled()) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">                    if (selected) {</span>
+<span class="nc" id="L74">                        setBackgroundColor(&quot;#DEDEDE&quot;);</span>
+                    } else {
+<span class="nc" id="L76">                        setBackgroundColor(&quot;#F2F2F2&quot;);</span>
+                    }
+                }
+<span class="nc" id="L79">            }</span>
+        });
+<span class="nc" id="L81">    }</span>
+
+    @Override
+    public void setDisabled(boolean disabled) {
+
+<span class="nc" id="L86">        super.setDisabled(disabled);</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (disabled) {</span>
+<span class="nc" id="L88">            this.setContents(&quot;&lt;font color=\&quot;#CCCCCC\&quot;&gt;&quot; + label + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L89">            this.setBackgroundColor(&quot;#F9F9F9&quot;);</span>
+<span class="nc" id="L90">            this.setCursor(Cursor.AUTO);</span>
+        } else {
+<span class="nc" id="L92">            this.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;&quot; + label + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L93">            this.setBackgroundColor(&quot;#F2F2F2&quot;);</span>
+<span class="nc" id="L94">            this.setCursor(Cursor.HAND);</span>
+        }
+<span class="nc" id="L96">    }</span>
+
+    public void setSelected(boolean selected) {
+
+<span class="nc" id="L100">        this.selected = selected;</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (selected) {</span>
+<span class="nc" id="L102">            this.setBackgroundColor(&quot;#DEDEDE&quot;);</span>
+        } else {
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            if (isDisabled()) {</span>
+<span class="nc" id="L105">                this.setBackgroundColor(&quot;#F9F9F9&quot;);</span>
+            } else {
+<span class="nc" id="L107">                this.setBackgroundColor(&quot;#F2F2F2&quot;);</span>
+            }
+        }
+<span class="nc" id="L110">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

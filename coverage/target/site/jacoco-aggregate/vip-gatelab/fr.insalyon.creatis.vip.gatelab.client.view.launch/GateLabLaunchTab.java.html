@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GateLabLaunchTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-gatelab</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.gatelab.client.view.launch</a> &gt; <span class="el_source">GateLabLaunchTab.java</span></div><h1>GateLabLaunchTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.gatelab.client.view.launch;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplicationExtensions;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesInput;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesStringInput;
+import fr.insalyon.creatis.vip.application.client.view.launch.LaunchFormLayout;
+import fr.insalyon.creatis.vip.application.client.view.launch.LaunchTab;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.bean.Data;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
+
+import java.util.*;
+
+/**
+ *
+ * @author Sorina Camarasu, Rafael Ferreira da Silva
+ */
+public class GateLabLaunchTab extends LaunchTab {
+
+    private LoadMacWindow loadMacWindow;
+    private String baseDir;
+    private String releaseDir;
+    private IButton loadMacButton;
+
+    public static final String GATE_RELEASE_INPUT_ID = &quot;GateRelease&quot;;
+    public static final String CPU_ESTIMATION_INPUT_ID = &quot;CPUestimation&quot;;
+    public static final String PARALLELIZATION_TYPE_INPUT_ID = &quot;ParallelizationType&quot;;
+    public static final String GATE_INPUT_INPUT_ID = &quot;GateInput&quot;;
+    public static final String NB_OF_PARTICLES_INPUT_ID = &quot;NumberOfParticles&quot;;
+    public static final String PHASE_SPACE_INPUT_ID = &quot;phaseSpace&quot;;
+
+    public GateLabLaunchTab(String applicationName, String applicationVersion, 
+            String applicationClass) {
+<span class="nc" id="L74">        super(applicationName, applicationVersion, applicationClass);</span>
+<span class="nc" id="L75">    }</span>
+
+    public GateLabLaunchTab(
+            String applicationName, String applicationVersion, String applicationClass,
+            String simulationName, Map&lt;String, String&gt; inputs) {
+<span class="nc" id="L80">        super(applicationName, applicationVersion, applicationClass, simulationName, inputs);</span>
+<span class="nc" id="L81">    }</span>
+
+    @Override
+    protected void init() {
+<span class="nc" id="L85">        super.init();</span>
+<span class="nc" id="L86">        baseDir = DataManagerConstants.ROOT + &quot;/Home/myGateSimus/inputs&quot;;</span>
+<span class="nc" id="L87">        releaseDir = &quot;/vip/GateLab (group)/releases/&quot;;</span>
+<span class="nc" id="L88">        this.mustBeABoutiquesDescriptor = true;</span>
+<span class="nc" id="L89">        this.showExamples = false;</span>
+<span class="nc" id="L90">        this.showSeparators = false;</span>
+
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (this.inputs == null) {</span>
+            // if inputs is null, it is NOT a relaunch and only the launch mac button must be shown first
+<span class="nc" id="L94">            initComplete(this);</span>
+<span class="nc" id="L95">            configureLoadMacButton();</span>
+        }
+<span class="nc" id="L97">    }</span>
+
+    private void configureLoadMacButton() {
+
+<span class="nc" id="L101">        loadMacButton = WidgetUtil.getIButton(&quot;Load Main MacFile&quot;, CoreConstants.ICON_SAVED,</span>
+<span class="nc" id="L102">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L105">                        loadMacWindow = new LoadMacWindow(modal, baseDir);</span>
+<span class="nc" id="L106">                        loadMacWindow.show();</span>
+<span class="nc" id="L107">                    }</span>
+                });
+<span class="nc" id="L109">        loadMacButton.setWidth(150);</span>
+<span class="nc" id="L110">    }</span>
+
+    @Override
+    protected void addExtensionAndCreateForm(
+            BoutiquesApplication applicationTool, Boolean addResultsDirectoryInput, Runnable launchFormCreator) {
+<span class="nc" id="L115">        verifyBoutiquesDescriptor(applicationTool);</span>
+<span class="nc" id="L116">        BoutiquesApplicationExtensions extensions = new BoutiquesApplicationExtensions(false);</span>
+<span class="nc" id="L117">        applicationTool.setBoutiquesExtensions(extensions);</span>
+
+<span class="nc" id="L119">        extensions.addNonListInputs(</span>
+                GATE_RELEASE_INPUT_ID, CPU_ESTIMATION_INPUT_ID, PARALLELIZATION_TYPE_INPUT_ID,
+                GATE_INPUT_INPUT_ID, NB_OF_PARTICLES_INPUT_ID, PHASE_SPACE_INPUT_ID);
+<span class="nc" id="L122">        enrichCPUEstimationInput(applicationTool, extensions);</span>
+<span class="nc" id="L123">        enrichParallelizationType(applicationTool, extensions);</span>
+        // do the asynchronous task last for clarity
+<span class="nc" id="L125">        enrichGateReleasesInput(applicationTool, extensions, launchFormCreator);</span>
+<span class="nc" id="L126">    }</span>
+
+    private void verifyBoutiquesDescriptor(BoutiquesApplication applicationTool) {
+<span class="nc" id="L129">        verifyBoutiquesInput(applicationTool, GATE_RELEASE_INPUT_ID, BoutiquesInput.InputType.STRING);</span>
+<span class="nc" id="L130">        verifyBoutiquesInput(applicationTool, CPU_ESTIMATION_INPUT_ID, BoutiquesInput.InputType.NUMBER);</span>
+<span class="nc" id="L131">        verifyBoutiquesInput(applicationTool, PARALLELIZATION_TYPE_INPUT_ID, BoutiquesInput.InputType.STRING);</span>
+<span class="nc" id="L132">        verifyBoutiquesInput(applicationTool, GATE_INPUT_INPUT_ID, BoutiquesInput.InputType.FILE);</span>
+<span class="nc" id="L133">        verifyBoutiquesInput(applicationTool, NB_OF_PARTICLES_INPUT_ID, BoutiquesInput.InputType.NUMBER);</span>
+<span class="nc" id="L134">        verifyBoutiquesInput(applicationTool, PHASE_SPACE_INPUT_ID, BoutiquesInput.InputType.STRING);</span>
+<span class="nc" id="L135">    }</span>
+
+    private void verifyBoutiquesInput(BoutiquesApplication applicationTool, String inputId, BoutiquesInput.InputType type) {
+<span class="nc" id="L138">        Optional&lt;BoutiquesInput&gt; boutiquesInput =</span>
+<span class="nc" id="L139">                applicationTool.getInputs().stream().filter(input -&gt; inputId.equals(input.getId())).findAny();</span>
+<span class="nc" id="L140">        LaunchFormLayout.assertCondition(boutiquesInput.isPresent(),</span>
+                &quot;Missing {&quot; + inputId + &quot;} input in Gate descriptor&quot;);
+<span class="nc" id="L142">        LaunchFormLayout.assertCondition(</span>
+<span class="nc" id="L143">                type.equals(boutiquesInput.get().getType()),</span>
+                &quot;Input {&quot; + inputId + &quot;} must have a number type in Gate descriptor&quot;);
+<span class="nc" id="L145">    }</span>
+
+    private void enrichCPUEstimationInput(
+            BoutiquesApplication applicationTool, BoutiquesApplicationExtensions extensions) {
+<span class="nc" id="L149">        BoutiquesInput cpuEstInput = applicationTool.getInputs().stream()</span>
+<span class="nc" id="L150">                .filter(input -&gt; CPU_ESTIMATION_INPUT_ID.equals(input.getId()))</span>
+<span class="nc" id="L151">                .findAny().orElseThrow(IllegalStateException::new);</span>
+<span class="nc" id="L152">        Map&lt;String, String&gt; map = new LinkedHashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L153">        map.put(&quot;1&quot;, &quot;A few minutes&quot;);</span>
+<span class="nc" id="L154">        map.put(&quot;2&quot;, &quot;A few hours&quot;);</span>
+<span class="nc" id="L155">        map.put(&quot;3&quot;, &quot;A few days&quot;);</span>
+<span class="nc" id="L156">        map.put(&quot;4&quot;, &quot;More than a few days&quot;);</span>
+<span class="nc" id="L157">        LaunchFormLayout.assertCondition(</span>
+<span class="nc bnc" id="L158" title="All 4 branches missed.">                cpuEstInput.getPossibleValues() != null &amp;&amp; cpuEstInput.getPossibleValues().equals(map.keySet()),</span>
+                &quot;CPU Estimation in Gate descriptor does not have the expected values&quot;);
+<span class="nc" id="L160">        extensions.addValueChoiceLabels(CPU_ESTIMATION_INPUT_ID, map);</span>
+<span class="nc" id="L161">    }</span>
+
+    private void enrichParallelizationType(
+            BoutiquesApplication applicationTool, BoutiquesApplicationExtensions extensions) {
+<span class="nc" id="L165">        BoutiquesInput paraTypeInput = applicationTool.getInputs().stream()</span>
+<span class="nc" id="L166">                .filter(input -&gt; PARALLELIZATION_TYPE_INPUT_ID.equals(input.getId()))</span>
+<span class="nc" id="L167">                .findAny().orElseThrow(IllegalStateException::new);</span>
+<span class="nc" id="L168">        Map&lt;String, String&gt; map = new LinkedHashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L169">        map.put(&quot;stat&quot;, &quot;Static&quot;);</span>
+<span class="nc" id="L170">        map.put(&quot;dyn&quot;, &quot;Dynamic&quot;);</span>
+<span class="nc" id="L171">        LaunchFormLayout.assertCondition(</span>
+<span class="nc bnc" id="L172" title="All 4 branches missed.">                paraTypeInput.getPossibleValues() != null &amp;&amp; paraTypeInput.getPossibleValues().equals(map.keySet()),</span>
+                &quot;CPU Estimation in Gate descriptor does not have the expected values&quot;);
+<span class="nc" id="L174">        extensions.addValueChoiceLabels(PARALLELIZATION_TYPE_INPUT_ID, map);</span>
+<span class="nc" id="L175">    }</span>
+
+    private void enrichGateReleasesInput(
+            BoutiquesApplication applicationTool, BoutiquesApplicationExtensions extensions, Runnable doNextStep) {
+<span class="nc" id="L179">        BoutiquesInput releaseInput = applicationTool.getInputs().stream()</span>
+<span class="nc" id="L180">                .filter(input -&gt; GATE_RELEASE_INPUT_ID.equals(input.getId()))</span>
+<span class="nc" id="L181">                .findAny().orElseThrow(IllegalStateException::new);</span>
+        //get list of available releases
+<span class="nc" id="L183">        DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L184">        AsyncCallback&lt;List&lt;Data&gt;&gt; callback = new AsyncCallback&lt;List&lt;Data&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L187">                modal.hide();</span>
+<span class="nc" id="L188">                Layout.getInstance().setWarningMessage(&quot;Unable to list release folder:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L189">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Data&gt; result) {
+<span class="nc" id="L193">                modal.hide();</span>
+<span class="nc" id="L194">                List&lt;Release&gt; releases = new ArrayList&lt;Release&gt;();</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">                for (Data d : result) {</span>
+<span class="nc" id="L196">                    releases.add(new Release(d.getName()));</span>
+<span class="nc" id="L197">                }</span>
+<span class="nc" id="L198">                Collections.sort(releases);</span>
+<span class="nc" id="L199">                updateGateReleaseInput(releaseInput, extensions, releases);</span>
+<span class="nc" id="L200">                doNextStep.run();;</span>
+<span class="nc" id="L201">            }</span>
+        };
+<span class="nc" id="L203">        service.listDir(releaseDir, true, callback);</span>
+<span class="nc" id="L204">    }</span>
+
+    private void updateGateReleaseInput(
+            BoutiquesInput releaseInput, BoutiquesApplicationExtensions extensions, List&lt;Release&gt; releases) {
+<span class="nc" id="L208">        Map&lt;String, String&gt; releaseMap = new LinkedHashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L209">        String defaultValue = releaseDir + &quot;/&quot; + releases.get(0).getReleaseName();</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        for (Release r : releases) {</span>
+<span class="nc" id="L211">            releaseMap.put(releaseDir + &quot;/&quot; + r.getReleaseName(), r.getReleaseName());</span>
+<span class="nc" id="L212">        }</span>
+<span class="nc" id="L213">        releaseInput.setPossibleValues(releaseMap.keySet());</span>
+<span class="nc" id="L214">        ((BoutiquesStringInput) releaseInput).setDefaultValue(defaultValue);</span>
+<span class="nc" id="L215">        extensions.addValueChoiceLabels(releaseInput.getId(), releaseMap);</span>
+<span class="nc" id="L216">    }</span>
+
+    @Override
+    protected void onLaunchFormCreated() {
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        if (this.inputs == null) {</span>
+            // on init, hide all inputs and launch buttons to put only the &quot;load mac buttons&quot;
+            // only if inputs is null, otherwise it is a relaunch
+<span class="nc" id="L223">            launchFormLayout.hideInputs();</span>
+<span class="nc" id="L224">            launchFormLayout.disableErrorsAndWarnings();</span>
+<span class="nc" id="L225">            launchFormLayout.setButtons(5, loadMacButton);</span>
+        }
+<span class="nc" id="L227">    }</span>
+
+    @Override
+    protected void onLaunchFormReady() {
+<span class="nc" id="L231">        super.onLaunchFormReady();</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        if (this.inputs != null) {</span>
+<span class="nc" id="L233">            customizeGateForm(this.inputs.get(PARALLELIZATION_TYPE_INPUT_ID));</span>
+        }
+<span class="nc" id="L235">    }</span>
+
+    //Bug #2368
+    private native void initComplete(GateLabLaunchTab uploadMac) /*-{
+     $wnd.uploadMacComplete = function (inputList) {
+     uploadMac.@fr.insalyon.creatis.vip.gatelab.client.view.launch.GateLabLaunchTab::uploadMacComplete(Ljava/lang/String;)(inputList);
+     };
+     $wnd.close = function () {
+     uploadMac.@fr.insalyon.creatis.vip.gatelab.client.view.launch.GateLabLaunchTab::close()();
+     };
+     }-*/;
+
+    //Bug #2368
+    public void uploadMacComplete(String inputList) {
+
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        if (loadMacWindow != null) {</span>
+<span class="nc" id="L251">            loadMacWindow.destroy();</span>
+<span class="nc" id="L252">            loadMacWindow = null;</span>
+
+<span class="nc" id="L254">            modal.hide();</span>
+            // we get something like &quot;GateInput = &quot; + fileName + &quot;, ParallelizationType = &quot; + type + &quot;, NumberOfParticles = &quot; + parts + &quot;, phaseSpace = &quot; + ps;
+<span class="nc" id="L256">            String[] inputs = inputList.split(&quot;, &quot;);</span>
+<span class="nc" id="L257">            Map&lt;String,String&gt; valuesMap = new HashMap&lt;&gt;();</span>
+
+            // first is a special case, we need to edit the path
+<span class="nc" id="L260">            String[] it = inputs[0].split(&quot; = &quot;);</span>
+<span class="nc" id="L261">            valuesMap.put(it[0], baseDir.concat(&quot;/&quot;).concat(it[1]));</span>
+
+<span class="nc bnc" id="L263" title="All 2 branches missed.">            for (int i=1 ; i&lt;4 ; i++) {</span>
+<span class="nc" id="L264">                String[] keyAndValue = inputs[i].split(&quot; = &quot;);</span>
+<span class="nc" id="L265">                valuesMap.put(keyAndValue[0], keyAndValue[1]);</span>
+            }
+<span class="nc" id="L267">            valuesMap.put(CPU_ESTIMATION_INPUT_ID,&quot;1&quot;);</span>
+
+<span class="nc" id="L269">            super.createButtons(); // override &quot;load mac button&quot; with &quot;launch button&quot;</span>
+<span class="nc" id="L270">            launchFormLayout.showInputs();</span>
+<span class="nc" id="L271">            launchFormLayout.enableErrorsAndWarnings();</span>
+<span class="nc" id="L272">            launchFormLayout.loadInputs(launchFormLayout.getSimulationName(), valuesMap, false);</span>
+
+<span class="nc" id="L274">            customizeGateForm(valuesMap.get(PARALLELIZATION_TYPE_INPUT_ID));</span>
+        }
+<span class="nc" id="L276">    }</span>
+
+    public void customizeGateForm(String parallelizationType) {
+        // hide and disable some inputs
+<span class="nc" id="L280">            launchFormLayout.hideInput(PHASE_SPACE_INPUT_ID);</span>
+<span class="nc" id="L281">            launchFormLayout.makeInputUnmodifiable(GATE_INPUT_INPUT_ID);</span>
+<span class="nc" id="L282">            launchFormLayout.makeInputUnmodifiable(NB_OF_PARTICLES_INPUT_ID);</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">            if (&quot;stat&quot;.equals(parallelizationType)) {</span>
+<span class="nc" id="L284">                launchFormLayout.makeInputUnmodifiable(PARALLELIZATION_TYPE_INPUT_ID);</span>
+            }
+<span class="nc" id="L286">    }</span>
+
+    // called from JS
+    public void close() {
+<span class="nc bnc" id="L290" title="All 2 branches missed.">        if (loadMacWindow != null) {</span>
+<span class="nc" id="L291">            loadMacWindow.destroy();</span>
+<span class="nc" id="L292">            loadMacWindow = null;</span>
+
+<span class="nc" id="L294">            modal.hide();</span>
+        }
+<span class="nc" id="L296">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

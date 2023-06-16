@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PublishVersionLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.system.application</a> &gt; <span class="el_source">PublishVersionLayout.java</span></div><h1>PublishVersionLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.system.application;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.widgets.*;
+import com.smartgwt.client.widgets.events.*;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+/**
+ *
+ * @author Axel Bonnet
+ */
+public class PublishVersionLayout extends AbstractFormLayout {
+
+    private String applicationName;
+    private String applicationVersion;
+
+    private Label statusLabel;
+    private Label doiLabel;
+    private IButton publishButton;
+
+    public PublishVersionLayout() {
+
+<span class="nc" id="L59">        super(480, 120);</span>
+<span class="nc" id="L60">        addTitle(&quot;Publish Version&quot;, ApplicationConstants.ICON_APPLICATION);</span>
+
+<span class="nc" id="L62">        configure();</span>
+<span class="nc" id="L63">    }</span>
+
+    private void configure() {
+
+<span class="nc" id="L67">        statusLabel = WidgetUtil.getLabel(&quot;&lt;b&gt;Status:&lt;/b&gt;&quot;, 15);</span>
+<span class="nc" id="L68">        doiLabel = WidgetUtil.getLabel(&quot;&quot;, 15);</span>
+<span class="nc" id="L69">        doiLabel.setVisible(false);</span>
+
+<span class="nc" id="L71">        publishButton = WidgetUtil.getIButton(&quot;Publish&quot;, CoreConstants.ICON_SAVE,</span>
+<span class="nc" id="L72">                new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L75">                publishVersion();</span>
+<span class="nc" id="L76">            }</span>
+        });
+<span class="nc" id="L78">        publishButton.setDisabled(true);</span>
+
+<span class="nc" id="L80">        this.addMember(statusLabel);</span>
+<span class="nc" id="L81">        this.addMember(doiLabel);</span>
+<span class="nc" id="L82">        addButtons(publishButton);</span>
+<span class="nc" id="L83">    }</span>
+
+    private void publishVersion() {
+<span class="nc" id="L86">        WidgetUtil.setLoadingIButton(publishButton, &quot;Publishing...&quot;);</span>
+
+<span class="nc" id="L88">        AsyncCallback&lt;String&gt; publishCallback = new AsyncCallback&lt;String&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L91">                WidgetUtil.resetIButton(publishButton, &quot;Publish&quot;, CoreConstants.ICON_SAVE);</span>
+<span class="nc" id="L92">                Layout.getInstance().setWarningMessage(&quot;Unable to publish this version.&lt;br /&gt;Please verify it has an author configured.&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L93">            }</span>
+
+            @Override
+            public void onSuccess(String doi) {
+<span class="nc" id="L97">                WidgetUtil.resetIButton(publishButton, &quot;Publish&quot;, CoreConstants.ICON_SAVE);</span>
+<span class="nc" id="L98">                Layout.getInstance().setNoticeMessage(&quot;Version published with success. DOI : &quot; + doi);</span>
+                // reload all version to avoid cache issues
+<span class="nc" id="L100">                setVersion(null,null, null);</span>
+<span class="nc" id="L101">                ManageApplicationsTab tab = (ManageApplicationsTab) Layout.getInstance().</span>
+<span class="nc" id="L102">                        getTab(ApplicationConstants.TAB_MANAGE_APPLICATION);</span>
+<span class="nc" id="L103">                tab.loadVersions(applicationName);</span>
+<span class="nc" id="L104">            }</span>
+        };
+
+<span class="nc" id="L107">        ApplicationService.Util.getInstance().publishVersion(applicationName, applicationVersion, publishCallback);</span>
+<span class="nc" id="L108">    }</span>
+
+    public void setApplication(String applicationName) {
+<span class="nc" id="L111">        setVersion(null,null, null);</span>
+<span class="nc" id="L112">        this.applicationName = applicationName;</span>
+<span class="nc" id="L113">    }</span>
+
+    public void setVersion(String applicationVersion, String jsonLfn, String doi) {
+<span class="nc" id="L116">        this.applicationVersion = applicationVersion;</span>
+
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        boolean isPublished = doi != null;</span>
+<span class="nc bnc" id="L119" title="All 4 branches missed.">        boolean canBePublished = !isPublished &amp;&amp; jsonLfn != null;</span>
+<span class="nc" id="L120">        doiLabel.setVisible(isPublished);</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (isPublished) {</span>
+<span class="nc" id="L122">            doiLabel.setContents(&quot;&lt;b&gt;DOI:&lt;/b&gt; &quot; + doi);</span>
+<span class="nc" id="L123">            statusLabel.setContents(&quot;&lt;b&gt;Status:&lt;/b&gt; Published&quot;);</span>
+        } else {
+<span class="nc" id="L125">            statusLabel.setContents(&quot;&lt;b&gt;Status:&lt;/b&gt; Not published&quot;);</span>
+        }
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        publishButton.setDisabled( ! canBePublished);</span>
+<span class="nc bnc" id="L128" title="All 4 branches missed.">        if (!isPublished &amp;&amp; !canBePublished) {</span>
+<span class="nc" id="L129">            publishButton.setTooltip(&quot;This version must have a json configured to be be published&quot;);</span>
+        } else {
+<span class="nc" id="L131">            publishButton.setTooltip(null);</span>
+        }
+<span class="nc" id="L133">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

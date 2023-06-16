@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StatsTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor</a> &gt; <span class="el_source">StatsTab.java</span></div><h1>StatsTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor;
+
+import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.Simulation;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.property.PropertyRecord;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.application.client.view.monitor.chart.WorkflowStatsChart;
+import fr.insalyon.creatis.vip.application.client.view.monitor.chart.JobStatsChart;
+import fr.insalyon.creatis.vip.application.client.view.monitor.chart.GeneralBarChart;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class StatsTab extends Tab {
+
+    private List&lt;Simulation&gt; simulationsList;
+    private VLayout leftVLayout;
+    private VLayout rightVLayout;
+    private SelectItem chartsItem;
+    private TextItem binItem;
+    private ListGrid grid;
+    private IButton generateButton;
+
+<span class="nc" id="L83">    public StatsTab() {</span>
+
+<span class="nc" id="L85">        this.setTitle(Canvas.imgHTML(ApplicationConstants.ICON_CHART) + &quot; Performance Statistics&quot;);</span>
+<span class="nc" id="L86">        this.setID(ApplicationConstants.TAB_STATS);</span>
+<span class="nc" id="L87">        this.setCanClose(true);</span>
+<span class="nc" id="L88">        this.setAttribute(&quot;paneMargin&quot;, 0);</span>
+
+<span class="nc" id="L90">        leftVLayout = new VLayout(15);</span>
+<span class="nc" id="L91">        leftVLayout.setWidth(280);</span>
+<span class="nc" id="L92">        leftVLayout.setHeight100();</span>
+<span class="nc" id="L93">        leftVLayout.setOverflow(Overflow.AUTO);</span>
+
+<span class="nc" id="L95">        rightVLayout = new VLayout(15);</span>
+<span class="nc" id="L96">        rightVLayout.setWidth100();</span>
+<span class="nc" id="L97">        rightVLayout.setHeight(600);</span>
+<span class="nc" id="L98">        rightVLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L99">        rightVLayout.setPadding(10);</span>
+
+<span class="nc" id="L101">        configureForm();</span>
+<span class="nc" id="L102">        configureGrid();</span>
+
+<span class="nc" id="L104">        HLayout hLayout = new HLayout(10);</span>
+<span class="nc" id="L105">        hLayout.setWidth100();</span>
+<span class="nc" id="L106">        hLayout.setHeight100();</span>
+<span class="nc" id="L107">        hLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L108">        hLayout.addMember(leftVLayout);</span>
+<span class="nc" id="L109">        hLayout.addMember(rightVLayout);</span>
+
+<span class="nc" id="L111">        this.setPane(hLayout);</span>
+<span class="nc" id="L112">    }</span>
+
+    private void configureForm() {
+
+<span class="nc" id="L116">        LinkedHashMap&lt;String, String&gt; chartsMap = new LinkedHashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L117">        chartsMap.put(&quot;1&quot;, &quot;Job Stats&quot;);</span>
+<span class="nc" id="L118">        chartsMap.put(&quot;2&quot;, &quot;Workflows per User&quot;);</span>
+<span class="nc" id="L119">        chartsMap.put(&quot;3&quot;, &quot;Workflows per Application&quot;);</span>
+<span class="nc" id="L120">        chartsMap.put(&quot;4&quot;, &quot;Application Classes&quot;);</span>
+<span class="nc" id="L121">        chartsItem = new SelectItem();</span>
+<span class="nc" id="L122">        chartsItem.setShowTitle(false);</span>
+<span class="nc" id="L123">        chartsItem.setWidth(250);</span>
+<span class="nc" id="L124">        chartsItem.setValueMap(chartsMap);</span>
+<span class="nc" id="L125">        chartsItem.setEmptyDisplayValue(&quot;Select a chart...&quot;);</span>
+<span class="nc" id="L126">        chartsItem.addChangedHandler(new ChangedHandler() {</span>
+
+            @Override
+            public void onChanged(ChangedEvent event) {
+<span class="nc" id="L130">                int value = new Integer(chartsItem.getValueAsString());</span>
+<span class="nc" id="L131">            }</span>
+        });
+
+<span class="nc" id="L134">        generateButton = WidgetUtil.getIButton(&quot;Get Stats&quot;, null, new ClickHandler() {</span>
+
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L138">                generateChart();</span>
+<span class="nc" id="L139">            }</span>
+        });
+
+<span class="nc" id="L142">        VLayout formLayout = WidgetUtil.getVIPLayout(280, 185, false);</span>
+<span class="nc" id="L143">        formLayout.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;Performance Statistics&lt;/b&gt;&quot;, ApplicationConstants.ICON_CHART, 30));</span>
+<span class="nc" id="L144">        WidgetUtil.addFieldToVIPLayout(formLayout, &quot;Chart&quot;, chartsItem);</span>
+        //WidgetUtil.addFieldToVIPLayout(formLayout, &quot;Bin Size&quot;, binItem);
+<span class="nc" id="L146">        formLayout.addMember(generateButton);</span>
+
+<span class="nc" id="L148">        leftVLayout.addMember(formLayout);</span>
+<span class="nc" id="L149">    }</span>
+
+    private void configureGrid() {
+
+<span class="nc" id="L153">        grid = new ListGrid();</span>
+<span class="nc" id="L154">        grid.setWidth(280);</span>
+<span class="nc" id="L155">        grid.setHeight(145);</span>
+<span class="nc" id="L156">        grid.setShowAllRecords(true);</span>
+<span class="nc" id="L157">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L158">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+
+<span class="nc" id="L160">        ListGridField propertyField = new ListGridField(&quot;property&quot;, &quot;Properties&quot;);</span>
+<span class="nc" id="L161">        ListGridField valueField = new ListGridField(&quot;value&quot;, &quot;Value&quot;);</span>
+<span class="nc" id="L162">        valueField.setAlign(Alignment.RIGHT);</span>
+<span class="nc" id="L163">        valueField.setCellFormatter(new CellFormatter() {</span>
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+
+<span class="nc bnc" id="L168" title="All 2 branches missed.">                if (value == null) {</span>
+<span class="nc" id="L169">                    return null;</span>
+                }
+                try {
+<span class="nc" id="L172">                    NumberFormat nf = NumberFormat.getDecimalFormat();</span>
+<span class="nc" id="L173">                    return nf.format(Double.parseDouble((String) value));</span>
+<span class="nc" id="L174">                } catch (Exception e) {</span>
+<span class="nc" id="L175">                    return value.toString();</span>
+                }
+            }
+        });
+
+<span class="nc" id="L180">        grid.setFields(propertyField, valueField);</span>
+<span class="nc" id="L181">        grid.setCanSelectCells(true);</span>
+<span class="nc" id="L182">        grid.setCanEdit(true);</span>
+        //grid.setAutoFetchData(true);
+        //grid.setCanDragSelect(true);
+<span class="nc" id="L185">        grid.setCanSelectText(true);</span>
+<span class="nc" id="L186">        grid.setCursor(Cursor.TEXT);</span>
+
+<span class="nc" id="L188">        leftVLayout.addMember(grid);</span>
+<span class="nc" id="L189">    }</span>
+
+    private void generateChart() {
+
+<span class="nc" id="L193">        int value = Integer.parseInt(chartsItem.getValueAsString());</span>
+<span class="nc bnc" id="L194" title="All 5 branches missed.">        switch (value) {</span>
+            case 1:
+<span class="nc" id="L196">                plotJobsStats();</span>
+<span class="nc" id="L197">                break;</span>
+            case 2:
+<span class="nc" id="L199">                plotWorkflowsPerUser();</span>
+<span class="nc" id="L200">                break;</span>
+            case 3:
+<span class="nc" id="L202">                plotApplications();</span>
+<span class="nc" id="L203">                break;</span>
+            case 4:
+<span class="nc" id="L205">                plotApplicationClasses();</span>
+
+        }
+<span class="nc" id="L208">    }</span>
+
+    private void plotWorkflowsPerUser() {
+
+<span class="nc" id="L212">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L213">        final AsyncCallback&lt;List&lt;String&gt;&gt; callback = new AsyncCallback&lt;List&lt;String&gt;&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+                //modal.hide();
+<span class="nc" id="L218">                Layout.getInstance().setWarningMessage(&quot;Unable to load chart data:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L219">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;String&gt; result) {
+<span class="nc bnc" id="L223" title="All 2 branches missed.">                if (result != null) {</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">                    if (result.isEmpty()) {</span>
+<span class="nc" id="L225">                        Layout.getInstance().setWarningMessage(&quot;Result set is empty!&lt;br /&gt;&quot;);</span>
+                    } else {
+<span class="nc" id="L227">                        new WorkflowStatsChart(result, rightVLayout, grid).build();</span>
+<span class="nc" id="L228">                        resetGenerateButton();</span>
+                        /*
+                        PropertyRecord[] p=new PropertyRecord[result.size()];
+                        for(int i=0; i&lt; result.size(); i++){
+                            if(result.get(i) != null){
+                                String[] v = result.get(i).split(&quot;##&quot;);
+                                p[i]=new PropertyRecord(v[0], v[1]);
+                            }
+                            
+                        }
+                        grid.setData(p);
+                        grid.refreshFields();
+                         * 
+                         */
+//                VisualizationUtils.loadVisualizationApi(getPieChartRunnable(data), PieChart.PACKAGE);
+                    }
+                }
+<span class="nc" id="L245">            }</span>
+        };
+        //modal.show(&quot;Loading Time Analysis for Completed Jobs...&quot;, true);
+
+<span class="nc" id="L249">        service.getPerformanceStats(simulationsList, 2, callback);</span>
+<span class="nc" id="L250">    }</span>
+
+    private void plotJobsStats() {
+
+<span class="nc" id="L254">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L255">        final AsyncCallback&lt;List&lt;String&gt;&gt; callback = new AsyncCallback&lt;List&lt;String&gt;&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+                //modal.hide();
+<span class="nc" id="L260">                Layout.getInstance().setWarningMessage(&quot;Unable to load chart data:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L261">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;String&gt; result) {
+
+<span class="nc bnc" id="L266" title="All 2 branches missed.">                if (result != null) {</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">                    if (result.isEmpty()) {</span>
+<span class="nc" id="L268">                        Layout.getInstance().setWarningMessage(&quot;Result set is empty!&lt;br /&gt;&quot;);</span>
+                    } else {
+<span class="nc" id="L270">                        new JobStatsChart(result, rightVLayout, grid).build();</span>
+<span class="nc" id="L271">                        resetGenerateButton();</span>
+//                VisualizationUtils.loadVisualizationApi(getPieChartRunnable(data), PieChart.PACKAGE);
+                    }
+                }
+<span class="nc" id="L275">            }</span>
+        };
+<span class="nc" id="L277">        service.getPerformanceStats(simulationsList, 1, callback);</span>
+<span class="nc" id="L278">    }</span>
+
+    private void plotApplications() {
+
+<span class="nc" id="L282">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L283">        final AsyncCallback&lt;List&lt;String&gt;&gt; callback = new AsyncCallback&lt;List&lt;String&gt;&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+                //modal.hide();
+<span class="nc" id="L288">                Layout.getInstance().setWarningMessage(&quot;Unable to load chart data:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L289">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;String&gt; result) {
+<span class="nc bnc" id="L293" title="All 2 branches missed.">                if (result != null) {</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">                    if (result.isEmpty()) {</span>
+<span class="nc" id="L295">                        Layout.getInstance().setWarningMessage(&quot;Result set is empty!&lt;br /&gt;&quot;);</span>
+                    } else {
+<span class="nc" id="L297">                        new WorkflowStatsChart(result, rightVLayout, grid).build();</span>
+<span class="nc" id="L298">                        resetGenerateButton();</span>
+                        /*
+                        PropertyRecord[] p=new PropertyRecord[result.size()];
+                        for(int i=0; i&lt; result.size(); i++){
+                            if(result.get(i) != null){
+                                String[] v = result.get(i).split(&quot;##&quot;);
+                                p[i]=new PropertyRecord(v[0], v[1]);
+                            }
+                            
+                        } 
+                        grid.setData(p);
+                        grid.setCursor(Cursor.TEXT); 
+                         * 
+                         */
+//                VisualizationUtils.loadVisualizationApi(getPieChartRunnable(data), PieChart.PACKAGE);
+                    }
+                }
+<span class="nc" id="L315">            }</span>
+        };
+
+<span class="nc" id="L318">        service.getPerformanceStats(simulationsList, 3, callback);</span>
+<span class="nc" id="L319">    }</span>
+
+    private void plotApplicationClasses() {
+
+<span class="nc" id="L323">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L324">        final AsyncCallback&lt;List&lt;String&gt;&gt; callback = new AsyncCallback&lt;List&lt;String&gt;&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+                //modal.hide();
+<span class="nc" id="L329">                Layout.getInstance().setWarningMessage(&quot;Unable to load chart data:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L330">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;String&gt; result) {
+<span class="nc bnc" id="L334" title="All 2 branches missed.">                if (result != null) {</span>
+<span class="nc bnc" id="L335" title="All 2 branches missed.">                    if (result.isEmpty()) {</span>
+<span class="nc" id="L336">                        Layout.getInstance().setWarningMessage(&quot;Result set is empty!&lt;br /&gt;&quot;);</span>
+                    } else {
+
+                        //modal.show(&quot;Loaded Stats&quot;, true);
+<span class="nc" id="L340">                        PropertyRecord[] p=new PropertyRecord[result.size()];</span>
+<span class="nc bnc" id="L341" title="All 2 branches missed.">                        for(int i=0; i&lt; result.size(); i++){</span>
+<span class="nc bnc" id="L342" title="All 2 branches missed.">                            if(result.get(i).compareToIgnoreCase(&quot;null&quot;)!=0){</span>
+<span class="nc" id="L343">                                p[i]=new PropertyRecord(&quot;Application Class&quot;, result.get(i) + &quot;&quot;);</span>
+                            }
+                            
+                        }
+<span class="nc" id="L347">                        grid.setData(p);</span>
+                        //grid.refreshFields();
+//                VisualizationUtils.loadVisualizationApi(getPieChartRunnable(data), PieChart.PACKAGE);
+                    }
+                }
+<span class="nc" id="L352">            }</span>
+        };
+        //Layout.getInstance().setWarningMessage(&quot;plotJobsSummary success:&lt;br /&gt;&quot;);
+        //modal.show(&quot;Loading Job Statuses...&quot;, true);
+<span class="nc" id="L356">        service.getPerformanceStats(simulationsList, 4, callback);</span>
+<span class="nc" id="L357">    }</span>
+
+    private Runnable getPieChartRunnable(final Object[][] data) {
+
+<span class="nc" id="L361">        return new Runnable() {</span>
+
+            @Override
+            public void run() {
+//                PieOptions options = PieOptions.create();
+//                options.setWidth(chartWidth);
+//                options.setHeight(chartHeight);
+//                options.set3D(true);
+//                options.setColors(&quot;#008000&quot;, &quot;#cc0033&quot;, &quot;#FEA101&quot;, &quot;#669999&quot;);
+//
+//                DataTable dataTable = DataTable.create();
+//                dataTable.addColumn(ColumnType.STRING, &quot;Property&quot;);
+//                dataTable.addColumn(ColumnType.NUMBER, &quot;Value&quot;);
+//                dataTable.addRows(3);
+//
+//                dataTable.setValue(0, 0, (String) data[1][0]);
+//                dataTable.setValue(0, 1, (Integer) data[1][1]);
+//                dataTable.setValue(1, 0, (String) data[2][0]);
+//                dataTable.setValue(1, 1, (Integer) data[2][1]);
+//                dataTable.setValue(2, 0, (String) data[3][0]);
+//                dataTable.setValue(2, 1, (Integer) data[3][1]);
+//
+//                PieChart pie = new PieChart(dataTable, options);
+//
+//                chartLayout.removeMember(innerChartLayout);
+//                innerChartLayout = new VLayout();
+//                innerChartLayout.setWidth100();
+//                innerChartLayout.setHeight100();
+//                innerChartLayout.addMember(pie);
+//                chartLayout.addMember(innerChartLayout);
+<span class="nc" id="L391">            }</span>
+        };
+    }
+
+    public void setSimulationsList(List&lt;Simulation&gt; simulationsList) {
+<span class="nc" id="L396">        this.simulationsList = simulationsList;</span>
+<span class="nc" id="L397">    }</span>
+    
+        private void resetGenerateButton() {
+<span class="nc" id="L400">        WidgetUtil.resetIButton(generateButton, &quot;Get Stats&quot;, null);</span>
+<span class="nc" id="L401">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

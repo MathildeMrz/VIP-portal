@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ValueSet.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.launch</a> &gt; <span class="el_source">ValueSet.java</span></div><h1>ValueSet.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.launch;
+
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Helper class to handle sets of values entered by user for one input
+ *
+ * @author Guillaume Vanel
+ * @version %I%, %G%
+ */
+<span class="nc" id="L14">public abstract class ValueSet {</span>
+<span class="nc" id="L15">    protected final List&lt;Object&gt; values = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L16">    protected final List&lt;String&gt; valuesAsStrings = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * 
+     * @param value Object value to convert to String
+     * @return      String representation of value. null is represented by ApplicationConstants.INPUT_WITHOUT_VALUE
+     * @see ApplicationConstants#INPUT_WITHOUT_VALUE
+     */
+    protected String valueAsString(Object value){
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        return (value == null) ? ApplicationConstants.INPUT_WITHOUT_VALUE : value.toString();</span>
+    }
+
+    /**
+     * @return String representation of this
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L33">        return &quot;ValueSet{&quot; + this.valuesAsStrings + '}';</span>
+    }
+
+    /**
+     * @param index int
+     * @return      Object representing value at provided index
+     * @throws IndexOutOfBoundsException if index is not strictly positive or not less than the number of values in this
+     * @see #getNValues()
+     */
+    public Object getValueNo(int index) throws IndexOutOfBoundsException{
+<span class="nc" id="L43">        return this.values.get(index);</span>
+    }
+
+    /**
+     * @param index int
+     * @return      String representing value at provided index
+     * @throws IndexOutOfBoundsException if index is not strictly positive or not less than the number of values in this
+     * @see #getValueNo(int) 
+     * @see #valueAsString(Object) 
+     */
+    public String getStringValueNo(int index) throws IndexOutOfBoundsException{
+<span class="nc" id="L54">        return this.valuesAsStrings.get(index);</span>
+    }
+
+    /**
+     * @return int number of values in this
+     * @see #getValueNo(int) 
+     */
+    public int getNValues(){
+<span class="nc" id="L62">        return this.values.size();</span>
+    }
+
+    /**
+     * @return List of String representation of values contained in this.
+     */
+    public List&lt;String&gt; getValuesAsStrings() {
+<span class="nc" id="L69">        return this.valuesAsStrings;</span>
+    }
+
+    /**
+     * @param comparedValueSet ValueSet to compare this to
+     * @return                 boolean: true if comparedValueSet represents the same input values as this. Comparison
+     *                         is based on String representation of values. Return value is always false if
+     *                         comparedValueSet is null
+     * @see #valuesAsStrings
+     */
+    public abstract boolean isEqualTo(ValueSet comparedValueSet);
+
+    /**
+     * @param stringValues String to convert to a ValueSet
+     * @return             ValueSet representing the same values
+     */
+    public static ValueSet valueSetFactory(String stringValues){
+<span class="nc bnc" id="L86" title="All 4 branches missed.">        if ((stringValues != null) &amp;&amp; stringValues.contains(&quot;Start: &quot;)) { // Range</span>
+<span class="nc" id="L87">            String[] v = stringValues.split(&quot;(: | - )&quot;);</span>
+<span class="nc" id="L88">            return new ValueRange(v[1].trim(), v[3].trim(), v[5].trim());</span>
+        } else { // List
+<span class="nc" id="L90">            return new ValueList(stringValues, &quot;; &quot;);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

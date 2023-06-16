@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AccountTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.user</a> &gt; <span class="el_source">AccountTab.java</span></div><h1>AccountTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.user;
+
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.user.account.*;
+
+/**
+ *
+ * @author Rafael Silva
+ */
+public class AccountTab extends Tab {
+
+    private TermsOfUseLayout layouttermsOfUse;
+
+<span class="nc" id="L51">    public AccountTab() {</span>
+
+<span class="nc" id="L53">        this.setTitle(Canvas.imgHTML(CoreConstants.ICON_ACCOUNT) + &quot; &quot;</span>
+                + CoreConstants.APP_ACCOUNT);
+<span class="nc" id="L55">        this.setID(CoreConstants.TAB_ACCOUNT);</span>
+<span class="nc" id="L56">        this.setCanClose(true);</span>
+
+<span class="nc" id="L58">        HLayout hLayout = new HLayout(5);</span>
+<span class="nc" id="L59">        hLayout.setWidth100();</span>
+<span class="nc" id="L60">        hLayout.setHeight100();</span>
+<span class="nc" id="L61">        hLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L62">        hLayout.setPadding(10);</span>
+
+        // Left column
+<span class="nc" id="L65">        VLayout leftLayout = new VLayout(15);</span>
+<span class="nc" id="L66">        leftLayout.setWidth(350);</span>
+<span class="nc" id="L67">        leftLayout.setHeight100();</span>
+
+<span class="nc" id="L69">        leftLayout.addMember(new PersonalLayout());</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (CoreModule.user.getNextEmail() != null) {</span>
+<span class="nc" id="L71">            leftLayout.addMember(new ConfirmNewEmailLayout());</span>
+        } else {
+<span class="nc" id="L73">            leftLayout.addMember(new RequestNewEmailLayout());</span>
+        }
+<span class="nc" id="L75">        leftLayout.addMember(new PasswordLayout());</span>
+<span class="nc" id="L76">        leftLayout.addMember(new ApikeyLayout());</span>
+
+        // Right column
+<span class="nc" id="L79">        VLayout rightLayout = new VLayout(15);</span>
+<span class="nc" id="L80">        rightLayout.setWidth(&quot;*&quot;);</span>
+<span class="nc" id="L81">        rightLayout.setHeight100();</span>
+
+<span class="nc" id="L83">        rightLayout.addMember(new GroupLayout());</span>
+
+<span class="nc" id="L85">        layouttermsOfUse = new TermsOfUseLayout();</span>
+<span class="nc" id="L86">        rightLayout.addMember(new RemoveAccountLayout());</span>
+<span class="nc" id="L87">        rightLayout.addMember(layouttermsOfUse);</span>
+<span class="nc" id="L88">        hLayout.addMember(leftLayout);</span>
+<span class="nc" id="L89">        hLayout.addMember(rightLayout);</span>
+
+<span class="nc" id="L91">        this.setPane(hLayout);</span>
+<span class="nc" id="L92">    }</span>
+
+    public TermsOfUseLayout getLayouttermsOfUse() {
+<span class="nc" id="L95">        return layouttermsOfUse;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

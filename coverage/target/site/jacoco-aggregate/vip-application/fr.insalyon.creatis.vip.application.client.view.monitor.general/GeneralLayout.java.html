@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GeneralLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.general</a> &gt; <span class="el_source">GeneralLayout.java</span></div><h1>GeneralLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.general;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.widgets.Label;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.Simulation;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowServiceAsync;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+import fr.insalyon.creatis.vip.application.client.view.monitor.progress.ProgressLayout;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class GeneralLayout extends AbstractFormLayout {
+
+    private String simulationID;
+    private Label generalLabel;
+    private ProgressLayout progressLayout;
+
+    public GeneralLayout(String simulationID, SimulationStatus status) {
+
+<span class="nc" id="L58">        super(&quot;100%&quot;, &quot;140px&quot;);</span>
+<span class="nc" id="L59">        this.simulationID = simulationID;</span>
+
+<span class="nc" id="L61">        generalLabel = new Label();</span>
+<span class="nc" id="L62">        generalLabel.setHeight(25);</span>
+<span class="nc" id="L63">        generalLabel.setIcon(ApplicationConstants.ICON_GENERAL);</span>
+<span class="nc" id="L64">        generalLabel.setCanSelectText(true);</span>
+<span class="nc" id="L65">        this.addMember(generalLabel);</span>
+
+<span class="nc" id="L67">        addTitle(&quot;&lt;font color=\&quot;#333333\&quot;&gt;Execution Progress&lt;/font&gt;&quot;, null);</span>
+<span class="nc" id="L68">        progressLayout = new ProgressLayout(simulationID, status);</span>
+<span class="nc" id="L69">        this.addMember(progressLayout);</span>
+        
+<span class="nc" id="L71">        loadData();</span>
+<span class="nc" id="L72">    }</span>
+
+    private void loadData() {
+
+<span class="nc" id="L76">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L77">        final AsyncCallback&lt;Simulation&gt; callback = new AsyncCallback&lt;Simulation&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L80">                Layout.getInstance().setWarningMessage(&quot;Unable to load general information:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L81">            }</span>
+
+            @Override
+            public void onSuccess(Simulation result) {
+                
+<span class="nc" id="L86">                StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L87">                sb.append(&quot;&lt;font color=\&quot;#333333\&quot;&gt;&lt;b&gt;&quot;);</span>
+<span class="nc" id="L88">                sb.append(result.getApplicationName());</span>
+<span class="nc" id="L89">                sb.append(&quot; &quot;);</span>
+<span class="nc" id="L90">                sb.append(result.getApplicationVersion());</span>
+<span class="nc" id="L91">                sb.append(&quot;&lt;/b&gt; launched on &lt;b&gt;&quot;);</span>
+<span class="nc" id="L92">                sb.append(result.getDate().toString());</span>
+<span class="nc" id="L93">                sb.append(&quot;&lt;/b&gt;&quot;);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                if (CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L95">                    sb.append(&quot; by &lt;b&gt;&quot;);</span>
+<span class="nc" id="L96">                    sb.append(result.getUserName());</span>
+<span class="nc" id="L97">                    sb.append(&quot;&lt;/b&gt; (&quot;);</span>
+<span class="nc" id="L98">                    sb.append(result.getID());</span>
+<span class="nc" id="L99">                    sb.append(&quot;)&lt;/font&gt;&quot;);</span>
+                }              
+<span class="nc" id="L101">                generalLabel.setContents(sb.toString());</span>
+<span class="nc" id="L102">            }</span>
+        };
+<span class="nc" id="L104">        service.getSimulation(simulationID, callback);</span>
+<span class="nc" id="L105">    }</span>
+
+    public void update() {
+<span class="nc" id="L108">        progressLayout.update();</span>
+<span class="nc" id="L109">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DescriptorParser.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.launch</a> &gt; <span class="el_source">DescriptorParser.java</span></div><h1>DescriptorParser.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.launch;
+
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.Descriptor;
+import fr.insalyon.creatis.vip.application.client.bean.Source;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesFlagInput;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesInput;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesStringInput;
+
+/**
+ * Class to parse Descriptor objects (used to represent gwendia descriptors) into BoutiquesApplication objects.
+ */
+<span class="nc" id="L14">public class DescriptorParser {</span>
+    /**
+     * @param descriptor            Descriptor of the application
+     * @param applicationName       String name of the application
+     * @param applicationVersion    String version of the application
+     * @return BoutiquesApplication representing the same application as provided Descriptor
+     */
+    public BoutiquesApplication descriptorToBoutiquesApplication(Descriptor descriptor, String applicationName,
+                                                                 String applicationVersion){
+<span class="nc" id="L23">        BoutiquesApplication application = new BoutiquesApplication(applicationName, descriptor.getDescription(),</span>
+                applicationVersion);
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        for(Source input : descriptor.getSources()){</span>
+<span class="nc" id="L26">            BoutiquesInput boutiquesInput = null;</span>
+            // it is a flag when type is NOT &quot;URI&quot;, and 'vip-type-restriction' is &quot;flag&quot;
+<span class="nc bnc" id="L28" title="All 2 branches missed.">            if ( ( ! &quot;URI&quot;.equals(input.getType())) &amp;&amp;</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">                    input.getVipTypeRestriction() != null &amp;&amp;</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">                    &quot;flag&quot;.equals(input.getVipTypeRestriction())) {</span>
+<span class="nc" id="L31">                boutiquesInput = handleFlags(input);</span>
+            } else {
+<span class="nc" id="L33">                boutiquesInput = handleStringsAndFiles(input);</span>
+            }
+<span class="nc" id="L35">            application.addInput(boutiquesInput);</span>
+<span class="nc" id="L36">        }</span>
+<span class="nc" id="L37">        return application;</span>
+    }
+
+    private BoutiquesInput handleFlags(Source input) {
+<span class="nc" id="L41">        BoutiquesInput res = new BoutiquesFlagInput(input.getName(), input.getName(), input.getDescription(),</span>
+<span class="nc" id="L42">                input.isOptional(), null, null, false);</span>
+<span class="nc" id="L43">        res.setCommandLineFlag(input.getDefaultValue());</span>
+<span class="nc" id="L44">        return res;</span>
+    }
+
+    private BoutiquesInput handleStringsAndFiles(Source input) {
+        BoutiquesInput.InputType type =
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                (input.getType().equals(&quot;URI&quot;)) ? BoutiquesInput.InputType.FILE : BoutiquesInput.InputType.STRING;</span>
+<span class="nc" id="L50">        String defaultValue = input.getDefaultValue();</span>
+<span class="nc bnc" id="L51" title="All 4 branches missed.">        if (input.isOptional() &amp;&amp; ApplicationConstants.INPUT_WITHOUT_VALUE.equals(input.getDefaultValue())) {</span>
+<span class="nc" id="L52">            defaultValue = null;</span>
+        }
+<span class="nc" id="L54">        return new BoutiquesStringInput(input.getName(), input.getName(), input.getDescription(),</span>
+<span class="nc" id="L55">                type, input.isOptional(), null, null, null,</span>
+                null, null, defaultValue);
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

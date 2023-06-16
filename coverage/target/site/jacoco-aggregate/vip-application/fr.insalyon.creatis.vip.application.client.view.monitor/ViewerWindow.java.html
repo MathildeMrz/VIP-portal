@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ViewerWindow.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor</a> &gt; <span class="el_source">ViewerWindow.java</span></div><h1>ViewerWindow.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.HTMLPane;
+import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import fr.insalyon.creatis.vip.application.client.rpc.JobService;
+import fr.insalyon.creatis.vip.application.client.rpc.JobServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+
+/**
+ *
+ * @author Rafael Silva
+ */
+public class ViewerWindow extends Window {
+
+    private ModalWindow modal;
+    private ToolStrip toolStrip;
+    private HTMLPane pane;
+    private String simulationID;
+    private String folder;
+    private String fileName;
+    private String extension;
+<span class="nc" id="L64">    private String content = null;</span>
+    private boolean file;
+
+    private void init(String title, String simulationID) {
+<span class="nc" id="L68">        this.simulationID = simulationID;</span>
+<span class="nc" id="L69">        this.setTitle(title);</span>
+<span class="nc" id="L70">        this.setCanDragReposition(true);</span>
+<span class="nc" id="L71">        this.setCanDragResize(true);</span>
+<span class="nc" id="L72">        this.setShowMaximizeButton(true);</span>
+<span class="nc" id="L73">        this.setWidth(700);</span>
+<span class="nc" id="L74">        this.setHeight(450);</span>
+<span class="nc" id="L75">        this.centerInPage();</span>
+
+<span class="nc" id="L77">        pane = new HTMLPane();</span>
+<span class="nc" id="L78">        pane.setPadding(10);</span>
+<span class="nc" id="L79">        pane.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L80">        pane.setStyleName(&quot;defaultBorder&quot;);</span>
+
+<span class="nc" id="L82">        modal = new ModalWindow(pane);</span>
+
+<span class="nc" id="L84">        configureToolStrip();</span>
+
+<span class="nc" id="L86">        this.addItem(toolStrip);</span>
+<span class="nc" id="L87">        this.addItem(pane);</span>
+
+<span class="nc" id="L89">        load();</span>
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * Views string content
+     * @param title
+     * @param simulationID
+     * @param content
+     */
+<span class="nc" id="L98">    public ViewerWindow(String title, String simulationID, String content) {</span>
+<span class="nc" id="L99">        this.file = false;</span>
+<span class="nc" id="L100">        this.content = content;</span>
+<span class="nc" id="L101">        init(title, simulationID);</span>
+
+<span class="nc" id="L103">    }</span>
+
+    /**
+     * Views file content
+     * @param title
+     * @param simulationID
+     * @param folder
+     * @param fileName
+     * @param extension
+     */
+    public ViewerWindow(String title, String simulationID, String folder,
+<span class="nc" id="L114">            String fileName, String extension) {</span>
+<span class="nc" id="L115">        this.file = true;</span>
+<span class="nc" id="L116">        this.folder = folder;</span>
+<span class="nc" id="L117">        this.fileName = fileName;</span>
+<span class="nc" id="L118">        this.extension = extension;</span>
+<span class="nc" id="L119">        init(title, simulationID);</span>
+
+<span class="nc" id="L121">    }</span>
+
+    private void load() {
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (file) {</span>
+<span class="nc" id="L125">            loadFile();</span>
+        } else {
+<span class="nc" id="L127">            loadString();</span>
+        }
+<span class="nc" id="L129">    }</span>
+
+    private void loadFile() {
+
+<span class="nc" id="L133">        JobServiceAsync service = JobService.Util.getInstance();</span>
+<span class="nc" id="L134">        final AsyncCallback&lt;String&gt; callback = new AsyncCallback&lt;String&gt;() {</span>
+
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L137">                modal.hide();</span>
+<span class="nc" id="L138">                SC.warn(&quot;Unable to get file:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L139">            }</span>
+
+            public void onSuccess(String result) {
+<span class="nc" id="L142">                modal.hide();</span>
+<span class="nc" id="L143">                pane.setContents(result.replaceAll(&quot;&lt;&quot;, &quot;&amp;lt;&quot;).replaceAll(&quot;&gt;&quot;, &quot;&amp;gt;&quot;).replaceAll(&quot;\n&quot;, &quot;&lt;br /&gt;&quot;));</span>
+<span class="nc" id="L144">            }</span>
+        };
+<span class="nc" id="L146">        modal.show(&quot;Loading file '&quot; + fileName + extension + &quot;'...&quot;, true);</span>
+<span class="nc" id="L147">        service.readFile(simulationID, folder, fileName, extension, callback);</span>
+
+<span class="nc" id="L149">    }</span>
+
+    private void configureToolStrip() {
+
+<span class="nc" id="L153">        toolStrip = new ToolStrip();</span>
+<span class="nc" id="L154">        toolStrip.setWidth100();</span>
+
+<span class="nc" id="L156">        ToolStripButton refreshButton = new ToolStripButton();</span>
+<span class="nc" id="L157">        refreshButton.setIcon(CoreConstants.ICON_REFRESH);</span>
+<span class="nc" id="L158">        refreshButton.setTitle(&quot;Refresh&quot;);</span>
+<span class="nc" id="L159">        refreshButton.addClickHandler(new ClickHandler() {</span>
+
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L162">                load();</span>
+<span class="nc" id="L163">            }</span>
+        });
+<span class="nc" id="L165">        toolStrip.addButton(refreshButton);</span>
+
+<span class="nc" id="L167">        ToolStripButton downloadButton = new ToolStripButton();</span>
+<span class="nc" id="L168">        downloadButton.setIcon(DataManagerConstants.ICON_DOWNLOAD);</span>
+<span class="nc" id="L169">        downloadButton.setTitle(&quot;Download&quot;);</span>
+<span class="nc" id="L170">        downloadButton.addClickHandler(new ClickHandler() {</span>
+
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L173">                com.google.gwt.user.client.Window.open(</span>
+<span class="nc" id="L174">                        GWT.getModuleBaseURL()</span>
+                        + &quot;/getfileservice?filepath=&quot; + &quot;/&quot; + simulationID
+                        + &quot;/&quot; + folder + &quot;/&quot; + fileName + extension
+                        + &quot;&amp;&quot; + CoreConstants.COOKIES_SESSION
+<span class="nc" id="L178">                        + &quot;=&quot; + Cookies.getCookie(CoreConstants.COOKIES_SESSION),</span>
+                        &quot;&quot;, &quot;&quot;);
+<span class="nc" id="L180">            }</span>
+        });
+<span class="nc" id="L182">        toolStrip.addButton(downloadButton);</span>
+<span class="nc" id="L183">    }</span>
+
+    private void loadString() {
+<span class="nc" id="L186">        pane.setContents(content.replaceAll(&quot;&lt;&quot;, &quot;&amp;lt;&quot;).replaceAll(&quot;&gt;&quot;, &quot;&amp;gt;&quot;).replaceAll(&quot;\n&quot;, &quot;&lt;br /&gt;&quot;));</span>
+<span class="nc" id="L187">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

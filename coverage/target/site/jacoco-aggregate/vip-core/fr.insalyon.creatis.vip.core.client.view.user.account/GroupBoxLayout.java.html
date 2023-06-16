@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GroupBoxLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.user.account</a> &gt; <span class="el_source">GroupBoxLayout.java</span></div><h1>GroupBoxLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.user.account;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants.GROUP_ROLE;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class GroupBoxLayout extends HLayout {
+
+    private String name;
+    private boolean isPublic;
+    private GROUP_ROLE role;
+    private boolean isMember;
+    private Label memberLabel;
+    private Label actionLabel;
+
+<span class="nc" id="L63">    public GroupBoxLayout(String name, boolean isPublic, GROUP_ROLE role) {</span>
+
+<span class="nc" id="L65">        this.name = name;</span>
+<span class="nc" id="L66">        this.isPublic = isPublic;</span>
+<span class="nc" id="L67">        this.role = role;</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        this.isMember = role == GROUP_ROLE.None ? false : true;</span>
+
+<span class="nc" id="L70">        this.setWidth100();</span>
+<span class="nc" id="L71">        this.setHeight(50);</span>
+<span class="nc" id="L72">        this.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+<span class="nc" id="L73">        this.setBorder(&quot;1px solid #C0C0C0&quot;);</span>
+
+<span class="nc" id="L75">        configureInfo();</span>
+<span class="nc" id="L76">        configureActions();</span>
+<span class="nc" id="L77">    }</span>
+
+    private void configureInfo() {
+
+<span class="nc" id="L81">        VLayout vLayout = new VLayout();</span>
+<span class="nc" id="L82">        vLayout.setPadding(5);</span>
+<span class="nc" id="L83">        vLayout.setWidth100();</span>
+<span class="nc" id="L84">        vLayout.setHeight100();</span>
+
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (isPublic) {</span>
+<span class="nc" id="L87">            vLayout.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;&quot; + name + &quot;&lt;/b&gt;&quot;, 15));</span>
+        } else {
+<span class="nc" id="L89">            vLayout.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;&quot; + name + &quot;&lt;/b&gt;&quot;, CoreConstants.ICON_LOCK, 15));</span>
+        }
+
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        memberLabel = isMember</span>
+<span class="nc" id="L93">                ? WidgetUtil.getLabel(&quot;&lt;font color=\&quot;#666666\&quot;&gt;Already a member (&quot; + role.name() + &quot;)&lt;/font&gt;&quot;, 15)</span>
+<span class="nc" id="L94">                : WidgetUtil.getLabel(&quot;&lt;font color=\&quot;#666666\&quot;&gt;Not a member&lt;/font&gt;&quot;, 15);</span>
+<span class="nc" id="L95">        vLayout.addMember(memberLabel);</span>
+
+<span class="nc" id="L97">        this.addMember(vLayout);</span>
+<span class="nc" id="L98">    }</span>
+
+    private void configureActions() {
+
+<span class="nc" id="L102">        VLayout vLayout = new VLayout();</span>
+<span class="nc" id="L103">        vLayout.setPadding(5);</span>
+<span class="nc" id="L104">        vLayout.setWidth(50);</span>
+<span class="nc" id="L105">        vLayout.setHeight100();</span>
+
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (isPublic) {</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">            String contents = isMember ? &quot;&lt;font color=\&quot;#C0C0C0\&quot;&gt;Leave Group&lt;/font&gt;&quot; : &quot;Join Group&quot;;</span>
+<span class="nc" id="L109">            actionLabel = WidgetUtil.getLabel(contents, 15, Cursor.HAND);</span>
+<span class="nc" id="L110">            actionLabel.addClickHandler(new ClickHandler() {</span>
+
+                @Override
+                public void onClick(ClickEvent event) {
+
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                    if (isMember) {</span>
+<span class="nc" id="L116">                        SC.ask(&quot;Do you really want to leave the group '&quot; + name + &quot;'?&quot;, new BooleanCallback() {</span>
+
+                            @Override
+                            public void execute(Boolean value) {
+<span class="nc bnc" id="L120" title="All 2 branches missed.">                                if (value) {</span>
+<span class="nc" id="L121">                                    leave();</span>
+                                }
+<span class="nc" id="L123">                            }</span>
+                        });
+                    } else {
+<span class="nc" id="L126">                        join();</span>
+                    }
+<span class="nc" id="L128">                }</span>
+            });
+
+<span class="nc" id="L131">            vLayout.addMember(actionLabel);</span>
+        }
+
+<span class="nc" id="L134">        this.addMember(vLayout);</span>
+<span class="nc" id="L135">    }</span>
+
+    private void leave() {
+
+<span class="nc" id="L139">        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L140">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L144">                Layout.getInstance().setWarningMessage(&quot;Unable to leave '&quot; + name + &quot;':&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L145">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L149">                isMember = false;</span>
+<span class="nc" id="L150">                role = GROUP_ROLE.None;</span>
+<span class="nc" id="L151">                memberLabel.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;Not a member&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L152">                actionLabel.setContents(&quot;Join Group&quot;);</span>
+<span class="nc" id="L153">            }</span>
+        };
+<span class="nc" id="L155">        service.removeUserFromGroup(null, name, callback);</span>
+<span class="nc" id="L156">    }</span>
+
+    private void join() {
+
+<span class="nc" id="L160">        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L161">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L165">                Layout.getInstance().setWarningMessage(&quot;Unable to join '&quot; + name + &quot;':&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L166">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L170">                isMember = true;</span>
+<span class="nc" id="L171">                role = GROUP_ROLE.User;</span>
+<span class="nc" id="L172">                memberLabel.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;Already a member (&quot; + role.name() + &quot;)&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L173">                actionLabel.setContents(&quot;&lt;font color=\&quot;#C0C0C0\&quot;&gt;Leave Group&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L174">            }</span>
+        };
+<span class="nc" id="L176">        service.addUserToGroup(name, callback);</span>
+<span class="nc" id="L177">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

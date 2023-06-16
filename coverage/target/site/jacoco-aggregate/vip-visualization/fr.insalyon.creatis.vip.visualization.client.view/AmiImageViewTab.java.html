@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AmiImageViewTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-visualization</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.visualization.client.view</a> &gt; <span class="el_source">AmiImageViewTab.java</span></div><h1>AmiImageViewTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.visualization.client.view;
+
+import com.google.gwt.core.client.JavaScriptObject;
+import com.smartgwt.client.widgets.HTMLPane;
+import fr.insalyon.creatis.vip.visualization.client.bean.VisualizationItem;
+
+import java.util.logging.Logger;
+
+public class AmiImageViewTab extends AbstractViewTab {
+
+<span class="nc" id="L42">    private static Logger logger =</span>
+<span class="nc" id="L43">        Logger.getLogger(AmiImageViewTab.class.getName());</span>
+
+    private final HTMLPane htmlPane;
+    private final String divId;
+    private JavaScriptObject amiJsViewer;
+
+    public AmiImageViewTab(String lfn) {
+<span class="nc" id="L50">        super(lfn);</span>
+<span class="nc" id="L51">        htmlPane = new HTMLPane();</span>
+<span class="nc" id="L52">        htmlPane.setShowEdges(false);</span>
+<span class="nc" id="L53">        this.divId = &quot;id_&quot; + sanitize(filename);</span>
+<span class="nc" id="L54">        htmlPane.setContents(</span>
+            &quot;&lt;div id=\&quot;&quot; + divId + &quot;\&quot; class=\&quot;ami-container\&quot;&gt;&lt;/div&gt;&quot; +
+            &quot;&lt;div id=\&quot;gui_&quot; + divId + &quot;\&quot; class=\&quot;ami-gui-container\&quot;&gt;&lt;/div&gt;&quot;);
+<span class="nc" id="L57">        htmlPane.setWidth100();</span>
+<span class="nc" id="L58">        htmlPane.setHeight100();</span>
+<span class="nc" id="L59">        htmlPane.addResizedHandler((event) -&gt; {</span>
+                // The check for null is needed because some resize events are
+                // received before the image has been loaded.
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                if (amiJsViewer != null) {</span>
+<span class="nc" id="L63">                    resizeCanvas(amiJsViewer);</span>
+                }
+<span class="nc" id="L65">            });</span>
+<span class="nc" id="L66">        this.setID(tabIdFrom(filename));</span>
+<span class="nc" id="L67">        this.getPane().addChild(htmlPane);</span>
+<span class="nc" id="L68">    }</span>
+
+    public static boolean isFileSupported(String filename) {
+<span class="nc" id="L71">        String[] allowedExtensions =</span>
+            {&quot;nii&quot;, &quot;nii_&quot;, &quot;dcm&quot;, &quot;dic&quot;, &quot;dicom&quot;, &quot;ima&quot;, &quot;mhd&quot;, &quot;nrrd&quot;, &quot;mgh&quot;};
+<span class="nc" id="L73">        String n = filename.toLowerCase();</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        return n.endsWith(&quot;.mgz&quot;)</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">            || java.util.Arrays.stream(allowedExtensions).anyMatch(</span>
+<span class="nc bnc" id="L76" title="All 4 branches missed.">                s -&gt; n.endsWith(&quot;.&quot; + s) || n.endsWith(&quot;.&quot; + s + &quot;.gz&quot;));</span>
+    }
+
+    public static String fileTypeName(){
+<span class="nc" id="L80">        return &quot;image&quot;;</span>
+    }
+
+    public static String tabIdFrom(String filename) {
+<span class="nc" id="L84">        int i = filename.lastIndexOf('/');</span>
+<span class="nc" id="L85">        String name = filename.substring(i + 1);</span>
+<span class="nc" id="L86">        return &quot;ami_view_&quot; + sanitize(name) + &quot;_tab&quot;;</span>
+    }
+
+    @Override
+    public void displayFile(VisualizationItem item) {
+<span class="nc" id="L91">        String url = getFileUrl(item.getLfn());</span>
+<span class="nc" id="L92">        amiJsViewer = showAmiImage(url, item.getExtension(), divId);</span>
+<span class="nc" id="L93">    }</span>
+
+    public native JavaScriptObject
+        showAmiImage(String url, String extension, String divId) /*-{
+        return $wnd.amiViewer(url, extension, divId);
+    }-*/;
+
+    public native void resizeCanvas(JavaScriptObject amiViewer) /*-{
+        $wnd.amiViewerResizeCanvas(amiViewer);
+    }-*/;
+
+    private static String sanitize(String filename) {
+<span class="nc" id="L105">        return filename.replaceAll(&quot;[ -./]&quot;, &quot;_&quot;).toLowerCase();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OperationBoxLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client.view.operation</a> &gt; <span class="el_source">OperationBoxLayout.java</span></div><h1>OperationBoxLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client.view.operation;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation;
+import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation.Status;
+import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation.Type;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class OperationBoxLayout extends HLayout {
+
+    private PoolOperation operation;
+    private Timer timer;
+    private VLayout imgLayout;
+    private VLayout mainLayout;
+    private VLayout actionLayout;
+
+<span class="nc" id="L69">    public OperationBoxLayout(PoolOperation operation) {</span>
+
+<span class="nc" id="L71">        this.operation = operation;</span>
+
+<span class="nc" id="L73">        this.setMembersMargin(2);</span>
+<span class="nc" id="L74">        this.setWidth100();</span>
+<span class="nc" id="L75">        this.setHeight(40);</span>
+<span class="nc" id="L76">        this.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+
+<span class="nc" id="L78">        imgLayout = new VLayout();</span>
+<span class="nc" id="L79">        imgLayout.setPadding(2);</span>
+<span class="nc" id="L80">        imgLayout.setWidth(40);</span>
+<span class="nc" id="L81">        imgLayout.setHeight(45);</span>
+<span class="nc" id="L82">        imgLayout.setAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L84">        mainLayout = new VLayout(2);</span>
+<span class="nc" id="L85">        mainLayout.setWidth(&quot;*&quot;);</span>
+<span class="nc" id="L86">        mainLayout.setHeight(45);</span>
+<span class="nc" id="L87">        mainLayout.setAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L89">        actionLayout = new VLayout(5);</span>
+<span class="nc" id="L90">        actionLayout.setHeight(45);</span>
+<span class="nc" id="L91">        actionLayout.setWidth(30);</span>
+<span class="nc" id="L92">        actionLayout.setAlign(VerticalAlignment.TOP);</span>
+
+<span class="nc" id="L94">        configureImageLayout();</span>
+<span class="nc" id="L95">        configureMainLayout();</span>
+<span class="nc" id="L96">        configureActionLayout();</span>
+
+<span class="nc" id="L98">        timer = new Timer() {</span>
+            @Override
+            public void run() {
+<span class="nc" id="L101">                loadData();</span>
+<span class="nc" id="L102">            }</span>
+        };
+<span class="nc" id="L104">        setTimer();</span>
+<span class="nc" id="L105">    }</span>
+
+    /**
+     * Configures the image layout.
+     */
+    private void configureImageLayout() {
+
+<span class="nc" id="L112">        imgLayout.removeMembers(imgLayout.getMembers());</span>
+
+        Img icon;
+
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (operation.getType() == Type.Download) {</span>
+<span class="nc" id="L117">            icon = new Img(DataManagerConstants.OP_DOWNLOAD, 32, 32);</span>
+<span class="nc" id="L118">            icon.setPrompt(&quot;Download&quot;);</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">            if (operation.getStatus() == Status.Done) {</span>
+<span class="nc" id="L120">                icon.setCursor(Cursor.HAND);</span>
+<span class="nc" id="L121">                icon.addClickHandler(new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L124">                        download();</span>
+<span class="nc" id="L125">                    }</span>
+                });
+            }
+        } else {
+<span class="nc" id="L129">            icon = new Img(DataManagerConstants.OP_UPLOAD, 32, 32);</span>
+<span class="nc" id="L130">            icon.setPrompt(&quot;Upload&quot;);</span>
+        }
+<span class="nc" id="L132">        imgLayout.addMember(icon);</span>
+<span class="nc" id="L133">        this.addMember(imgLayout);</span>
+<span class="nc" id="L134">    }</span>
+
+    /**
+     * Configures the main layout of an operation.
+     */
+    private void configureMainLayout() {
+
+<span class="nc" id="L141">        mainLayout.removeMembers(mainLayout.getMembers());</span>
+
+<span class="nc" id="L143">        String source = operation.getSource();</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        String message = operation.getType() == Type.Download</span>
+<span class="nc" id="L145">                ? source : operation.getDest() + &quot;/&quot;</span>
+<span class="nc" id="L146">                + source;</span>
+
+<span class="nc" id="L148">        Label messageLabel = new Label(message);</span>
+<span class="nc" id="L149">        messageLabel.setHeight(15);</span>
+<span class="nc" id="L150">        mainLayout.addMember(messageLabel);</span>
+
+<span class="nc bnc" id="L152" title="All 4 branches missed.">        if (operation.getStatus() == Status.Queued || operation.getStatus() == Status.Rescheduled) {</span>
+<span class="nc" id="L153">            Label waitingLabel = new Label(</span>
+                    &quot;&lt;font color=\&quot;#D9D509\&quot;&gt;Waiting&lt;/font&gt; &lt;font color=\&quot;#666666\&quot;&gt;- &quot;
+<span class="nc" id="L155">                    + operation.getParsedRegistration() + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L156">            waitingLabel.setHeight(15);</span>
+<span class="nc" id="L157">            mainLayout.addMember(waitingLabel);</span>
+
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        } else if (operation.getStatus() == Status.Done) {</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            if (operation.getType() == Type.Upload) {</span>
+<span class="nc" id="L161">                Label completedLabel = new Label(</span>
+                        &quot;&lt;font color=\&quot;#666666\&quot;&gt;Uploaded - &quot;
+<span class="nc" id="L163">                        + operation.getParsedRegistration() + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L164">                completedLabel.setHeight(15);</span>
+<span class="nc" id="L165">                mainLayout.addMember(completedLabel);</span>
+
+<span class="nc" id="L167">            } else {</span>
+<span class="nc" id="L168">                Label downloadLabel = new Label(&quot;&lt;font color=\&quot;#666666\&quot;&gt;&lt;u&gt;Download&lt;/u&gt;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L169">                downloadLabel.setHeight(12);</span>
+<span class="nc" id="L170">                downloadLabel.setWidth(55);</span>
+<span class="nc" id="L171">                downloadLabel.setCursor(Cursor.HAND);</span>
+<span class="nc" id="L172">                downloadLabel.addClickHandler(new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L175">                        download();</span>
+<span class="nc" id="L176">                    }</span>
+                });
+
+<span class="nc" id="L179">                Label completedLabel = new Label(&quot;&lt;font color=\&quot;#666666\&quot;&gt; - &quot;</span>
+<span class="nc" id="L180">                        + operation.getParsedRegistration() + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L181">                completedLabel.setHeight(12);</span>
+<span class="nc" id="L182">                completedLabel.setWidth(&quot;*&quot;);</span>
+
+<span class="nc" id="L184">                HLayout hLayout = new HLayout();</span>
+<span class="nc" id="L185">                hLayout.setWidth100();</span>
+<span class="nc" id="L186">                hLayout.setHeight(12);</span>
+<span class="nc" id="L187">                hLayout.addMember(downloadLabel);</span>
+<span class="nc" id="L188">                hLayout.addMember(completedLabel);</span>
+
+<span class="nc" id="L190">                mainLayout.addMember(hLayout);</span>
+<span class="nc" id="L191">            }</span>
+
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        } else if (operation.getStatus() == Status.Failed) {</span>
+<span class="nc" id="L194">            Label failedLabel = new Label(</span>
+                    &quot;&lt;font color=\&quot;#BF153F\&quot;&gt;Failed&lt;/font&gt; &lt;font color=\&quot;#666666\&quot;&gt;- &quot;
+<span class="nc" id="L196">                    + operation.getParsedRegistration() + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L197">            failedLabel.setHeight(15);</span>
+<span class="nc" id="L198">            mainLayout.addMember(failedLabel);</span>
+
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        } else if (operation.getStatus() == Status.Running) {</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">            if (operation.getType() == Type.Download) {</span>
+<span class="nc" id="L202">                ProgressBar progressBar = new ProgressBar(10, &quot;#D3E0F2&quot;, operation.getProgress());</span>
+<span class="nc" id="L203">                mainLayout.addMember(progressBar);</span>
+
+<span class="nc" id="L205">            } else {</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">                String text = operation.getType() == Type.Upload ? &quot;Uploading&quot; : &quot;Downloading&quot;;</span>
+<span class="nc" id="L207">                Label textLabel = new Label(</span>
+                        &quot;&lt;font color=\&quot;#1B9406\&quot;&gt;&quot; + text + &quot;&lt;/font&gt; &lt;font color=\&quot;#666666\&quot;&gt;- &quot;
+<span class="nc" id="L209">                        + operation.getParsedRegistration() + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L210">                textLabel.setHeight(15);</span>
+<span class="nc" id="L211">                mainLayout.addMember(textLabel);</span>
+            }
+        }
+
+<span class="nc" id="L215">        this.addMember(mainLayout);</span>
+<span class="nc" id="L216">    }</span>
+
+    /**
+     * Configures actions related to an operation.
+     */
+    private void configureActionLayout() {
+
+<span class="nc" id="L223">        actionLayout.removeMembers(actionLayout.getMembers());</span>
+
+<span class="nc" id="L225">        Img removeImg = new Img(DataManagerConstants.OP_ICON_CLEAR, 16, 16);</span>
+<span class="nc" id="L226">        removeImg.setCursor(Cursor.HAND);</span>
+<span class="nc" id="L227">        removeImg.setPrompt(&quot;Remove&quot;);</span>
+<span class="nc" id="L228">        removeImg.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L231">                remove();</span>
+<span class="nc" id="L232">            }</span>
+        });
+<span class="nc" id="L234">        actionLayout.addMember(removeImg);</span>
+
+<span class="nc bnc" id="L236" title="All 4 branches missed.">        if (operation.getType() == Type.Download &amp;&amp; operation.getStatus() == Status.Done) {</span>
+<span class="nc" id="L237">            Img downloadImg = new Img(DataManagerConstants.OP_ICON_DOWNLOAD, 16, 16);</span>
+<span class="nc" id="L238">            downloadImg.setCursor(Cursor.HAND);</span>
+<span class="nc" id="L239">            downloadImg.setPrompt(&quot;Download&quot;);</span>
+<span class="nc" id="L240">            downloadImg.addClickHandler(new ClickHandler() {</span>
+                @Override
+                public void onClick(ClickEvent event) {
+<span class="nc" id="L243">                    download();</span>
+<span class="nc" id="L244">                }</span>
+            });
+<span class="nc" id="L246">            actionLayout.addMember(downloadImg);</span>
+        }
+
+<span class="nc" id="L249">        this.addMember(actionLayout);</span>
+<span class="nc" id="L250">    }</span>
+
+    private void loadData() {
+
+<span class="nc" id="L254">        DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L255">        AsyncCallback&lt;PoolOperation&gt; asyncCallback = new AsyncCallback&lt;PoolOperation&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc bnc" id="L258" title="All 2 branches missed.">                if (caught.getMessage().contains(&quot;No data is available&quot;)) {</span>
+<span class="nc" id="L259">                    timer.cancel();</span>
+<span class="nc" id="L260">                    operation.setStatus(Status.Failed);</span>
+<span class="nc" id="L261">                    configureMainLayout();</span>
+<span class="nc" id="L262">                    configureActionLayout();</span>
+                } else {
+<span class="nc" id="L264">                    Layout.getInstance().setWarningMessage(&quot;Unable to update operation data:&lt;br /&gt;&quot; + caught.getMessage());</span>
+                }
+<span class="nc" id="L266">            }</span>
+
+            @Override
+            public void onSuccess(PoolOperation result) {
+
+<span class="nc" id="L271">                operation = result;</span>
+<span class="nc" id="L272">                configureImageLayout();</span>
+<span class="nc" id="L273">                configureMainLayout();</span>
+<span class="nc" id="L274">                configureActionLayout();</span>
+
+<span class="nc bnc" id="L276" title="All 2 branches missed.">                if (operation.getStatus() == Status.Done</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">                        || operation.getStatus() == Status.Failed) {</span>
+
+<span class="nc" id="L279">                    timer.cancel();</span>
+
+                } else {
+<span class="nc" id="L282">                    setTimer();</span>
+                }
+<span class="nc" id="L284">            }</span>
+        };
+<span class="nc" id="L286">        service.getPoolOperationById(operation.getId(), asyncCallback);</span>
+<span class="nc" id="L287">    }</span>
+
+    /**
+     * Removes an operation.
+     */
+    private void remove() {
+
+<span class="nc" id="L294">        SC.confirm(&quot;Do you want to remove this operation?&quot;, new BooleanCallback() {</span>
+            @Override
+            public void execute(Boolean value) {
+<span class="nc bnc" id="L297" title="All 4 branches missed.">                if (value != null &amp;&amp; value) {</span>
+<span class="nc" id="L298">                    DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L299">                    AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                        @Override
+                        public void onFailure(Throwable caught) {
+<span class="nc bnc" id="L302" title="All 2 branches missed.">                            if (caught.getMessage().contains(&quot;No data is available&quot;)) {</span>
+<span class="nc" id="L303">                                timer.cancel();</span>
+<span class="nc" id="L304">                                destroy();</span>
+                            } else {
+<span class="nc" id="L306">                                Layout.getInstance().setWarningMessage(&quot;Unable to remove operation:&lt;br /&gt;&quot; + caught.getMessage());</span>
+                            }
+<span class="nc" id="L308">                        }</span>
+
+                        @Override
+                        public void onSuccess(Void result) {
+<span class="nc" id="L312">                            destroy();</span>
+<span class="nc" id="L313">                        }</span>
+                    };
+<span class="nc" id="L315">                    service.removeOperationById(operation.getId(), callback);</span>
+                }
+<span class="nc" id="L317">            }</span>
+        });
+<span class="nc" id="L319">    }</span>
+
+    /**
+     * Downloads a file (for download operations).
+     */
+    private void download() {
+
+<span class="nc" id="L326">        Window.open(GWT.getModuleBaseURL() + &quot;/filedownloadservice?operationid=&quot;</span>
+<span class="nc" id="L327">                + operation.getId(), &quot;&quot;, &quot;&quot;);</span>
+<span class="nc" id="L328">    }</span>
+
+    private void setTimer() {
+
+<span class="nc bnc" id="L332" title="All 2 branches missed.">        if (operation.getStatus() == Status.Queued</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">                || operation.getStatus() == Status.Rescheduled) {</span>
+<span class="nc" id="L334">            timer.scheduleRepeating(15000);</span>
+
+<span class="nc bnc" id="L336" title="All 2 branches missed.">        } else if (operation.getStatus() == Status.Running) {</span>
+<span class="nc" id="L337">            timer.scheduleRepeating(2500);</span>
+        }
+<span class="nc" id="L339">    }</span>
+
+    @Override
+    protected void onDestroy() {
+<span class="nc" id="L343">        super.onDestroy();</span>
+<span class="nc bnc" id="L344" title="All 2 branches missed.">        if (timer.isRunning()) {</span>
+<span class="nc" id="L345">            timer.cancel();</span>
+        }
+<span class="nc" id="L347">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

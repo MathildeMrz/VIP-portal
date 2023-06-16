@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GridaClientLocal.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-local</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.local</a> &gt; <span class="el_source">GridaClientLocal.java</span></div><h1>GridaClientLocal.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.local;
+
+import fr.insalyon.creatis.grida.client.GRIDAClient;
+import fr.insalyon.creatis.grida.client.GRIDAClientException;
+import fr.insalyon.creatis.grida.common.bean.GridData;
+import fr.insalyon.creatis.grida.common.bean.GridData.Type;
+import fr.insalyon.creatis.vip.core.server.business.Server;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * overides original GRIDAClient by a simpler version that do local file
+ * transfers in a configured &quot;localRoot&quot; directory.
+ *
+ * replication methods are not implemented
+ */
+@Component
+@Profile(&quot;local&quot;)
+@Primary
+@DependsOn(&quot;localConfiguration&quot;) // to populate rootDirName @Value
+public class GridaClientLocal extends GRIDAClient {
+
+    private Server server;
+
+    private Path localRoot; // local folder simulating remote LFN hierarchy
+
+    @Autowired
+    public GridaClientLocal(
+            Server server,
+            Resource vipConfigFolder,
+            @Value(&quot;${local.grida.root.dirname}&quot;) String rootDirName) throws IOException {
+<span class="nc" id="L45">        super(null, 0, null);</span>
+<span class="nc" id="L46">        this.server = server;</span>
+<span class="nc" id="L47">        localRoot = Paths.get(vipConfigFolder.getURI()).resolve(rootDirName);</span>
+
+<span class="nc" id="L49">    }</span>
+
+    @PostConstruct
+    public void init() {
+        // creating root if needed
+<span class="nc bnc" id="L54" title="All 4 branches missed.">        if (localRoot.toFile().exists() &amp;&amp; ! localRoot.toFile().isDirectory()) {</span>
+<span class="nc" id="L55">            throw new IllegalStateException(&quot;grida local root must be a directory&quot;);</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        } else if (localRoot.toFile().exists()) {</span>
+<span class="nc" id="L57">            return;</span>
+        }
+        // create folder test root folder
+<span class="nc" id="L60">        createDirectory(localRoot, &quot;grida local root&quot;);</span>
+        // create users and groups lfn folders
+<span class="nc" id="L62">        String usersFolderLFN = server.getDataManagerUsersHome();</span>
+<span class="nc" id="L63">        String groupsFolderLFN = server.getDataManagerGroupsHome();</span>
+<span class="nc" id="L64">        Path usersFolder = localRoot.resolve(usersFolderLFN.substring(1)); // remove first slash to make usersFolderLFN relative</span>
+<span class="nc" id="L65">        Path groupsFolder = localRoot.resolve(groupsFolderLFN.substring(1)); // remove first slash to make groupsFolderLFN relative</span>
+<span class="nc" id="L66">        createDirectory(usersFolder, &quot;users lfn root folder&quot;);</span>
+<span class="nc" id="L67">        createDirectory(groupsFolder, &quot;groups lfn root folder&quot;);</span>
+<span class="nc" id="L68">    }</span>
+
+    private void createDirectory(Path dir, String description) {
+<span class="nc" id="L71">        boolean mkdirOK = dir.toFile().mkdirs();</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if ( ! mkdirOK) {</span>
+<span class="nc" id="L73">            throw new IllegalStateException(&quot;Error creating &quot; + description + &quot; directory&quot;);</span>
+        }
+<span class="nc" id="L75">    }</span>
+
+    @Override
+    public String getRemoteFile(String remoteFile, String localDir) throws GRIDAClientException {
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        while (remoteFile.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L80">            remoteFile = remoteFile.substring(1);</span>
+        }
+<span class="nc" id="L82">        Path from = localRoot.resolve(remoteFile);</span>
+<span class="nc" id="L83">        Path to = Paths.get(localDir).resolve(from.getFileName());</span>
+        try {
+<span class="nc" id="L85">            Files.createDirectories(Paths.get(localDir));</span>
+<span class="nc" id="L86">            Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);</span>
+<span class="nc" id="L87">        } catch (IOException e) {</span>
+<span class="nc" id="L88">            throw new GRIDAClientException(e);</span>
+<span class="nc" id="L89">        }</span>
+<span class="nc" id="L90">        return to.toString();</span>
+    }
+
+    @Override
+    public String getRemoteFolder(String remoteDir, String localDir) throws GRIDAClientException {
+<span class="nc" id="L95">        throw new GRIDAClientException(&quot;not implemented in local version&quot;);</span>
+    }
+
+    @Override
+    public List&lt;GridData&gt; getFolderData(String dir, boolean refresh) throws GRIDAClientException {
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        while (dir.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L101">            dir = dir.substring(1);</span>
+        }
+<span class="nc" id="L103">        Path dirPath = localRoot.resolve(dir);</span>
+        try {
+<span class="nc" id="L105">            return Files.list(dirPath).map( path -&gt; path.toFile()).map(file -&gt;</span>
+<span class="nc" id="L106">                new GridData(</span>
+<span class="nc" id="L107">                        file.getName(),</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">                        file.isDirectory() ? Type.Folder : Type.File,</span>
+<span class="nc" id="L109">                        file.length(),</span>
+<span class="nc" id="L110">                        String.valueOf(file.lastModified()),</span>
+                        &quot;&quot;, &quot;&quot;)
+<span class="nc" id="L112">            ).collect(Collectors.toList());</span>
+<span class="nc" id="L113">        } catch (IOException e) {</span>
+<span class="nc" id="L114">            throw new GRIDAClientException(e);</span>
+        }
+    }
+
+    @Override
+    public Long getModificationDate(String fileName) throws GRIDAClientException {
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        while (fileName.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L121">            fileName = fileName.substring(1);</span>
+        }
+<span class="nc" id="L123">        return localRoot.resolve(fileName).toFile().lastModified();</span>
+    }
+
+    @Override
+    public List&lt;Long&gt; getModificationDate(List&lt;String&gt; filesList) throws GRIDAClientException {
+<span class="nc" id="L128">        return filesList.stream()</span>
+<span class="nc" id="L129">                .map(s -&gt; {</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                    while (s.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L131">                        s = s.substring(1);</span>
+                    }
+<span class="nc" id="L133">                    return s;</span>
+                })
+<span class="nc" id="L135">                .map(s -&gt; localRoot.resolve(s).toFile())</span>
+<span class="nc" id="L136">                .map(file -&gt; file.lastModified())</span>
+<span class="nc" id="L137">                .collect(Collectors.toList());</span>
+    }
+
+    @Override
+    public String uploadFile(String localFile, String remoteDir) throws GRIDAClientException {
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        while (remoteDir.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L143">            remoteDir = remoteDir.substring(1);</span>
+        }
+<span class="nc" id="L145">        Path from = Paths.get(localFile);</span>
+<span class="nc" id="L146">        Path to = localRoot.resolve(remoteDir).resolve(from.getFileName());</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if ( ! to.getParent().toFile().exists()) {</span>
+<span class="nc" id="L148">            createDirectory(to.getParent(), &quot;&quot;);</span>
+        }
+        try {
+<span class="nc" id="L151">            Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);</span>
+<span class="nc" id="L152">        } catch (IOException e) {</span>
+<span class="nc" id="L153">            throw new GRIDAClientException(e);</span>
+<span class="nc" id="L154">        }</span>
+<span class="nc" id="L155">        return Paths.get(remoteDir).resolve(from.getFileName()).toString();</span>
+    }
+
+    @Override
+    public String uploadFileToSE(String localFile, String remoteDir, String storageElement) throws GRIDAClientException {
+<span class="nc" id="L160">        throw new GRIDAClientException(&quot;not implemented in local version&quot;);</span>
+    }
+
+    @Override
+    public String uploadFileToSE(String localFile, String remoteDir, List&lt;String&gt; storageElementsList) throws GRIDAClientException {
+<span class="nc" id="L165">        throw new GRIDAClientException(&quot;not implemented in local version&quot;);</span>
+    }
+
+    @Override
+    public void replicateToPreferredSEs(String remoteFile) throws GRIDAClientException {
+<span class="nc" id="L170">        throw new GRIDAClientException(&quot;not implemented in local version&quot;);</span>
+    }
+
+    @Override
+    public void delete(String path) throws GRIDAClientException {
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        while (path.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L176">            path = path.substring(1);</span>
+        }
+        try {
+<span class="nc" id="L179">            Files.delete(localRoot.resolve(path));</span>
+<span class="nc" id="L180">        } catch (IOException e) {</span>
+<span class="nc" id="L181">            throw new GRIDAClientException(e);</span>
+<span class="nc" id="L182">        }</span>
+<span class="nc" id="L183">    }</span>
+
+    @Override
+    public void delete(List&lt;String&gt; paths) throws GRIDAClientException {
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        for (String path : paths) {</span>
+<span class="nc" id="L188">            delete(path);</span>
+<span class="nc" id="L189">        }</span>
+<span class="nc" id="L190">    }</span>
+
+    @Override
+    public void createFolder(String path, String folderName) throws GRIDAClientException {
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        while (path.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L195">            path = path.substring(1);</span>
+        }
+        try {
+<span class="nc" id="L198">            Files.createDirectory(localRoot.resolve(path).resolve(folderName));</span>
+<span class="nc" id="L199">        } catch (IOException e) {</span>
+<span class="nc" id="L200">            throw new GRIDAClientException(e);</span>
+<span class="nc" id="L201">        }</span>
+<span class="nc" id="L202">    }</span>
+
+    @Override
+    public void rename(String oldPath, String newPath) throws GRIDAClientException {
+<span class="nc" id="L206">        throw new GRIDAClientException(&quot;not implemented in local version&quot;);</span>
+    }
+
+    @Override
+    public boolean exist(String remotePath) throws GRIDAClientException {
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        while (remotePath.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L212">            remotePath = remotePath.substring(1);</span>
+        }
+<span class="nc" id="L214">        return localRoot.resolve(remotePath).toFile().exists();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

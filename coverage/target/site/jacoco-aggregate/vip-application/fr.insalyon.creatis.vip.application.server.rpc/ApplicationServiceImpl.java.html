@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.server.rpc</a> &gt; <span class="el_source">ApplicationServiceImpl.java</span></div><h1>ApplicationServiceImpl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.server.rpc;
+
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.*;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.application.client.view.ApplicationException;
+import fr.insalyon.creatis.vip.application.server.business.*;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.CoreException;
+import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
+import fr.insalyon.creatis.vip.core.server.rpc.AbstractRemoteServiceServlet;
+import org.jsoup.Jsoup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+<span class="nc" id="L57">public class ApplicationServiceImpl extends AbstractRemoteServiceServlet implements ApplicationService {</span>
+
+<span class="nc" id="L59">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+
+    private ClassBusiness classBusiness;
+    private ApplicationBusiness applicationBusiness;
+    private EngineBusiness engineBusiness;
+    private BoutiquesBusiness boutiquesBusiness;
+    private ConfigurationBusiness configurationBusiness;
+    private WorkflowBusiness workflowBusiness;
+    private SimulationBusiness simulationBusiness;
+
+    @Override
+    public void init() throws ServletException {
+<span class="nc" id="L71">        super.init();</span>
+<span class="nc" id="L72">        engineBusiness = getBean(EngineBusiness.class);</span>
+<span class="nc" id="L73">        classBusiness = getBean(ClassBusiness.class);</span>
+<span class="nc" id="L74">        applicationBusiness = getBean(ApplicationBusiness.class);</span>
+<span class="nc" id="L75">        boutiquesBusiness = getBean(BoutiquesBusiness.class);</span>
+<span class="nc" id="L76">        configurationBusiness = getBean(ConfigurationBusiness.class);</span>
+<span class="nc" id="L77">        workflowBusiness = getBean(WorkflowBusiness.class);</span>
+<span class="nc" id="L78">        simulationBusiness = getBean(SimulationBusiness.class);</span>
+<span class="nc" id="L79">    }</span>
+
+    @Override
+    public void signout() throws ApplicationException {
+
+<span class="nc" id="L84">        getSession().removeAttribute(ApplicationConstants.SESSION_CLASSES);</span>
+<span class="nc" id="L85">    }</span>
+
+    @Override
+    public void add(Application application) throws ApplicationException {
+
+        try {
+<span class="nc bnc" id="L91" title="All 6 branches missed.">            if (isSystemAdministrator() || isGroupAdministrator() || isDeveloper()) {</span>
+<span class="nc" id="L92">                trace(logger, &quot;Adding application '&quot; + application.getName() + &quot;'.&quot;);</span>
+<span class="nc" id="L93">                application.setOwner(getSessionUser().getEmail());</span>
+<span class="nc" id="L94">                applicationBusiness.add(application);</span>
+            } else {
+<span class="nc" id="L96">                logger.error(&quot;Unauthorized to add application {}&quot;, application.getName());</span>
+<span class="nc" id="L97">                throw new ApplicationException(&quot;You have no administrator rights.&quot;);</span>
+            }
+<span class="nc" id="L99">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L100">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L101">        }</span>
+<span class="nc" id="L102">    }</span>
+
+    @Override
+    public void update(Application application) throws ApplicationException {
+        try {
+<span class="nc bnc" id="L107" title="All 6 branches missed.">            if (isSystemAdministrator() || isGroupAdministrator() || isDeveloper()) {</span>
+<span class="nc" id="L108">                trace(logger, &quot;Updating application '&quot; + application.getName() + &quot;'.&quot;);</span>
+<span class="nc" id="L109">                applicationBusiness.update(application);</span>
+
+            } else {
+<span class="nc" id="L112">                logger.error(&quot;Unauthorized to update application {}&quot;, application.getName());</span>
+<span class="nc" id="L113">                throw new ApplicationException(&quot;You have no administrator rights.&quot;);</span>
+            }
+<span class="nc" id="L115">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L116">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L117">        }</span>
+<span class="nc" id="L118">    }</span>
+
+    @Override
+    public void remove(String name) throws ApplicationException {
+        try {
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            if (isSystemAdministrator()) {</span>
+<span class="nc" id="L124">                trace(logger, &quot;Removing application '&quot; + name + &quot;'.&quot;);</span>
+<span class="nc" id="L125">                applicationBusiness.remove(name);</span>
+
+            } else {
+<span class="nc" id="L128">                trace(logger, &quot;Removing classes from application '&quot; + name + &quot;'.&quot;);</span>
+<span class="nc" id="L129">                applicationBusiness.remove(</span>
+<span class="nc" id="L130">                    getSessionUser().getEmail(), name);</span>
+            }
+<span class="nc" id="L132">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L133">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L134">        }</span>
+<span class="nc" id="L135">    }</span>
+
+    @Override
+    public void addVersion(AppVersion version) throws ApplicationException {
+        try {
+<span class="nc bnc" id="L140" title="All 4 branches missed.">            if (isSystemAdministrator() || isGroupAdministrator()) {</span>
+<span class="nc" id="L141">                trace(logger, &quot;Adding version '&quot; + version.getVersion() + &quot;' ('&quot; + version.getApplicationName() + &quot;').&quot;);</span>
+<span class="nc" id="L142">                applicationBusiness.addVersion(version);</span>
+            } else {
+<span class="nc" id="L144">                logger.error(&quot;Unauthorized to add version {} to {}&quot;,</span>
+<span class="nc" id="L145">                        version.getVersion(), version.getApplicationName());</span>
+<span class="nc" id="L146">                throw new ApplicationException(&quot;You have no administrator rights.&quot;);</span>
+            }
+<span class="nc" id="L148">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L149">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L150">        }</span>
+<span class="nc" id="L151">    }</span>
+
+    @Override
+    public void updateVersion(AppVersion version) throws ApplicationException {
+        try {
+<span class="nc bnc" id="L156" title="All 4 branches missed.">            if (isSystemAdministrator() || isGroupAdministrator()) {</span>
+<span class="nc" id="L157">                trace(logger, &quot;Updating version '&quot; + version.getVersion() + &quot;' ('&quot; + version.getApplicationName() + &quot;').&quot;);</span>
+
+<span class="nc" id="L159">                applicationBusiness.updateVersion(version);</span>
+            } else {
+<span class="nc" id="L161">                logger.error(&quot;Unauthorized to update version {}/{}&quot;,</span>
+<span class="nc" id="L162">                        version.getApplicationName(), version.getVersion());</span>
+<span class="nc" id="L163">                throw new ApplicationException(&quot;You have no administrator rights.&quot;);</span>
+            }
+<span class="nc" id="L165">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L166">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L167">        }</span>
+<span class="nc" id="L168">    }</span>
+
+    @Override
+    public void removeVersion(String applicationName, String version) throws ApplicationException {
+        try {
+<span class="nc bnc" id="L173" title="All 4 branches missed.">            if (isSystemAdministrator() || isGroupAdministrator()) {</span>
+<span class="nc" id="L174">                trace(logger, &quot;Removing application '&quot; + applicationName + &quot;'.&quot;);</span>
+<span class="nc" id="L175">                applicationBusiness.removeVersion(</span>
+                    applicationName, version);
+            } else {
+<span class="nc" id="L178">                logger.error(&quot;Unauthorized to remove version {}/{}&quot;,</span>
+                        applicationName, version);
+<span class="nc" id="L180">                throw new ApplicationException(&quot;You have no administrator rights.&quot;);</span>
+            }
+<span class="nc" id="L182">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L183">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L184">        }</span>
+<span class="nc" id="L185">    }</span>
+
+    @Override
+    public String publishVersion(String applicationName, String version) throws ApplicationException {
+        try {
+<span class="nc bnc" id="L190" title="All 4 branches missed.">            if (isSystemAdministrator() || isGroupAdministrator()) {</span>
+<span class="nc" id="L191">                trace(logger, &quot;Publishing version &quot; + version + &quot;' ('&quot; + applicationName + &quot;').&quot;);</span>
+<span class="nc" id="L192">                return boutiquesBusiness.publishVersion(</span>
+<span class="nc" id="L193">                    getSessionUser(), applicationName, version);</span>
+            } else {
+<span class="nc" id="L195">                logger.error(&quot;Unauthorized to publish version {}/{}&quot;,</span>
+                        applicationName, version);
+<span class="nc" id="L197">                throw new ApplicationException(&quot;You have no administrator rights.&quot;);</span>
+            }
+<span class="nc" id="L199">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L200">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @Override
+    public List&lt;Application&gt; getPublicApplications() throws ApplicationException {
+        try {
+<span class="nc" id="L207">            return applicationBusiness.getPublicApplicationsWithGroups();</span>
+<span class="nc" id="L208">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L209">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @Override
+    public List&lt;Application&gt; getApplications() throws ApplicationException {
+        try {
+<span class="nc bnc" id="L216" title="All 2 branches missed.">            if (isSystemAdministrator()) {</span>
+<span class="nc" id="L217">                return applicationBusiness.getApplications();</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">            } else if (isDeveloper()) {</span>
+<span class="nc" id="L219">                return applicationBusiness.getApplicationsWithOwner(getSessionUser().getEmail());</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">            }  else if (isGroupAdministrator()) {</span>
+<span class="nc" id="L221">                List&lt;String&gt; classes = classBusiness.getUserClassesName(</span>
+<span class="nc" id="L222">                    getSessionUser().getEmail(), true);</span>
+<span class="nc" id="L223">                return applicationBusiness.getApplications(classes);</span>
+            }
+<span class="nc" id="L225">            List&lt;AppClass&gt; classes = classBusiness.getUserClasses(</span>
+<span class="nc" id="L226">                    getSessionUser().getEmail(), false);</span>
+<span class="nc" id="L227">            List&lt;String&gt; classNames = classes.stream().map(AppClass::getName).collect(Collectors.toList());</span>
+<span class="nc" id="L228">            return applicationBusiness.getApplications(classNames);</span>
+<span class="nc" id="L229">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L230">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @Override
+    public List&lt;String[]&gt; getApplications(String className) throws ApplicationException {
+        try {
+<span class="nc" id="L237">            return applicationBusiness.getApplications(className);</span>
+<span class="nc" id="L238">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L239">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @Override
+    public List&lt;String[]&gt; getApplicationsByClass(String applicationClass) throws ApplicationException {
+        try {
+<span class="nc" id="L246">            return applicationBusiness.getApplications(</span>
+                applicationClass);
+<span class="nc" id="L248">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L249">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @Override
+    public void addClass(AppClass c) throws ApplicationException {
+        try {
+<span class="nc" id="L256">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L257">            trace(logger, &quot;Adding class '&quot; + c.getName() + &quot;'.&quot;);</span>
+<span class="nc" id="L258">            classBusiness.addClass(c);</span>
+<span class="nc" id="L259">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L260">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L261">        }</span>
+<span class="nc" id="L262">    }</span>
+
+    @Override
+    public void updateClass(AppClass c) throws ApplicationException {
+        try {
+<span class="nc" id="L267">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L268">            trace(logger, &quot;Updating class '&quot; + c.getName() + &quot;'.&quot;);</span>
+<span class="nc" id="L269">            classBusiness.updateClass(c);</span>
+<span class="nc" id="L270">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L271">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L272">        }</span>
+<span class="nc" id="L273">    }</span>
+
+    @Override
+    public void removeClass(String name) throws ApplicationException {
+        try {
+<span class="nc" id="L278">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L279">            trace(logger, &quot;Removing class '&quot; + name + &quot;'.&quot;);</span>
+<span class="nc" id="L280">            classBusiness.removeClass(name);</span>
+<span class="nc" id="L281">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L282">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L283">        }</span>
+<span class="nc" id="L284">    }</span>
+
+    @Override
+    public List&lt;AppClass&gt; getClasses() throws ApplicationException {
+        try {
+<span class="nc bnc" id="L289" title="All 2 branches missed.">            if (isSystemAdministrator()) {</span>
+<span class="nc" id="L290">                return classBusiness.getClasses();</span>
+            }
+<span class="nc" id="L292">            return classBusiness.getUserClasses(</span>
+<span class="nc" id="L293">                getSessionUser().getEmail(), false);</span>
+<span class="nc" id="L294">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L295">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    public List&lt;String&gt;[] getApplicationsAndUsers(List&lt;String&gt; reservedClasses) throws ApplicationException {
+        try {
+<span class="nc" id="L303">            User user = getSessionUser();</span>
+<span class="nc bnc" id="L304" title="All 2 branches missed.">            if (isSystemAdministrator()) {</span>
+<span class="nc" id="L305">                List&lt;String&gt; classes = classBusiness.getClassesName();</span>
+<span class="nc" id="L306">                return new List[]{</span>
+<span class="nc" id="L307">                    configurationBusiness.getUserNames(</span>
+<span class="nc" id="L308">                        user.getEmail(), false),</span>
+<span class="nc" id="L309">                    applicationBusiness.getApplicationNames(),</span>
+                    classes
+                };
+            } else {
+<span class="nc" id="L313">                List&lt;String&gt; classes = classBusiness.getUserClassesName(</span>
+<span class="nc bnc" id="L314" title="All 2 branches missed.">                    user.getEmail(), !user.isSystemAdministrator());</span>
+<span class="nc" id="L315">                classes.removeAll(reservedClasses);</span>
+<span class="nc" id="L316">                return new List[] {</span>
+<span class="nc" id="L317">                    configurationBusiness.getUserNames(</span>
+<span class="nc" id="L318">                        user.getEmail(), true),</span>
+<span class="nc" id="L319">                    applicationBusiness.getApplicationNames(classes),</span>
+                    classes
+                };
+            }
+<span class="nc" id="L323">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L324">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @Override
+    public ApplicationStatus getApplicationStatus() throws ApplicationException {
+
+        try {
+<span class="nc" id="L332">            List&lt;Simulation&gt; runningSimulations = workflowBusiness.getRunningSimulations();</span>
+
+<span class="nc" id="L334">            ApplicationStatus status = new ApplicationStatus();</span>
+<span class="nc" id="L335">            status.setRunningWorkflows(runningSimulations.size());</span>
+
+<span class="nc" id="L337">            int[] tasks = simulationBusiness.getNumberOfActiveTasks(runningSimulations);</span>
+<span class="nc" id="L338">            status.setRunningTasks(tasks[0]);</span>
+<span class="nc" id="L339">            status.setWaitingTasks(tasks[1]);</span>
+
+<span class="nc" id="L341">            return status;</span>
+
+<span class="nc" id="L343">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L344">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @Override
+    public String getCitation(String applicationName) throws ApplicationException {
+        try {
+<span class="nc" id="L351">            String citationWithoutHtml = Jsoup</span>
+<span class="nc" id="L352">                .parse(applicationBusiness.getCitation(</span>
+                           applicationName))
+<span class="nc" id="L354">                .text();</span>
+<span class="nc bnc" id="L355" title="All 4 branches missed.">            if (citationWithoutHtml.isEmpty() || citationWithoutHtml == null) {</span>
+<span class="nc" id="L356">                return null;</span>
+            } else {
+<span class="nc" id="L358">                return applicationBusiness.getCitation(</span>
+                    applicationName);
+            }
+<span class="nc" id="L361">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L362">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @Override
+    public List&lt;AppVersion&gt; getVersions(String applicationName) throws ApplicationException {
+        try {
+<span class="nc" id="L369">            return applicationBusiness.getVersions(applicationName);</span>
+<span class="nc" id="L370">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L371">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @Override
+    public void addEngine(Engine engine) throws ApplicationException {
+        try {
+<span class="nc" id="L378">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L379">            trace(logger, &quot;Adding engine '&quot; + engine.getName() + &quot;'.&quot;);</span>
+<span class="nc" id="L380">            engineBusiness.add(engine);</span>
+<span class="nc" id="L381">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L382">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L383">        }</span>
+<span class="nc" id="L384">    }</span>
+
+    @Override
+    public void updateEngine(Engine engine) throws ApplicationException {
+        try {
+<span class="nc" id="L389">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L390">            trace(logger, &quot;Updating engine '&quot; + engine.getName() + &quot;'.&quot;);</span>
+<span class="nc" id="L391">            engineBusiness.update(engine);</span>
+<span class="nc" id="L392">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L393">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L394">        }</span>
+<span class="nc" id="L395">    }</span>
+
+    @Override
+    public void removeEngine(String engineName) throws ApplicationException {
+        try {
+<span class="nc" id="L400">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L401">            trace(logger, &quot;Removing engine '&quot; + engineName + &quot;'.&quot;);</span>
+<span class="nc" id="L402">            engineBusiness.remove(engineName);</span>
+<span class="nc" id="L403">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L404">            throw new ApplicationException(ex);</span>
+<span class="nc" id="L405">        }</span>
+<span class="nc" id="L406">    }</span>
+
+    @Override
+    public List&lt;Engine&gt; getEngines() throws ApplicationException {
+        try {
+<span class="nc" id="L411">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L412">            return engineBusiness.get();</span>
+<span class="nc" id="L413">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L414">            throw new ApplicationException(ex);</span>
+        }
+    }
+
+    @Override
+    public HashMap&lt;String, Integer&gt; getReservedClasses()
+        throws ApplicationException {
+<span class="nc" id="L421">        return server.getReservedClasses();</span>
+    }
+
+    @Override
+    public AppVersion getVersion(String applicationName, String applicationVersion) throws ApplicationException {
+        try {
+<span class="nc" id="L427">            return applicationBusiness.getVersion(</span>
+                applicationName, applicationVersion);
+<span class="nc" id="L429">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L430">            throw new ApplicationException(ex);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PersonalLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.user.account</a> &gt; <span class="el_source">PersonalLayout.java</span></div><h1>PersonalLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.user.account;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.Modules;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.user.UpgradeLevelLayout;
+import fr.insalyon.creatis.vip.core.client.view.user.UserLevel;
+import fr.insalyon.creatis.vip.core.client.view.util.CountryCode;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class PersonalLayout extends AbstractFormLayout {
+
+    private Label levelLabel;
+    private Label firstNameField;
+    private Label lastNameField;
+    private TextItem institutionField;
+    private SelectItem countryField;
+    private IButton saveButton;
+
+    public PersonalLayout() {
+
+<span class="nc" id="L72">        super(&quot;100%&quot;, &quot;275&quot;);</span>
+<span class="nc" id="L73">        addTitle(&quot;Account Information&quot;, CoreConstants.ICON_PERSONAL);</span>
+
+<span class="nc" id="L75">        configure();</span>
+<span class="nc" id="L76">        loadData();</span>
+<span class="nc" id="L77">    }</span>
+
+    private void configure() {
+<span class="nc" id="L80">        levelLabel = WidgetUtil.getLabel(&quot;&quot;, 15);</span>
+<span class="nc" id="L81">        firstNameField = WidgetUtil.getLabel(&quot;&quot;, 15);</span>
+<span class="nc" id="L82">        lastNameField = WidgetUtil.getLabel(&quot;&quot;, 15);</span>
+<span class="nc" id="L83">        institutionField = FieldUtil.getTextItem(200, null);</span>
+
+<span class="nc" id="L85">        countryField = new SelectItem();</span>
+<span class="nc" id="L86">        countryField.setShowTitle(false);</span>
+<span class="nc" id="L87">        countryField.setValueMap(CountryCode.getCountriesMap());</span>
+<span class="nc" id="L88">        countryField.setValueIcons(CountryCode.getCodesMap());</span>
+<span class="nc" id="L89">        countryField.setImageURLPrefix(CoreConstants.FOLDER_FLAGS);</span>
+<span class="nc" id="L90">        countryField.setImageURLSuffix(&quot;.png&quot;);</span>
+<span class="nc" id="L91">        countryField.setRequired(true);</span>
+<span class="nc" id="L92">        countryField.setWidth(&quot;150&quot;);</span>
+<span class="nc" id="L93">        saveButton = WidgetUtil.getIButton(&quot;Save Changes&quot;, CoreConstants.ICON_SAVED,</span>
+<span class="nc" id="L94">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+<span class="nc bnc" id="L97" title="All 2 branches missed.">                        if (institutionField.validate() &amp; countryField.validate()) {</span>
+
+<span class="nc" id="L99">                            User user = new User(</span>
+<span class="nc" id="L100">                                    CoreModule.user.getFirstName(),</span>
+<span class="nc" id="L101">                                    CoreModule.user.getLastName(),</span>
+<span class="nc" id="L102">                                    CoreModule.user.getEmail(),</span>
+<span class="nc" id="L103">                                    institutionField.getValueAsString().trim(),</span>
+<span class="nc" id="L104">                                    UserLevel.valueOf(levelLabel.getContents()),</span>
+<span class="nc" id="L105">                                    CountryCode.valueOf(countryField.getValueAsString()));</span>
+<span class="nc" id="L106">                            user.setFolder(CoreModule.user.getFolder());</span>
+
+<span class="nc" id="L108">                            ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L109">                            final AsyncCallback&lt;User&gt; callback = new AsyncCallback&lt;User&gt;() {</span>
+                                @Override
+                                public void onFailure(Throwable caught) {
+<span class="nc" id="L112">                                    WidgetUtil.resetIButton(saveButton, &quot;Save Changes&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L113">                                    Layout.getInstance().setWarningMessage(&quot;Unable to save changes:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L114">                                }</span>
+
+                                @Override
+                                public void onSuccess(User result) {
+<span class="nc" id="L118">                                    Modules.getInstance().userUpdated(CoreModule.user, result);</span>
+<span class="nc" id="L119">                                    CoreModule.user = result;</span>
+<span class="nc" id="L120">                                    WidgetUtil.resetIButton(saveButton, &quot;Save Changes&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L121">                                    Layout.getInstance().setNoticeMessage(&quot;User information successfully updated.&quot;);</span>
+<span class="nc" id="L122">                                }</span>
+                            };
+<span class="nc" id="L124">                            WidgetUtil.setLoadingIButton(saveButton, &quot;Saving...&quot;);</span>
+<span class="nc" id="L125">                            service.updateUser(user, callback);</span>
+                        }
+<span class="nc" id="L127">                    }</span>
+                });
+<span class="nc" id="L129">        saveButton.setWidth(150);</span>
+<span class="nc" id="L130">        this.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;Level&lt;/b&gt;&quot;, 15));</span>
+<span class="nc" id="L131">        this.addMember(levelLabel);</span>
+<span class="nc" id="L132">        this.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;First Name&lt;/b&gt;&quot;, 15));</span>
+<span class="nc" id="L133">        this.addMember(firstNameField);</span>
+<span class="nc" id="L134">        this.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;Last Name&lt;/b&gt;&quot;, 15));</span>
+<span class="nc" id="L135">        this.addMember(lastNameField);</span>
+<span class="nc" id="L136">        addField(&quot;Institution&quot;, institutionField);</span>
+<span class="nc" id="L137">        addField(&quot;Country&quot;, countryField);</span>
+<span class="nc" id="L138">        this.addMember(saveButton);</span>
+<span class="nc" id="L139">    }</span>
+
+    private void loadData() {
+<span class="nc" id="L142">        User user = CoreModule.user;</span>
+
+<span class="nc" id="L144">        levelLabel.setContents(user.getLevel().name());</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (user.getLevel() == UserLevel.Beginner) {</span>
+<span class="nc" id="L146">            levelLabel.addClickHandler(</span>
+<span class="nc" id="L147">                    new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L150">                            new UpgradeLevelLayout(event.getX(), event.getY()).show();</span>
+<span class="nc" id="L151">                        }</span>
+                    });
+<span class="nc" id="L153">            levelLabel.setPrompt(&quot;Upgrade your Account!&quot;);</span>
+<span class="nc" id="L154">            levelLabel.setCursor(Cursor.HAND);</span>
+        }
+<span class="nc" id="L156">        firstNameField.setContents(user.getFirstName());</span>
+<span class="nc" id="L157">        lastNameField.setContents(user.getLastName());</span>
+<span class="nc" id="L158">        institutionField.setValue(user.getInstitution());</span>
+<span class="nc" id="L159">        countryField.setValue(user.getCountryCode().name());</span>
+
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if(institutionField.getDisplayValue().equals(&quot;Unknown&quot;)){</span>
+<span class="nc" id="L162">            Layout.getInstance().setWarningMessage(&quot;Please review your account information (Institution)&quot;,0);</span>
+        }
+<span class="nc" id="L164">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GeneralInformationContextMenu.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-gatelab</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.gatelab.client.view.monitor</a> &gt; <span class="el_source">GeneralInformationContextMenu.java</span></div><h1>GeneralInformationContextMenu.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.gatelab.client.view.monitor;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.menu.Menu;
+import com.smartgwt.client.widgets.menu.MenuItem;
+import com.smartgwt.client.widgets.menu.events.ClickHandler;
+import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.property.PropertyRecord;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
+import fr.insalyon.creatis.vip.datamanager.client.view.DataManagerSection;
+import fr.insalyon.creatis.vip.datamanager.client.view.browser.BrowserLayout;
+import fr.insalyon.creatis.vip.datamanager.client.view.operation.OperationLayout;
+
+/**
+ *
+ * @author Sorina Camarasu
+ */
+public class GeneralInformationContextMenu extends Menu {
+
+    private ModalWindow modal;
+
+    public GeneralInformationContextMenu(String simulationID, 
+<span class="nc" id="L59">            final PropertyRecord record, ModalWindow modal) {</span>
+
+<span class="nc" id="L61">        this.modal = modal;</span>
+
+<span class="nc" id="L63">        this.setShowShadow(true);</span>
+<span class="nc" id="L64">        this.setShadowDepth(10);</span>
+<span class="nc" id="L65">        this.setWidth(90);</span>
+
+<span class="nc" id="L67">        MenuItem downloadFileItem = new MenuItem(&quot;Download File&quot;);</span>
+<span class="nc" id="L68">        downloadFileItem.setIcon(&quot;icon-download.png&quot;);</span>
+<span class="nc" id="L69">        downloadFileItem.addClickHandler(new ClickHandler() {</span>
+
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L72">                downloadFile(record.getValue());</span>
+<span class="nc" id="L73">            }</span>
+        });
+
+<span class="nc" id="L76">        MenuItem jumpToItem = new MenuItem(&quot;Go to Folder&quot;);</span>
+<span class="nc" id="L77">        jumpToItem.setIcon(&quot;icon-jumpto.png&quot;);</span>
+<span class="nc" id="L78">        jumpToItem.addClickHandler(new ClickHandler() {</span>
+
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L81">                String folder = record.getValue().substring(0, record.getValue().lastIndexOf(&quot;/&quot;));</span>
+<span class="nc" id="L82">                BrowserLayout.getInstance().loadData(folder, false);</span>
+<span class="nc" id="L83">                ((DataManagerSection)Layout.getInstance().getMainSection(DataManagerConstants.SECTION_FILE_TRANSFER)).expand();</span>
+<span class="nc" id="L84">              }</span>
+        });
+
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (record.getProperty().equals(&quot;Input&quot;) </span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                || record.getProperty().equals(&quot;Output&quot;) </span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">                || record.getProperty().equals(&quot;Gate Release&quot;)) {</span>
+
+<span class="nc" id="L91">            this.setItems(downloadFileItem, jumpToItem);</span>
+        }
+<span class="nc" id="L93">    }</span>
+
+    private void downloadFile(String path) {
+
+<span class="nc" id="L97">        DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L98">        AsyncCallback&lt;String&gt; callback = new AsyncCallback&lt;String&gt;() {</span>
+
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L101">                modal.hide();</span>
+<span class="nc" id="L102">                SC.warn(&quot;Unable to download file:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L103">            }</span>
+
+            public void onSuccess(String result) {
+<span class="nc" id="L106">                modal.hide();</span>
+<span class="nc" id="L107">                OperationLayout.getInstance().addOperation(result);</span>
+<span class="nc" id="L108">                ((DataManagerSection)Layout.getInstance().getMainSection(DataManagerConstants.SECTION_FILE_TRANSFER)).expand();</span>
+<span class="nc" id="L109">            }</span>
+        };
+<span class="nc" id="L111">        modal.show(&quot;Adding file to transfer queue...&quot;, true);</span>
+<span class="nc" id="L112">        service.downloadFile(path, callback);</span>
+<span class="nc" id="L113">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

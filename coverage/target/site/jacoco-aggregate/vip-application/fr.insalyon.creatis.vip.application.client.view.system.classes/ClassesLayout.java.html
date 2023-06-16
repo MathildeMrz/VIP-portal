@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ClassesLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.system.classes</a> &gt; <span class="el_source">ClassesLayout.java</span></div><h1>ClassesLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.system.classes;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.ImgButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.AppClass;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationServiceAsync;
+import fr.insalyon.creatis.vip.application.server.dao.mysql.ClassData;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.common.LabelButton;
+import fr.insalyon.creatis.vip.core.client.view.common.ToolstripLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class ClassesLayout extends VLayout {
+
+    private ModalWindow modal;
+    private ListGrid grid;
+    private HLayout rollOverCanvas;
+    private ListGridRecord rollOverRecord;
+
+<span class="nc" id="L76">    public ClassesLayout() {</span>
+
+<span class="nc" id="L78">        this.setWidth100();</span>
+<span class="nc" id="L79">        this.setHeight100();</span>
+<span class="nc" id="L80">        this.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L81">        configureToolStrip();</span>
+<span class="nc" id="L82">        configureGrid();</span>
+<span class="nc" id="L83">        modal = new ModalWindow(grid);</span>
+        
+<span class="nc" id="L85">        loadData();</span>
+<span class="nc" id="L86">    }</span>
+
+    private void configureToolStrip() {
+        
+<span class="nc" id="L90">        ToolstripLayout toolstrip = new ToolstripLayout();</span>
+        
+<span class="nc" id="L92">        toolstrip.addMember(WidgetUtil.getSpaceLabel(15));</span>
+        
+<span class="nc" id="L94">        LabelButton addButton = new LabelButton(&quot;Add Class&quot;, CoreConstants.ICON_ADD);</span>
+<span class="nc" id="L95">        addButton.setWidth(150);</span>
+<span class="nc" id="L96">        addButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L99">                ManageClassesTab tab = (ManageClassesTab) Layout.getInstance().</span>
+<span class="nc" id="L100">                        getTab(ApplicationConstants.TAB_MANAGE_CLASSES);</span>
+<span class="nc" id="L101">                tab.setClass(null, null, null);</span>
+<span class="nc" id="L102">            }</span>
+        });
+<span class="nc" id="L104">        toolstrip.addMember(addButton);</span>
+        
+<span class="nc" id="L106">        LabelButton refreshButton = new LabelButton(&quot;Refresh&quot;, CoreConstants.ICON_REFRESH);</span>
+<span class="nc" id="L107">        refreshButton.setWidth(150);</span>
+<span class="nc" id="L108">        refreshButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L111">                loadData();</span>
+<span class="nc" id="L112">            }</span>
+        });
+<span class="nc" id="L114">        toolstrip.addMember(refreshButton);</span>
+
+<span class="nc" id="L116">        this.addMember(toolstrip);</span>
+<span class="nc" id="L117">    }</span>
+    
+    private void configureGrid() {
+
+<span class="nc" id="L121">        grid = new ListGrid() {</span>
+
+            @Override
+            protected Canvas getRollOverCanvas(Integer rowNum, Integer colNum) {
+<span class="nc" id="L125">                rollOverRecord = this.getRecord(rowNum);</span>
+
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                if (rollOverCanvas == null) {</span>
+<span class="nc" id="L128">                    rollOverCanvas = new HLayout(3);</span>
+<span class="nc" id="L129">                    rollOverCanvas.setSnapTo(&quot;TR&quot;);</span>
+<span class="nc" id="L130">                    rollOverCanvas.setWidth(50);</span>
+<span class="nc" id="L131">                    rollOverCanvas.setHeight(22);</span>
+
+<span class="nc" id="L133">                    ImgButton loadImg = getImgButton(CoreConstants.ICON_EDIT, &quot;Edit&quot;);</span>
+<span class="nc" id="L134">                    loadImg.addClickHandler(new ClickHandler() {</span>
+
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L138">                            edit(rollOverRecord.getAttribute(&quot;name&quot;),</span>
+<span class="nc" id="L139">                                    rollOverRecord.getAttribute(&quot;groups&quot;),</span>
+<span class="nc" id="L140">                                    rollOverRecord.getAttribute(&quot;engines&quot;));</span>
+<span class="nc" id="L141">                        }</span>
+                    });
+<span class="nc" id="L143">                    ImgButton deleteImg = getImgButton(CoreConstants.ICON_DELETE, &quot;Delete&quot;);</span>
+<span class="nc" id="L144">                    deleteImg.addClickHandler(new ClickHandler() {</span>
+
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L148">                            final String name = rollOverRecord.getAttribute(&quot;name&quot;);</span>
+<span class="nc" id="L149">                            SC.ask(&quot;Do you really want to remove the class '&quot;</span>
+<span class="nc" id="L150">                                    + name + &quot;'?&quot;, new BooleanCallback() {</span>
+
+                                @Override
+                                public void execute(Boolean value) {
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                                    if (value) {</span>
+<span class="nc" id="L155">                                        remove(name);</span>
+                                    }
+<span class="nc" id="L157">                                }</span>
+                            });
+<span class="nc" id="L159">                        }</span>
+                    });
+<span class="nc" id="L161">                    rollOverCanvas.addMember(loadImg);</span>
+<span class="nc" id="L162">                    rollOverCanvas.addMember(deleteImg);</span>
+                }
+<span class="nc" id="L164">                return rollOverCanvas;</span>
+            }
+
+            private ImgButton getImgButton(String imgSrc, String prompt) {
+<span class="nc" id="L168">                ImgButton button = new ImgButton();</span>
+<span class="nc" id="L169">                button.setShowDown(false);</span>
+<span class="nc" id="L170">                button.setShowRollOver(false);</span>
+<span class="nc" id="L171">                button.setLayoutAlign(Alignment.CENTER);</span>
+<span class="nc" id="L172">                button.setSrc(imgSrc);</span>
+<span class="nc" id="L173">                button.setPrompt(prompt);</span>
+<span class="nc" id="L174">                button.setHeight(16);</span>
+<span class="nc" id="L175">                button.setWidth(16);</span>
+<span class="nc" id="L176">                return button;</span>
+            }
+        };
+<span class="nc" id="L179">        grid.setWidth100();</span>
+<span class="nc" id="L180">        grid.setHeight100();</span>
+<span class="nc" id="L181">        grid.setShowRollOverCanvas(true);</span>
+<span class="nc" id="L182">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L183">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L184">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L185">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+<span class="nc" id="L186">        grid.setFields(</span>
+                new ListGridField(&quot;name&quot;, &quot;Class Name&quot;),
+                new ListGridField(&quot;groups&quot;, &quot;Groups&quot;),
+                new ListGridField(&quot;engines&quot;, &quot;Engines&quot;));
+<span class="nc" id="L190">        grid.setSortField(&quot;name&quot;);</span>
+<span class="nc" id="L191">        grid.setSortDirection(SortDirection.ASCENDING);</span>
+<span class="nc" id="L192">        grid.addCellDoubleClickHandler(new CellDoubleClickHandler() {</span>
+
+            @Override
+            public void onCellDoubleClick(CellDoubleClickEvent event) {
+<span class="nc" id="L196">                edit(event.getRecord().getAttribute(&quot;name&quot;),</span>
+<span class="nc" id="L197">                        event.getRecord().getAttribute(&quot;groups&quot;),</span>
+<span class="nc" id="L198">                        event.getRecord().getAttribute(&quot;engines&quot;));</span>
+<span class="nc" id="L199">            }</span>
+        });
+<span class="nc" id="L201">        this.addMember(grid);</span>
+<span class="nc" id="L202">    }</span>
+
+    public void loadData() {
+<span class="nc" id="L205">        ApplicationServiceAsync service = ApplicationService.Util.getInstance();</span>
+<span class="nc" id="L206">        final AsyncCallback&lt;List&lt;AppClass&gt;&gt; callback = new AsyncCallback&lt;List&lt;AppClass&gt;&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L210">                modal.hide();</span>
+<span class="nc" id="L211">                SC.warn(&quot;Unable to get list of classes:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L212">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;AppClass&gt; result) {
+<span class="nc" id="L216">                List&lt;ClassRecord&gt; dataList = new ArrayList&lt;ClassRecord&gt;();</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">                for (AppClass c : result) {</span>
+<span class="nc" id="L218">                    StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L219">                    StringBuilder sbe = new StringBuilder();</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">                    for (String group : c.getGroups()) {</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">                        if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L222">                            sb.append(&quot;, &quot;);</span>
+                        }
+<span class="nc" id="L224">                        sb.append(group);</span>
+<span class="nc" id="L225">                    }</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">                    for (String engine : c.getEngines()) {</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">                        if (sbe.length() &gt; 0) {</span>
+<span class="nc" id="L228">                            sbe.append(&quot;, &quot;);</span>
+                        }
+<span class="nc" id="L230">                        sbe.append(engine);</span>
+<span class="nc" id="L231">                    }</span>
+<span class="nc" id="L232">                    dataList.add(new ClassRecord(c.getName(), sb.toString(), sbe.toString()));</span>
+<span class="nc" id="L233">                }</span>
+<span class="nc" id="L234">                grid.setData(dataList.toArray(new ClassRecord[]{}));</span>
+<span class="nc" id="L235">                modal.hide();</span>
+<span class="nc" id="L236">            }</span>
+        };
+<span class="nc" id="L238">        modal.show(&quot;Loading classes...&quot;, true);</span>
+<span class="nc" id="L239">        service.getClasses(callback);</span>
+<span class="nc" id="L240">    }</span>
+
+    private void remove(String name) {
+
+<span class="nc" id="L244">        ApplicationServiceAsync service = ApplicationService.Util.getInstance();</span>
+<span class="nc" id="L245">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L249">                modal.hide();</span>
+<span class="nc" id="L250">                SC.warn(&quot;Unable to remove class:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L251">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L255">                modal.hide();</span>
+<span class="nc" id="L256">                SC.say(&quot;The class was successfully removed!&quot;);</span>
+<span class="nc" id="L257">                loadData();</span>
+<span class="nc" id="L258">            }</span>
+        };
+<span class="nc" id="L260">        modal.show(&quot;Removing class '&quot; + name + &quot;'...&quot;, true);</span>
+<span class="nc" id="L261">        service.removeClass(name, callback);</span>
+<span class="nc" id="L262">    }</span>
+
+    private void edit(String name, String groups, String engines) {
+<span class="nc" id="L265">        ManageClassesTab classTab = (ManageClassesTab) Layout.getInstance().</span>
+<span class="nc" id="L266">                getTab(ApplicationConstants.TAB_MANAGE_CLASSES);</span>
+<span class="nc" id="L267">        classTab.setClass(name, groups, engines);</span>
+<span class="nc" id="L268">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

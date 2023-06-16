@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GroupComposerWindow.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-social</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.social.client.view.message.group</a> &gt; <span class="el_source">GroupComposerWindow.java</span></div><h1>GroupComposerWindow.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.social.client.view.message.group;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.layout.HLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.social.client.SocialConstants;
+import fr.insalyon.creatis.vip.social.client.rpc.SocialService;
+import fr.insalyon.creatis.vip.social.client.rpc.SocialServiceAsync;
+import fr.insalyon.creatis.vip.social.client.view.common.AbstractComposeWindow;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class GroupComposerWindow extends AbstractComposeWindow {
+
+    private String groupName;
+    private TextItem groupItem;
+    private TextItem subjectItem;
+    
+    public GroupComposerWindow(String groupName) {
+
+<span class="nc" id="L61">        super(&quot;Compose New Message to '&quot; + groupName + &quot;'&quot;);</span>
+        
+<span class="nc" id="L63">        this.groupName = groupName;</span>
+
+<span class="nc" id="L65">        configureForm();</span>
+<span class="nc" id="L66">    }</span>
+
+    private void configureForm() {
+
+<span class="nc" id="L70">        HLayout buttonsLayout = new HLayout(5);</span>
+<span class="nc" id="L71">        Label sendLabel = WidgetUtil.getLabel(&quot;Send Message&quot;, SocialConstants.ICON_SEND, 15, Cursor.HAND);</span>
+<span class="nc" id="L72">        sendLabel.addClickHandler(new ClickHandler() {</span>
+
+            public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                if (form.validate()) {</span>
+<span class="nc" id="L76">                    sendMessage(subjectItem.getValueAsString().trim(),</span>
+<span class="nc" id="L77">                            richTextEditor.getValue());</span>
+                }
+<span class="nc" id="L79">            }</span>
+        });
+<span class="nc" id="L81">        buttonsLayout.addMember(sendLabel);</span>
+<span class="nc" id="L82">        vLayout.addMember(buttonsLayout);</span>
+
+<span class="nc" id="L84">        groupItem = FieldUtil.getTextItem(350, true, &quot;Group&quot;, null);</span>
+<span class="nc" id="L85">        groupItem.setValue(groupName);</span>
+<span class="nc" id="L86">        groupItem.setDisabled(true);</span>
+        
+<span class="nc" id="L88">        subjectItem = FieldUtil.getTextItem(350, true, &quot;Subject&quot;, &quot;[0-9.,A-Za-z-+/_(): ]&quot;);</span>
+        
+<span class="nc" id="L90">        form = FieldUtil.getForm(groupItem, subjectItem);</span>
+<span class="nc" id="L91">        form.setWidth(500);</span>
+<span class="nc" id="L92">        vLayout.addMember(form);</span>
+        
+<span class="nc" id="L94">        vLayout.addMember(richTextEditor);</span>
+<span class="nc" id="L95">    }</span>
+    
+    private void sendMessage(String subject, String message) {
+        
+<span class="nc" id="L99">        SocialServiceAsync service = SocialService.Util.getInstance();</span>
+<span class="nc" id="L100">        AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L103">                modal.hide();</span>
+<span class="nc" id="L104">                Layout.getInstance().setWarningMessage(&quot;Unable to send message:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L105">            }</span>
+
+            public void onSuccess(Void result) {
+<span class="nc" id="L108">                destroy();</span>
+<span class="nc" id="L109">                Layout.getInstance().setNoticeMessage(&quot;Message successfully sent.&quot;);</span>
+<span class="nc" id="L110">            }</span>
+        };
+<span class="nc" id="L112">        service.sendGroupMessage(groupName, subject, message, callback);</span>
+<span class="nc" id="L113">        modal.show(&quot;Sending message to '&quot; + groupName + &quot;'...&quot;, true);</span>
+<span class="nc" id="L114">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OperationLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client.view.operation</a> &gt; <span class="el_source">OperationLayout.java</span></div><h1>OperationLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client.view.operation;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
+import java.util.Date;
+import java.util.List;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class OperationLayout extends VLayout {
+
+    private static OperationLayout instance;
+    private OperationToolStrip toolStrip;
+    private VLayout operationsLayout;
+    private Date lastDate;
+    private MoreOperationsBoxLayout loadMoreDataBoxLayout;
+
+    public static OperationLayout getInstance() {
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (instance == null) {</span>
+<span class="nc" id="L62">            instance = new OperationLayout();</span>
+        }
+<span class="nc" id="L64">        return instance;</span>
+    }
+
+    public static void terminate() {
+<span class="nc" id="L68">        instance.destroy();</span>
+<span class="nc" id="L69">        instance = null;</span>
+<span class="nc" id="L70">    }</span>
+
+<span class="nc" id="L72">    private OperationLayout() {</span>
+
+<span class="nc" id="L74">        this.setWidth(&quot;35%&quot;);</span>
+<span class="nc" id="L75">        this.setMaxWidth(450);</span>
+<span class="nc" id="L76">        this.setHeight100();</span>
+<span class="nc" id="L77">        this.setOverflow(Overflow.AUTO);</span>
+
+<span class="nc" id="L79">        operationsLayout = new VLayout(2);</span>
+<span class="nc" id="L80">        operationsLayout.setWidth100();</span>
+<span class="nc" id="L81">        operationsLayout.setHeight100();</span>
+<span class="nc" id="L82">        operationsLayout.setPadding(5);</span>
+<span class="nc" id="L83">        operationsLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L84">        operationsLayout.setAlign(VerticalAlignment.TOP);</span>
+<span class="nc" id="L85">        operationsLayout.setBackgroundColor(&quot;#F2F2F2&quot;);</span>
+
+<span class="nc" id="L87">        toolStrip = new OperationToolStrip();</span>
+<span class="nc" id="L88">        this.addMember(toolStrip);</span>
+<span class="nc" id="L89">        this.addMember(operationsLayout);</span>
+
+<span class="nc" id="L91">        loadMoreDataBoxLayout = new MoreOperationsBoxLayout();</span>
+<span class="nc" id="L92">        loadMoreDataBoxLayout.addClickHandler(new ClickHandler() {</span>
+
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L96">                loadMoreData();</span>
+<span class="nc" id="L97">            }</span>
+        });
+
+<span class="nc" id="L100">        loadData();</span>
+<span class="nc" id="L101">    }</span>
+
+    private void loadData() {
+
+<span class="nc" id="L105">        DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L106">        AsyncCallback&lt;List&lt;PoolOperation&gt;&gt; callback = new AsyncCallback&lt;List&lt;PoolOperation&gt;&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L110">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of operations:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L111">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;PoolOperation&gt; result) {
+
+<span class="nc" id="L116">                operationsLayout.removeMembers(operationsLayout.getMembers());</span>
+
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                if (!result.isEmpty()) {</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                    for (PoolOperation operation : result) {</span>
+<span class="nc" id="L120">                        operationsLayout.addMember(new OperationBoxLayout(operation));</span>
+<span class="nc" id="L121">                        lastDate = operation.getRegistration();</span>
+<span class="nc" id="L122">                    }</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                    if (result.size() == DataManagerConstants.MAX_OPERATIONS_LIMIT) {</span>
+<span class="nc" id="L124">                        operationsLayout.addMember(loadMoreDataBoxLayout);</span>
+                    }
+                }
+<span class="nc" id="L127">            }</span>
+        };
+<span class="nc" id="L129">        service.getPoolOperationsByUser(callback);</span>
+<span class="nc" id="L130">    }</span>
+
+    private void loadMoreData() {
+
+<span class="nc" id="L134">        DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L135">        AsyncCallback&lt;List&lt;PoolOperation&gt;&gt; callback = new AsyncCallback&lt;List&lt;PoolOperation&gt;&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L139">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of operations:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L140">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;PoolOperation&gt; result) {
+
+<span class="nc" id="L145">                operationsLayout.removeMember(loadMoreDataBoxLayout);</span>
+
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                if (!result.isEmpty()) {</span>
+
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                    for (PoolOperation operation : result) {</span>
+<span class="nc" id="L150">                        operationsLayout.addMember(new OperationBoxLayout(operation));</span>
+<span class="nc" id="L151">                        lastDate = operation.getRegistration();</span>
+<span class="nc" id="L152">                    }</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                    if (result.size() == DataManagerConstants.MAX_OPERATIONS_LIMIT) {</span>
+<span class="nc" id="L154">                        operationsLayout.addMember(loadMoreDataBoxLayout);</span>
+                    }
+                }
+<span class="nc" id="L157">            }</span>
+        };
+<span class="nc" id="L159">        service.getPoolOperationsByUserAndDate(lastDate, callback);</span>
+<span class="nc" id="L160">    }</span>
+
+    /**
+     * Adds an operation to the list of operations.
+     *
+     * @param operationID
+     */
+    public void addOperation(final String operationID) {
+
+<span class="nc" id="L169">        DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L170">        AsyncCallback&lt;PoolOperation&gt; asyncCallback = new AsyncCallback&lt;PoolOperation&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L174">                Layout.getInstance().setWarningMessage(operationID + &quot;&lt;br /&gt;Unable to get operation data:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L175">            }</span>
+
+            @Override
+            public void onSuccess(PoolOperation result) {
+<span class="nc" id="L179">                operationsLayout.addMember(new OperationBoxLayout(result), 0);</span>
+<span class="nc" id="L180">            }</span>
+        };
+<span class="nc" id="L182">        service.getPoolOperationById(operationID, asyncCallback);</span>
+<span class="nc" id="L183">    }</span>
+
+    /**
+     * Removes all operations from the list.
+     */
+    public void clearOperations() {
+
+<span class="nc" id="L190">        operationsLayout.removeMembers(operationsLayout.getMembers());</span>
+<span class="nc" id="L191">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

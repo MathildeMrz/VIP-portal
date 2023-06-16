@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractFormLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.common</a> &gt; <span class="el_source">AbstractFormLayout.java</span></div><h1>AbstractFormLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.common;
+
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public abstract class AbstractFormLayout extends VLayout {
+
+    public AbstractFormLayout(int width, int height) {
+<span class="nc" id="L50">        this(Integer.toString(width), Integer.toString(height));</span>
+<span class="nc" id="L51">    }</span>
+
+    public AbstractFormLayout(int width, String height) {
+<span class="nc" id="L54">        this(Integer.toString(width), height);</span>
+<span class="nc" id="L55">    }</span>
+    
+<span class="nc" id="L57"> public AbstractFormLayout() {</span>
+<span class="nc" id="L58">        this.setBorder(&quot;1px solid #C0C0C0&quot;);</span>
+<span class="nc" id="L59">        this.setBackgroundColor(&quot;#F5F5F5&quot;);</span>
+<span class="nc" id="L60">        this.setPadding(10);</span>
+<span class="nc" id="L61">        this.setMembersMargin(5);</span>
+<span class="nc" id="L62">    }</span>
+
+<span class="nc" id="L64">    public AbstractFormLayout(String width, String height) {</span>
+<span class="nc" id="L65">        this.setWidth(width);</span>
+<span class="nc" id="L66">        this.setHeight(height);</span>
+<span class="nc" id="L67">        this.setBorder(&quot;1px solid #C0C0C0&quot;);</span>
+<span class="nc" id="L68">        this.setBackgroundColor(&quot;#F5F5F5&quot;);</span>
+<span class="nc" id="L69">        this.setPadding(10);</span>
+<span class="nc" id="L70">        this.setMembersMargin(5);</span>
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Adds a title to the form.
+     * 
+     * @param title
+     * @param icon 
+     */
+    protected void addTitle(String title, String icon) {
+
+<span class="nc" id="L81">        Label label = WidgetUtil.getLabel(&quot;&lt;b&gt;&quot; + title + &quot;&lt;/b&gt;&quot;,</span>
+                icon, 15);
+<span class="nc" id="L83">        label.setWidth100();</span>
+<span class="nc" id="L84">        label.setAlign(Alignment.LEFT);</span>
+<span class="nc" id="L85">        this.addMember(label);</span>
+<span class="nc" id="L86">    }</span>
+
+    /**
+     * Adds a field to the form.
+     * 
+     * @param title
+     * @param item 
+     */
+    public void addField(String title, FormItem item) {
+
+<span class="nc" id="L96">        this.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;&quot; + title + &quot;&lt;/b&gt;&quot;, 15));</span>
+<span class="nc" id="L97">        this.addMember(FieldUtil.getForm(item));</span>
+<span class="nc" id="L98">    }</span>
+    
+     public void addField100(String title, FormItem item) {
+
+<span class="nc" id="L102">        this.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;&quot; + title + &quot;&lt;/b&gt;&quot;, 15));</span>
+<span class="nc" id="L103">        this.addMember(FieldUtil.getFormOneColumn(item));</span>
+<span class="nc" id="L104">    }</span>
+     
+      public void addFieldResponsiveHeight(String title, FormItem item) {
+
+<span class="nc" id="L108">        this.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;&quot; + title + &quot;&lt;/b&gt;&quot;, 15));</span>
+<span class="nc" id="L109">        this.addMember(FieldUtil.getFormOneColumnResponsiveHeight(item));</span>
+<span class="nc" id="L110">    }</span>
+    /**
+     * Adds a set of buttons displayed in line.
+     * 
+     * @param buttons 
+     */
+    protected void addButtons(IButton... buttons) {
+
+<span class="nc" id="L118">        HLayout hLayout = new HLayout(5);</span>
+<span class="nc" id="L119">        hLayout.setWidth100();</span>
+        
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        for (IButton button : buttons) {</span>
+<span class="nc" id="L122">            hLayout.addMember(button);</span>
+        }
+<span class="nc" id="L124">        this.addMember(hLayout);</span>
+<span class="nc" id="L125">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

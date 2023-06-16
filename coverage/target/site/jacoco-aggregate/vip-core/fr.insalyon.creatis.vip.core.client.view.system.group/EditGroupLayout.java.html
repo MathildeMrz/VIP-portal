@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EditGroupLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.system.group</a> &gt; <span class="el_source">EditGroupLayout.java</span></div><h1>EditGroupLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.system.group;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.CheckboxItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.layout.HLayout;
+import fr.insalyon.creatis.vip.core.client.bean.Group;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.system.user.UserRecord;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class EditGroupLayout extends AbstractFormLayout {
+
+<span class="nc" id="L68">    private String oldName = null;</span>
+<span class="nc" id="L69">    private boolean newGroup = true;</span>
+    private TextItem nameItem;
+    private CheckboxItem isPublicField;
+    private CheckboxItem isGridFileField;
+    private CheckboxItem isGridJobsField;
+    private IButton saveButton;
+    private IButton removeButton;
+    private ListGrid grid;
+    private ModalWindow gridModal;
+    private HLayout rollOverCanvas;
+    private ListGridRecord rollOverRecord;
+
+    public EditGroupLayout() {
+
+<span class="nc" id="L83">        super(380, 450);</span>
+<span class="nc" id="L84">        addTitle(&quot;Add/Edit Group&quot;, CoreConstants.ICON_GROUP);</span>
+
+<span class="nc" id="L86">        configure();</span>
+<span class="nc" id="L87">        loadUsers();</span>
+<span class="nc" id="L88">    }</span>
+
+    private void configure() {
+
+<span class="nc" id="L92">        nameItem = FieldUtil.getTextItem(350, null);</span>
+
+<span class="nc" id="L94">        isPublicField = new CheckboxItem();</span>
+<span class="nc" id="L95">        isPublicField.setTitle(&quot;Public&quot;);</span>
+<span class="nc" id="L96">        isPublicField.setWidth(350);</span>
+        
+<span class="nc" id="L98">        isGridFileField = new CheckboxItem();</span>
+<span class="nc" id="L99">        isGridFileField.setTitle(&quot;Grid File&quot;);</span>
+<span class="nc" id="L100">        isGridFileField.setWidth(350);</span>
+        
+<span class="nc" id="L102">        isGridJobsField= new CheckboxItem();</span>
+<span class="nc" id="L103">        isGridJobsField.setTitle(&quot;Grid Jobs&quot;);</span>
+<span class="nc" id="L104">        isGridJobsField.setWidth(350);</span>
+        
+        
+
+<span class="nc" id="L108">        saveButton = WidgetUtil.getIButton(&quot;Save&quot;, CoreConstants.ICON_SAVED,</span>
+<span class="nc" id="L109">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                        if (nameItem.validate()) {</span>
+<span class="nc" id="L113">                            save(nameItem.getValueAsString().trim(),</span>
+<span class="nc" id="L114">                                    isPublicField.getValueAsBoolean(),</span>
+<span class="nc" id="L115">                                    isGridFileField.getValueAsBoolean(),</span>
+<span class="nc" id="L116">                                    isGridJobsField.getValueAsBoolean());</span>
+                        }
+<span class="nc" id="L118">                    }</span>
+                });
+
+<span class="nc" id="L121">        removeButton = WidgetUtil.getIButton(&quot;Remove&quot;, CoreConstants.ICON_DELETE,</span>
+<span class="nc" id="L122">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L125" title="All 2 branches missed.">                        if (nameItem.validate()) {</span>
+<span class="nc" id="L126">                            remove(nameItem.getValueAsString().trim());</span>
+                        }
+<span class="nc" id="L128">                    }</span>
+                });
+<span class="nc" id="L130">        removeButton.setDisabled(true);</span>
+
+<span class="nc" id="L132">        grid = new ListGrid() {</span>
+            @Override
+            protected Canvas getRollOverCanvas(Integer rowNum, Integer colNum) {
+
+<span class="nc" id="L136">                rollOverRecord = this.getRecord(rowNum);</span>
+
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                if (rollOverCanvas == null) {</span>
+<span class="nc" id="L139">                    rollOverCanvas = new HLayout(3);</span>
+<span class="nc" id="L140">                    rollOverCanvas.setSnapTo(&quot;TR&quot;);</span>
+<span class="nc" id="L141">                    rollOverCanvas.setWidth(50);</span>
+<span class="nc" id="L142">                    rollOverCanvas.setHeight(22);</span>
+
+<span class="nc" id="L144">                    rollOverCanvas.addMember(FieldUtil.getImgButton(</span>
+                            CoreConstants.ICON_DELETE, &quot;Remove user from this group&quot;,
+<span class="nc" id="L146">                            new ClickHandler() {</span>
+                                @Override
+                                public void onClick(ClickEvent event) {
+<span class="nc" id="L149">                                    final String email = rollOverRecord.getAttribute(&quot;email&quot;);</span>
+<span class="nc" id="L150">                                    SC.ask(&quot;Do you really want to remove the user \&quot;&quot;</span>
+<span class="nc" id="L151">                                            + email + &quot;\&quot; from this group?&quot;, new BooleanCallback() {</span>
+                                        @Override
+                                        public void execute(Boolean value) {
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                                            if (value) {</span>
+<span class="nc" id="L155">                                                removeUserFromGroup(email);</span>
+                                            }
+<span class="nc" id="L157">                                        }</span>
+                                    });
+<span class="nc" id="L159">                                }</span>
+                            }));
+                }
+<span class="nc" id="L162">                return rollOverCanvas;</span>
+            }
+        };
+<span class="nc" id="L165">        grid.setWidth(350);</span>
+<span class="nc" id="L166">        grid.setHeight100();</span>
+<span class="nc" id="L167">        grid.setShowRollOverCanvas(true);</span>
+<span class="nc" id="L168">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L169">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L170">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L171">        grid.setCanHover(true);</span>
+<span class="nc" id="L172">        grid.setShowHover(true);</span>
+<span class="nc" id="L173">        grid.setShowHoverComponents(true);</span>
+<span class="nc" id="L174">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+<span class="nc" id="L175">        grid.setFields(FieldUtil.getIconGridField(&quot;countryCodeIcon&quot;),</span>
+                new ListGridField(&quot;username&quot;, &quot;Name&quot;));
+<span class="nc" id="L177">        grid.setSortField(&quot;username&quot;);</span>
+<span class="nc" id="L178">        grid.setSortDirection(SortDirection.ASCENDING);</span>
+
+<span class="nc" id="L180">        gridModal = new ModalWindow(grid);</span>
+
+<span class="nc" id="L182">        addField(&quot;Name&quot;, nameItem);</span>
+<span class="nc" id="L183">        this.addMember(FieldUtil.getForm(isPublicField));</span>
+<span class="nc" id="L184">        this.addMember(FieldUtil.getForm(isGridFileField));</span>
+<span class="nc" id="L185">        this.addMember(FieldUtil.getForm(isGridJobsField));</span>
+<span class="nc" id="L186">        this.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;Users&lt;/b&gt;&quot;, 15));</span>
+<span class="nc" id="L187">        this.addMember(grid);</span>
+<span class="nc" id="L188">        addButtons(saveButton, removeButton);</span>
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * Sets a group to edit or creates a blank form.
+     *
+     * @param name Group name
+     */
+    public void setGroup(String name, boolean isPublic,boolean isGridFile,boolean isGridJobs ) {
+
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        if (name != null) {</span>
+<span class="nc" id="L199">            this.oldName = name;</span>
+<span class="nc" id="L200">            this.nameItem.setValue(name);</span>
+<span class="nc" id="L201">            this.isPublicField.setValue(isPublic);</span>
+<span class="nc" id="L202">            this.isGridFileField.setValue(isGridFile);</span>
+<span class="nc" id="L203">            this.isGridJobsField.setValue(isGridJobs);</span>
+<span class="nc" id="L204">            this.newGroup = false;</span>
+<span class="nc" id="L205">            this.removeButton.setDisabled(false);</span>
+<span class="nc" id="L206">            loadUsers();</span>
+
+        } else {
+<span class="nc" id="L209">            this.oldName = null;</span>
+<span class="nc" id="L210">            this.nameItem.setValue(&quot;&quot;);</span>
+<span class="nc" id="L211">            this.isPublicField.setValue(true);</span>
+<span class="nc" id="L212">            this.isGridFileField.setValue(true);</span>
+<span class="nc" id="L213">            this.isGridJobsField.setValue(true);</span>
+<span class="nc" id="L214">            this.newGroup = true;</span>
+<span class="nc" id="L215">            this.removeButton.setDisabled(true);</span>
+<span class="nc" id="L216">            this.grid.setData(new ListGridRecord[]{});</span>
+        }
+<span class="nc" id="L218">    }</span>
+
+    private void save(String name, boolean isPublic,boolean isgridfile,boolean isgridjobs) {
+
+<span class="nc" id="L222">        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L223">        WidgetUtil.setLoadingIButton(saveButton, &quot;Saving...&quot;);</span>
+
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (newGroup) {</span>
+<span class="nc" id="L226">            service.addGroup(new Group(name, isPublic,isgridfile,isgridjobs), getCallback(&quot;add&quot;));</span>
+        } else {
+<span class="nc" id="L228">            service.updateGroup(oldName, new Group(name, isPublic,isgridfile,isgridjobs), getCallback(&quot;update&quot;));</span>
+        }
+<span class="nc" id="L230">    }</span>
+
+    private void remove(final String name) {
+
+<span class="nc bnc" id="L234" title="All 2 branches missed.">        if (name.equals(CoreConstants.GROUP_SUPPORT)) {</span>
+<span class="nc" id="L235">            Layout.getInstance().setWarningMessage(&quot;You can not remove the &lt;b&gt;&quot; + name + &quot;&lt;/b&gt; group.&quot;);</span>
+<span class="nc" id="L236">            return;</span>
+        }
+<span class="nc" id="L238">        SC.ask(&quot;Do you really want to remove \&quot;&quot; + name + &quot;\&quot; group?&quot;, new BooleanCallback() {</span>
+            @Override
+            public void execute(Boolean value) {
+<span class="nc bnc" id="L241" title="All 2 branches missed.">                if (value) {</span>
+<span class="nc" id="L242">                    ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L243">                    WidgetUtil.setLoadingIButton(removeButton, &quot;Removing...&quot;);</span>
+<span class="nc" id="L244">                    service.removeGroup(name, getCallback(&quot;remove&quot;));</span>
+                }
+<span class="nc" id="L246">            }</span>
+        });
+<span class="nc" id="L248">    }</span>
+
+    private AsyncCallback&lt;Void&gt; getCallback(final String text) {
+
+<span class="nc" id="L252">        return new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L255">                WidgetUtil.resetIButton(saveButton, &quot;Save&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L256">                WidgetUtil.resetIButton(removeButton, &quot;Remove&quot;, CoreConstants.ICON_DELETE);</span>
+<span class="nc" id="L257">                Layout.getInstance().setWarningMessage(&quot;Unable to &quot; + text + &quot; group:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L258">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L262">                WidgetUtil.resetIButton(saveButton, &quot;Save&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L263">                WidgetUtil.resetIButton(removeButton, &quot;Remove&quot;, CoreConstants.ICON_DELETE);</span>
+<span class="nc" id="L264">                setGroup(null, false,false,false);</span>
+<span class="nc" id="L265">                ((ManageGroupsTab) Layout.getInstance().getTab(</span>
+<span class="nc" id="L266">                        CoreConstants.TAB_MANAGE_GROUPS)).loadGroups();</span>
+<span class="nc" id="L267">            }</span>
+        };
+    }
+
+    private void loadUsers() {
+
+<span class="nc" id="L273">        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L274">        final AsyncCallback&lt;List&lt;User&gt;&gt; callback = new AsyncCallback&lt;List&lt;User&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L277">                gridModal.hide();</span>
+<span class="nc" id="L278">                Layout.getInstance().setWarningMessage(&quot;Unable to load users:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L279">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;User&gt; result) {
+<span class="nc" id="L283">                gridModal.hide();</span>
+<span class="nc" id="L284">                List&lt;UserRecord&gt; dataList = new ArrayList&lt;UserRecord&gt;();</span>
+
+<span class="nc bnc" id="L286" title="All 2 branches missed.">                for (User user : result) {</span>
+<span class="nc" id="L287">                    dataList.add(new UserRecord(user));</span>
+<span class="nc" id="L288">                }</span>
+<span class="nc" id="L289">                grid.setData(dataList.toArray(new UserRecord[]{}));</span>
+<span class="nc" id="L290">            }</span>
+        };
+<span class="nc" id="L292">        gridModal.show(&quot;Loading users from \&quot;&quot; + oldName + &quot;\&quot; group...&quot;, true);</span>
+<span class="nc" id="L293">        service.getUsersFromGroup(oldName, callback);</span>
+<span class="nc" id="L294">    }</span>
+
+    private void removeUserFromGroup(String email) {
+
+<span class="nc" id="L298">        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L299">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L302">                gridModal.hide();</span>
+<span class="nc" id="L303">                Layout.getInstance().setWarningMessage(&quot;Unable to remove user:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L304">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L308">                gridModal.hide();</span>
+<span class="nc" id="L309">                loadUsers();</span>
+<span class="nc" id="L310">            }</span>
+        };
+<span class="nc" id="L312">        gridModal.show(&quot;Removing \&quot;&quot; + email + &quot;\&quot;&lt;br /&gt;from \&quot;&quot; + oldName + &quot;\&quot;...&quot;, true);</span>
+<span class="nc" id="L313">        service.removeUserFromGroup(email, oldName, callback);</span>
+<span class="nc" id="L314">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

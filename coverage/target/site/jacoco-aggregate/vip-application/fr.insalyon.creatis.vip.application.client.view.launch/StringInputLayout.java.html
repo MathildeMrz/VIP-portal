@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StringInputLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.launch</a> &gt; <span class="el_source">StringInputLayout.java</span></div><h1>StringInputLayout.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.launch;
+
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.PickerIcon;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.validator.RequiredIfValidator;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesInput;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesStringInput;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.ValidatorUtil;
+import fr.insalyon.creatis.vip.datamanager.client.view.selection.PathSelectionWindow;
+
+
+/**
+ * Representation of a text input (String or File)
+ *
+ * @author Guillaume Vanel
+ * @version %I%, %G%
+ */
+public class StringInputLayout extends InputLayout{
+    private final String allowedCharacters;
+    /**
+     * Initialise graphical labels and main input field
+     *
+     * @param input             BoutiquesInputString to be represented
+     * @param parentLayout      LaunchFormLayout containing this
+     * @param hasAddValueButton boolean: true if input should have a &quot;add value&quot; button, false otherwise
+     * @param allowedChar       String representing a regexp of allowed characters (ex: &quot;[a-zA-z0-9]&quot; for alphanumeric).
+     */
+    public StringInputLayout(BoutiquesStringInput input, LaunchFormLayout parentLayout, boolean hasAddValueButton,
+                             String allowedChar) {
+<span class="nc" id="L32">        super(input, parentLayout);</span>
+<span class="nc" id="L33">        this.allowedCharacters = allowedChar;</span>
+        // Remove add value button if needed
+<span class="nc" id="L35">        TextItem mainField = (TextItem) this.masterForm.getField(MAIN_FIELD_NAME);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if (!hasAddValueButton){</span>
+<span class="nc" id="L37">            mainField.setIcons();</span>
+        }
+<span class="nc" id="L39">        this.allowCharacters(mainField);</span>
+<span class="nc" id="L40">    }</span>
+
+    /**
+     * @return FormItem representing an input field for this input
+     * @see InputLayout#getFormItem()
+     */
+    @Override
+    protected FormItem getFormItem() {
+<span class="nc" id="L48">        final TextItem inputField = FieldUtil.getTextItem(400, &quot;.&quot;);</span>
+<span class="nc" id="L49">        inputField.setValue(this.getDefaultValue());</span>
+<span class="nc" id="L50">        LaunchFormLayout.assertCondition(this.input instanceof BoutiquesStringInput,</span>
+                &quot;Invalid state: StringInputLayout with non BoutiquesStringInput input.&quot;);
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if(this.isFile()){</span>
+            // Add browse icon
+<span class="nc" id="L54">            PickerIcon browsePicker = new PickerIcon(PickerIcon.SEARCH,</span>
+<span class="nc" id="L55">                    event -&gt; new PathSelectionWindow(inputField, this::onValueChanged).show());</span>
+<span class="nc" id="L56">            browsePicker.setPrompt(&quot;Browse on the Grid&quot;);</span>
+<span class="nc" id="L57">            inputField.setIcons(browsePicker);</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">            if(this.allowedCharacters != null) {</span>
+<span class="nc" id="L59">                this.allowCharacters(inputField);</span>
+            }
+        }
+
+<span class="nc" id="L63">        return inputField;</span>
+    }
+
+    /**
+     * @return boolean: true if this input represents a file input, false if it represent an arbitrary string input.
+     */
+    public boolean isFile(){
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        return this.input.getType() == BoutiquesInput.InputType.FILE;</span>
+    }
+
+    /**
+     * Ensure provided input field accepts only allowed characters
+     *
+     * @param inputField TextItem
+     */
+    private void allowCharacters(TextItem inputField){
+<span class="nc" id="L79">            inputField.setKeyPressFilter(this.allowedCharacters);</span>
+<span class="nc" id="L80">            inputField.setValidators(</span>
+<span class="nc" id="L81">                    ValidatorUtil.getStringValidator(&quot;^&quot; + this.allowedCharacters + &quot;+$&quot;),</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                    new RequiredIfValidator((formItem, value) -&gt; !this.isOptional()));</span>
+<span class="nc" id="L83">            inputField.setShowErrorIcon(false);</span>
+<span class="nc" id="L84">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

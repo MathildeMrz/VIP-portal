@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BrowserToolStrip.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client.view.browser</a> &gt; <span class="el_source">BrowserToolStrip.java</span></div><h1>BrowserToolStrip.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client.view.browser;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.bean.Data;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
+import fr.insalyon.creatis.vip.datamanager.client.view.ValidatorUtil;
+import fr.insalyon.creatis.vip.datamanager.client.view.common.BasicBrowserToolStrip;
+import fr.insalyon.creatis.vip.datamanager.client.view.operation.OperationLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class BrowserToolStrip extends BasicBrowserToolStrip {
+
+    private ToolStripButton pasteButton;
+
+    public BrowserToolStrip(final ModalWindow modal, final ListGrid grid) {
+
+<span class="nc" id="L67">        super(modal, grid);</span>
+
+        // Upload a File Button
+<span class="nc" id="L70">        this.addSeparator();</span>
+<span class="nc" id="L71">        this.addButton(WidgetUtil.getToolStripButton(</span>
+<span class="nc" id="L72">                DataManagerConstants.ICON_UPLOAD, &quot;Upload a File&quot;, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L75">                        String path = pathItem.getValueAsString();</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                        if (ValidatorUtil.validateRootPath(path, &quot;upload a file in&quot;)</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">                        &amp;&amp; ValidatorUtil.validateUserLevel(path, &quot;upload a file to&quot;)) {</span>
+
+<span class="nc" id="L79">                            new FileUploadWindow(modal, path, &quot;dataManagerUploadComplete&quot;).show();</span>
+                        }
+<span class="nc" id="L81">                    }</span>
+                }));
+
+        // Upload Multiple Data Button
+<span class="nc" id="L85">        this.addButton(WidgetUtil.getToolStripButton(</span>
+<span class="nc" id="L86">                DataManagerConstants.ICON_UPLOAD_MULTIPLE, &quot;Upload Multiple Data&quot;, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L89">                        String path = pathItem.getValueAsString();</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">                        if (ValidatorUtil.validateRootPath(path, &quot;upload data in&quot;)</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">                        &amp;&amp; ValidatorUtil.validateUserLevel(path, &quot;upload data to&quot;)) {</span>
+
+<span class="nc" id="L93">                            DataUploadWindow window = new DataUploadWindow(modal, path, &quot;dataManagerUploadComplete&quot;);</span>
+<span class="nc" id="L94">                            BrowserLayout.getInstance().setDataUploadWindow(window);</span>
+<span class="nc" id="L95">                            window.show();</span>
+                        }
+<span class="nc" id="L97">                    }</span>
+                }));
+
+        // Download Button
+<span class="nc" id="L101">        this.addButton(WidgetUtil.getToolStripButton(</span>
+<span class="nc" id="L102">                DataManagerConstants.ICON_DOWNLOAD, &quot;Download Selected Data&quot;, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L105">                        download();</span>
+<span class="nc" id="L106">                    }</span>
+                }));
+
+        // Delete Button
+<span class="nc" id="L110">        this.addButton(WidgetUtil.getToolStripButton(</span>
+<span class="nc" id="L111">                CoreConstants.ICON_DELETE, &quot;Delete Selected Files/Folders&quot;, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L114">                        String path = pathItem.getValueAsString();</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                        if (ValidatorUtil.validateRootPath(path, &quot;delete from&quot;)</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                        &amp;&amp; ValidatorUtil.validateUserLevel(path, &quot;delete from&quot;)) {</span>
+
+<span class="nc" id="L118">                            delete();</span>
+                        }
+<span class="nc" id="L120">                    }</span>
+                }));
+<span class="nc" id="L122">    }</span>
+
+    private void download() {
+<span class="nc" id="L125">        ListGridRecord[] records = BrowserLayout.getInstance().getGridSelection();</span>
+
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        for (ListGridRecord record : records) {</span>
+<span class="nc" id="L128">            DataRecord data = (DataRecord) record;</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">            if (data.getType() == Data.Type.file) {</span>
+<span class="nc" id="L131">                DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L132">                AsyncCallback&lt;String&gt; callback = new AsyncCallback&lt;String&gt;() {</span>
+                    @Override
+                    public void onFailure(Throwable caught) {
+<span class="nc" id="L135">                        modal.hide();</span>
+<span class="nc" id="L136">                        Layout.getInstance().setWarningMessage(&quot;Unable to download file:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L137">                    }</span>
+
+                    @Override
+                    public void onSuccess(String result) {
+<span class="nc" id="L141">                        modal.hide();</span>
+<span class="nc" id="L142">                        OperationLayout.getInstance().addOperation(result);</span>
+<span class="nc" id="L143">                    }</span>
+                };
+<span class="nc" id="L145">                modal.show(&quot;Adding file to transfer queue...&quot;, true);</span>
+<span class="nc" id="L146">                service.downloadFile(</span>
+<span class="nc" id="L147">                        pathItem.getValueAsString() + &quot;/&quot; + data.getName(),</span>
+                        callback);
+
+<span class="nc" id="L150">            } else {</span>
+<span class="nc" id="L151">                DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L152">                AsyncCallback&lt;String&gt; callback = new AsyncCallback&lt;String&gt;() {</span>
+                    @Override
+                    public void onFailure(Throwable caught) {
+<span class="nc" id="L155">                        modal.hide();</span>
+<span class="nc" id="L156">                        Layout.getInstance().setWarningMessage(&quot;Unable to download folder: &quot; + caught.getMessage());</span>
+<span class="nc" id="L157">                    }</span>
+
+                    @Override
+                    public void onSuccess(String result) {
+<span class="nc" id="L161">                        modal.hide();</span>
+<span class="nc" id="L162">                        OperationLayout.getInstance().addOperation(result);</span>
+<span class="nc" id="L163">                    }</span>
+                };
+<span class="nc" id="L165">                modal.show(&quot;Adding folder to transfer queue...&quot;, true);</span>
+<span class="nc" id="L166">                service.downloadFolder(</span>
+<span class="nc" id="L167">                        pathItem.getValueAsString() + &quot;/&quot; + data.getName(),</span>
+                        callback);
+            }
+        }
+<span class="nc" id="L171">    }</span>
+
+    private void delete() {
+
+<span class="nc" id="L175">        final List&lt;String&gt; paths = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L176">        final String baseDir = pathItem.getValueAsString();</span>
+<span class="nc" id="L177">        final DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (baseDir.startsWith(DataManagerConstants.ROOT + &quot;/&quot; + DataManagerConstants.TRASH_HOME)) {</span>
+<span class="nc" id="L180">            SC.ask(&quot;Do you really want to permanently delete the selected files/folders?&quot;, new BooleanCallback() {</span>
+                @Override
+                public void execute(Boolean value) {
+<span class="nc bnc" id="L183" title="All 2 branches missed.">                    if (value) {</span>
+
+<span class="nc bnc" id="L185" title="All 2 branches missed.">                        for (ListGridRecord record : BrowserLayout.getInstance().getGridSelection()) {</span>
+<span class="nc" id="L186">                            DataRecord data = (DataRecord) record;</span>
+<span class="nc" id="L187">                            paths.add(baseDir + &quot;/&quot; + data.getName());</span>
+                        }
+
+<span class="nc" id="L190">                        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                            @Override
+                            public void onFailure(Throwable caught) {
+<span class="nc" id="L193">                                modal.hide();</span>
+<span class="nc" id="L194">                                Layout.getInstance().setWarningMessage(&quot;Unable to delete files/folders:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L195">                            }</span>
+
+                            @Override
+                            public void onSuccess(Void result) {
+<span class="nc" id="L199">                                modal.hide();</span>
+<span class="nc" id="L200">                                Layout.getInstance().setNoticeMessage(&quot;The selected files/folders were successfully scheduled to be permanentely deleted.&quot;);</span>
+<span class="nc" id="L201">                                BrowserLayout.getInstance().loadData(baseDir, true);</span>
+<span class="nc" id="L202">                            }</span>
+                        };
+<span class="nc" id="L204">                        modal.show(&quot;Deleting files/folders...&quot;, true);</span>
+<span class="nc" id="L205">                        service.delete(paths, callback);</span>
+                    }
+<span class="nc" id="L207">                }</span>
+            });
+
+        } else {
+<span class="nc" id="L211">            SC.ask(&quot;Do you really want to delete the selected files/folders?&quot;, new BooleanCallback() {</span>
+                @Override
+                public void execute(Boolean value) {
+<span class="nc bnc" id="L214" title="All 2 branches missed.">                    if (value) {</span>
+
+<span class="nc bnc" id="L216" title="All 2 branches missed.">                        for (ListGridRecord record : BrowserLayout.getInstance().getGridSelection()) {</span>
+<span class="nc" id="L217">                            DataRecord data = (DataRecord) record;</span>
+<span class="nc bnc" id="L218" title="All 4 branches missed.">                            if (data.getType().equals(Data.Type.folderSync) || data.getType().equals(Data.Type.fileSync)) {</span>
+<span class="nc" id="L219">                                Layout.getInstance().setWarningMessage(&quot;could not delete a synchronized files/folders &lt;br /&gt;&quot;);</span>
+                            } else {
+<span class="nc" id="L221">                                paths.add(baseDir + &quot;/&quot; + data.getName());</span>
+                            }
+                        }
+<span class="nc bnc" id="L224" title="All 2 branches missed.">                        if (!paths.isEmpty()) {</span>
+<span class="nc" id="L225">                            final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                                @Override
+                                public void onFailure(Throwable caught) {
+<span class="nc" id="L228">                                    modal.hide();</span>
+<span class="nc" id="L229">                                    Layout.getInstance().setWarningMessage(&quot;Unable to delete files/folders:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L230">                                }</span>
+
+                                @Override
+                                public void onSuccess(Void result) {
+<span class="nc" id="L234">                                    modal.hide();</span>
+<span class="nc" id="L235">                                    Layout.getInstance().setNoticeMessage(&quot;The selected files/folders were successfully scheduled to be permanentely deleted.&quot;);</span>
+<span class="nc" id="L236">                                    BrowserLayout.getInstance().loadData(baseDir, true);</span>
+<span class="nc" id="L237">                                }</span>
+                            };
+                            // trash desactivated : raw delete
+<span class="nc" id="L240">                            modal.show(&quot;Deleting files/folders...&quot;, true);</span>
+<span class="nc" id="L241">                            service.delete(paths, callback);</span>
+                        }
+                    }
+<span class="nc" id="L244">                }</span>
+            });
+        }
+<span class="nc" id="L247">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

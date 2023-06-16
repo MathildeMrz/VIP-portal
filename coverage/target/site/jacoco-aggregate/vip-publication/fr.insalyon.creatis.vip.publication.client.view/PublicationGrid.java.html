@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PublicationGrid.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-publication</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.publication.client.view</a> &gt; <span class="el_source">PublicationGrid.java</span></div><h1>PublicationGrid.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.publication.client.view;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.ImgButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.viewer.DetailViewer;
+import com.smartgwt.client.widgets.viewer.DetailViewerField;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.user.UserLevel;
+import fr.insalyon.creatis.vip.publication.client.rpc.PublicationService;
+
+/**
+ *
+ * @author Nouha Boujelben
+ */
+public class PublicationGrid extends ListGrid {
+
+    private ListGrid grid;
+    private HLayout rollOverCanvas;
+    private ListGridRecord rollOverRecord;
+    private DetailViewer detailViewer;
+    DataSource ds;
+   
+
+<span class="nc" id="L72">    public PublicationGrid() {</span>
+<span class="nc" id="L73">        ds = new Data();</span>
+<span class="nc" id="L74">        grid = new ListGrid() {</span>
+            @Override
+            protected Canvas getRollOverCanvas(Integer rowNum, Integer colNum) {
+<span class="nc" id="L77">                rollOverRecord = this.getRecord(rowNum);</span>
+
+<span class="nc bnc" id="L79" title="All 4 branches missed.">                if (CoreModule.user != null &amp;&amp; rollOverCanvas == null) {</span>
+<span class="nc" id="L80">                    rollOverCanvas = new HLayout(3);</span>
+<span class="nc" id="L81">                    rollOverCanvas.setSnapTo(&quot;TR&quot;);</span>
+<span class="nc" id="L82">                    rollOverCanvas.setWidth(50);</span>
+<span class="nc" id="L83">                    rollOverCanvas.setHeight(22);</span>
+
+<span class="nc" id="L85">                    final ImgButton loadImg = getImgButton(CoreConstants.ICON_EDIT, &quot;Edit&quot;);</span>
+<span class="nc" id="L86">                    loadImg.addClickHandler(new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L89">                            PublicationLayout.edit(rollOverRecord.getAttribute(&quot;id&quot;), rollOverRecord.getAttribute(&quot;title&quot;),</span>
+<span class="nc" id="L90">                                    rollOverRecord.getAttribute(&quot;type&quot;),</span>
+<span class="nc" id="L91">                                    rollOverRecord.getAttribute(&quot;typeName&quot;), rollOverRecord.getAttribute(&quot;authors&quot;), rollOverRecord.getAttribute(&quot;date&quot;), rollOverRecord.getAttribute(&quot;doi&quot;), rollOverRecord.getAttribute(&quot;vipApplication&quot;));</span>
+<span class="nc" id="L92">                        }</span>
+                    });
+<span class="nc" id="L94">                    final ImgButton deleteImg = getImgButton(CoreConstants.ICON_DELETE, &quot;Delete&quot;);</span>
+<span class="nc" id="L95">                    deleteImg.addClickHandler(new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L98">                            final String id = rollOverRecord.getAttribute(&quot;id&quot;);</span>
+<span class="nc" id="L99">                            SC.ask(&quot;Do you really want to remove the publication \&quot;&quot;</span>
+<span class="nc" id="L100">                                    + rollOverRecord.getAttribute(&quot;title&quot;) + &quot; ?&quot;, new BooleanCallback() {</span>
+                                @Override
+                                public void execute(Boolean value) {
+<span class="nc bnc" id="L103" title="All 4 branches missed.">                                    if (value != null &amp;&amp; value) {</span>
+<span class="nc" id="L104">                                        remove(Long.parseLong(id));</span>
+                                    }
+<span class="nc" id="L106">                                }</span>
+                            });
+
+<span class="nc" id="L109">                        }</span>
+                    });
+
+                    
+<span class="nc" id="L113">                        rollOverCanvas.addMember(loadImg);</span>
+<span class="nc" id="L114">                        rollOverCanvas.addMember(deleteImg);</span>
+                    
+                }
+<span class="nc" id="L117">                return rollOverCanvas;</span>
+            }
+
+            private ImgButton getImgButton(String imgSrc, String prompt) {
+<span class="nc" id="L121">                ImgButton button = new ImgButton();</span>
+<span class="nc" id="L122">                button.setShowDown(false);</span>
+<span class="nc" id="L123">                button.setShowRollOver(false);</span>
+<span class="nc" id="L124">                button.setLayoutAlign(Alignment.CENTER);</span>
+<span class="nc" id="L125">                button.setSrc(imgSrc);</span>
+<span class="nc" id="L126">                button.setPrompt(prompt);</span>
+<span class="nc" id="L127">                button.setHeight(16);</span>
+<span class="nc" id="L128">                button.setWidth(16);</span>
+<span class="nc" id="L129">                return button;</span>
+            }
+
+            @Override
+            protected Canvas getCellHoverComponent(Record record, Integer rowNum, Integer colNum) {
+
+
+<span class="nc" id="L136">                detailViewer = new DetailViewer();</span>
+<span class="nc" id="L137">                detailViewer.setWidth(400);</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                if (CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L139">                    detailViewer.setFields(</span>
+                            new DetailViewerField(&quot;title&quot;, &quot;Title&quot;),
+                            new DetailViewerField(&quot;type&quot;, &quot;Type&quot;),
+                            new DetailViewerField(&quot;typeName&quot;, &quot;Journal, Conference or Book Name&quot;),
+                            new DetailViewerField(&quot;authors&quot;, &quot;Authors&quot;),
+                            new DetailViewerField(&quot;date&quot;, &quot;Date&quot;),
+                            new DetailViewerField(&quot;vipApplication&quot;, &quot;VIP Application&quot;),
+                            new DetailViewerField(&quot;doi&quot;, &quot;Doi&quot;),
+                            new DetailViewerField(&quot;vipAuthor&quot;, &quot;Owner&quot;));
+                } else {
+<span class="nc" id="L149">                    detailViewer.setFields(</span>
+                            new DetailViewerField(&quot;title&quot;, &quot;Title&quot;),
+                            new DetailViewerField(&quot;type&quot;, &quot;Type&quot;),
+                            new DetailViewerField(&quot;typeName&quot;, &quot;Journal, Conference or Book Name&quot;),
+                            new DetailViewerField(&quot;authors&quot;, &quot;Authors&quot;),
+                            new DetailViewerField(&quot;date&quot;, &quot;Date&quot;),
+                            new DetailViewerField(&quot;vipApplication&quot;, &quot;VIP Application&quot;),
+                            new DetailViewerField(&quot;doi&quot;, &quot;Doi&quot;));
+                }
+
+<span class="nc" id="L159">                detailViewer.setData(new Record[]{record});</span>
+
+<span class="nc" id="L161">                return detailViewer;</span>
+            }
+        };
+<span class="nc" id="L164">        grid.setWidth100();</span>
+<span class="nc" id="L165">        grid.setHeight100();</span>
+<span class="nc" id="L166">        grid.setShowRollOverCanvas(true);</span>
+<span class="nc" id="L167">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L168">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L169">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L170">        grid.setCanHover(true);</span>
+<span class="nc" id="L171">        grid.setShowHover(true);</span>
+<span class="nc" id="L172">        grid.setShowHoverComponents(true);</span>
+<span class="nc" id="L173">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L174">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+<span class="nc" id="L175">        grid.setFilterOnKeypress(true);</span>
+<span class="nc" id="L176">        grid.setDataSource(ds);</span>
+<span class="nc" id="L177">        grid.setAutoFetchData(Boolean.TRUE);</span>
+<span class="nc" id="L178">        ListGridField publicationId = new ListGridField(&quot;id&quot;, &quot;ID&quot;);</span>
+<span class="nc" id="L179">        ListGridField pubOwner = new ListGridField(&quot;vipAuthor&quot;, &quot;Owner&quot;);</span>
+<span class="nc" id="L180">        grid.setFields(publicationId, new ListGridField(&quot;title&quot;, &quot;Title&quot;),</span>
+                new ListGridField(&quot;type&quot;, &quot;Type&quot;),
+                new ListGridField(&quot;typeName&quot;, &quot;Journal, Conference or Book Name&quot;),
+                new ListGridField(&quot;authors&quot;, &quot;Authors&quot;),
+                new ListGridField(&quot;date&quot;, &quot;Date&quot;),
+                new ListGridField(&quot;vipApplication&quot;, &quot;VIP Application&quot;),
+                pubOwner);
+
+<span class="nc" id="L188">        publicationId.setHidden(true);</span>
+
+<span class="nc bnc" id="L190" title="All 4 branches missed.">        if (CoreModule.user != null &amp;&amp; CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L191">            pubOwner.setHidden(false);</span>
+        } else {
+<span class="nc" id="L193">            pubOwner.setHidden(true);</span>
+        }
+<span class="nc" id="L195">        grid.setSortField(&quot;title&quot;);</span>
+<span class="nc" id="L196">        grid.setSortDirection(SortDirection.ASCENDING);</span>
+<span class="nc" id="L197">        grid.addCellClickHandler(new CellClickHandler() {</span>
+            @Override
+            public void onCellClick(CellClickEvent event) {
+<span class="nc bnc" id="L200" title="All 2 branches missed.">                if (CoreModule.user.getLevel() == UserLevel.Administrator) {</span>
+<span class="nc" id="L201">                    PublicationLayout.edit(event.getRecord().getAttribute(&quot;id&quot;), event.getRecord().getAttribute(&quot;title&quot;),</span>
+<span class="nc" id="L202">                            event.getRecord().getAttribute(&quot;type&quot;),</span>
+<span class="nc" id="L203">                            event.getRecord().getAttribute(&quot;typeName&quot;), event.getRecord().getAttribute(&quot;authors&quot;), event.getRecord().getAttribute(&quot;date&quot;), event.getRecord().getAttribute(&quot;doi&quot;),event.getRecord().getAttribute(&quot;vipApplication&quot;));</span>
+                }
+<span class="nc" id="L205">            }</span>
+        });
+<span class="nc" id="L207">    }</span>
+
+    private void remove(Long id) {
+
+<span class="nc" id="L211">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L214">               getPubTab().getModal().hide();</span>
+<span class="nc" id="L215">                Layout.getInstance().setWarningMessage(&quot;Unable to remove publication:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L216">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L220">                Layout.getInstance().setNoticeMessage(&quot;222&quot;);</span>
+<span class="nc" id="L221">                getPubTab().getModal().hide();</span>
+<span class="nc" id="L222">                Layout.getInstance().setNoticeMessage(&quot;The publication was successfully removed!&quot;);</span>
+<span class="nc" id="L223">                loadData();</span>
+<span class="nc" id="L224">            }</span>
+        };
+<span class="nc" id="L226">       getPubTab().getModal().show(&quot;Removing publication '&quot; + &quot;'...&quot;, true);</span>
+
+<span class="nc" id="L228">        PublicationService.Util.getInstance().removePublication(id, callback);</span>
+
+<span class="nc" id="L230">    }</span>
+
+    public ListGrid getGrid() {
+<span class="nc" id="L233">        return grid;</span>
+    }
+
+    public DataSource getDs() {
+<span class="nc" id="L237">        return ds;</span>
+    }
+
+    protected void loadData() {
+
+<span class="nc" id="L242">        getPubTab().loadPublication();</span>
+<span class="nc" id="L243">    }</span>
+
+    private PublicationTab getPubTab() {
+<span class="nc" id="L246">        return (PublicationTab) Layout.getInstance().</span>
+<span class="nc" id="L247">                getTab(PublicationConstants.TAB_PUBLICATION);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

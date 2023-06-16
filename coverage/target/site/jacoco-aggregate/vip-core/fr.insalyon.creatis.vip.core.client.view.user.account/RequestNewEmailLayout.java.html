@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RequestNewEmailLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.user.account</a> &gt; <span class="el_source">RequestNewEmailLayout.java</span></div><h1>RequestNewEmailLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.user.account;
+
+import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.widgets.*;
+import com.smartgwt.client.widgets.events.*;
+import com.smartgwt.client.widgets.form.fields.*;
+import fr.insalyon.creatis.vip.core.client.*;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.rpc.*;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.*;
+
+/**
+ *
+ * @author Axel Bonnet
+ */
+public class RequestNewEmailLayout extends AbstractFormLayout {
+
+    private TextItem emailField;
+    private IButton saveButton;
+
+    public RequestNewEmailLayout() {
+
+<span class="nc" id="L58">        super(&quot;100%&quot;, &quot;135&quot;);</span>
+<span class="nc" id="L59">        addTitle(&quot;Email&quot;, CoreConstants.ICON_PERSONAL);</span>
+
+<span class="nc" id="L61">        configure();</span>
+<span class="nc" id="L62">    }</span>
+
+    private void configure() {
+
+<span class="nc" id="L66">        Label emailLabel = WidgetUtil.getLabel(CoreModule.user.getEmail(), 15);</span>
+<span class="nc" id="L67">        emailField = FieldUtil.getTextItem(200, &quot;[a-zA-Z0-9_.\\-+@]&quot;);</span>
+<span class="nc" id="L68">        emailField.setName(&quot;email&quot;);</span>
+
+<span class="nc" id="L70">        emailField.setValidators(ValidatorUtil.getEmailValidator());</span>
+
+<span class="nc" id="L72">        saveButton = WidgetUtil.getIButton(&quot;Change email&quot;, CoreConstants.ICON_SAVED,</span>
+<span class="nc" id="L73">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                        if (emailField.validate()) {</span>
+
+<span class="nc" id="L78">                            ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L79">                            final AsyncCallback&lt;User&gt; callback = new AsyncCallback&lt;User&gt;() {</span>
+                                @Override
+                                public void onFailure(Throwable caught) {
+<span class="nc" id="L82">                                    WidgetUtil.resetIButton(saveButton, &quot;Change email&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L83">                                    Layout.getInstance().setWarningMessage(&quot;Unable to change email:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L84">                                }</span>
+
+                                @Override
+                                public void onSuccess(User result) {
+<span class="nc" id="L88">                                    Modules.getInstance().userUpdated(CoreModule.user, result);</span>
+<span class="nc" id="L89">                                    CoreModule.user = result;</span>
+
+<span class="nc" id="L91">                                    WidgetUtil.resetIButton(saveButton, &quot;Change email&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L92">                                    Layout.getInstance().setNoticeMessage(</span>
+                                            &quot;Your email change has been taken into account. &quot;
+                                                    +&quot; Please use the validation code sent to your new email address in order to validate it. &lt;br /&gt;&quot;
+                                                    + &quot;Note that your login email will not change until you validate the new address&quot;);
+<span class="nc" id="L96">                                }</span>
+                            };
+<span class="nc" id="L98">                            WidgetUtil.setLoadingIButton(saveButton, &quot;Saving...&quot;);</span>
+<span class="nc" id="L99">                            service.requestNewEmail(</span>
+<span class="nc" id="L100">                                    emailField.getValueAsString().trim(), callback);</span>
+                        }
+<span class="nc" id="L102">                    }</span>
+                });
+<span class="nc" id="L104">        saveButton.setWidth(150);</span>
+<span class="nc" id="L105">        this.addMember(emailLabel);</span>
+<span class="nc" id="L106">        addField(&quot;New email&quot;, emailField);</span>
+<span class="nc" id="L107">        this.addMember(saveButton);</span>
+<span class="nc" id="L108">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

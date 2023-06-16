@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GroupMessageViewerWindow.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-social</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.social.client.view.message.group</a> &gt; <span class="el_source">GroupMessageViewerWindow.java</span></div><h1>GroupMessageViewerWindow.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.social.client.view.message.group;
+
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.HTMLPane;
+import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.social.client.SocialConstants;
+import fr.insalyon.creatis.vip.social.client.bean.GroupMessage;
+
+/**
+ *
+ * @author Rafael Silva
+ */
+public class GroupMessageViewerWindow extends Window {
+
+    private VLayout vLayout;
+    private GroupMessage message;
+
+<span class="nc" id="L55">    public GroupMessageViewerWindow(GroupMessage message) {</span>
+
+<span class="nc" id="L57">        this.message = message;</span>
+
+<span class="nc" id="L59">        this.setTitle(Canvas.imgHTML(SocialConstants.ICON_MESSAGE) + &quot; &quot;</span>
+<span class="nc" id="L60">                + message.getGroupName() + &quot;: &quot; + message.getTitle());</span>
+<span class="nc" id="L61">        this.setCanDragReposition(true);</span>
+<span class="nc" id="L62">        this.setCanDragResize(true);</span>
+<span class="nc" id="L63">        this.setWidth(700);</span>
+<span class="nc" id="L64">        this.setHeight(450);</span>
+<span class="nc" id="L65">        this.centerInPage();</span>
+<span class="nc" id="L66">        this.setBackgroundColor(&quot;#F2F2F2&quot;);</span>
+<span class="nc" id="L67">        this.setPadding(5);</span>
+
+<span class="nc" id="L69">        vLayout = new VLayout(5);</span>
+<span class="nc" id="L70">        vLayout.setWidth100();</span>
+<span class="nc" id="L71">        vLayout.setHeight100();</span>
+<span class="nc" id="L72">        vLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L73">        vLayout.setPadding(5);</span>
+
+<span class="nc" id="L75">        configureHeader();</span>
+<span class="nc" id="L76">        configureBody();</span>
+
+<span class="nc" id="L78">        this.addItem(vLayout);</span>
+<span class="nc" id="L79">    }</span>
+
+    private void configureHeader() {
+
+<span class="nc" id="L83">        HLayout hLayout = new HLayout(5);</span>
+<span class="nc" id="L84">        hLayout.setWidth100();</span>
+<span class="nc" id="L85">        hLayout.setHeight(50);</span>
+<span class="nc" id="L86">        hLayout.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+
+        // Image Layout
+<span class="nc" id="L89">        VLayout imgLayout = new VLayout();</span>
+<span class="nc" id="L90">        imgLayout.setPadding(2);</span>
+<span class="nc" id="L91">        imgLayout.setWidth(50);</span>
+<span class="nc" id="L92">        imgLayout.setHeight(50);</span>
+<span class="nc" id="L93">        imgLayout.setAlign(Alignment.CENTER);</span>
+<span class="nc" id="L94">        imgLayout.addMember(new Img(SocialConstants.ICON_USER, 48, 48));</span>
+
+<span class="nc" id="L96">        hLayout.addMember(imgLayout);</span>
+
+        // Main Layout
+<span class="nc" id="L99">        VLayout mainLayout = new VLayout(2);</span>
+<span class="nc" id="L100">        mainLayout.setWidth(&quot;*&quot;);</span>
+<span class="nc" id="L101">        mainLayout.setHeight(50);</span>
+<span class="nc" id="L102">        mainLayout.setAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L104">        mainLayout.addMember(WidgetUtil.getLabel(&quot;&lt;strong&gt;&quot; + message.getSender().getFullName()</span>
+<span class="nc" id="L105">                + &quot;&lt;/strong&gt;: &quot; + message.getTitle(), 15));</span>
+
+<span class="nc" id="L107">        mainLayout.addMember(WidgetUtil.getLabel(&quot;&lt;font color=\&quot;#666666\&quot;&gt;&quot;</span>
+<span class="nc" id="L108">                + message.getPosted() + &quot;&lt;/font&gt;&quot;, 15));</span>
+
+<span class="nc" id="L110">        hLayout.addMember(mainLayout);</span>
+
+<span class="nc" id="L112">        vLayout.addMember(hLayout);</span>
+<span class="nc" id="L113">    }</span>
+
+    private void configureBody() {
+
+<span class="nc" id="L117">        HTMLPane pane = new HTMLPane();</span>
+<span class="nc" id="L118">        pane.setPadding(10);</span>
+<span class="nc" id="L119">        pane.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L120">        pane.setStyleName(&quot;defaultBorder&quot;);</span>
+<span class="nc" id="L121">        pane.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+
+<span class="nc" id="L123">        String contents = &quot;&lt;b&gt;Message: &lt;/b&gt;&lt;br /&gt;&lt;br /&gt;&quot; + message.getMessage();</span>
+
+<span class="nc" id="L125">        pane.setContents(contents);</span>
+<span class="nc" id="L126">        vLayout.addMember(pane);</span>
+<span class="nc" id="L127">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

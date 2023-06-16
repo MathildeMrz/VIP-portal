@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SystemLoadLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor</a> &gt; <span class="el_source">SystemLoadLayout.java</span></div><h1>SystemLoadLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor;
+
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.ApplicationStatus;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class SystemLoadLayout extends VLayout {
+
+    private Timer timer;
+    private Label workflowsLabel;
+    private Label runningTasksLabel;
+    private Label waitingTasksLabel;
+
+<span class="nc" id="L60">    public SystemLoadLayout(int x, int y) {</span>
+
+<span class="nc" id="L62">        this.setWidth(300);</span>
+<span class="nc" id="L63">        this.setHeight(120);</span>
+<span class="nc" id="L64">        this.setMembersMargin(5);</span>
+<span class="nc" id="L65">        this.setPadding(5);</span>
+<span class="nc" id="L66">        this.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+<span class="nc" id="L67">        this.setBorder(&quot;1px solid #CCCCCC&quot;);</span>
+<span class="nc" id="L68">        this.setOpacity(85);</span>
+<span class="nc" id="L69">        this.moveTo(x - getWidth(), y + 20);</span>
+
+<span class="nc" id="L71">        Label titleLabel = new Label(&quot;&lt;b&gt;System Load&lt;/b&gt;&quot;);</span>
+<span class="nc" id="L72">        titleLabel.setIcon(ApplicationConstants.ICON_STATUS);</span>
+<span class="nc" id="L73">        titleLabel.setHeight(30);</span>
+
+<span class="nc" id="L75">        this.addMember(titleLabel);</span>
+
+<span class="nc" id="L77">        workflowsLabel = new Label(&quot;Loading Executions...&quot;);</span>
+<span class="nc" id="L78">        workflowsLabel.setHeight(18);</span>
+<span class="nc" id="L79">        this.addMember(workflowsLabel);</span>
+
+<span class="nc" id="L81">        runningTasksLabel = new Label(&quot;Loading Running Tasks...&quot;);</span>
+<span class="nc" id="L82">        runningTasksLabel.setHeight(18);</span>
+<span class="nc" id="L83">        this.addMember(runningTasksLabel);</span>
+
+<span class="nc" id="L85">        waitingTasksLabel = new Label(&quot;Loading Waiting Tasks...&quot;);</span>
+<span class="nc" id="L86">        waitingTasksLabel.setHeight(18);</span>
+<span class="nc" id="L87">        this.addMember(waitingTasksLabel);</span>
+
+<span class="nc" id="L89">        Label closeLabel = new Label(&quot;Close&quot;);</span>
+<span class="nc" id="L90">        closeLabel.setIcon(DataManagerConstants.OP_ICON_CLEAR);</span>
+<span class="nc" id="L91">        closeLabel.setHeight(25);</span>
+<span class="nc" id="L92">        closeLabel.setWidth100();</span>
+<span class="nc" id="L93">        closeLabel.setAlign(Alignment.RIGHT);</span>
+<span class="nc" id="L94">        closeLabel.setCursor(Cursor.HAND);</span>
+<span class="nc" id="L95">        closeLabel.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L98">                timer.cancel();</span>
+<span class="nc" id="L99">                destroy();</span>
+<span class="nc" id="L100">            }</span>
+        });
+
+<span class="nc" id="L103">        this.addMember(closeLabel);</span>
+
+<span class="nc" id="L105">        timer = new Timer() {</span>
+            @Override
+            public void run() {
+<span class="nc" id="L108">                loadData();</span>
+<span class="nc" id="L109">            }</span>
+        };
+<span class="nc" id="L111">        timer.scheduleRepeating(30000);</span>
+<span class="nc" id="L112">    }</span>
+
+    private void loadData() {
+
+<span class="nc" id="L116">        ApplicationServiceAsync service = ApplicationService.Util.getInstance();</span>
+<span class="nc" id="L117">        final AsyncCallback&lt;ApplicationStatus&gt; callback = new AsyncCallback&lt;ApplicationStatus&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+
+<span class="nc" id="L121">                Layout.getInstance().setWarningMessage(&quot;Unable to update system load:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L122">            }</span>
+
+            @Override
+            public void onSuccess(ApplicationStatus result) {
+
+<span class="nc" id="L127">                workflowsLabel.setContents(&quot;Running Executions: &quot; + result.getRunningWorkflows());</span>
+<span class="nc" id="L128">                runningTasksLabel.setContents(&quot;Running Tasks: &quot; + result.getRunningTasks());</span>
+<span class="nc" id="L129">                waitingTasksLabel.setContents(&quot;Waiting Tasks: &quot; + result.getWaitingTasks());</span>
+<span class="nc" id="L130">            }</span>
+        };
+<span class="nc" id="L132">        service.getApplicationStatus(callback);</span>
+<span class="nc" id="L133">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

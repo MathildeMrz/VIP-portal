@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationsLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.system.application</a> &gt; <span class="el_source">ApplicationsLayout.java</span></div><h1>ApplicationsLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.system.application;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.ImgButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.Application;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.common.LabelButton;
+import fr.insalyon.creatis.vip.core.client.view.common.ToolstripLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class ApplicationsLayout extends VLayout {
+
+    private ModalWindow modal;
+    private ListGrid grid;
+    private HLayout rollOverCanvas;
+    private ListGridRecord rollOverRecord;
+
+    private boolean onlyPublicApps;
+
+<span class="nc" id="L79">    public ApplicationsLayout(boolean onlyPublicApps) {</span>
+
+<span class="nc" id="L81">        this.setWidth100();</span>
+<span class="nc" id="L82">        this.setHeight100();</span>
+<span class="nc" id="L83">        this.setOverflow(Overflow.AUTO);</span>
+
+<span class="nc" id="L85">        this.onlyPublicApps = onlyPublicApps;</span>
+
+<span class="nc" id="L87">        configureActions();</span>
+<span class="nc" id="L88">        configureGrid();</span>
+<span class="nc" id="L89">        modal = new ModalWindow(grid);</span>
+<span class="nc" id="L90">        loadData();</span>
+<span class="nc" id="L91">    }</span>
+
+    private void configureActions() {
+
+<span class="nc" id="L95">        ToolstripLayout toolstrip = new ToolstripLayout();</span>
+
+<span class="nc" id="L97">        toolstrip.addMember(WidgetUtil.getSpaceLabel(15));</span>
+
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if( ! onlyPublicApps) {</span>
+<span class="nc" id="L100">            LabelButton addButton = new LabelButton(&quot;Add Application&quot;, CoreConstants.ICON_ADD);</span>
+<span class="nc" id="L101">            addButton.setWidth(150);</span>
+<span class="nc" id="L102">            addButton.addClickHandler(new ClickHandler() {</span>
+                @Override
+                public void onClick(ClickEvent event) {
+<span class="nc" id="L105">                    ManageApplicationsTab appsTab = (ManageApplicationsTab) Layout.getInstance().</span>
+<span class="nc" id="L106">                            getTab(ApplicationConstants.TAB_MANAGE_APPLICATION);</span>
+<span class="nc" id="L107">                    appsTab.setApplication(null, null, null, null);</span>
+<span class="nc" id="L108">                }</span>
+            });
+<span class="nc" id="L110">            toolstrip.addMember(addButton);</span>
+
+<span class="nc" id="L112">            LabelButton refreshButton = new LabelButton(&quot;Refresh&quot;, CoreConstants.ICON_REFRESH);</span>
+<span class="nc" id="L113">            refreshButton.setWidth(150);</span>
+<span class="nc" id="L114">            refreshButton.addClickHandler(new ClickHandler() {</span>
+                @Override
+                public void onClick(ClickEvent event) {
+<span class="nc" id="L117">                    loadData();</span>
+<span class="nc" id="L118">                }</span>
+            });
+<span class="nc" id="L120">            toolstrip.addMember(refreshButton);</span>
+
+<span class="nc" id="L122">            this.addMember(toolstrip);</span>
+        }
+<span class="nc" id="L124">    }</span>
+
+    private void configureGrid() {
+
+<span class="nc" id="L128">        grid = new ListGrid() {</span>
+            @Override
+            protected Canvas getRollOverCanvas(Integer rowNum, Integer colNum) {
+<span class="nc" id="L131">                rollOverRecord = this.getRecord(rowNum);</span>
+
+<span class="nc bnc" id="L133" title="All 4 branches missed.">                if ( ! onlyPublicApps &amp;&amp; rollOverCanvas == null) {</span>
+<span class="nc" id="L134">                    rollOverCanvas = new HLayout(3);</span>
+<span class="nc" id="L135">                    rollOverCanvas.setSnapTo(&quot;TR&quot;);</span>
+<span class="nc" id="L136">                    rollOverCanvas.setWidth(50);</span>
+<span class="nc" id="L137">                    rollOverCanvas.setHeight(22);</span>
+
+<span class="nc" id="L139">                    ImgButton loadImg = getImgButton(CoreConstants.ICON_EDIT, &quot;Edit&quot;);</span>
+<span class="nc" id="L140">                    loadImg.addClickHandler(new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L143">                            edit(rollOverRecord.getAttribute(&quot;name&quot;),</span>
+<span class="nc" id="L144">                                    rollOverRecord.getAttribute(&quot;owner&quot;),</span>
+<span class="nc" id="L145">                                    rollOverRecord.getAttribute(&quot;classes&quot;),</span>
+<span class="nc" id="L146">                                    rollOverRecord.getAttribute(&quot;citation&quot;));</span>
+<span class="nc" id="L147">                        }</span>
+                    });
+<span class="nc" id="L149">                    ImgButton deleteImg = getImgButton(CoreConstants.ICON_DELETE, &quot;Delete&quot;);</span>
+<span class="nc" id="L150">                    deleteImg.addClickHandler(new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L153">                            final String name = rollOverRecord.getAttribute(&quot;name&quot;);</span>
+<span class="nc" id="L154">                            SC.ask(&quot;Do you really want to remove the application \&quot;&quot;</span>
+<span class="nc" id="L155">                                    + name + &quot;\&quot;?&quot;, new BooleanCallback() {</span>
+                                @Override
+                                public void execute(Boolean value) {
+<span class="nc bnc" id="L158" title="All 2 branches missed.">                                    if (value) {</span>
+<span class="nc" id="L159">                                        remove(name);</span>
+                                    }
+<span class="nc" id="L161">                                }</span>
+                            });
+<span class="nc" id="L163">                        }</span>
+                    });
+<span class="nc" id="L165">                    rollOverCanvas.addMember(loadImg);</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                    if (! CoreModule.user.isDeveloper()) {</span>
+<span class="nc" id="L167">                        rollOverCanvas.addMember(deleteImg);</span>
+                    }
+                }
+<span class="nc" id="L170">                return rollOverCanvas;</span>
+            }
+
+            private ImgButton getImgButton(String imgSrc, String prompt) {
+<span class="nc" id="L174">                ImgButton button = new ImgButton();</span>
+<span class="nc" id="L175">                button.setShowDown(false);</span>
+<span class="nc" id="L176">                button.setShowRollOver(false);</span>
+<span class="nc" id="L177">                button.setLayoutAlign(Alignment.CENTER);</span>
+<span class="nc" id="L178">                button.setSrc(imgSrc);</span>
+<span class="nc" id="L179">                button.setPrompt(prompt);</span>
+<span class="nc" id="L180">                button.setHeight(16);</span>
+<span class="nc" id="L181">                button.setWidth(16);</span>
+<span class="nc" id="L182">                return button;</span>
+            }
+        };
+<span class="nc" id="L185">        grid.setWidth100();</span>
+<span class="nc" id="L186">        grid.setHeight100();</span>
+<span class="nc" id="L187">        grid.setShowRollOverCanvas(true);</span>
+<span class="nc" id="L188">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L189">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L190">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L191">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (onlyPublicApps){</span>
+<span class="nc" id="L193">            grid.setFields(new ListGridField(&quot;name&quot;, &quot;Application Name&quot;),</span>
+                    new ListGridField(&quot;classes&quot;, &quot;Classes&quot;),
+                    new ListGridField(&quot;groups&quot;, &quot;Groups&quot;));
+        } else {
+<span class="nc" id="L197">            ListGridField ownerField = new ListGridField(&quot;owner&quot;, &quot;Owner&quot;);</span>
+<span class="nc" id="L198">            ownerField.setHidden(true);</span>
+<span class="nc" id="L199">            grid.setFields(new ListGridField(&quot;name&quot;, &quot;Application Name&quot;),</span>
+                    new ListGridField(&quot;ownerFullName&quot;, &quot;Owner&quot;),
+                    ownerField,
+                    new ListGridField(&quot;classes&quot;, &quot;Classes&quot;));
+        }
+<span class="nc" id="L204">        grid.setSortField(&quot;name&quot;);</span>
+<span class="nc" id="L205">        grid.setSortDirection(SortDirection.ASCENDING);</span>
+<span class="nc" id="L206">        grid.addCellClickHandler(new CellClickHandler() {</span>
+            @Override
+            public void onCellClick(CellClickEvent event) {
+
+<span class="nc" id="L210">                edit(event.getRecord().getAttribute(&quot;name&quot;),</span>
+<span class="nc" id="L211">                        event.getRecord().getAttribute(&quot;owner&quot;),</span>
+<span class="nc" id="L212">                        event.getRecord().getAttribute(&quot;classes&quot;),</span>
+<span class="nc" id="L213">                        event.getRecord().getAttribute(&quot;citation&quot;));</span>
+<span class="nc" id="L214">            }</span>
+        });
+<span class="nc" id="L216">        this.addMember(grid);</span>
+<span class="nc" id="L217">    }</span>
+
+    public void loadData() {
+
+<span class="nc" id="L221">        final AsyncCallback&lt;List&lt;Application&gt;&gt; callback = new AsyncCallback&lt;List&lt;Application&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L224">                modal.hide();</span>
+<span class="nc" id="L225">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of applications:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L226">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Application&gt; result) {
+<span class="nc" id="L230">                modal.hide();</span>
+<span class="nc" id="L231">                List&lt;ApplicationRecord&gt; dataList = new ArrayList&lt;ApplicationRecord&gt;();</span>
+
+<span class="nc bnc" id="L233" title="All 2 branches missed.">                for (Application app : result) {</span>
+<span class="nc" id="L234">                    StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L235">                    StringBuilder sbg = new StringBuilder();</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">                    for (String className : app.getApplicationClasses()) {</span>
+<span class="nc bnc" id="L237" title="All 2 branches missed.">                        if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L238">                            sb.append(&quot;, &quot;);</span>
+                        }
+<span class="nc" id="L240">                        sb.append(className);</span>
+<span class="nc" id="L241">                    }</span>
+
+<span class="nc bnc" id="L243" title="All 2 branches missed.">                    if(onlyPublicApps) {</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">                        for (String group : app.getApplicationGroups()) {</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">                            if (sbg.length() &gt; 0) {</span>
+<span class="nc" id="L246">                                sbg.append(&quot;, &quot;);</span>
+                            }
+<span class="nc" id="L248">                            sbg.append(group);</span>
+<span class="nc" id="L249">                        }</span>
+                    }
+<span class="nc bnc" id="L251" title="All 2 branches missed.">                    if(onlyPublicApps) {</span>
+<span class="nc" id="L252">                        dataList.add(new ApplicationRecord(app.getName(), app.getOwner(), app.getFullName(), sb.toString(), app.getCitation(), sbg.toString()));</span>
+                    } else {
+<span class="nc" id="L254">                        dataList.add(new ApplicationRecord(app.getName(), app.getOwner(), app.getFullName(), sb.toString(), app.getCitation()));</span>
+                    }
+<span class="nc" id="L256">                }</span>
+<span class="nc" id="L257">                grid.setData(dataList.toArray(new ApplicationRecord[]{}));</span>
+<span class="nc" id="L258">            }</span>
+        };
+<span class="nc" id="L260">        modal.show(&quot;Loading applications...&quot;, true);</span>
+<span class="nc bnc" id="L261" title="All 2 branches missed.">        if (onlyPublicApps) {</span>
+<span class="nc" id="L262">            ApplicationService.Util.getInstance().getPublicApplications(callback);</span>
+        } else {
+<span class="nc" id="L264">            ApplicationService.Util.getInstance().getApplications(callback);</span>
+        }
+<span class="nc" id="L266">    }</span>
+
+    private void remove(String name) {
+
+<span class="nc" id="L270">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L273">                modal.hide();</span>
+<span class="nc" id="L274">                Layout.getInstance().setWarningMessage(&quot;Unable to remove application:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L275">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L279">                modal.hide();</span>
+<span class="nc" id="L280">                Layout.getInstance().setNoticeMessage(&quot;The application was successfully removed!&quot;);</span>
+<span class="nc" id="L281">                loadData();</span>
+<span class="nc" id="L282">            }</span>
+        };
+<span class="nc" id="L284">        modal.show(&quot;Removing application '&quot; + name + &quot;'...&quot;, true);</span>
+<span class="nc" id="L285">        ApplicationService.Util.getInstance().remove(name, callback);</span>
+<span class="nc" id="L286">    }</span>
+
+    private void edit(String name, String owner, String classes, String citation) {
+
+<span class="nc" id="L290">        ManageApplicationsTab appsTab = (ManageApplicationsTab) Layout.getInstance().</span>
+<span class="nc" id="L291">                getTab(ApplicationConstants.TAB_MANAGE_APPLICATION);</span>
+
+<span class="nc" id="L293">        appsTab.loadVersions(name);</span>
+<span class="nc" id="L294">        appsTab.setApplication(name, owner, classes, citation);</span>
+<span class="nc" id="L295">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

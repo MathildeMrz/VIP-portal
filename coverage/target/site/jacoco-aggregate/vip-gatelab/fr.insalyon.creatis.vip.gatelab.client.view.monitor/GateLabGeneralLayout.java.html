@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GateLabGeneralLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-gatelab</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.gatelab.client.view.monitor</a> &gt; <span class="el_source">GateLabGeneralLayout.java</span></div><h1>GateLabGeneralLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.gatelab.client.view.monitor;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.common.LabelButton;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.gatelab.client.rpc.GateLabService;
+import java.util.Map;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class GateLabGeneralLayout extends AbstractFormLayout {
+
+    private String simulationID;
+    private String date;
+    private Label generalLabel;
+    private Label infoLabel;
+    private GateLabProgressLayout progressLayout;
+    private LabelButton stopAndMergeButton;
+
+    public GateLabGeneralLayout(String simulationID, SimulationStatus status, String date) {
+
+<span class="nc" id="L65">        super(&quot;100%&quot;, &quot;160px&quot;);</span>
+<span class="nc" id="L66">        this.simulationID = simulationID;</span>
+<span class="nc" id="L67">        this.date = date;</span>
+
+<span class="nc" id="L69">        generalLabel = new Label();</span>
+<span class="nc" id="L70">        generalLabel.setHeight(20);</span>
+<span class="nc" id="L71">        generalLabel.setIcon(ApplicationConstants.ICON_GENERAL);</span>
+<span class="nc" id="L72">        generalLabel.setCanSelectText(true);</span>
+<span class="nc" id="L73">        this.addMember(generalLabel);</span>
+
+<span class="nc" id="L75">        infoLabel = new Label();</span>
+<span class="nc" id="L76">        infoLabel.setHeight(20);</span>
+<span class="nc" id="L77">        infoLabel.setCanSelectText(true);</span>
+<span class="nc" id="L78">        this.addMember(infoLabel);</span>
+
+<span class="nc" id="L80">        addTitle(&quot;&lt;font color=\&quot;#333333\&quot;&gt;Simulation Progress&lt;/font&gt;&quot;, null);</span>
+<span class="nc" id="L81">        progressLayout = new GateLabProgressLayout(simulationID, status);</span>
+<span class="nc" id="L82">        this.addMember(progressLayout);</span>
+
+<span class="nc" id="L84">        HLayout bottomLayout = new HLayout();</span>
+<span class="nc" id="L85">        bottomLayout.setWidth100();</span>
+<span class="nc" id="L86">        bottomLayout.setHeight(25);</span>
+<span class="nc" id="L87">        this.addMember(bottomLayout);</span>
+
+<span class="nc" id="L89">        stopAndMergeButton = getStopAndMergeButton();</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (status != SimulationStatus.Running) {</span>
+<span class="nc" id="L91">            stopAndMergeButton.setDisabled(true);</span>
+        }
+<span class="nc" id="L93">        bottomLayout.addMember(stopAndMergeButton);</span>
+
+<span class="nc" id="L95">        loadData();</span>
+<span class="nc" id="L96">    }</span>
+
+    private LabelButton getStopAndMergeButton() {
+
+<span class="nc" id="L100">        LabelButton button = new LabelButton(&quot;Stop and Merge&quot;, null);</span>
+<span class="nc" id="L101">        button.setWidth(150);</span>
+<span class="nc" id="L102">        button.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L105">                SC.ask(&quot;Do you really want to stop and merge this simulation?&quot;, new BooleanCallback() {</span>
+                    @Override
+                    public void execute(Boolean value) {
+<span class="nc bnc" id="L108" title="All 2 branches missed.">                        if (value) {</span>
+<span class="nc" id="L109">                            final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                                @Override
+                                public void onFailure(Throwable caught) {
+<span class="nc" id="L112">                                    Layout.getInstance().setWarningMessage(&quot;Unable to execute stop and merge:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L113">                                }</span>
+
+                                @Override
+                                public void onSuccess(Void result) {
+<span class="nc" id="L117">                                    stopAndMergeButton.setDisabled(true);</span>
+<span class="nc" id="L118">                                    Layout.getInstance().setNoticeMessage(&quot;The simulation was successfully Stopped... Starting Merge in few minutes!&quot;);</span>
+<span class="nc" id="L119">                                }</span>
+                            };
+<span class="nc" id="L121">                            GateLabService.Util.getInstance().StopWorkflowSimulation(simulationID, callback);</span>
+                        }
+<span class="nc" id="L123">                    }</span>
+                });
+<span class="nc" id="L125">            }</span>
+        });
+<span class="nc" id="L127">        return button;</span>
+    }
+
+    private void loadData() {
+
+<span class="nc" id="L132">        AsyncCallback&lt;Map&lt;String, String&gt;&gt; callback = new AsyncCallback&lt;Map&lt;String, String&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L135">                Layout.getInstance().setWarningMessage(&quot;Unable to load general information:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L136">            }</span>
+
+            @Override
+            public void onSuccess(Map&lt;String, String&gt; result) {
+
+<span class="nc" id="L141">                String gateVersion = result.get(&quot;gate_version&quot;);</span>
+<span class="nc" id="L142">                GateLabSimulationType type = GateLabSimulationType.valueOf(result.get(&quot;simulation&quot;));</span>
+<span class="nc" id="L143">                double particles = Double.parseDouble(result.get(&quot;particles&quot;));</span>
+<span class="nc" id="L144">                double runnedParticles = Double.parseDouble(result.get(&quot;runnedparticles&quot;));</span>
+
+<span class="nc" id="L146">                StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L147">                sb.append(&quot;&lt;font color=\&quot;#333333\&quot;&gt;&lt;b&gt;GateLab&lt;/b&gt; launched on &lt;b&gt;&quot;);</span>
+<span class="nc" id="L148">                sb.append(date);</span>
+<span class="nc" id="L149">                sb.append(&quot;&lt;/b&gt;&quot;);</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                if (CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L151">                    sb.append(&quot; (&quot;);</span>
+<span class="nc" id="L152">                    sb.append(simulationID);</span>
+<span class="nc" id="L153">                    sb.append(&quot;)&lt;/font&gt;&quot;);</span>
+                }
+<span class="nc" id="L155">                generalLabel.setContents(sb.toString());</span>
+
+<span class="nc" id="L157">                sb = new StringBuilder();</span>
+<span class="nc" id="L158">                sb.append(&quot;&lt;font color=\&quot;#333333\&quot;&gt;Simulation Type: &lt;b&gt;&quot;);</span>
+<span class="nc" id="L159">                sb.append(type.name());</span>
+<span class="nc" id="L160">                sb.append(&quot;&lt;/b&gt; - Gate Release: &lt;b&gt;&quot;);</span>
+<span class="nc" id="L161">                sb.append(gateVersion.substring(gateVersion.lastIndexOf(&quot;/&quot;) + 1));</span>
+<span class="nc" id="L162">                sb.append(&quot;&lt;/b&gt;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L163">                infoLabel.setContents(sb.toString());</span>
+
+<span class="nc" id="L165">                progressLayout.update(particles, runnedParticles);</span>
+<span class="nc" id="L166">            }</span>
+        };
+<span class="nc" id="L168">        GateLabService.Util.getInstance().getGatelabWorkflowInputs(simulationID, callback);</span>
+<span class="nc" id="L169">    }</span>
+
+    public void update() {
+<span class="nc" id="L172">        loadData();</span>
+<span class="nc" id="L173">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EditClassLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.system.classes</a> &gt; <span class="el_source">EditClassLayout.java</span></div><h1>EditClassLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.system.classes;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.MultipleAppearance;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.AppClass;
+import fr.insalyon.creatis.vip.application.client.bean.Engine;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.bean.Group;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class EditClassLayout extends AbstractFormLayout {
+
+<span class="nc" id="L65">    private boolean newClass = true;</span>
+    private TextItem nameField;
+    private SelectItem enginesPickList;
+    private SelectItem groupsPickList;
+    private IButton saveButton;
+    private IButton removeButton;
+
+    public EditClassLayout() {
+
+<span class="nc" id="L74">        super(380, 200);</span>
+<span class="nc" id="L75">        addTitle(&quot;Add/Edit Class&quot;, ApplicationConstants.ICON_CLASSES);</span>
+        
+<span class="nc" id="L77">        configure();</span>
+<span class="nc" id="L78">        loadData();</span>
+<span class="nc" id="L79">    }</span>
+
+    private void configure() {
+
+<span class="nc" id="L83">        nameField = FieldUtil.getTextItem(350, null);</span>
+
+<span class="nc" id="L85">        enginesPickList = new SelectItem();</span>
+<span class="nc" id="L86">        enginesPickList.setShowTitle(false);</span>
+<span class="nc" id="L87">        enginesPickList.setMultiple(true);</span>
+<span class="nc" id="L88">        enginesPickList.setMultipleAppearance(MultipleAppearance.PICKLIST);</span>
+<span class="nc" id="L89">        enginesPickList.setWidth(350);</span>
+        
+<span class="nc" id="L91">        groupsPickList = new SelectItem();</span>
+<span class="nc" id="L92">        groupsPickList.setShowTitle(false);</span>
+<span class="nc" id="L93">        groupsPickList.setMultiple(true);</span>
+<span class="nc" id="L94">        groupsPickList.setMultipleAppearance(MultipleAppearance.PICKLIST);</span>
+<span class="nc" id="L95">        groupsPickList.setWidth(350);</span>
+
+<span class="nc" id="L97">        saveButton = WidgetUtil.getIButton(&quot;Save&quot;, CoreConstants.ICON_SAVED,</span>
+<span class="nc" id="L98">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                        if (nameField.validate()) {</span>
+<span class="nc" id="L102">                            save(new AppClass(nameField.getValueAsString().trim(),</span>
+<span class="nc" id="L103">                                    Arrays.asList(enginesPickList.getValues()),</span>
+<span class="nc" id="L104">                                    Arrays.asList(groupsPickList.getValues())));</span>
+                        }
+<span class="nc" id="L106">                    }</span>
+                });
+
+<span class="nc" id="L109">        removeButton = WidgetUtil.getIButton(&quot;Remove&quot;, CoreConstants.ICON_DELETE,</span>
+<span class="nc" id="L110">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L113">                        SC.ask(&quot;Do you really want to remove this class?&quot;, new BooleanCallback() {</span>
+                            @Override
+                            public void execute(Boolean value) {
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                                if (value) {</span>
+<span class="nc" id="L117">                                    remove(nameField.getValueAsString().trim());</span>
+                                }
+<span class="nc" id="L119">                            }</span>
+                        });
+<span class="nc" id="L121">                    }</span>
+                });
+<span class="nc" id="L123">        removeButton.setDisabled(true);</span>
+
+<span class="nc" id="L125">        addField(&quot;Name&quot;, nameField);</span>
+<span class="nc" id="L126">        addField(&quot;Engines&quot;, enginesPickList);</span>
+<span class="nc" id="L127">        addField(&quot;Groups&quot;, groupsPickList);</span>
+<span class="nc" id="L128">        addButtons(saveButton, removeButton);</span>
+<span class="nc" id="L129">    }</span>
+
+    /**
+     * Sets a class to edit or creates a blank form.
+     *
+     * @param name Class name
+     * @param groups Class groups
+     * @param engines Class engines
+     */
+    public void setClass(String name, String groups, String engines) {
+
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (name != null) {</span>
+<span class="nc" id="L141">            this.nameField.setValue(name);</span>
+<span class="nc" id="L142">            this.nameField.setDisabled(true);</span>
+<span class="nc" id="L143">            this.enginesPickList.setValues(engines.split(&quot;\\s*,\\s*&quot;));</span>
+<span class="nc" id="L144">            this.groupsPickList.setValues(groups.split(&quot;\\s*,\\s*&quot;));</span>
+<span class="nc" id="L145">            this.newClass = false;</span>
+<span class="nc" id="L146">            this.removeButton.setDisabled(false);</span>
+
+        } else {
+<span class="nc" id="L149">            this.nameField.setValue(&quot;&quot;);</span>
+<span class="nc" id="L150">            this.nameField.setDisabled(false);</span>
+<span class="nc" id="L151">            this.enginesPickList.setValues(new String[]{});</span>
+<span class="nc" id="L152">            this.groupsPickList.setValues(new String[]{});</span>
+<span class="nc" id="L153">            this.newClass = true;</span>
+<span class="nc" id="L154">            this.removeButton.setDisabled(true);</span>
+        }
+<span class="nc" id="L156">    }</span>
+
+    /**
+     *
+     * @param appClass
+     */
+    private void save(AppClass appClass) {
+
+<span class="nc" id="L164">        ApplicationServiceAsync service = ApplicationService.Util.getInstance();</span>
+<span class="nc" id="L165">        WidgetUtil.setLoadingIButton(saveButton, &quot;Saving...&quot;);</span>
+
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if (newClass) {</span>
+<span class="nc" id="L168">            service.addClass(appClass, getCallback(&quot;add&quot;));</span>
+        } else {
+<span class="nc" id="L170">            service.updateClass(appClass, getCallback(&quot;update&quot;));</span>
+        }
+<span class="nc" id="L172">    }</span>
+
+    /**
+     * Removes a class.
+     *
+     * @param name Class name
+     */
+    private void remove(String name) {
+
+<span class="nc" id="L181">        ApplicationServiceAsync service = ApplicationService.Util.getInstance();</span>
+<span class="nc" id="L182">        WidgetUtil.setLoadingIButton(removeButton, &quot;Removing...&quot;);</span>
+<span class="nc" id="L183">        service.removeClass(name, getCallback(&quot;remove&quot;));</span>
+<span class="nc" id="L184">    }</span>
+
+    /**
+     *
+     * @param text
+     * @return
+     */
+    private AsyncCallback&lt;Void&gt; getCallback(final String text) {
+
+<span class="nc" id="L193">        return new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L196">                WidgetUtil.resetIButton(saveButton, &quot;Save&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L197">                WidgetUtil.resetIButton(removeButton, &quot;Remove&quot;, CoreConstants.ICON_DELETE);</span>
+<span class="nc" id="L198">                Layout.getInstance().setWarningMessage(&quot;Unable to &quot; + text + &quot; class:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L199">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L203">                WidgetUtil.resetIButton(saveButton, &quot;Save&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L204">                WidgetUtil.resetIButton(removeButton, &quot;Remove&quot;, CoreConstants.ICON_DELETE);</span>
+<span class="nc" id="L205">                setClass(null, null, null);</span>
+<span class="nc" id="L206">                ManageClassesTab tab = (ManageClassesTab) Layout.getInstance().</span>
+<span class="nc" id="L207">                        getTab(ApplicationConstants.TAB_MANAGE_CLASSES);</span>
+<span class="nc" id="L208">                tab.loadClasses();</span>
+<span class="nc" id="L209">            }</span>
+        };
+    }
+
+    /**
+     * Loads groups and engines list.
+     */
+    private void loadData() {
+
+<span class="nc" id="L218">        AsyncCallback&lt;List&lt;Group&gt;&gt; callback = new AsyncCallback&lt;List&lt;Group&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L221">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of groups:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L222">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Group&gt; result) {
+<span class="nc" id="L226">                List&lt;String&gt; dataList = new ArrayList&lt;String&gt;();</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">                for (Group group : result) {</span>
+<span class="nc" id="L228">                    dataList.add(group.getName());</span>
+<span class="nc" id="L229">                }</span>
+<span class="nc" id="L230">                groupsPickList.setValueMap(dataList.toArray(new String[]{}));</span>
+<span class="nc" id="L231">            }</span>
+        };
+<span class="nc" id="L233">        ConfigurationService.Util.getInstance().getGroups(callback);</span>
+        
+<span class="nc" id="L235">        AsyncCallback&lt;List&lt;Engine&gt;&gt; callback2 = new AsyncCallback&lt;List&lt;Engine&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L238">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of engines:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L239">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Engine&gt; result) {
+<span class="nc" id="L243">                List&lt;String&gt; dataList = new ArrayList&lt;String&gt;();</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">                for (Engine engine : result) {</span>
+<span class="nc" id="L245">                    dataList.add(engine.getName());</span>
+<span class="nc" id="L246">                }</span>
+<span class="nc" id="L247">                enginesPickList.setValueMap(dataList.toArray(new String[]{}));</span>
+<span class="nc" id="L248">            }</span>
+        };
+<span class="nc" id="L250">        ApplicationService.Util.getInstance().getEngines(callback2);</span>
+<span class="nc" id="L251">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

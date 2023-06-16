@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SignUpTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.auth</a> &gt; <span class="el_source">SignUpTab.java</span></div><h1>SignUpTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use, 
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;. 
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability. 
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or 
+ * data to be ensured and,  more generally, to use and operate it in the 
+ * same conditions as regards security. 
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.auth;
+
+import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.MultipleAppearance;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.*;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import fr.insalyon.creatis.vip.core.client.bean.Account;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.user.UserLevel;
+import fr.insalyon.creatis.vip.core.client.view.util.CountryCode;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.ValidatorUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import java.util.Date;
+import java.util.List;
+
+/**
+ *
+ * @author Rafael Ferreira da Silva
+ */
+public class SignUpTab extends Tab {
+
+    private VLayout signupLayout;
+    private TextItem firstNameField;
+    private TextItem lastNameField;
+    private TextItem emailField;
+    private TextItem confirmEmailField;
+    private TextItem institutionField;
+    private SelectItem countryField;
+    private PasswordItem passwordField;
+    private PasswordItem confirmPasswordField;
+    private TextAreaItem commentsItem;
+    private CheckboxItem acceptField;
+    private IButton signupButton;
+
+<span class="nc" id="L77">    public SignUpTab() {</span>
+
+<span class="nc" id="L79">        this.setID(CoreConstants.TAB_SIGNUP);</span>
+<span class="nc" id="L80">        this.setTitle(&quot;Sign Up&quot;);</span>
+<span class="nc" id="L81">        this.setCanClose(true);</span>
+
+<span class="nc" id="L83">        VLayout vLayout = new VLayout();</span>
+<span class="nc" id="L84">        vLayout.setWidth100();</span>
+<span class="nc" id="L85">        vLayout.setHeight100();</span>
+<span class="nc" id="L86">        vLayout.setMargin(5);</span>
+<span class="nc" id="L87">        vLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L88">        vLayout.setDefaultLayoutAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L90">        configureSignupLayout();</span>
+<span class="nc" id="L91">        vLayout.addMember(signupLayout);</span>
+
+<span class="nc" id="L93">        this.setPane(vLayout);</span>
+<span class="nc" id="L94">    }</span>
+
+    private void configureSignupLayout() {
+
+<span class="nc" id="L98">        firstNameField = FieldUtil.getTextItem(300, false, &quot;&quot;, null);</span>
+<span class="nc" id="L99">        lastNameField = FieldUtil.getTextItem(300, false, &quot;&quot;, null);</span>
+
+<span class="nc" id="L101">        emailField = FieldUtil.getTextItem(300, false, &quot;&quot;, &quot;[a-zA-Z0-9_.\\-+@]&quot;);</span>
+<span class="nc" id="L102">        emailField.setName(&quot;email&quot;);</span>
+<span class="nc" id="L103">        confirmEmailField = FieldUtil.getTextItem(300, false, &quot;&quot;, &quot;[a-zA-Z0-9_.\\-+@]&quot;);</span>
+
+<span class="nc" id="L105">        emailField.setValidators(ValidatorUtil.getEmailValidator());</span>
+<span class="nc" id="L106">        confirmEmailField.setValidators(ValidatorUtil.getEmailValidator());</span>
+
+<span class="nc" id="L108">        institutionField = FieldUtil.getTextItem(300, false, &quot;&quot;, null);</span>
+
+<span class="nc" id="L110">        countryField = new SelectItem();</span>
+<span class="nc" id="L111">        countryField.setShowTitle(false);</span>
+<span class="nc" id="L112">        countryField.setValueMap(CountryCode.getCountriesMap());</span>
+<span class="nc" id="L113">        countryField.setValueIcons(CountryCode.getCodesMap());</span>
+<span class="nc" id="L114">        countryField.setImageURLPrefix(CoreConstants.FOLDER_FLAGS);</span>
+<span class="nc" id="L115">        countryField.setImageURLSuffix(&quot;.png&quot;);</span>
+<span class="nc" id="L116">        countryField.setRequired(true);</span>
+
+<span class="nc" id="L118">        passwordField = FieldUtil.getPasswordItem(150, 32);</span>
+<span class="nc" id="L119">        confirmPasswordField = FieldUtil.getPasswordItem(150, 32);</span>
+
+<span class="nc" id="L121">        commentsItem = new TextAreaItem(&quot;comment&quot;, &quot;&quot;);</span>
+<span class="nc" id="L122">        commentsItem.setHeight(80);</span>
+<span class="nc" id="L123">        commentsItem.setWidth(300);</span>
+<span class="nc" id="L124">        commentsItem.setShowTitle(false);</span>
+
+<span class="nc" id="L126">        acceptField = new CheckboxItem(&quot;acceptTerms&quot;, &quot;I accept the &lt;a href=\&quot;documentation/terms.html\&quot;&gt;terms of use&lt;/a&gt;.&quot;);</span>
+<span class="nc" id="L127">        acceptField.setRequired(true);</span>
+<span class="nc" id="L128">        acceptField.setWidth(300);</span>
+<span class="nc" id="L129">        acceptField.setAlign(Alignment.LEFT);</span>
+
+<span class="nc" id="L131">        signupButton = new IButton(&quot;Sign Up&quot;);</span>
+<span class="nc" id="L132">        signupButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+
+<span class="nc" id="L136">                if (firstNameField.validate() &amp; lastNameField.validate()</span>
+<span class="nc" id="L137">                        &amp; emailField.validate() &amp; confirmEmailField.validate()</span>
+<span class="nc" id="L138">                        &amp; institutionField.validate()</span>
+<span class="nc" id="L139">                        &amp; countryField.validate()</span>
+<span class="nc" id="L140">                        &amp; passwordField.validate() &amp; confirmPasswordField.validate()</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                        &amp; acceptField.getValueAsBoolean()) {</span>
+
+<span class="nc bnc" id="L143" title="All 2 branches missed.">                    if (!emailField.getValueAsString().equals(confirmEmailField.getValueAsString())) {</span>
+<span class="nc" id="L144">                        Layout.getInstance().setWarningMessage(&quot;&lt;b&gt;E-mails&lt;/b&gt; do not match. Please verify the entered e-mail.&quot;, 10);</span>
+<span class="nc" id="L145">                        emailField.focusInItem();</span>
+<span class="nc" id="L146">                        return;</span>
+                    }
+
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                    if (!passwordField.getValueAsString().equals(confirmPasswordField.getValueAsString())) {</span>
+<span class="nc" id="L150">                        Layout.getInstance().setWarningMessage(&quot;&lt;b&gt;Passwords&lt;/b&gt; do not match. Please verify the entered password.&quot;, 10);</span>
+<span class="nc" id="L151">                        passwordField.focusInItem();</span>
+<span class="nc" id="L152">                        return;</span>
+                    }
+
+<span class="nc" id="L155">                    User user = new User(</span>
+<span class="nc" id="L156">                            firstNameField.getValueAsString().trim(),</span>
+<span class="nc" id="L157">                            lastNameField.getValueAsString().trim(),</span>
+<span class="nc" id="L158">                            emailField.getValueAsString().trim(),</span>
+<span class="nc" id="L159">                            institutionField.getValueAsString().trim(),</span>
+<span class="nc" id="L160">                            passwordField.getValueAsString(),</span>
+<span class="nc" id="L161">                            CountryCode.valueOf(countryField.getValueAsString()),null);</span>
+
+<span class="nc" id="L163">                    final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                        @Override
+                        public void onFailure(Throwable caught) {
+<span class="nc" id="L166">                            WidgetUtil.resetIButton(signupButton, &quot;Sign Up&quot;, null);</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                            if(!caught.getMessage().contains(&quot;Undesired Mail Domain&quot;)){</span>
+<span class="nc" id="L168">                                Layout.getInstance().setWarningMessage(&quot;Unable to sign up:&lt;br /&gt;&quot; + caught.getMessage(), 10);</span>
+                            }
+<span class="nc" id="L170">                        }</span>
+
+                        @Override
+                        public void onSuccess(Void result) {
+                            /*if (result == false) {
+                                WidgetUtil.resetIButton(signupButton, &quot;Sign Up&quot;, null);
+                                * 
+                                * ***/
+                         
+
+<span class="nc" id="L180">                                Layout.getInstance().setNoticeMessage(&quot;Your membership request was successfully processed.&lt;br /&gt;&quot;</span>
+                                        + &quot;An activation code was sent to your email.&lt;br /&gt;&quot;
+                                        + &quot;This code will be requested on your first login.&quot;, 15);
+<span class="nc" id="L183">                                signin();</span>
+                           
+<span class="nc" id="L185">                        }</span>
+                    };
+<span class="nc" id="L187">                    ConfigurationService.Util.getInstance().signup(user, commentsItem.getValueAsString(), callback);</span>
+<span class="nc" id="L188">                    WidgetUtil.setLoadingIButton(signupButton, &quot;Signing up...&quot;);</span>
+                }
+<span class="nc" id="L190">            }</span>
+        });
+
+<span class="nc" id="L193">        signupLayout = WidgetUtil.getVIPLayout(320);</span>
+<span class="nc" id="L194">        WidgetUtil.addFieldToVIPLayout(signupLayout, &quot;First Name&quot;, firstNameField);</span>
+<span class="nc" id="L195">        WidgetUtil.addFieldToVIPLayout(signupLayout, &quot;Last Name&quot;, lastNameField);</span>
+<span class="nc" id="L196">        WidgetUtil.addFieldToVIPLayout(signupLayout, &quot;E-mail&quot;, emailField);</span>
+<span class="nc" id="L197">        WidgetUtil.addFieldToVIPLayout(signupLayout, &quot;Re-enter E-mail&quot;, confirmEmailField);</span>
+<span class="nc" id="L198">        WidgetUtil.addFieldToVIPLayout(signupLayout, &quot;Institution&quot;, institutionField);</span>
+<span class="nc" id="L199">        WidgetUtil.addFieldToVIPLayout(signupLayout, &quot;Country&quot;, countryField);</span>
+<span class="nc" id="L200">        WidgetUtil.addFieldToVIPLayout(signupLayout, &quot;Password&quot;, passwordField);</span>
+<span class="nc" id="L201">        WidgetUtil.addFieldToVIPLayout(signupLayout, &quot;Re-enter Password&quot;, confirmPasswordField);</span>
+<span class="nc" id="L202">        WidgetUtil.addFieldToVIPLayout(signupLayout, &quot;Comments&quot;, commentsItem);</span>
+<span class="nc" id="L203">        signupLayout.addMember(FieldUtil.getForm(acceptField));</span>
+<span class="nc" id="L204">        signupLayout.addMember(signupButton);</span>
+<span class="nc" id="L205">    }</span>
+
+    private void signin() {
+
+<span class="nc" id="L209">        final AsyncCallback&lt;User&gt; callback = new AsyncCallback&lt;User&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc bnc" id="L212" title="All 2 branches missed.">                if (caught.getMessage().contains(&quot;Authentication failed&quot;)) {</span>
+<span class="nc" id="L213">                    Layout.getInstance().setWarningMessage(&quot;The username or password you entered is incorrect.&quot;, 10);</span>
+                } else {
+<span class="nc" id="L215">                    Layout.getInstance().setWarningMessage(&quot;Unable to signing in:\n&quot; + caught.getMessage(), 10);</span>
+                }
+<span class="nc" id="L217">            }</span>
+
+            @Override
+            public void onSuccess(User result) {
+<span class="nc" id="L221">                Layout.getInstance().removeTab(CoreConstants.TAB_SIGNIN);</span>
+<span class="nc" id="L222">                Layout.getInstance().removeTab(CoreConstants.TAB_SIGNUP);</span>
+
+<span class="nc" id="L224">                Cookies.setCookie(CoreConstants.COOKIES_USER,</span>
+<span class="nc" id="L225">                        result.getEmail(), CoreConstants.COOKIES_EXPIRATION_DATE,</span>
+                        null, &quot;/&quot;, false);
+<span class="nc" id="L227">                Cookies.setCookie(CoreConstants.COOKIES_SESSION,</span>
+<span class="nc" id="L228">                        result.getSession(), CoreConstants.COOKIES_EXPIRATION_DATE,</span>
+                        null, &quot;/&quot;, false);
+
+<span class="nc" id="L231">                Layout.getInstance().authenticate(result);</span>
+<span class="nc" id="L232">            }</span>
+        };
+<span class="nc" id="L234">        ConfigurationService.Util.getInstance().signin(emailField.getValueAsString().trim(),</span>
+<span class="nc" id="L235">                passwordField.getValueAsString(), callback);</span>
+<span class="nc" id="L236">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FileUploadServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.server.rpc</a> &gt; <span class="el_source">FileUploadServiceImpl.java</span></div><h1>FileUploadServiceImpl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.server.rpc;
+
+import fr.insalyon.creatis.devtools.zip.UnZipper;
+import fr.insalyon.creatis.grida.client.GRIDAClient;
+import fr.insalyon.creatis.grida.client.GRIDAClientException;
+import fr.insalyon.creatis.grida.client.GRIDAPoolClient;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.datamanager.client.view.DataManagerException;
+import fr.insalyon.creatis.vip.datamanager.server.DataManagerUtil;
+import fr.insalyon.creatis.vip.datamanager.server.business.DataManagerBusiness;
+import fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.PrintWriter;
+import java.text.Normalizer;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ *
+ * @author Rafael Silva
+ */
+<span class="nc" id="L67">public class FileUploadServiceImpl extends HttpServlet {</span>
+
+<span class="nc" id="L69">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+
+    private GRIDAClient client;
+    private GRIDAPoolClient poolClient;
+    private LfcPathsBusiness lfcPathsBusiness;
+    private DataManagerBusiness dataManagerBusiness;
+
+    @Override
+    public void init() throws ServletException {
+<span class="nc" id="L78">        super.init();</span>
+<span class="nc" id="L79">        ApplicationContext applicationContext =</span>
+<span class="nc" id="L80">                WebApplicationContextUtils.findWebApplicationContext(getServletContext());</span>
+<span class="nc" id="L81">        client = applicationContext.getBean(GRIDAClient.class);</span>
+<span class="nc" id="L82">        poolClient = applicationContext.getBean(GRIDAPoolClient.class);</span>
+<span class="nc" id="L83">        lfcPathsBusiness = applicationContext.getBean(LfcPathsBusiness.class);</span>
+<span class="nc" id="L84">        dataManagerBusiness = applicationContext.getBean(DataManagerBusiness.class);</span>
+<span class="nc" id="L85">    }</span>
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException {
+
+        try {
+<span class="nc" id="L92">            User user = (User) request.getSession().getAttribute(CoreConstants.SESSION_USER);</span>
+<span class="nc" id="L93">            logger.info(&quot;upload received from &quot; + user.getEmail());</span>
+<span class="nc bnc" id="L94" title="All 4 branches missed.">            if (user != null &amp;&amp; ServletFileUpload.isMultipartContent(request)) {</span>
+
+<span class="nc" id="L96">                FileItemFactory factory = new DiskFileItemFactory();</span>
+<span class="nc" id="L97">                ServletFileUpload upload = new ServletFileUpload(factory);</span>
+<span class="nc" id="L98">                List items = upload.parseRequest(request);</span>
+<span class="nc" id="L99">                Iterator iter = items.iterator();</span>
+<span class="nc" id="L100">                String fileName = null;</span>
+<span class="nc" id="L101">                FileItem fileItem = null;</span>
+<span class="nc" id="L102">                String path = null;</span>
+<span class="nc" id="L103">                String target = &quot;uploadComplete&quot;;</span>
+<span class="nc" id="L104">                boolean single = true;</span>
+<span class="nc" id="L105">                boolean unzip = true;</span>
+<span class="nc" id="L106">                boolean usePool = true;</span>
+<span class="nc" id="L107">                String operationID = &quot;no-id&quot;;</span>
+
+<span class="nc bnc" id="L109" title="All 2 branches missed.">                while (iter.hasNext()) {</span>
+<span class="nc" id="L110">                    FileItem item = (FileItem) iter.next();</span>
+
+<span class="nc bnc" id="L112" title="All 7 branches missed.">                    switch (item.getFieldName()) {</span>
+                        case &quot;path&quot;:
+<span class="nc" id="L114">                            path = item.getString();</span>
+<span class="nc" id="L115">                            break;</span>
+                        case &quot;file&quot;:
+<span class="nc" id="L117">                            fileName = item.getName();</span>
+<span class="nc" id="L118">                            fileItem = item;</span>
+<span class="nc" id="L119">                            break;</span>
+                        case &quot;target&quot;:
+<span class="nc" id="L121">                            target = item.getString();</span>
+<span class="nc" id="L122">                            break;</span>
+                        case &quot;single&quot;:
+<span class="nc" id="L124">                            single = Boolean.valueOf(item.getString());</span>
+<span class="nc" id="L125">                            break;</span>
+                        case &quot;unzip&quot;:
+<span class="nc" id="L127">                            unzip = Boolean.valueOf(item.getString());</span>
+<span class="nc" id="L128">                            break;</span>
+                        case &quot;pool&quot;:
+<span class="nc" id="L130">                            usePool = Boolean.valueOf(item.getString());</span>
+<span class="nc" id="L131">                            break;</span>
+                        default:
+<span class="nc" id="L133">                            logger.error(&quot;File upload : invalid FieldName {}&quot;, item.getFieldName());</span>
+<span class="nc" id="L134">                            throw new IllegalArgumentException(&quot;Invalid FieldName: &quot; + item.getFieldName());</span>
+                    }
+
+<span class="nc" id="L137">                }</span>
+<span class="nc bnc" id="L138" title="All 4 branches missed.">                if (fileName != null &amp;&amp; !fileName.equals(&quot;&quot;)) {</span>
+
+<span class="nc" id="L140">                    boolean local = path.equals(&quot;local&quot;);</span>
+<span class="nc" id="L141">                    String rootDirectory = dataManagerBusiness.getUploadRootDirectory(local);</span>
+<span class="nc" id="L142">                    fileName = DataManagerUtil.getCleanFilename(fileName);</span>
+<span class="nc" id="L143">                    File uploadedFile = new File(rootDirectory + fileName);</span>
+
+                    try {
+<span class="nc" id="L146">                        fileItem.write(uploadedFile);</span>
+<span class="nc" id="L147">                        response.getWriter().write(fileName);</span>
+
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                        if (!local) {</span>
+                            // GRIDA Client
+<span class="nc" id="L151">                            logger.info(&quot;(&quot; + user.getEmail() + &quot;) Uploading '&quot; + uploadedFile.getAbsolutePath() + &quot;' to '&quot; + path + &quot;'.&quot;);</span>
+<span class="nc bnc" id="L152" title="All 4 branches missed.">                            if (single || !unzip) {</span>
+<span class="nc" id="L153">                                operationID = uploadFile(user, uploadedFile.getAbsolutePath(), path, usePool);</span>
+                            } else {
+<span class="nc" id="L155">                                UnZipper.unzip(uploadedFile.getAbsolutePath());</span>
+<span class="nc" id="L156">                                String dir = uploadedFile.getParent();</span>
+<span class="nc" id="L157">                                uploadedFile.delete();</span>
+<span class="nc" id="L158">                                operationID = processDir(user, dir, path, usePool);</span>
+<span class="nc" id="L159">                            }</span>
+
+                        } else {
+<span class="nc" id="L162">                            operationID = fileName;</span>
+<span class="nc" id="L163">                            logger.info(&quot;(&quot; + user.getEmail() + &quot;) Uploaded '&quot; + uploadedFile.getAbsolutePath() + &quot;'.&quot;);</span>
+                        }
+<span class="nc" id="L165">                    } catch (Exception ex) {</span>
+<span class="nc" id="L166">                        logger.error(&quot;Error uploading a file&quot;, ex);</span>
+<span class="nc" id="L167">                    }</span>
+                }
+                //TODO: change the HTML/JS response to XML data that could be directly processed in JS
+<span class="nc" id="L170">                response.setContentType(&quot;text/html&quot;);</span>
+<span class="nc" id="L171">                response.setHeader(&quot;Pragma&quot;, &quot;No-cache&quot;);</span>
+<span class="nc" id="L172">                response.setDateHeader(&quot;Expires&quot;, 0);</span>
+<span class="nc" id="L173">                response.setHeader(&quot;Cache-Control&quot;, &quot;no-cache&quot;);</span>
+<span class="nc" id="L174">                PrintWriter out = response.getWriter();</span>
+<span class="nc" id="L175">                out.println(&quot;&lt;html&gt;&quot;);</span>
+<span class="nc" id="L176">                out.println(&quot;&lt;body&gt;&quot;);</span>
+<span class="nc" id="L177">                out.println(&quot;&lt;script type=\&quot;text/javascript\&quot; id=\&quot;runscript\&quot;&gt;&quot;);</span>
+<span class="nc" id="L178">                out.println(&quot;if (parent.&quot; + target + &quot;) parent.&quot; + target + &quot;('&quot;</span>
+                        + operationID + &quot;');&quot;);
+<span class="nc" id="L180">                out.println(&quot;&lt;/script&gt;&quot;);</span>
+<span class="nc" id="L181">                out.println(&quot;&lt;/body&gt;&quot;);</span>
+<span class="nc" id="L182">                out.println(&quot;&lt;/html&gt;&quot;);</span>
+<span class="nc" id="L183">                out.flush();</span>
+
+
+            }
+<span class="nc" id="L187">        } catch (Exception ex) {</span>
+<span class="nc" id="L188">            logger.error(&quot;Error uploading a file&quot;, ex);</span>
+<span class="nc" id="L189">            throw new ServletException(ex);</span>
+<span class="nc" id="L190">        }</span>
+<span class="nc" id="L191">    }</span>
+
+    private String processDir(User user, String dir, String baseDir, boolean usePool)
+        throws GRIDAClientException, DataManagerException {
+
+<span class="nc" id="L196">        StringBuilder ids = new StringBuilder();</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        for (File f : new File(dir).listFiles()) {</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">            if (f.isDirectory()) {</span>
+<span class="nc" id="L199">                ids.append(</span>
+<span class="nc" id="L200">                        processDir(</span>
+                                user,
+<span class="nc" id="L202">                                f.getAbsolutePath(),</span>
+<span class="nc" id="L203">                                baseDir + &quot;/&quot; + f.getName(),</span>
+                                usePool));
+            } else {
+<span class="nc" id="L206">                ids.append(</span>
+<span class="nc" id="L207">                    uploadFile(</span>
+<span class="nc" id="L208">                        user, f.getAbsolutePath(), baseDir, usePool));</span>
+            }
+<span class="nc" id="L210">            ids.append(&quot;##&quot;);</span>
+        }
+<span class="nc" id="L212">        return ids.toString();</span>
+    }
+
+    private String uploadFile(User user, String fileName, String dir, boolean usePool)
+            throws GRIDAClientException, DataManagerException {
+
+<span class="nc" id="L218">        String parsed = fileName.trim().replaceAll(&quot; &quot;, &quot;_&quot;);</span>
+<span class="nc" id="L219">        parsed = Normalizer.normalize(parsed, Normalizer.Form.NFD).replaceAll(&quot;\\p{InCombiningDiacriticalMarks}+&quot;, &quot;&quot;);</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        if (!parsed.equals(fileName)) {</span>
+<span class="nc" id="L221">            new File(fileName).renameTo(new File(parsed));</span>
+<span class="nc" id="L222">            fileName = parsed;</span>
+        }
+
+<span class="nc" id="L225">        logger.info(&quot;(&quot; + user.getEmail() + &quot;) Uploading '&quot; + fileName + &quot;' to '&quot; + dir + &quot;'.&quot;);</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        if (usePool) {</span>
+<span class="nc" id="L227">            return poolClient.uploadFile(</span>
+                    fileName,
+<span class="nc" id="L229">                    lfcPathsBusiness.parseBaseDir(user, dir),</span>
+<span class="nc" id="L230">                    user.getEmail());</span>
+        } else {
+<span class="nc" id="L232">            client.uploadFile(fileName, lfcPathsBusiness.parseBaseDir(user, dir));</span>
+<span class="nc" id="L233">            return &quot;no-id&quot;;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
