@@ -40,10 +40,10 @@ jobs:
         run: mvn clean install
         
       - name: Commit files
-        run: |
-          git config --local user.email "mathilde.marza@insa-lyon.fr"
-          git config --local user.name "MathildeMrz"
-          git commit -a -m "Add changes"
+        run: |   
+              git config --local user.email "mathilde.marza@insa-lyon.fr"
+              git config --local user.name "github-actions[bot]"
+              git commit -a -m "Add changes"
       
       - name: Push changes
         uses: ad-m/github-push-action@master
