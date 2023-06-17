@@ -6,8 +6,8 @@ name: tests_coverage_jacoco
 on:
   push:
     branches: ["master"] 
-    #paths-ignore:
-    #  - '**.github/workflows/**'
+    paths-ignore:
+      - '**.github/workflows/**'
 
   pull_request:
     branches: ["master"]
@@ -29,21 +29,18 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-
     steps:
     
       - uses: actions/checkout@v3
+      
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           java-version: "11"
           distribution: "temurin"
+          
       - name: Build Maven
         run: mvn clean install
-        
-      #- name: Commit and Push Changes
-      #  id: commit-and-push
-      #  uses: stefanzweifel/git-auto-commit-action@v4
         
       - name: Commit and push changes
         run: |   
@@ -55,13 +52,10 @@ jobs:
               git push
               echo "commit_hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
       
-      
-    
   ##########################################################################################################################################################################################
   ############################################################################ Jacoco static page creation build ###########################################################################
   ##########################################################################################################################################################################################
 
-  # Single deploy job since we're just deploying
   deploy:
     needs: build
     environment:
@@ -69,19 +63,22 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+    
       - name: Checkout
         uses: actions/checkout@v3
+        
       - name: test
         run: |   
             ls coverage/target/site/jacoco-aggregate
           
       - name: Setup Pages
         uses: actions/configure-pages@v3
+        
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload entire repository
           path: "coverage/target/site/jacoco-aggregate/"
+          
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
