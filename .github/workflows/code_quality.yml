@@ -38,14 +38,18 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    
       - uses: actions/checkout@v3
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
           fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+      
       - uses: actions/setup-java@v3
+      
         with:
           distribution: 'temurin'
           java-version: '11'
+          
       - uses: pmd/pmd-github-action@v1
         with:
           rulesets: 'ruleset.xml'
@@ -59,8 +63,6 @@ jobs:
               mv pmd-report.sarif "${newFileName}"
               cp -r "${newFileName}" results/
               echo "Sarif code quality report created"
-
-
   
   ##########################################################################################################################################################################################
   ############################################################################# Store quality code Sarif analysis ##########################################################################
