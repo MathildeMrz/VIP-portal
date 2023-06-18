@@ -15,7 +15,7 @@ on:
       - "**.github/workflows/**"
 
   schedule:
-    - cron: "40 1 * * 0"
+    - cron: "0 0 1 * *" # Once a month
 
 permissions:
   contents: write
@@ -44,13 +44,11 @@ jobs:
         
       - name: Commit and push changes
         run: |   
-              ls coverage/target/site/jacoco-aggregate
               git add -f coverage/target/site/jacoco-aggregate
               git config --local user.email "mathilde.marza@insa-lyon.fr"
               git config --local user.name "MathildeMrz"
               git commit -m "Update coverage"
               git push
-              echo "commit_hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
       
   ##########################################################################################################################################################################################
   ############################################################################ Jacoco static page creation build ###########################################################################
