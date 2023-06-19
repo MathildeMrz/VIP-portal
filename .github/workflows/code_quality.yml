@@ -55,9 +55,8 @@ jobs:
           rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
                                        
-      - name: Create results folder
-        run: |
-              mkdir -m 777 -p results              
+      - name: Rename results file
+        run: |  
               currentDate=$(date +%Y-%m-%d-%H-%M-%S)
               newFileName="results-${currentDate}.sarif"
               mv pmd-report.sarif "${newFileName}"
