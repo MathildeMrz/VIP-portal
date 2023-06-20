@@ -93,6 +93,7 @@ public class ConfigurationBusiness {
         this.termsUseDAO = termsUseDAO;
         this.userDAO = userDAO;
         this.usersGroupsDAO = usersGroupsDAO;
+        System.out.println("Iciii 2 "+ this.server.getAdminEmail());
     }
 
     public void configure() throws BusinessException {

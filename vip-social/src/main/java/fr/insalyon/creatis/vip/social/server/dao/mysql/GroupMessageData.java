@@ -97,7 +97,20 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     public void remove(long id) throws DAOException {
 
         try {
-            PreparedStatement ps = getConnection().prepareStatement("DELETE FROM "
+
+            PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM "
+                    + "VIPSocialMessage WHERE id = ?");
+            ps.setLong(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(! rs.next())
+            {
+                logger.error("There is no message registered with the id {}", id);
+                throw new DAOException(String.format("There is no message registered with the id %d", id));
+            }
+
+            ps = getConnection().prepareStatement("DELETE FROM "
                     + "VIPSocialGroupMessage WHERE id = ?");
             ps.setLong(1, id);
 

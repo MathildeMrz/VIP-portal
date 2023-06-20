@@ -120,6 +120,10 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
         throws DAOException {
 
         try {
+
+            // Added in order to see if the user exists or not
+            userDAO.getUser(email);
+
             PreparedStatement ps = getConnection().prepareStatement("SELECT "
                     + "id, sender, title, message, posted, user_read "
                     + "FROM VIPSocialMessage AS sc, VIPSocialMessageSenderReceiver AS ss "
@@ -156,6 +160,10 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
         throws DAOException {
 
         try {
+
+            // Added in order to see if the user exists or not
+            userDAO.getUser(email);
+
             PreparedStatement ps = getConnection().prepareStatement("SELECT "
                     + "id, title, message, posted "
                     + "FROM VIPSocialMessage "
@@ -222,7 +230,19 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
     public void remove(long id) throws DAOException {
 
         try {
-            PreparedStatement ps = getConnection().prepareStatement("DELETE FROM "
+            PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM "
+                    + "VIPSocialMessage WHERE id = ?");
+            ps.setLong(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(! rs.next())
+            {
+                logger.error("There is no message registered with the id {}", id);
+                throw new DAOException(String.format("There is no message registered with the id %d", id));
+            }
+
+            ps = getConnection().prepareStatement("DELETE FROM "
                     + "VIPSocialMessage WHERE id = ?");
             ps.setLong(1, id);
 

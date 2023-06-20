@@ -84,7 +84,7 @@ public abstract class BaseSpringIT {
     protected GRIDAClient gridaClient;
 
     @BeforeEach
-    protected void setUp() {
+    protected void setUp() throws BusinessException, GRIDAClientException {
         ServerMockConfig.reset(server);
     }
 
