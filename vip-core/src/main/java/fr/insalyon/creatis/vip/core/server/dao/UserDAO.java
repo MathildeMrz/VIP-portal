@@ -69,6 +69,7 @@ public interface UserDAO {
 
     public User getUser(String email) throws DAOException;
 
+    public boolean isUser(String email) throws DAOException;
     public List<User> getUsers() throws DAOException;
 
     List<User> searchUsers(UserSearchCriteria searchCriteria) throws DAOException;

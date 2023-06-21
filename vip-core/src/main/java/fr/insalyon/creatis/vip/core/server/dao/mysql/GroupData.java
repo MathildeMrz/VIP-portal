@@ -147,4 +147,26 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
             throw new DAOException(ex);
         }
     }
+
+    @Override
+    public boolean isGroup(String groupName) throws DAOException {
+        try
+        {
+            PreparedStatement ps = getConnection().prepareStatement("SELECT * "
+                    + "FROM VIPGroups "
+                    + "WHERE groupname=? ");
+
+            ps.setString(1, groupName);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return true;
+            }
+
+            return false;
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

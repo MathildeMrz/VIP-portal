@@ -29,19 +29,16 @@ public class SocialSpringServerIT extends BaseSpringIT
     @BeforeEach
     public void setUp() throws BusinessException, GRIDAClientException
     {
-         // Adding 3 new users to configurationBusiness
-        createUser("test1@test.fr", "1");
-        createUser("test2@test.fr", "2");
-        createUser("test3@test.fr", "3");
-        createUser("test4@test.fr", "4");
 
         Group group1 = new Group("group1", true, true, true);
         // Adding a new group to configurationBusiness
         configurationBusiness.addGroup(group1);
 
-        configurationBusiness.addUserToGroup("test1@test.fr", group1.getName());
-        configurationBusiness.addUserToGroup("test2@test.fr", group1.getName());
-        configurationBusiness.addUserToGroup("test3@test.fr", group1.getName());
+        // Adding 3 new users to configurationBusiness
+        configurationBusiness.getOrCreateUser("test1@test.fr", "institution", "group1");
+        configurationBusiness.getOrCreateUser("test2@test.fr", "institution", "group1");
+        configurationBusiness.getOrCreateUser("test3@test.fr", "institution", "group1");
+        configurationBusiness.getOrCreateUser("test4@test.fr", "institution", null);
 
         messageBusiness.sendMessage
         (
@@ -62,9 +59,21 @@ public class SocialSpringServerIT extends BaseSpringIT
     }
 
     @Test
+    public void testCatchCreateGroupAlreadyExisting() throws BusinessException
+    {
+        Group group1 = new Group("group1", true, true, true);
+
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        configurationBusiness.addGroup(group1)
+        );
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is already a group registered with the name :"));
+
+    }
+
+    @Test
     public void testInitialisation() throws BusinessException
     {
-
         assertRowsNbInTable("VIPSocialMessage", 1);
         assertRowsNbInTable("VIPSocialMessageSenderReceiver", 2);
         assertRowsNbInTable("VIPSocialGroupMessage", 1);
@@ -84,6 +93,60 @@ public class SocialSpringServerIT extends BaseSpringIT
         assert (messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
 
         assert (messageBusiness.getGroupMessages("group1", startDate).size() == 1): "Incorrect number of group messages received";
+
+    }
+
+    /* *********************************************************************************************************************************************************************************** */
+    /* *********************************************************************************** Create user *********************************************************************************** */
+    /* *********************************************************************************************************************************************************************************** */
+
+    // Add user catch
+    @Test
+    public void testCreateUser() throws BusinessException, GRIDAClientException {
+        configurationBusiness.getOrCreateUser("test5@test.fr", "institution", "group1");
+
+        assertRowsNbInTable("VIPUsers", 6);
+        assert messageBusiness.verifyMessages("test5@test.fr") == 0: "Incorrect number of unread messages";
+    }
+
+    // FIXME : Même adresse mail => pas d'erreur juste get
+    @Test
+    public void testCatchExistingEmailCreateUser() throws BusinessException, GRIDAClientException
+    {
+        configurationBusiness.getOrCreateUser("test4@test.fr", "institution", "group1");
+
+    }
+
+
+    /* *********************************************************************************************************************************************************************************** */
+    /* ************************************************************************************ Add user ************************************************************************************* */
+    /* *********************************************************************************************************************************************************************************** */
+    @Test
+    public void testAddUserToGroup() throws BusinessException, GRIDAClientException
+    {
+        configurationBusiness.addUserToGroup("test4@test.fr", "group1");
+    }
+
+    @Test
+    public void testCatchInexistingUserAddUserToGroup()
+    {
+
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        configurationBusiness.addUserToGroup("inexisting user","group1")
+        );
+        assertTrue(StringUtils.contains(exception.getMessage(), "Referential integrity constraint violation"));
+
+    }
+
+    @Test
+    public void testCatchInexistingGroupAddUserToGroup()
+    {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        configurationBusiness.addUserToGroup("test4@test.fr","inexisting group")
+        );
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no group registered with the groupname : inexisting group"));
 
     }
 
@@ -119,7 +182,7 @@ public class SocialSpringServerIT extends BaseSpringIT
         Calendar calendar = Calendar.getInstance();
         Date startDate = calendar.getTime();
 
-        assert (messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() == 2): "Invalid number of indivud messages";
+        assert (messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() == 2): "Invalid number of individual messages";
         assert (messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
         assert (messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() == 2): "Incorrect number of individual messages received";
         assert (messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
@@ -127,137 +190,53 @@ public class SocialSpringServerIT extends BaseSpringIT
     }
 
     @Test
-    public void testGroupMessageIsSent() throws BusinessException
+    public void testAllMessageIsSent() throws BusinessException
     {
-
-        messageBusiness.sendGroupMessage
-        (
-            configurationBusiness.getUser("test2@test.fr"),
-            "group1",
-            configurationBusiness.getUsersFromGroup("group1"),
-            "subject user 2",
-            "message user 2"
-        );
-
-        assertRowsNbInTable("VIPSocialMessage", 1);
-        assertRowsNbInTable("VIPSocialMessageSenderReceiver", 2);
-        assertRowsNbInTable("VIPSocialGroupMessage", 2);
-        assertRowsNbInTable("VIPUsers", 5);
-
-        assert messageBusiness.verifyMessages("test1@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
-
-        Calendar calendar = Calendar.getInstance();
-        Date startDate = calendar.getTime();
-
-        assert (messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() == 1): "Invalid number of individual messages";
-        assert (messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() == 1): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
-
-        assert (messageBusiness.getGroupMessages("group1", startDate).size() == 2): "Incorrect number of group messages received";
-    }
-
-    /* ********************************************************************************************************************************************** */
-    /* ************************************************************** send group message ************************************************************ */
-    /* ********************************************************************************************************************************************** */
-    @Test
-    public void testCatchInexistingSenderGroupMessage() throws BusinessException {
-
-        // Inexisting sender
-        Exception exception = assertThrows
-                (BusinessException.class, () ->
-                        messageBusiness.sendGroupMessage
-                        (
-                                configurationBusiness.getUser("inexisting user"),
-                                "group1",
-                                configurationBusiness.getUsersFromGroup("group1"),
-                                "subject user 2",
-                                "message user 2"
-                        )
-                );
-
-        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail: inexisting user"));
-
-    }
-
-    @Test
-    public void testCatchInexistingGroupGroupMessage() throws BusinessException {
-
-        // Inexisting group
-        Exception exception = assertThrows
-                (BusinessException.class, () ->
-                        messageBusiness.sendGroupMessage
-                                (
-                                        configurationBusiness.getUser("test3@test.fr"),
-                                        "group2",
-                                        configurationBusiness.getUsersFromGroup("group1"),
-                                        "subject user 2",
-                                        "message user 2"
-                                )
-                );
-
-        assertTrue(StringUtils.contains(exception.getMessage(), "Referential integrity constraint violation: \"CONSTRAINT_4970: PUBLIC.VIPSOCIALGROUPMESSAGE FOREIGN KEY(GROUPNAME) REFERENCES PUBLIC.VIPGROUPS(GROUPNAME) ('group2')"));
-    }
-
-    // FIXME : no exception "Error getting users from group" thrown
-    /*@Test
-    public void testCatchInexistingUsersGroupMessage() throws BusinessException {
-
-        Exception exception = assertThrows
-                (BusinessException.class, () ->
-                        messageBusiness.sendGroupMessage
-                                (
-                                        configurationBusiness.getUser("test3@test.fr"),
-                                        "group1",
-                                        configurationBusiness.getUsersFromGroup("inexisting group"),
-                                        "subject user 2",
-                                        "message user 2"
-                                )
-                );
-
-         assertTrue(StringUtils.contains(exception.getMessage(), "Error getting users from group"));
-
-    }*/
-
-    /* ********************************************************************************************************************************************** */
-    /* ************************************************************* remove group message *********************************************************** */
-    /* ********************************************************************************************************************************************** */
-
-    // FIXME : Does not work anymore
-    @Test
-    public void testRemoveGroupMessage() throws BusinessException
-    {
-        messageBusiness.removeGroupMessage(1);
-
-        assertRowsNbInTable("VIPSocialMessage", 1);
-        assertRowsNbInTable("VIPSocialMessageSenderReceiver", 2);
-        assertRowsNbInTable("VIPSocialGroupMessage", 0);
-        assertRowsNbInTable("VIPUsers", 5);
-
-        assert messageBusiness.verifyMessages("test1@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
-
-        Calendar calendar = Calendar.getInstance();
-        Date startDate = calendar.getTime();
-
-        assert (messageBusiness.getGroupMessages("group1", startDate).size() == 0): "Incorrect number of group messages received";
-    }
-
-    // FIXME : no exception "Error removing group message" thrown
-    @Test
-    public void testCatchRemoveGroupMessage() {
-        Exception exception = assertThrows
-            (BusinessException.class, () ->
-                messageBusiness.removeGroupMessage(2) // inexisting group message id
+        messageBusiness.sendMessage
+            (
+                    configurationBusiness.getUser("test2@test.fr"),
+                    new String[]{"All"},
+                    "subject user 2",
+                    "message user 2"
             );
 
-        assertTrue(StringUtils.contains(exception.getMessage(), "There is no message registered with the id 2"));
+        assertRowsNbInTable("VIPSocialMessage", 2);
+        assertRowsNbInTable("VIPSocialMessageSenderReceiver", 7);
+        assertRowsNbInTable("VIPSocialGroupMessage", 1);
+        assertRowsNbInTable("VIPUsers", 5);
 
+        assert messageBusiness.verifyMessages("test1@test.fr") == 2: "Incorrect number of messages not read";
+        assert messageBusiness.verifyMessages("test2@test.fr") == 1: "Incorrect number of messages not read";
+        assert messageBusiness.verifyMessages("test3@test.fr") == 2: "Incorrect number of messages not read";
+        assert messageBusiness.verifyMessages("test4@test.fr") == 1: "Incorrect number of messages not read";
+        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 1: "Incorrect number of messages not read";
+
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime();
+
+        assert (messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() == 2): "Invalid number of individual messages";
+        assert (messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() == 1): "Incorrect number of individual messages received";
+        assert (messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() == 2): "Incorrect number of individual messages received";
+        assert (messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() == 1): "Incorrect number of individual messages received";
+
+        assert (messageBusiness.getGroupMessages("group1", startDate).size() == 1): "Incorrect number of group messages received";
+    }
+
+    @Test
+    public void testCatchInexistantUserMessageIsSent() throws BusinessException {
+
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+
+                messageBusiness.sendMessage
+                (
+                        configurationBusiness.getUser("inexistant user"),
+                        new String[]{"test1@test.fr", "test3@test.fr"},
+                        "subject user 2",
+                        "message user 2"
+                )
+        );
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexistant user"));
     }
 
     /* ********************************************************************************************************************************************** */
@@ -292,8 +271,6 @@ public class SocialSpringServerIT extends BaseSpringIT
     }
 
 
-    // FIXME : no exception thrown
-    // test catch
     @Test
     public void testCatchRemoveMessage() throws BusinessException
     {
@@ -302,7 +279,7 @@ public class SocialSpringServerIT extends BaseSpringIT
                         messageBusiness.remove(2)
                 );
 
-        assertTrue(StringUtils.contains(exception.getMessage(), "There is no message registered with the id 2"));
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no individual message registered with the id : 2"));
     }
 
 
@@ -325,6 +302,28 @@ public class SocialSpringServerIT extends BaseSpringIT
 
     }
 
+    @Test
+    public void testCatchInexistingUserRemoveByReceiver() throws BusinessException {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                    messageBusiness.removeByReceiver(1, "inexisting user")
+        );
+
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
+
+    }
+
+    @Test
+    public void testCatchInexistingMessageemoveByReceiver() throws BusinessException {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                    messageBusiness.removeByReceiver(2, "test3@test.fr")
+        );
+
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no individual message registered with the id : 2"));
+
+    }
+
     /* ********************************************************************************************************************************************** */
     /* *************************************************** send individual message adding support *************************************************** */
     /* ********************************************************************************************************************************************** */
@@ -333,12 +332,12 @@ public class SocialSpringServerIT extends BaseSpringIT
     public void testCopyMessageToVipSupport() throws BusinessException
     {
         messageBusiness.copyMessageToVipSupport
-        (
-                configurationBusiness.getUser("test1@test.fr"),
-                new String[]{"test1@test.fr", "test3@test.fr"},
-                "subject test copy message to Vip support",
-                "message test copy message to Vip support"
-        );
+                (
+                        configurationBusiness.getUser("test1@test.fr"),
+                        new String[]{"test1@test.fr", "test3@test.fr"},
+                        "subject test copy message to Vip support",
+                        "message test copy message to Vip support"
+                );
 
         // Nothing changes
         assertRowsNbInTable("VIPSocialMessage", 1);
@@ -359,17 +358,17 @@ public class SocialSpringServerIT extends BaseSpringIT
     public void testCatchRCopyMessageToVipSupport() throws BusinessException
     {
         Exception exception = assertThrows(
-            BusinessException.class, () ->
-                messageBusiness.copyMessageToVipSupport
-                (
-                        configurationBusiness.getUser("inexisting user"),
-                        new String[]{"test1@test.fr", "test3@test.fr"},
-                        "subject test copy message to Vip support",
-                        "message test copy message to Vip support"
-                )
+                BusinessException.class, () ->
+                        messageBusiness.copyMessageToVipSupport
+                                (
+                                        configurationBusiness.getUser("inexisting user"),
+                                        new String[]{"test1@test.fr", "test3@test.fr"},
+                                        "subject test copy message to Vip support",
+                                        "message test copy message to Vip support"
+                                )
         );
 
-        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail: inexisting user"));
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
 
     }
 
@@ -379,15 +378,16 @@ public class SocialSpringServerIT extends BaseSpringIT
     @Test
     public void testSendMessageToVipSupport() throws BusinessException
     {
-        messageBusiness.sendMessageToVipSupport
-        (
-                configurationBusiness.getUser("test2@test.fr"),
-                "subject",
-                "message from test2@test.fr to Vip support",
-                List.of("workflow 1", "workflow 2"),
-                List.of("simulation 1", "simulation 2")
 
-        );
+        messageBusiness.sendMessageToVipSupport
+                (
+                        configurationBusiness.getUser("test2@test.fr"),
+                        "subject",
+                        "message from test2@test.fr to Vip support",
+                        List.of("workflow 1", "workflow 2"),
+                        List.of("simulation 1", "simulation 2")
+
+                );
 
         // Nothing changes
         assertRowsNbInTable("VIPSocialMessage", 1);
@@ -400,6 +400,28 @@ public class SocialSpringServerIT extends BaseSpringIT
         assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of unread messages";
         assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
     }
+
+    @Test
+    public void testCatchInexistingEmailSendMessageToVipSupport() throws BusinessException
+    {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+            messageBusiness.sendMessageToVipSupport
+                    (
+                            configurationBusiness.getUser("inexisting user"),
+                            "subject",
+                            "message from test2@test.fr to Vip support",
+                            List.of("workflow 1", "workflow 2"),
+                            List.of("simulation 1", "simulation 2")
+
+                    )
+        );
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
+
+
+    }
+
+
 
     /* ********************************************************************************************************************************************** */
     /* ****************************************************** mark individual message as read ******************************************************* */
@@ -421,70 +443,28 @@ public class SocialSpringServerIT extends BaseSpringIT
         assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
     }
 
-    /* ********************************************************************************************************************************************** */
-    /* **************************************************************** Create user ***************************************************************** */
-    /* ********************************************************************************************************************************************** */
-
-    // Add user catch
     @Test
-    public void testCreateUser() throws BusinessException, GRIDAClientException {
-        createUser("test5@test.fr", "5");
-
-        assertRowsNbInTable("VIPUsers", 6);
-        assert messageBusiness.verifyMessages("test5@test.fr") == 0: "Incorrect number of unread messages";
-    }
-
-    @Test
-    public void testCatchExistingEmailCreateUser() throws BusinessException, GRIDAClientException
+    public void testCatchInexistingUserMarkAsRead() throws BusinessException
     {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
-                        createUser("test4@test.fr", "5")
+                    messageBusiness.markAsRead(1, "inexisting user")
         );
-
-        assertTrue(StringUtils.contains(exception.getMessage(), "Unique index or primary key violation"));
-
-    }
-
-
-    @Test
-    public void testCatchExistingKeyCreateUser() throws BusinessException, GRIDAClientException {
-        Exception exception = assertThrows(
-                BusinessException.class, () ->
-                        createUser("inexisting user", "1")
-        );
-
-        assertTrue(StringUtils.contains(exception.getMessage(), "Unique index or primary key violation"));
-
-    }
-
-    /* ********************************************************************************************************************************************** */
-    /* **************************************************************** Add user ***************************************************************** */
-    /* ********************************************************************************************************************************************** */
-    @Test
-    public void testAddUserToGroup() throws BusinessException, GRIDAClientException {
-        configurationBusiness.addUserToGroup("test4@test.fr", "group1");
-    }
-
-    @Test
-    public void testCatchInexistingUserAddUserToGroup() throws BusinessException, GRIDAClientException {
-
-        Exception exception = assertThrows(
-                BusinessException.class, () ->
-                        configurationBusiness.addUserToGroup("inexisting user","group1")
-        );
-        assertTrue(StringUtils.contains(exception.getMessage(), "Referential integrity constraint violation"));
+        System.out.println("exception.getMessage(): "+exception.getMessage());
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
 
     }
 
     @Test
-    public void testCatchInexistingGroupAddUserToGroup() throws BusinessException, GRIDAClientException
+    public void testCatchInexistingMessageMarkAsRead() throws BusinessException
     {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
-                        configurationBusiness.addUserToGroup("test4@test.fr","Inexisting group")
+                    messageBusiness.markAsRead(2, "test1@test.fr")
         );
-        assertTrue(StringUtils.contains(exception.getMessage(), "Referential integrity constraint violation"));
+
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no individual message registered with the id : 2"));
+
 
     }
 
@@ -503,17 +483,152 @@ public class SocialSpringServerIT extends BaseSpringIT
                         messageBusiness.getMessagesByUser("inexisting user", startDate)
         );
 
-        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail: inexisting user"));
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
 
     }
 
 
+    /* *********************************************************************************************************************************************************************************** */
+    /* ********************************************************************************* group messages ********************************************************************************** */
+    /* *********************************************************************************************************************************************************************************** */
+
     /* ********************************************************************************************************************************************** */
-    /* **************************************************************** Get message by group ***************************************************************** */
+    /* ************************************************************** send group message ************************************************************ */
+    /* ********************************************************************************************************************************************** */
+    @Test
+    public void testGroupMessageIsSent() throws BusinessException
+    {
+
+        messageBusiness.sendGroupMessage
+        (
+            configurationBusiness.getUser("test2@test.fr"),
+            "group1",
+            configurationBusiness.getUsersFromGroup("group1"),
+            "subject user 2",
+            "message user 2"
+        );
+
+        assertRowsNbInTable("VIPSocialMessage", 1);
+        assertRowsNbInTable("VIPSocialMessageSenderReceiver", 2);
+        assertRowsNbInTable("VIPSocialGroupMessage", 2);
+        assertRowsNbInTable("VIPUsers", 5);
+
+        assert messageBusiness.verifyMessages("test1@test.fr") == 1: "Incorrect number of unread messages";
+        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
+        assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of unread messages";
+        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
+
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime();
+
+        assert (messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() == 1): "Invalid number of individual messages";
+        assert (messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
+        assert (messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() == 1): "Incorrect number of individual messages received";
+        assert (messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
+
+        assert (messageBusiness.getGroupMessages("group1", startDate).size() == 2): "Incorrect number of group messages received";
+    }
+
+
+    @Test
+    public void testCatchInexistingSenderGroupMessage() throws BusinessException {
+
+        // Inexisting sender
+        Exception exception = assertThrows
+                (BusinessException.class, () ->
+                        messageBusiness.sendGroupMessage
+                        (
+                                configurationBusiness.getUser("inexisting user"),
+                                "group1",
+                                configurationBusiness.getUsersFromGroup("group1"),
+                                "subject user 2",
+                                "message user 2"
+                        )
+                );
+
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
+
+    }
+
+    @Test
+    public void testCatchInexistingGroupGroupMessage() throws BusinessException {
+
+        // Inexisting group
+        Exception exception = assertThrows
+                (BusinessException.class, () ->
+                        messageBusiness.sendGroupMessage
+                        (
+                                configurationBusiness.getUser("test3@test.fr"),
+                                "inexisting group",
+                                configurationBusiness.getUsersFromGroup("group1"),
+                                "subject user 2",
+                                "message user 2"
+                        )
+                );
+
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no group registered with the groupname : inexisting group"));
+    }
+
+    @Test
+    public void testCatchInexistingUsersGroupMessage() throws BusinessException {
+
+        Exception exception = assertThrows
+                (BusinessException.class, () ->
+                        messageBusiness.sendGroupMessage
+                        (
+                                configurationBusiness.getUser("test3@test.fr"),
+                                "group1",
+                                configurationBusiness.getUsersFromGroup("inexisting group"),
+                                "subject user 2",
+                                "message user 2"
+                        )
+                );
+
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no group registered with the groupname : inexisting group"));
+
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* remove group message *********************************************************** */
     /* ********************************************************************************************************************************************** */
 
-    // FIXME : no exception thrown
-    /*@Test
+    @Test
+    public void testRemoveGroupMessage() throws BusinessException
+    {
+        messageBusiness.removeGroupMessage(1);
+
+        assertRowsNbInTable("VIPSocialMessage", 1);
+        assertRowsNbInTable("VIPSocialMessageSenderReceiver", 2);
+        assertRowsNbInTable("VIPSocialGroupMessage", 0);
+        assertRowsNbInTable("VIPUsers", 5);
+
+        assert messageBusiness.verifyMessages("test1@test.fr") == 1: "Incorrect number of unread messages";
+        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
+        assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of unread messages";
+        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
+
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime();
+
+        assert (messageBusiness.getGroupMessages("group1", startDate).size() == 0): "Incorrect number of group messages received";
+    }
+
+    @Test
+    public void testCatchRemoveGroupMessage() {
+        Exception exception = assertThrows
+            (BusinessException.class, () ->
+                messageBusiness.removeGroupMessage(2) // inexisting group message id
+            );
+
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no group message registered with the id : 2"));
+
+    }
+
+    /* ******************************************************************************************************************************************************* */
+    /* **************************************************************** Get message by group ***************************************************************** */
+    /* ******************************************************************************************************************************************************* */
+
+    @Test
     public void testCatchGetMessageByGroup() throws BusinessException, GRIDAClientException {
 
         Calendar calendar = Calendar.getInstance();
@@ -524,9 +639,31 @@ public class SocialSpringServerIT extends BaseSpringIT
                         messageBusiness.getGroupMessages("inexisting group", startDate)
         );
 
-        assertTrue(StringUtils.contains(exception.getMessage(), "..."));
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no group registered with the groupname : inexisting group"));
+    }
 
-    }*/
+    /* ******************************************************************************************************************************************************* */
+    /* **************************************************************** Get individual message by user ***************************************************************** */
+    /* ******************************************************************************************************************************************************* */
+
+
+    @Test
+    public void testGetSentMessageByUser() throws BusinessException {
+
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime();
+
+        assert (messageBusiness.getSentMessagesByUser("test1@test.fr", startDate).size() == 0) : "Inccorect number of individual messages sent";
+    }
+
+    @Test
+    public void testAdminGetSentMessageByUser() throws BusinessException {
+
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = calendar.getTime();
+
+        assert (messageBusiness.getSentMessagesByUser(ServerMockConfig.TEST_ADMIN_EMAIL, startDate).size() == 1) : "Inccorect number of individual messages sent";
+    }
 
     @Test
     public void testCatchGetSentMessageByUser() {
@@ -539,7 +676,19 @@ public class SocialSpringServerIT extends BaseSpringIT
                         messageBusiness.getSentMessagesByUser("inexisting user", startDate)
         );
 
-        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail: inexisting user"));
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
+
+    }
+
+    @Test
+    public void testCatchIncorrectEmailVerifyMessages() throws BusinessException {
+
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        messageBusiness.verifyMessages("inexisting user")
+                );
+
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
 
     }
 

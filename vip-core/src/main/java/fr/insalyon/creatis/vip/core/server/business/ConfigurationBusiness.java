@@ -647,10 +647,19 @@ public class ConfigurationBusiness {
 
     public void addGroup(Group group) throws BusinessException {
         try {
-            gridaClient.createFolder(server.getDataManagerGroupsHome(),
-                                group.getName().replaceAll(" ", "_"));
+            if (! groupDAO.isGroup(group.getName()))
+            {
+                gridaClient.createFolder(server.getDataManagerGroupsHome(),
+                        group.getName().replaceAll(" ", "_"));
 
-            groupDAO.add(group);
+                groupDAO.add(group);
+            }
+            else
+            {
+                logger.error("There is already a group registered with the name {}", group.getName());
+                throw new DAOException(String.format("There is already a group registered with the name : %s", group.getName()));
+            }
+
         } catch (GRIDAClientException ex) {
             logger.error("Error adding group : {}", group.getName(), ex);
             throw new BusinessException(ex);

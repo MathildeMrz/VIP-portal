@@ -33,9 +33,11 @@ package fr.insalyon.creatis.vip.social.server.dao.mysql;
 
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import fr.insalyon.creatis.vip.core.server.dao.GroupDAO;
 import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
 import fr.insalyon.creatis.vip.social.client.bean.GroupMessage;
 import fr.insalyon.creatis.vip.social.server.dao.GroupMessageDAO;
+import fr.insalyon.creatis.vip.social.server.dao.MessageDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,32 +63,45 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private UserDAO userDAO;
+    private GroupDAO groupDao;
+    private MessageDAO messageDao;
 
     @Autowired
-    public GroupMessageData(UserDAO userDAO, DataSource dataSource) {
+    public GroupMessageData(UserDAO userDAO, GroupDAO groupDao, MessageDAO messageDao, DataSource dataSource) {
         setDataSource(dataSource);
         this.userDAO = userDAO;
+        this.groupDao = groupDao;
+        this.messageDao = messageDao;
     }
 
     public long add(String sender, String groupName, String title, String message) throws DAOException {
 
         try {
-            PreparedStatement ps = getConnection().prepareStatement("INSERT INTO "
-                    + "VIPSocialGroupMessage(sender, groupname, title, message, posted) "
-                    + "VALUES(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, sender);
-            ps.setString(2, groupName);
-            ps.setString(3, title);
-            ps.setString(4, message);
-            ps.setTimestamp(5, new Timestamp(new Date().getTime()));
-            ps.execute();
 
-            ResultSet rs = ps.getGeneratedKeys();
-            rs.next();
-            long result = rs.getLong(1);
-            ps.close();
+            if(groupDao.isGroup(groupName))
+            {
+                PreparedStatement ps = getConnection().prepareStatement("INSERT INTO "
+                        + "VIPSocialGroupMessage(sender, groupname, title, message, posted) "
+                        + "VALUES(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, sender);
+                ps.setString(2, groupName);
+                ps.setString(3, title);
+                ps.setString(4, message);
+                ps.setTimestamp(5, new Timestamp(new Date().getTime()));
+                ps.execute();
 
-            return result;
+                ResultSet rs = ps.getGeneratedKeys();
+                rs.next();
+                long result = rs.getLong(1);
+                ps.close();
+
+                return result;
+            }
+            else
+            {
+                logger.error("There is no group registered with the groupname {}", groupName);
+                throw new DAOException("There is no group registered with the groupname : " + groupName);
+            }
 
         } catch (SQLException ex) {
             logger.error("Error adding a group message {} by {}", title, sender, ex);
@@ -97,27 +112,22 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     public void remove(long id) throws DAOException {
 
         try {
-
-            PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM "
-                    + "VIPSocialMessage WHERE id = ?");
-            ps.setLong(1, id);
-
-            ResultSet rs = ps.executeQuery();
-
-            if(! rs.next())
+            if(isMessage(id))
             {
-                logger.error("There is no message registered with the id {}", id);
-                throw new DAOException(String.format("There is no message registered with the id %d", id));
+                PreparedStatement ps = getConnection().prepareStatement("DELETE FROM "
+                        + "VIPSocialGroupMessage WHERE id = ?");
+                ps.setLong(1, id);
+
+                ps.executeUpdate();
+                ps.close();
+            }
+            else
+            {
+                logger.error("There is no group message registered with the id {}", id);
+                throw new DAOException(String.format("There is no group message registered with the id : %d", id));
             }
 
-            ps = getConnection().prepareStatement("DELETE FROM "
-                    + "VIPSocialGroupMessage WHERE id = ?");
-            ps.setLong(1, id);
-
-            ps.executeUpdate();
-            ps.close();
-
-        } catch (SQLException ex) {
+        }  catch (SQLException ex) {
             logger.error("Error removing group message {}", id, ex);
             throw new DAOException(ex);
         }
@@ -126,31 +136,58 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     public List<GroupMessage> getMessageByGroup(String groupName, int limit, Date startDate) throws DAOException {
 
         try {
-            PreparedStatement ps = getConnection().prepareStatement("SELECT "
-                    + "id, sender, groupname, title, message, posted "
-                    + "FROM VIPSocialGroupMessage "
-                    + "WHERE posted < ? AND groupname = ? "
-                    + "ORDER BY posted DESC LIMIT 0," + limit);
-            ps.setTimestamp(1, new Timestamp(startDate.getTime()));
-            ps.setString(2, groupName);
+            if(groupDao.isGroup(groupName))
+            {
+                PreparedStatement ps = getConnection().prepareStatement("SELECT "
+                        + "id, sender, groupname, title, message, posted "
+                        + "FROM VIPSocialGroupMessage "
+                        + "WHERE posted < ? AND groupname = ? "
+                        + "ORDER BY posted DESC LIMIT 0," + limit);
+                ps.setTimestamp(1, new Timestamp(startDate.getTime()));
+                ps.setString(2, groupName);
 
-            ResultSet rs = ps.executeQuery();
-            List<GroupMessage> messages = new ArrayList<GroupMessage>();
-            SimpleDateFormat f = new SimpleDateFormat("MMMM d, yyyy HH:mm");
+                ResultSet rs = ps.executeQuery();
+                List<GroupMessage> messages = new ArrayList<GroupMessage>();
+                SimpleDateFormat f = new SimpleDateFormat("MMMM d, yyyy HH:mm");
 
-            while (rs.next()) {
-                User from = userDAO.getUser(rs.getString("sender"));
-                Date posted = new Date(rs.getTimestamp("posted").getTime());
-                messages.add(new GroupMessage(rs.getLong("id"), from, groupName, rs.getString("title"),
-                        rs.getString("message"), f.format(posted), posted));
+                while (rs.next()) {
+                    User from = userDAO.getUser(rs.getString("sender"));
+                    Date posted = new Date(rs.getTimestamp("posted").getTime());
+                    messages.add(new GroupMessage(rs.getLong("id"), from, groupName, rs.getString("title"),
+                            rs.getString("message"), f.format(posted), posted));
+                }
+                ps.close();
+
+                return messages;
             }
-            ps.close();
+            else
+            {
+                logger.error("There is no group registered with the groupname {}", groupName);
+                throw new DAOException("There is no group registered with the groupname : " + groupName);
+            }
 
-            return messages;
 
         } catch (SQLException ex) {
             logger.error("Error getting group messages for {}", groupName, ex);
             throw new DAOException(ex);
+        }
+    }
+
+    public boolean isMessage(long id) throws DAOException
+    {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement("SELECT *"
+                    + "FROM VIPSocialGroupMessage "
+                    + "WHERE id=?");
+
+            ps.setString(1, String.valueOf(id));
+            ResultSet rs = ps.executeQuery();
+
+            return rs.next();
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

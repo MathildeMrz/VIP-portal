@@ -47,4 +47,6 @@ public interface GroupMessageDAO {
     public void remove(long id) throws DAOException;
     
     public List<GroupMessage> getMessageByGroup(String groupName, int limit, Date startDate) throws DAOException;
+
+
 }

@@ -47,4 +47,6 @@ public interface GroupDAO {
     public void update(String name, Group group) throws DAOException;
 
     public List<Group> getGroups() throws DAOException;
+
+    public boolean isGroup(String groupName) throws DAOException;
 }

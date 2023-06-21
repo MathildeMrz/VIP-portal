@@ -232,7 +232,7 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
             }
 
             logger.error("There is no user registered with the e-mail {}", email);
-            throw new DAOException("There is no user registered with the e-mail: " + email);
+            throw new DAOException("There is no user registered with the e-mail : " + email);
 
         } catch (SQLException ex) {
             logger.error("Error getting user {}", email, ex);
@@ -241,6 +241,28 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
+     *
+     * @param email
+     * @return
+     * @throws DAOException
+     */
+    public boolean isUser(String email) throws DAOException {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement("SELECT *"
+                    + "FROM VIPUsers "
+                    + "WHERE email=?");
+
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+
+            return rs.next();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+        /**
      *
      * @return @throws DAOException
      */
