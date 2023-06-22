@@ -30,7 +30,10 @@ public class ServerMockConfig {
     public static final String TEST_ADMIN_PASSWORD = "test-admin-password";
     public static final String TEST_ADMIN_INSTITUTION = "test admin institution";
 
+    // Added because the max number of simulations was 0
+    public static final String MAX_NUMBER_EXECUTIONS = "5";
     public static final String TEST_CAS_URL = "testCasURL";
+
 
     @Bean
     @Primary
@@ -48,6 +51,7 @@ public class ServerMockConfig {
         Mockito.when(server.getAdminPassword()).thenReturn(TEST_ADMIN_PASSWORD);
         Mockito.when(server.getAdminInstitution()).thenReturn(TEST_ADMIN_INSTITUTION);
         Mockito.when(server.getCasURL()).thenReturn(TEST_CAS_URL);
+        Mockito.when(server.getMaxPlatformRunningSimulations()).thenReturn(Integer.valueOf(MAX_NUMBER_EXECUTIONS));
         when(server.getDataManagerUsersHome()).thenReturn("/test/prefix/vip/data/test_users");
         when(server.getDataManagerGroupsHome()).thenReturn("/test/prefix/vip/data/test_groups");
         when(server.getVoRoot()).thenReturn("/vo_test/root");

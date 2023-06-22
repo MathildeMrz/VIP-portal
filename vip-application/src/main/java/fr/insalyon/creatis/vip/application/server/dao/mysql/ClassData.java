@@ -35,7 +35,7 @@ import fr.insalyon.creatis.vip.application.client.bean.AppClass;
 import fr.insalyon.creatis.vip.application.server.dao.ClassDAO;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants.GROUP_ROLE;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
-import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -105,12 +105,22 @@ public class ClassData extends JdbcDaoSupport implements ClassDAO {
     public void remove(String className) throws DAOException {
 
         try {
-            PreparedStatement ps = getConnection().prepareStatement("DELETE "
-                    + "FROM VIPClasses WHERE name=?");
+            // Added in order to see if class exists
+            if(isClass(className))
+            {
+                PreparedStatement ps = getConnection().prepareStatement("DELETE "
+                        + "FROM VIPClasses WHERE name=?");
 
-            ps.setString(1, className);
-            ps.execute();
-            ps.close();
+                ps.setString(1, className);
+                ps.execute();
+                ps.close();
+            }
+            else
+            {
+                logger.error("There is no class registered with the name: {}", className);
+                throw new DAOException("There is no class registered with the name : " + className);
+            }
+
 
         } catch (SQLException ex) {
             logger.error("Error removing class {}", className, ex);
@@ -165,46 +175,67 @@ public class ClassData extends JdbcDaoSupport implements ClassDAO {
         }
     }
 
+    public boolean isClass(String className) throws SQLException {
+        PreparedStatement ps = getConnection().prepareStatement(
+                "SELECT name FROM VIPClasses WHERE name=?");
+        ps.setString(1, className);
+        ResultSet rs = ps.executeQuery();
+
+        return rs.next();
+
+    }
+
     @Override
     public AppClass getClass(String className) throws DAOException {
           try {
 
-              // Get class
-            PreparedStatement ps = getConnection().prepareStatement(
-                    "SELECT name FROM VIPClasses WHERE name=?");
-            ps.setString(1, className);
-            ResultSet rs = ps.executeQuery();
+              if(isClass(className))
+              {
+                // Get class
+                PreparedStatement ps = getConnection().prepareStatement(
+                        "SELECT name FROM VIPClasses WHERE name=?");
+                ps.setString(1, className);
+                ResultSet rs = ps.executeQuery();
 
-            if(rs.first()) {
+                // Added in order to see if class exists
 
-                // Get groups associated to class
-                List<String> groups = new ArrayList<String>();
-                PreparedStatement ps2 = getConnection().prepareStatement(
-                        "SELECT groupname FROM VIPGroupsClasses "
-                        + "WHERE classname=? ORDER BY groupname");
-                ps2.setString(1, rs.getString("name"));
-                ResultSet r = ps2.executeQuery();
-                while (r.next()) {
-                    groups.add(r.getString("groupname"));
+                if(rs.first()) {
+
+                    // Get groups associated to class
+                    List<String> groups = new ArrayList<String>();
+                    PreparedStatement ps2 = getConnection().prepareStatement(
+                            "SELECT groupname FROM VIPGroupsClasses "
+                                    + "WHERE classname=? ORDER BY groupname");
+                    ps2.setString(1, rs.getString("name"));
+                    ResultSet r = ps2.executeQuery();
+                    while (r.next()) {
+                        groups.add(r.getString("groupname"));
+                    }
+                    ps2.close();
+                    // Get engines associated to class
+                    List<String> engines = new ArrayList<String>();
+                    PreparedStatement ps3 = getConnection().prepareStatement(
+                            "SELECT engine FROM VIPClassesEngines "
+                                    + "WHERE class=? ORDER BY engine");
+                    ps3.setString(1, rs.getString("name"));
+                    ResultSet re = ps3.executeQuery();
+                    while (re.next()) {
+                        engines.add(re.getString("engine"));
+                    }
+                    ps3.close();
+
+                    return new AppClass(rs.getString("name"),
+                            engines, groups);
                 }
-                ps2.close();
-                // Get engines associated to class
-                List<String> engines = new ArrayList<String>();
-                PreparedStatement ps3 = getConnection().prepareStatement(
-                        "SELECT engine FROM VIPClassesEngines "
-                        + "WHERE class=? ORDER BY engine");
-                ps3.setString(1, rs.getString("name"));
-                ResultSet re = ps3.executeQuery();
-                while (re.next()) {
-                    engines.add(re.getString("engine"));
-                }
-                ps3.close();
-
-                return new AppClass(rs.getString("name"),
-                        engines, groups);
+                ps.close();
+                return null;
             }
-            ps.close();
-            return null;
+            else
+            {
+                logger.error("There is no class registered with the name: {}", className);
+                throw new DAOException("There is no class registered with the name : " + className);
+            }
+
 
         } catch (SQLException ex) {
               logger.error("Error getting class {}", className, ex);

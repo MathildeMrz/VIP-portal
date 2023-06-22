@@ -8,6 +8,7 @@ import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.social.server.business.MessageBusiness;
 import org.apache.commons.lang.StringUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -58,6 +60,7 @@ public class SocialSpringServerIT extends BaseSpringIT
 
     }
 
+
     @Test
     public void testCatchCreateGroupAlreadyExisting() throws BusinessException
     {
@@ -79,20 +82,20 @@ public class SocialSpringServerIT extends BaseSpringIT
         assertRowsNbInTable("VIPSocialGroupMessage", 1);
         assertRowsNbInTable("VIPUsers", 5);
 
-        assert messageBusiness.verifyMessages("test1@test.fr") == 1: "Incorrect number of messages not read";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of messages not read";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of messages not read";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of messages not read";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test1@test.fr") , 1, "Incorrect number of messages not read");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test2@test.fr") , 0, "Incorrect number of messages not read");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test3@test.fr") , 1, "Incorrect number of messages not read");
+        Assertions.assertEquals(messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) , 0, "Incorrect number of messages not read");
 
         Calendar calendar = Calendar.getInstance();
         Date startDate = calendar.getTime();
 
-        assert (messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() == 1): "Invalid number of indivud messages";
-        assert (messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() == 1): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() , 1, "Invalid number of individual messages");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() , 0, "Incorrect number of individual messages received");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() , 1, "Incorrect number of individual messages received");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() , 0, "Incorrect number of individual messages received");
 
-        assert (messageBusiness.getGroupMessages("group1", startDate).size() == 1): "Incorrect number of group messages received";
+        Assertions.assertEquals(messageBusiness.getGroupMessages("group1", startDate).size() , 1, "Incorrect number of group messages received");
 
     }
 
@@ -106,10 +109,10 @@ public class SocialSpringServerIT extends BaseSpringIT
         configurationBusiness.getOrCreateUser("test5@test.fr", "institution", "group1");
 
         assertRowsNbInTable("VIPUsers", 6);
-        assert messageBusiness.verifyMessages("test5@test.fr") == 0: "Incorrect number of unread messages";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test5@test.fr") , 0, "Incorrect number of unread messages");
     }
 
-    // FIXME : Même adresse mail => pas d'erreur juste get
+    // FIXME , Même adresse mail => pas d'erreur juste get
     @Test
     public void testCatchExistingEmailCreateUser() throws BusinessException, GRIDAClientException
     {
@@ -174,18 +177,18 @@ public class SocialSpringServerIT extends BaseSpringIT
         assertRowsNbInTable("VIPSocialGroupMessage", 1);
         assertRowsNbInTable("VIPUsers", 5);
 
-        assert messageBusiness.verifyMessages("test1@test.fr") == 2: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 2: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test1@test.fr") , 2, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test2@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test3@test.fr") , 2, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) , 0, "Incorrect number of unread messages");
 
         Calendar calendar = Calendar.getInstance();
         Date startDate = calendar.getTime();
 
-        assert (messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() == 2): "Invalid number of individual messages";
-        assert (messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() == 2): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() , 2, "Invalid number of individual messages");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() , 0, "Incorrect number of individual messages received");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() , 2, "Incorrect number of individual messages received");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() , 0, "Incorrect number of individual messages received");
 
     }
 
@@ -205,21 +208,21 @@ public class SocialSpringServerIT extends BaseSpringIT
         assertRowsNbInTable("VIPSocialGroupMessage", 1);
         assertRowsNbInTable("VIPUsers", 5);
 
-        assert messageBusiness.verifyMessages("test1@test.fr") == 2: "Incorrect number of messages not read";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 1: "Incorrect number of messages not read";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 2: "Incorrect number of messages not read";
-        assert messageBusiness.verifyMessages("test4@test.fr") == 1: "Incorrect number of messages not read";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 1: "Incorrect number of messages not read";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test1@test.fr") , 2, "Incorrect number of messages not read");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test2@test.fr") , 1, "Incorrect number of messages not read");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test3@test.fr") , 2, "Incorrect number of messages not read");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test4@test.fr") , 1, "Incorrect number of messages not read");
+        Assertions.assertEquals(messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) , 1, "Incorrect number of messages not read");
 
         Calendar calendar = Calendar.getInstance();
         Date startDate = calendar.getTime();
 
-        assert (messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() == 2): "Invalid number of individual messages";
-        assert (messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() == 1): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() == 2): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() == 1): "Incorrect number of individual messages received";
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() , 2, "Invalid number of individual messages");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() , 1, "Incorrect number of individual messages received");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() , 2, "Incorrect number of individual messages received");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() , 1, "Incorrect number of individual messages received");
 
-        assert (messageBusiness.getGroupMessages("group1", startDate).size() == 1): "Incorrect number of group messages received";
+        Assertions.assertEquals(messageBusiness.getGroupMessages("group1", startDate).size() , 1, "Incorrect number of group messages received");
     }
 
     @Test
@@ -254,20 +257,20 @@ public class SocialSpringServerIT extends BaseSpringIT
         assertRowsNbInTable("VIPSocialGroupMessage", 1);
         assertRowsNbInTable("VIPUsers", 5);
 
-        assert messageBusiness.verifyMessages("test1@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test1@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test2@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test3@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) , 0, "Incorrect number of unread messages");
 
         Calendar calendar = Calendar.getInstance();
         Date startDate = calendar.getTime();
 
-        assert (messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() == 0): "Invalid number of indivud messages";
-        assert (messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() , 0, "Invalid number of indivud messages");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() , 0, "Incorrect number of individual messages received");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() , 0, "Incorrect number of individual messages received");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() , 0, "Incorrect number of individual messages received");
 
-        assert (messageBusiness.getGroupMessages("group1", startDate).size() == 1): "Incorrect number of group messages received";
+        Assertions.assertEquals(messageBusiness.getGroupMessages("group1", startDate).size() , 1, "Incorrect number of group messages received");
     }
 
 
@@ -295,10 +298,10 @@ public class SocialSpringServerIT extends BaseSpringIT
         assertRowsNbInTable("VIPSocialGroupMessage", 1);
         assertRowsNbInTable("VIPUsers", 5);
 
-        assert messageBusiness.verifyMessages("test1@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test1@test.fr") , 1, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test2@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test3@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) , 0, "Incorrect number of unread messages");
 
     }
 
@@ -345,11 +348,10 @@ public class SocialSpringServerIT extends BaseSpringIT
         assertRowsNbInTable("VIPSocialGroupMessage", 1);
         assertRowsNbInTable("VIPUsers", 5);
 
-        //Through VIPSocialMessageSenderReceiver
-        assert messageBusiness.verifyMessages("test1@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test1@test.fr") , 1, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test2@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test3@test.fr") , 1, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) , 0, "Incorrect number of unread messages");
 
     }
 
@@ -395,10 +397,10 @@ public class SocialSpringServerIT extends BaseSpringIT
         assertRowsNbInTable("VIPSocialGroupMessage", 1);
         assertRowsNbInTable("VIPUsers", 5);
 
-        assert messageBusiness.verifyMessages("test1@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test1@test.fr") , 1, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test2@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test3@test.fr") , 1, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) , 0, "Incorrect number of unread messages");
     }
 
     @Test
@@ -437,10 +439,10 @@ public class SocialSpringServerIT extends BaseSpringIT
         assertRowsNbInTable("VIPSocialGroupMessage", 1);
         assertRowsNbInTable("VIPUsers", 5);
 
-        assert messageBusiness.verifyMessages("test1@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test1@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test2@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test3@test.fr") , 1, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) , 0, "Incorrect number of unread messages");
     }
 
     @Test
@@ -513,20 +515,20 @@ public class SocialSpringServerIT extends BaseSpringIT
         assertRowsNbInTable("VIPSocialGroupMessage", 2);
         assertRowsNbInTable("VIPUsers", 5);
 
-        assert messageBusiness.verifyMessages("test1@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test1@test.fr") , 1, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test2@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test3@test.fr") , 1, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) , 0, "Incorrect number of unread messages");
 
         Calendar calendar = Calendar.getInstance();
         Date startDate = calendar.getTime();
 
-        assert (messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() == 1): "Invalid number of individual messages";
-        assert (messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() == 1): "Incorrect number of individual messages received";
-        assert (messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() == 0): "Incorrect number of individual messages received";
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test1@test.fr", startDate).size() , 1, "Invalid number of individual messages");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test2@test.fr", startDate).size() , 0, "Incorrect number of individual messages received");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test3@test.fr", startDate).size() , 1, "Incorrect number of individual messages received");
+        Assertions.assertEquals(messageBusiness.getMessagesByUser("test4@test.fr", startDate).size() , 0, "Incorrect number of individual messages received");
 
-        assert (messageBusiness.getGroupMessages("group1", startDate).size() == 2): "Incorrect number of group messages received";
+        Assertions.assertEquals(messageBusiness.getGroupMessages("group1", startDate).size() , 2, "Incorrect number of group messages received");
     }
 
 
@@ -602,15 +604,15 @@ public class SocialSpringServerIT extends BaseSpringIT
         assertRowsNbInTable("VIPSocialGroupMessage", 0);
         assertRowsNbInTable("VIPUsers", 5);
 
-        assert messageBusiness.verifyMessages("test1@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test2@test.fr") == 0: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages("test3@test.fr") == 1: "Incorrect number of unread messages";
-        assert messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) == 0: "Incorrect number of unread messages";
+        Assertions.assertEquals(messageBusiness.verifyMessages("test1@test.fr") , 1, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test2@test.fr") , 0, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages("test3@test.fr") , 1, "Incorrect number of unread messages");
+        Assertions.assertEquals(messageBusiness.verifyMessages(ServerMockConfig.TEST_ADMIN_EMAIL) , 0, "Incorrect number of unread messages");
 
         Calendar calendar = Calendar.getInstance();
         Date startDate = calendar.getTime();
 
-        assert (messageBusiness.getGroupMessages("group1", startDate).size() == 0): "Incorrect number of group messages received";
+        Assertions.assertEquals(messageBusiness.getGroupMessages("group1", startDate).size() , 0, "Incorrect number of group messages received");
     }
 
     @Test
@@ -653,7 +655,7 @@ public class SocialSpringServerIT extends BaseSpringIT
         Calendar calendar = Calendar.getInstance();
         Date startDate = calendar.getTime();
 
-        assert (messageBusiness.getSentMessagesByUser("test1@test.fr", startDate).size() == 0) : "Inccorect number of individual messages sent";
+        Assertions.assertEquals(messageBusiness.getSentMessagesByUser("test1@test.fr", startDate).size() , 0 , "Inccorect number of individual messages sent");
     }
 
     @Test
@@ -662,7 +664,7 @@ public class SocialSpringServerIT extends BaseSpringIT
         Calendar calendar = Calendar.getInstance();
         Date startDate = calendar.getTime();
 
-        assert (messageBusiness.getSentMessagesByUser(ServerMockConfig.TEST_ADMIN_EMAIL, startDate).size() == 1) : "Inccorect number of individual messages sent";
+        Assertions.assertEquals(messageBusiness.getSentMessagesByUser(ServerMockConfig.TEST_ADMIN_EMAIL, startDate).size() , 1 , "Inccorect number of individual messages sent");
     }
 
     @Test
@@ -687,6 +689,18 @@ public class SocialSpringServerIT extends BaseSpringIT
                 BusinessException.class, () ->
                         messageBusiness.verifyMessages("inexisting user")
                 );
+
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
+
+    }
+
+    @Test
+    public void testCatchInexistingUserAssociateMessageToUser()
+    {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        messageBusiness.sendMessage(configurationBusiness.getUser("test1@test.fr"),new String[]{"inexisting user"}, "subject", "message")
+        );
 
         assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
 

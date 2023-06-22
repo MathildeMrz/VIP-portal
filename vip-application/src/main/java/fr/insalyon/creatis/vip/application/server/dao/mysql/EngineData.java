@@ -53,6 +53,7 @@ import javax.sql.DataSource;
  *
  * @author Rafael Ferreira da Silva
  */
+
 @Repository
 @Transactional
 public class EngineData extends JdbcDaoSupport implements EngineDAO {
@@ -65,12 +66,13 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
     }
 
     @Override
-    public void add(Engine engine) throws DAOException {
-
-        try {
+    public void add(Engine engine) throws DAOException
+    {
+        try
+        {
             PreparedStatement ps = getConnection().prepareStatement(
                     "INSERT INTO VIPEngines(name, endpoint, status) "
-                    + "VALUES (?, ?, ?)");
+                            + "VALUES (?, ?, ?)");
 
             ps.setString(1, engine.getName());
             ps.setString(2, engine.getEndpoint());
@@ -79,9 +81,9 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
             ps.close();
 
         } catch (SQLException ex) {
-            if (ex.getMessage().contains("Duplicate entry")) {
-                logger.error("An engine named \"{}\" already exists.", engine.getName());
-                throw new DAOException("An engine named \"" + engine.getName() + "\" already exists.");
+            if (ex.getMessage().contains("Unique index or primary key")) {
+                logger.error("There is already an engine registered with the name {}", engine.getName());
+                 throw new DAOException("There is already an engine registered with the name : " + engine.getName());
             } else {
                 logger.error("Error adding engine {}", engine.getEndpoint(), ex);
                 throw new DAOException(ex);
@@ -91,18 +93,27 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
 
     @Override
     public void update(Engine engine) throws DAOException {
-
         try {
-            PreparedStatement ps = getConnection().prepareStatement(
-                    "UPDATE VIPEngines SET endpoint = ?, "
-                    + "status = ? "
-                    + "WHERE name = ?");
+            if(isEngine(engine.getName()))// TODO : voir si sql renvoie erreur comme quoi
+            {
+                PreparedStatement ps = getConnection().prepareStatement(
+                        "UPDATE VIPEngines SET endpoint = ?, "
+                                + "status = ? "
+                                + "WHERE name = ?");
 
-            ps.setString(1, engine.getEndpoint());
-            ps.setString(2, engine.getStatus());
-            ps.setString(3, engine.getName());
-            ps.executeUpdate();
-            ps.close();
+                ps.setString(1, engine.getEndpoint());
+                ps.setString(2, engine.getStatus());
+                ps.setString(3, engine.getName());
+                //ps.executeUpdate();
+
+                if(ps.executeUpdate() == 0)
+                {
+                    logger.error("There is no engine registered with the name {}", engine.getName());
+                    throw new DAOException("There is no engine registered with the name : " + engine.getName());
+                }
+
+                ps.close();
+            }
 
         } catch (SQLException ex) {
             logger.error("Error updating engine {} to {}", engine.getName(), engine.getEndpoint(), ex);
@@ -111,20 +122,30 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
     }
 
     @Override
-    public void remove(String name) throws DAOException {
+    public void remove(String name) throws DAOException
+    {
+            try {
+                PreparedStatement ps = getConnection().prepareStatement("DELETE "
+                        + "FROM VIPEngines WHERE name=?");
 
-        try {
-            PreparedStatement ps = getConnection().prepareStatement("DELETE "
-                    + "FROM VIPEngines WHERE name=?");
+                ps.setString(1, name);
+                ps.execute();
 
-            ps.setString(1, name);
-            ps.execute();
-            ps.close();
 
-        } catch (SQLException ex) {
-            logger.error("Error removing engine {}", name, ex);
-            throw new DAOException(ex);
-        }
+                System.out.println("IIIIIIIIIIII : "+ps.executeUpdate());
+                if(ps.executeUpdate() == 0)
+                {
+                    logger.error("There is no engine registered with the name {}", name);
+                    throw new DAOException("There is no engine registered with the name : " + name);
+                }
+
+                ps.close();
+
+            } catch (SQLException ex) {
+                logger.error("Error removing engine {}", name, ex);
+                throw new DAOException(ex);
+            }
+
     }
 
     @Override
@@ -175,6 +196,24 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
         } catch (SQLException ex) {
             logger.error("Error getting engines by class {}", className, ex);
             throw new DAOException(ex);
+        }
+    }
+
+    @Override
+    public boolean isEngine(String name)
+    {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement("SELECT *"
+                    + "FROM VIPEngines "
+                    + "WHERE name=?");
+
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+
+            return rs.next();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

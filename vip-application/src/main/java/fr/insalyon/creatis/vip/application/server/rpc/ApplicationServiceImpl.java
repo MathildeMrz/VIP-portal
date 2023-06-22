@@ -40,6 +40,7 @@ import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.CoreException;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.core.server.rpc.AbstractRemoteServiceServlet;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
@@ -400,7 +401,7 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
             authenticateSystemAdministrator(logger);
             trace(logger, "Removing engine '" + engineName + "'.");
             engineBusiness.remove(engineName);
-        } catch (BusinessException | CoreException ex) {
+        } catch (BusinessException | CoreException | DAOException ex) {
             throw new ApplicationException(ex);
         }
     }

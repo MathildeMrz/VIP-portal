@@ -70,13 +70,14 @@ public class EngineBusiness {
         }
     }
 
-    public void remove(String name) throws BusinessException {
+    public void remove(String name) throws BusinessException, DAOException {
         try {
             engineDAO.remove(name);
         } catch (DAOException ex) {
             throw new BusinessException(ex);
         }
     }
+
 
     public List<Engine> get() throws BusinessException {
         try {
