@@ -33,6 +33,8 @@ package fr.insalyon.creatis.vip.application.server.dao;
 
 import fr.insalyon.creatis.vip.application.client.bean.AppClass;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -52,4 +54,6 @@ public interface ClassDAO {
     public List<AppClass> getUserClasses(String email, boolean validAdmin) throws DAOException;
     
     public AppClass getClass(String className) throws DAOException;
+
+    public boolean isClass(String name) throws DAOException, SQLException;
 }

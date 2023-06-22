@@ -6,6 +6,7 @@ import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.integrationtest.ServerMockConfig;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.social.server.business.MessageBusiness;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -29,14 +30,10 @@ public class SocialSpringServerIT extends BaseSpringIT
     public MessageBusiness messageBusiness;
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException
-    {
-
+    public void setUp() throws BusinessException, GRIDAClientException, DAOException {
         Group group1 = new Group("group1", true, true, true);
-        // Adding a new group to configurationBusiness
         configurationBusiness.addGroup(group1);
 
-        // Adding 3 new users to configurationBusiness
         configurationBusiness.getOrCreateUser("test1@test.fr", "institution", "group1");
         configurationBusiness.getOrCreateUser("test2@test.fr", "institution", "group1");
         configurationBusiness.getOrCreateUser("test3@test.fr", "institution", "group1");

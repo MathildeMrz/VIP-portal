@@ -32,6 +32,7 @@
 package fr.insalyon.creatis.vip.application.server.dao.mysql;
 
 import fr.insalyon.creatis.vip.application.client.bean.Engine;
+import fr.insalyon.creatis.vip.application.server.dao.ClassDAO;
 import fr.insalyon.creatis.vip.application.server.dao.EngineDAO;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import java.sql.Connection;
@@ -40,6 +41,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +63,12 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private ClassDAO classDao;
+
     @Autowired
     public void useDataSource(DataSource dataSource) {
         setDataSource(dataSource);
+        this.classDao = classDao;
     }
 
     @Override
@@ -94,7 +100,7 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
     @Override
     public void update(Engine engine) throws DAOException {
         try {
-            if(isEngine(engine.getName()))// TODO : voir si sql renvoie erreur comme quoi
+            if(isEngine(engine.getName()))
             {
                 PreparedStatement ps = getConnection().prepareStatement(
                         "UPDATE VIPEngines SET endpoint = ?, "
@@ -104,15 +110,14 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
                 ps.setString(1, engine.getEndpoint());
                 ps.setString(2, engine.getStatus());
                 ps.setString(3, engine.getName());
-                //ps.executeUpdate();
-
-                if(ps.executeUpdate() == 0)
-                {
-                    logger.error("There is no engine registered with the name {}", engine.getName());
-                    throw new DAOException("There is no engine registered with the name : " + engine.getName());
-                }
+                ps.executeUpdate();
 
                 ps.close();
+            }
+            else
+            {
+                logger.error("There is no engine registered with the name {}", engine.getName());
+                throw new DAOException("There is no engine registered with the name : " + engine.getName());
             }
 
         } catch (SQLException ex) {
@@ -125,21 +130,22 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
     public void remove(String name) throws DAOException
     {
             try {
-                PreparedStatement ps = getConnection().prepareStatement("DELETE "
-                        + "FROM VIPEngines WHERE name=?");
+                if(isEngine(name))
+                {
+                    PreparedStatement ps = getConnection().prepareStatement("DELETE "
+                            + "FROM VIPEngines WHERE name=?");
 
-                ps.setString(1, name);
-                ps.execute();
+                    ps.setString(1, name);
+                    ps.execute();
 
-
-                System.out.println("IIIIIIIIIIII : "+ps.executeUpdate());
-                if(ps.executeUpdate() == 0)
+                    ps.close();
+                }
+                else
                 {
                     logger.error("There is no engine registered with the name {}", name);
                     throw new DAOException("There is no engine registered with the name : " + name);
                 }
 
-                ps.close();
 
             } catch (SQLException ex) {
                 logger.error("Error removing engine {}", name, ex);
@@ -175,23 +181,32 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
 
         String status= "enabled";
         try {
-            PreparedStatement ps = getConnection().prepareStatement("SELECT "
-                    + "e.name AS engineName, endpoint, status "
-                    + "FROM VIPEngines e, VIPClassesEngines c "
-                    + "WHERE e.name = c.engine AND "
-                    + "e.status = ? AND "
-                    + "c.class = ?");
-            ps.setString(1, status);
-            ps.setString(2, className);
+            if(classDao.isClass(className))
+            {
+                PreparedStatement ps = getConnection().prepareStatement("SELECT "
+                        + "e.name AS engineName, endpoint, status "
+                        + "FROM VIPEngines e, VIPClassesEngines c "
+                        + "WHERE e.name = c.engine AND "
+                        + "e.status = ? AND "
+                        + "c.class = ?");
+                ps.setString(1, status);
+                ps.setString(2, className);
 
-            ResultSet rs = ps.executeQuery();
+                ResultSet rs = ps.executeQuery();
 
-            List<Engine> list = new ArrayList<Engine>();
-            while (rs.next()) {
-                list.add(new Engine(rs.getString("engineName"), rs.getString("endpoint"), rs.getString("status")));
+                List<Engine> list = new ArrayList<Engine>();
+                while (rs.next()) {
+                    list.add(new Engine(rs.getString("engineName"), rs.getString("endpoint"), rs.getString("status")));
+                }
+                ps.close();
+                return list;
             }
-            ps.close();
-            return list;
+            else
+            {
+                logger.error("There is no class registered with the name {}", className);
+                throw new DAOException("There is no class registered with the name : " + className);
+            }
+
 
         } catch (SQLException ex) {
             logger.error("Error getting engines by class {}", className, ex);

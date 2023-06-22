@@ -12,6 +12,7 @@ import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
 import fr.insalyon.creatis.vip.core.server.business.EmailBusiness;
 import fr.insalyon.creatis.vip.core.server.business.Server;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -84,7 +85,7 @@ public abstract class BaseSpringIT {
     protected GRIDAClient gridaClient;
 
     @BeforeEach
-    protected void setUp() throws BusinessException, GRIDAClientException {
+    protected void setUp() throws BusinessException, GRIDAClientException, DAOException {
         ServerMockConfig.reset(server);
     }
 

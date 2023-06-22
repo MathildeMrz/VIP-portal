@@ -645,23 +645,27 @@ public class ConfigurationBusiness {
         }
     }
 
-    public void addGroup(Group group) throws BusinessException {
+    public void addGroup(Group group) throws BusinessException, DAOException {
         try {
-            if (! groupDAO.isGroup(group.getName()))
-            {
+            //if (! groupDAO.isGroup(group.getName()))
+            //{
                 gridaClient.createFolder(server.getDataManagerGroupsHome(),
                         group.getName().replaceAll(" ", "_"));
 
                 groupDAO.add(group);
-            }
-            else
-            {
+            //}
+            //else
+            //{
+            //    logger.error("There is already a group registered with the name {}", group.getName());
+            //    throw new DAOException(String.format("There is already a group registered with the name : %s", group.getName()));
+            //}
+
+        } catch (GRIDAClientException ex) {
+            if (ex.getMessage().contains("Unique index or primary key")) {
                 logger.error("There is already a group registered with the name {}", group.getName());
                 throw new DAOException(String.format("There is already a group registered with the name : %s", group.getName()));
             }
-
-        } catch (GRIDAClientException ex) {
-            logger.error("Error adding group : {}", group.getName(), ex);
+                logger.error("Error adding group : {}", group.getName(), ex);
             throw new BusinessException(ex);
         } catch (DAOException ex) {
             throw new BusinessException(ex);

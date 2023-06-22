@@ -57,7 +57,6 @@ import javax.sql.DataSource;
 @Repository
 @Transactional
 public class ClassData extends JdbcDaoSupport implements ClassDAO {
-
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -175,7 +174,7 @@ public class ClassData extends JdbcDaoSupport implements ClassDAO {
         }
     }
 
-    public boolean isClass(String className) throws SQLException {
+    public boolean isClass(String className) throws DAOException, SQLException {
         PreparedStatement ps = getConnection().prepareStatement(
                 "SELECT name FROM VIPClasses WHERE name=?");
         ps.setString(1, className);

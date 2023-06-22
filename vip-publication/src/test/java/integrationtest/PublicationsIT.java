@@ -39,11 +39,9 @@ public class PublicationsIT extends BaseSpringIT {
     }
 
     @Test
-    public void testAddExistingPublication()
-    {
+    public void testAddExistingPublication() throws BusinessException {
         String adminMail = server.getAdminEmail();
         Publication publication = new Publication(1L, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
-
 
         Exception exception = assertThrows(
                 BusinessException.class, () ->
@@ -51,7 +49,9 @@ public class PublicationsIT extends BaseSpringIT {
         );
 
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is already a publication registered with the id : 1"));
+
     }
+
 
     @Test
     public void testCatchGetInexistingPublication()

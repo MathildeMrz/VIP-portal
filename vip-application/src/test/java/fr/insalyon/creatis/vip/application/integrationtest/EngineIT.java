@@ -87,16 +87,16 @@ public class EngineIT extends BaseSpringIT {
 
     @Test
     public void testUpdate() throws BusinessException {
-        String engineName = "test engine 2";
+        String engineName = "test engine";
         String engineEndpoint = "test endpoint 2";
         String engineStatus = "enabled";
         Engine engine = new Engine(engineName, engineEndpoint, engineStatus);
         engineBusiness.update(engine);
 
         Assertions.assertEquals(1, engineBusiness.get().size());
-        Assertions.assertEquals("test engine 2", engineBusiness.get().get(1).getName());
-        Assertions.assertEquals("test endpoint 2", engineBusiness.get().get(1).getEndpoint());
-        Assertions.assertEquals("enabled", engineBusiness.get().get(1).getStatus());
+        Assertions.assertEquals("test engine", engineBusiness.get().get(0).getName());
+        Assertions.assertEquals("test endpoint 2", engineBusiness.get().get(0).getEndpoint());
+        Assertions.assertEquals("enabled", engineBusiness.get().get(0).getStatus());
     }
 
     @Test

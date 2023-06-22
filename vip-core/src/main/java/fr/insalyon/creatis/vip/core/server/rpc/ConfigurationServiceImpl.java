@@ -201,7 +201,7 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
             authenticateSystemAdministrator(logger);
             trace(logger, "Adding group '" + group + "'.");
             configurationBusiness.addGroup(group);
-        } catch (BusinessException ex) {
+        } catch (BusinessException | DAOException ex) {
             throw new CoreException(ex);
         }
     }

@@ -8,6 +8,7 @@ import fr.insalyon.creatis.vip.application.server.business.EngineBusiness;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +35,7 @@ public class ClassIT extends BaseSpringIT {
     static public Map < AppClass, List < Application >> applicationsPerClass = new HashMap < > ();
 
     @BeforeEach
-    public void setUp() throws BusinessException {
+    public void setUp() throws BusinessException, DAOException {
         List < String > applicationGroups = new ArrayList < > ();
         applicationGroups.add("group1");
 
