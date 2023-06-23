@@ -11,6 +11,7 @@ import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,11 @@ public class ApplicationIT extends BaseSpringIT {
 
         @BeforeEach
         public void setUp() throws BusinessException, GRIDAClientException, DAOException {
+            super.setUp();
             Group group1 = new Group("group1", true, true, true);
             configurationBusiness.addGroup(group1);
             List<String> applicationGroups = new ArrayList<>();
             applicationGroups.add("group1");
-
             configurationBusiness.getOrCreateUser("test1@test.fr", "institution", "group1");
 
             String engineName = "test engine";
@@ -59,18 +60,19 @@ public class ApplicationIT extends BaseSpringIT {
 
         }
 
-        /*@Test
-        public void testInitialization() throws BusinessException {
-            assert applicationBusiness.getApplications().size() == 1 : "Incorrect number of applications";
-            assert applicationBusiness.getApplications().get(0).getName().equals("Application1") : "Incorrect name of application";
-            assert applicationBusiness.getApplication("Application1").getCitation().equals("citation1") : "Incorrect citation of application";
-            assert applicationBusiness.getApplication("Application1").getName().equals("Application1") : "Incorrect name of application";
-            assert applicationBusiness.getApplication("Application1").getOwner().equals("test1@test.fr") : "Incorrect owner of application";
+        @Test
+        public void testInitialization() throws BusinessException
+        {
+                Application application = applicationBusiness.getApplication("Application1");
+                Assertions.assertEquals(1,applicationBusiness.getApplications().size(), "Incorrect number of applications");
+                Assertions.assertEquals( "Application1", application.getName(), "Incorrect name of application");
+                Assertions.assertEquals( "citation1", application.getCitation(), "Incorrect citation of application");
+                Assertions.assertEquals( "Application1", application.getName(), "Incorrect name of application");
+                Assertions.assertEquals( "test1@test.fr", application.getOwner(), "Incorrect owner of application");
 
+                Assertions.assertNull(application.getFullName(), "getApplication should not fill fullname");
+                Assertions.assertEquals( "class1", application.getApplicationClasses().get(0), "Incorrect class of application");
+                Assertions.assertNull(application.getApplicationGroups(), "getApplication should not fill applicationGroups");
 
-            assert applicationBusiness.getApplication("Application1").getFullName().equals("test1") : "Incorrect full name of application";
-            assert applicationBusiness.getApplication("Application1").getApplicationClasses().get(0).equals("class1") : "Incorrect class of application";
-            assert applicationBusiness.getApplication("Application1").getApplicationGroups().get(0).equals("group1") : "Incorrect group of application";
-
-        }*/
+        }
 }

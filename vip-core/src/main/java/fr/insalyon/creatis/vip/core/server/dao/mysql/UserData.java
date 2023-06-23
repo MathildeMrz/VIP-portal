@@ -1038,8 +1038,9 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
                 return getUser(email);
             }
             ps.close();
-            logger.info("There is no user registered with the key: " + apikey);
-            return null;
+
+            logger.error("There is no user registered with the key: " + apikey);
+            throw new DAOException("There is no user registered with the key : " + apikey);
 
         } catch (SQLException ex) {
             logger.error("Error getting user by api key for {}", apikey, ex);
@@ -1060,11 +1061,11 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
                 ps.close();
                 return apikey;
             }
-
             ps.close();
-            logger.error("Looking for an apikey, but there is no user registered with the email: {}", email);
-            throw new DAOException(
-                    "Looking for an apikey, but there is no user registered with the email");
+
+            logger.error("There is no user registered with the e-mail {}", email);
+            throw new DAOException("There is no user registered with the e-mail : " + email);
+
         } catch (SQLException ex) {
             logger.error("Error getting user api key for {}", email, ex);
             throw new DAOException(ex);
@@ -1083,9 +1084,8 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
             ps.close();
 
             if (rowsUpdatedNb == 0) {
-                logger.error("Updating an apikey, but there is no user registered with the email: {}", email);
-                throw new DAOException(
-                        "Updating an apikey, but there is no user registered with the email");
+                logger.error("There is no user registered with the e-mail {}", email);
+                throw new DAOException("There is no user registered with the e-mail : " + email);
             }
         } catch (SQLException ex) {
             logger.error("Error updating {} api key to {}", email, newApikey, ex);

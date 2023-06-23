@@ -69,29 +69,20 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
     {
             PreparedStatement ps = null;
             try {
-                if(! isPublication(pub.getId()))
-                {
-                    ps = getConnection().prepareStatement(
-                            "INSERT INTO VIPPublication(title,date,doi,authors,type,typeName,vipAuthor,vipApplication) "
-                                    + "VALUES (?, ?, ?, ?, ?, ?, ?,?)");
+                ps = getConnection().prepareStatement(
+                        "INSERT INTO VIPPublication(title,date,doi,authors,type,typeName,vipAuthor,vipApplication) "
+                                + "VALUES (?, ?, ?, ?, ?, ?, ?,?)");
 
-                    ps.setString(1, pub.getTitle());
-                    ps.setString(2, pub.getDate());
-                    ps.setString(3, pub.getDoi());
-                    ps.setString(4, pub.getAuthors());
-                    ps.setString(5, pub.getType());
-                    ps.setString(6, pub.getTypeName());
-                    ps.setString(7, pub.getVipAuthor());
-                    ps.setString(8, pub.getVipApplication());
-                    ps.execute();
-                    ps.close();
-                }
-                else
-                {
-                    logger.error("There is already a publication registered with the id {}", pub.getId());
-                    throw new DAOException(String.format("There is already a publication registered with the id : %d", pub.getId()));
-                }
-
+                ps.setString(1, pub.getTitle());
+                ps.setString(2, pub.getDate());
+                ps.setString(3, pub.getDoi());
+                ps.setString(4, pub.getAuthors());
+                ps.setString(5, pub.getType());
+                ps.setString(6, pub.getTypeName());
+                ps.setString(7, pub.getVipAuthor());
+                ps.setString(8, pub.getVipApplication());
+                ps.execute();
+                ps.close();
             }
             catch (SQLException ex)
             {

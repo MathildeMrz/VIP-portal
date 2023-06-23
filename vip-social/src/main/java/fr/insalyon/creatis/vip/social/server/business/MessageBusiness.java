@@ -75,7 +75,6 @@ public class MessageBusiness {
         this.usersGroupsDAO = usersGroupsDAO;
         this.configurationBusiness = configurationBusiness;
         this.emailBusiness = emailBusiness;
-        System.out.println("Iciii "+ this.messageDAO);
     }
 
     public List<Message> getMessagesByUser(String email, Date startDate)

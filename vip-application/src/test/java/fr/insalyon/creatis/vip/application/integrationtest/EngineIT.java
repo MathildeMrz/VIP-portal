@@ -27,7 +27,6 @@ public class EngineIT extends BaseSpringIT {
         String engineEndpoint = "test endpoint";
         String engineStatus = "enabled";
         Engine engine = new Engine(engineName, engineEndpoint, engineStatus);
-
         engineBusiness.add(engine);
     }
     @Test
@@ -112,6 +111,21 @@ public class EngineIT extends BaseSpringIT {
         );
 
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no engine registered with the name : inexisting engine"));
+
+    }
+
+    @Test
+    public void testSet() throws BusinessException {
+        Engine engine = engineBusiness.get().get(0);
+        engine.setStatus("status updated");
+        engineBusiness.update(engine);
+        Assertions.assertTrue(StringUtils.contains(engineBusiness.get().get(0).getStatus(), "status updated"));
+    }
+    @Test
+    public void testCreate()
+    {
+        // Without parameters
+        Engine engine = new Engine();
 
     }
 }

@@ -77,9 +77,9 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
             ps.close();
 
         } catch (SQLException ex) {
-            if (ex.getMessage().contains("Duplicate entry")) {
-                logger.error("A group named {} already exists", group.getName());
-                throw new DAOException("Error creating a group", ex);
+            if (ex.getMessage().contains("Unique index or primary key")) {
+                logger.error("There is already a group registered with the name {}", group.getName());
+                throw new DAOException(String.format("There is already a group registered with the name : %s", group.getName()));
             } else {
                 logger.error("Error adding group {}", group.getName(), ex);
                 throw new DAOException(ex);
