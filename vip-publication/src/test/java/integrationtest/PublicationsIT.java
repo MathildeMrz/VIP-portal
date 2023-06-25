@@ -1,8 +1,10 @@
 package integrationtest;
 
+import fr.insalyon.creatis.grida.client.GRIDAClientException;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.Server;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.publication.client.bean.Publication;
 import fr.insalyon.creatis.vip.publication.server.business.PublicationBusiness;
 import org.apache.commons.lang.StringUtils;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-//Spring : exécute cette méthode avant de lancer les tests
 public class PublicationsIT extends BaseSpringIT {
 
     @Autowired
@@ -26,7 +27,8 @@ public class PublicationsIT extends BaseSpringIT {
     private String adminMail;
 
     @BeforeEach
-    public void setUp() throws BusinessException {
+    public void setUp() throws BusinessException, DAOException, GRIDAClientException {
+        super.setUp();
         adminMail = server.getAdminEmail();
         Publication publication = new Publication("Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
         publicationBusiness.addPublication(publication);
@@ -40,17 +42,57 @@ public class PublicationsIT extends BaseSpringIT {
         Assertions.assertEquals(publicationBusiness.getPublication(idPublicationCreated).getVipApplication(), null, "Incorrect VIPApplication value");
     }
 
-    @Test
-    public void testAddExistingPublication() throws BusinessException {
-        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* create publication *********************************************************** */
+    /* ********************************************************************************************************************************************** */
 
-        //No exception because the id is not taken into account
+    @Test
+    public void testCreatePublication() throws BusinessException {
+        // With id
+        Publication publication = new Publication(1L, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
+
+        // Without id
+        Publication publication2 = new Publication("Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
+
+        // Without parameter
+        Publication publication3 = new Publication();
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* add publication *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testAddPublication() throws BusinessException {
+        Publication publication = new Publication(null, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
         publicationBusiness.addPublication(publication);
     }
 
     @Test
-    public void testSet() throws BusinessException {
+    public void testAddExistingPublication() throws BusinessException {
+        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
+
+        //No exception because the id is not taken into account for the object creation
+        publicationBusiness.addPublication(publication);
+    }
+
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* update publication *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testUpdatePublication() throws BusinessException {
+        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author2, author3", "type", "typeName", adminMail, null);
+        publicationBusiness.updatePublication(publication);
+        Assertions.assertEquals(publicationBusiness.getPublication(idPublicationCreated).getAuthors(), "author2, author3", "Incorrect authors value");
+
+    }
+
+    @Test
+    public void testSetAttributesUpdatePublication() throws BusinessException {
         Publication publication = publicationBusiness.getPublication(idPublicationCreated);
+
         configurationBusiness.getOrCreateUser("test1@test.fr", "institution", null);
         publication.setAuthors("author2, author3");
         publication.setId(idPublicationCreated);
@@ -61,56 +103,17 @@ public class PublicationsIT extends BaseSpringIT {
         publication.setTypeName("typeName updated");
         publication.setTypeName("typeName updated");
         publication.setVipAuthor("test1@test.fr");
+
         publicationBusiness.updatePublication(publication);
 
         Assertions.assertEquals("author2, author3", publicationBusiness.getPublication(idPublicationCreated).getAuthors(), "Incorrect publication authors");
         Assertions.assertEquals(idPublicationCreated, publicationBusiness.getPublication(idPublicationCreated).getId(), "Incorrect publication id");
-        Assertions.assertEquals( "22/06/2023", publicationBusiness.getPublication(idPublicationCreated).getDate(),"Incorrect publication DOI");
+        Assertions.assertEquals("22/06/2023", publicationBusiness.getPublication(idPublicationCreated).getDate(), "Incorrect publication DOI");
         Assertions.assertEquals("010110", publicationBusiness.getPublication(idPublicationCreated).getDoi(), "Incorrect publication DOI");
         Assertions.assertEquals("type updated", publicationBusiness.getPublication(idPublicationCreated).getType(), "Incorrect publication type");
         Assertions.assertEquals("Publication title updated", publicationBusiness.getPublication(idPublicationCreated).getTitle(), "Incorrect publication title");
         Assertions.assertEquals("typeName updated", publicationBusiness.getPublication(idPublicationCreated).getTypeName(), "Incorrect publication typeName");
         Assertions.assertEquals("test1@test.fr", publicationBusiness.getPublication(idPublicationCreated).getVipAuthor(), "Incorrect publication VIP author");
-
-    }
-
-
-    @Test
-    public void testCatchGetInexistingPublication() {
-        Exception exception = assertThrows(
-                BusinessException.class, () ->
-                        publicationBusiness.getPublication(2L)
-        );
-
-        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no publication registered with the id : 2"));
-
-    }
-
-    @Test
-    public void testRemovePublication() throws BusinessException {
-        publicationBusiness.removePublication(idPublicationCreated);
-        Assertions.assertEquals(publicationBusiness.getPublications().size(), 0, "Incorrect number of publications");
-    }
-
-
-    @Test
-    public void testCatchRemoveInexistantPublication() {
-
-        Exception exception = assertThrows(
-                BusinessException.class, () ->
-                        publicationBusiness.removePublication(2L)
-        );
-
-        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no publication registered with the id : 2"));
-
-    }
-
-    @Test
-    public void testUpdatePublication() throws BusinessException {
-        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author2, author3", "type", "typeName", adminMail, null);
-        publicationBusiness.updatePublication(publication);
-        Assertions.assertEquals(publicationBusiness.getPublication(idPublicationCreated).getAuthors(), "author2, author3", "Incorrect authors value");
-
     }
 
     @Test
@@ -124,20 +127,55 @@ public class PublicationsIT extends BaseSpringIT {
         );
 
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no publication registered with the id : 2"));
+    }
 
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* get publication *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testGetPublication() throws BusinessException {
+        Publication publication = publicationBusiness.getPublication(idPublicationCreated);
+        Assertions.assertEquals("author1, author2", publication.getAuthors(), "Incorrect publication authors");
+        Assertions.assertEquals(idPublicationCreated, publication.getId(), "Incorrect publication id");
+        Assertions.assertEquals("21/06/2023", publication.getDate(), "Incorrect publication DOI");
+        Assertions.assertEquals("01010100", publication.getDoi(), "Incorrect publication DOI");
+        Assertions.assertEquals("type", publication.getType(), "Incorrect publication type");
+        Assertions.assertEquals("Publication title", publication.getTitle(), "Incorrect publication title");
+        Assertions.assertEquals("typeName", publication.getTypeName(), "Incorrect publication typeName");
+        Assertions.assertEquals(adminMail, publication.getVipAuthor(), "Incorrect publication VIP author");
     }
 
     @Test
-    public void testCreatePublication() throws BusinessException {
-        // With an id
-        Publication publication = new Publication(1L,"Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
+    public void testCatchGetInexistingPublication() {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        publicationBusiness.getPublication(2L)
+        );
 
-        // Without an id
-        Publication publication2 = new Publication("Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
+        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no publication registered with the id : 2"));
 
-        // Without parameter
-        Publication publication3 = new Publication();
+    }
 
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* remove publication *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testRemovePublication() throws BusinessException {
+        publicationBusiness.removePublication(idPublicationCreated);
+        Assertions.assertEquals(publicationBusiness.getPublications().size(), 0, "Incorrect number of publications");
+    }
+
+    @Test
+    public void testCatchRemoveInexistantPublication() {
+
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        publicationBusiness.removePublication(2L)
+        );
+
+        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no publication registered with the id : 2"));
     }
 
 }

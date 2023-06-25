@@ -22,11 +22,9 @@ public class EngineIT extends BaseSpringIT {
     private EngineBusiness engineBusiness;
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException {
-        String engineName = "test engine";
-        String engineEndpoint = "test endpoint";
-        String engineStatus = "enabled";
-        Engine engine = new Engine(engineName, engineEndpoint, engineStatus);
+    public void setUp() throws BusinessException, GRIDAClientException, DAOException {
+        super.setUp();
+        Engine engine = new Engine("test engine", "test endpoint", "enabled");
         engineBusiness.add(engine);
     }
     @Test
@@ -36,6 +34,84 @@ public class EngineIT extends BaseSpringIT {
         Assertions.assertEquals("test endpoint", engineBusiness.get().get(0).getEndpoint());
         Assertions.assertEquals("enabled", engineBusiness.get().get(0).getStatus());
     }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* create engine *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testCreate()
+    {
+        // Without parameters
+        Engine engine = new Engine();
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* add engine *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testAdd() throws BusinessException {
+        Engine engine = new Engine("test engine 2", "test endpoint 2", "enabled");
+        engineBusiness.add(engine);
+
+        Assertions.assertEquals(2, engineBusiness.get().size());
+        Assertions.assertEquals("test engine 2", engineBusiness.get().get(1).getName());
+        Assertions.assertEquals("test endpoint 2", engineBusiness.get().get(1).getEndpoint());
+        Assertions.assertEquals("enabled", engineBusiness.get().get(1).getStatus());
+    }
+
+    @Test
+    public void testCatchAddExistingEngine() throws BusinessException
+    {
+        Engine engine = new Engine("test engine", "test endpoint 2", "enabled");
+
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        engineBusiness.add(engine)
+        );
+
+        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is already an engine registered with the name : test engine"));
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* update engine *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testUpdate() throws BusinessException {
+        Engine engine = new Engine("test engine", "test endpoint 2", "enabled");
+        engineBusiness.update(engine);
+
+        Assertions.assertEquals(1, engineBusiness.get().size());
+        Assertions.assertEquals("test engine", engineBusiness.get().get(0).getName());
+        Assertions.assertEquals("test endpoint 2", engineBusiness.get().get(0).getEndpoint());
+        Assertions.assertEquals("enabled", engineBusiness.get().get(0).getStatus());
+    }
+
+    @Test
+    public void testUpdateInexistingEngine() throws BusinessException {
+        Engine engine = new Engine("inexisting engine", "test endpoint 2", "enabled");
+
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        engineBusiness.update(engine)
+        );
+
+        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no engine registered with the name : inexisting engine"));
+    }
+
+    @Test
+    public void testSet() throws BusinessException {
+        Engine engine = engineBusiness.get().get(0);
+        engine.setStatus("status updated");
+        engineBusiness.update(engine);
+        Assertions.assertTrue(StringUtils.contains(engineBusiness.get().get(0).getStatus(), "status updated"));
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* remove engine *********************************************************** */
+    /* ********************************************************************************************************************************************** */
 
     @Test
     public void testRemove() throws BusinessException, DAOException {
@@ -51,81 +127,5 @@ public class EngineIT extends BaseSpringIT {
                         engineBusiness.remove("inexisting engine")
         );
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no engine registered with the name : inexisting engine"));
-
-    }
-
-    @Test
-    public void testAdd() throws BusinessException {
-        String engineName = "test engine 2";
-        String engineEndpoint = "test endpoint 2";
-        String engineStatus = "enabled";
-        Engine engine = new Engine(engineName, engineEndpoint, engineStatus);
-        engineBusiness.add(engine);
-
-        Assertions.assertEquals(2, engineBusiness.get().size());
-        Assertions.assertEquals("test engine 2", engineBusiness.get().get(1).getName());
-        Assertions.assertEquals("test endpoint 2", engineBusiness.get().get(1).getEndpoint());
-        Assertions.assertEquals("enabled", engineBusiness.get().get(1).getStatus());
-    }
-
-    @Test
-    public void testCatchAddExistingEngine() throws BusinessException {
-        String engineName = "test engine";
-        String engineEndpoint = "test endpoint 2";
-        String engineStatus = "enabled";
-        Engine engine = new Engine(engineName, engineEndpoint, engineStatus);
-
-        Exception exception = assertThrows(
-                BusinessException.class, () ->
-                        engineBusiness.add(engine)
-        );
-
-        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is already an engine registered with the name : test engine"));
-
-    }
-
-    @Test
-    public void testUpdate() throws BusinessException {
-        String engineName = "test engine";
-        String engineEndpoint = "test endpoint 2";
-        String engineStatus = "enabled";
-        Engine engine = new Engine(engineName, engineEndpoint, engineStatus);
-        engineBusiness.update(engine);
-
-        Assertions.assertEquals(1, engineBusiness.get().size());
-        Assertions.assertEquals("test engine", engineBusiness.get().get(0).getName());
-        Assertions.assertEquals("test endpoint 2", engineBusiness.get().get(0).getEndpoint());
-        Assertions.assertEquals("enabled", engineBusiness.get().get(0).getStatus());
-    }
-
-    @Test
-    public void testUpdateInexistingEngine() throws BusinessException {
-        String engineName = "inexisting engine";
-        String engineEndpoint = "test endpoint 2";
-        String engineStatus = "enabled";
-        Engine engine = new Engine(engineName, engineEndpoint, engineStatus);
-
-        Exception exception = assertThrows(
-                BusinessException.class, () ->
-                        engineBusiness.update(engine)
-        );
-
-        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no engine registered with the name : inexisting engine"));
-
-    }
-
-    @Test
-    public void testSet() throws BusinessException {
-        Engine engine = engineBusiness.get().get(0);
-        engine.setStatus("status updated");
-        engineBusiness.update(engine);
-        Assertions.assertTrue(StringUtils.contains(engineBusiness.get().get(0).getStatus(), "status updated"));
-    }
-    @Test
-    public void testCreate()
-    {
-        // Without parameters
-        Engine engine = new Engine();
-
     }
 }

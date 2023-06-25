@@ -57,6 +57,4 @@ public interface MessageDAO {
     public void removeByReceiver(long id, String receiver) throws DAOException;
     
     public int verifyMessages(String email) throws DAOException;
-
-    public boolean isMessage(long id) throws DAOException;
 }

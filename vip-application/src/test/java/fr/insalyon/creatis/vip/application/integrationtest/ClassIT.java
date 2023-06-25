@@ -1,5 +1,6 @@
 package fr.insalyon.creatis.vip.application.integrationtest;
 
+import fr.insalyon.creatis.grida.client.GRIDAClientException;
 import fr.insalyon.creatis.vip.application.client.bean.AppClass;
 import fr.insalyon.creatis.vip.application.client.bean.Application;
 import fr.insalyon.creatis.vip.application.client.bean.Engine;
@@ -34,18 +35,18 @@ public class ClassIT extends BaseSpringIT {
 
     static public Map < AppClass, List < Application >> applicationsPerClass = new HashMap < > ();
 
+    private List < String > applicationGroups = new ArrayList < > ();
+    private List < String > engines = new ArrayList < > ();
+
     @BeforeEach
-    public void setUp() throws BusinessException, DAOException {
-        List < String > applicationGroups = new ArrayList < > ();
-        applicationGroups.add("group1");
+    public void setUp() throws BusinessException, DAOException, GRIDAClientException {
+        super.setUp();
+
         Group group1 = new Group("group1", true, true, true);
+        applicationGroups.add("group1");
         configurationBusiness.addGroup(group1);
 
-        String engineName = "test engine";
-        String engineEndpoint = "test endpoint";
-        String engineStatus = "enabled";
-        Engine engine = new Engine(engineName, engineEndpoint, engineStatus);
-        List < String > engines = new ArrayList < > ();
+        Engine engine = new Engine("test engine", "test endpoint", "enabled");
         engines.add("test engine");
         engineBusiness.add(engine);
 
@@ -59,6 +60,56 @@ public class ClassIT extends BaseSpringIT {
         Assertions.assertEquals(classBusiness.getClassesName().get(0), "class1", "Incorrect name of class");
     }
 
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* create class *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testCreateClass()
+    {
+        // With all parameters
+        AppClass appClass = new AppClass("class1", engines, applicationGroups);
+
+        // With string and list
+        AppClass appclass2 = new AppClass("class2", applicationGroups);
+
+        // Without parameters
+        AppClass appclass3 = new AppClass();
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* add class *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testAddClass() throws BusinessException {
+
+        AppClass appClass = new AppClass("class2", engines, applicationGroups);
+        classBusiness.addClass(appClass);
+
+        Assertions.assertEquals(classBusiness.getClasses().size(), 2, "Incorrect number of classes");
+        Assertions.assertEquals(classBusiness.getClassesName().get(1), "class2", "Incorrect name of class");
+    }
+
+    @Test
+    public void testAddExistingClass() throws BusinessException {
+
+        AppClass appClass = new AppClass("class2", engines, applicationGroups);
+        classBusiness.addClass(appClass);
+
+        Assertions.assertEquals(classBusiness.getClasses().size(), 2, "Incorrect number of classes");
+        Assertions.assertEquals(classBusiness.getClassesName().get(1), "class2", "Incorrect name of class");
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* get class *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testGetClass() throws BusinessException {
+        classBusiness.getClass("class1");
+    }
+
     @Test
     public void testCatchGetInexistingClass() throws BusinessException {
 
@@ -70,6 +121,10 @@ public class ClassIT extends BaseSpringIT {
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no class registered with the name : inexisting class"));
     }
 
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* remove class *********************************************************** */
+    /* ********************************************************************************************************************************************** */
     @Test
     public void testRemoveClass() throws BusinessException {
         classBusiness.removeClass("class1");
@@ -93,64 +148,26 @@ public class ClassIT extends BaseSpringIT {
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no class registered with the name : inexisting class"));
     }
 
-    @Test
-    public void testAddClass() throws BusinessException {
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* update class *********************************************************** */
+    /* ********************************************************************************************************************************************** */
 
-        List < String > engines = new ArrayList < > ();
-        engines.add("test engine");
-
-        List < String > applicationGroups = new ArrayList < > ();
-        applicationGroups.add("group1");
-
-        AppClass appClass = new AppClass("class2", engines, applicationGroups);
-        classBusiness.addClass(appClass);
-
-        Assertions.assertEquals(classBusiness.getClasses().size(), 2, "Incorrect number of classes");
-        Assertions.assertEquals(classBusiness.getClassesName().get(1), "class2", "Incorrect name of class");
-    }
 
     @Test
     public void testUpdateClass() throws BusinessException {
         List < String > applicationGroups = new ArrayList < > ();
         applicationGroups.add("group1");
 
-        String engineName = "test engine 2";
-        String engineEndpoint = "test endpoint";
-        String engineStatus = "enabled";
-
-        Engine engine = new Engine(engineName, engineEndpoint, engineStatus);
-
+        Engine engine = new Engine("test engine 2", "test endpoint", "enabled");
         List < String > engines = new ArrayList < > ();
         engines.add("test engine 2");
         engineBusiness.add(engine);
 
         AppClass appClass = new AppClass("class1", engines, applicationGroups);
-
         classBusiness.updateClass(appClass);
 
         Assertions.assertEquals(classBusiness.getClasses().size() , 1, "Incorrect number of classes");
         Assertions.assertEquals(classBusiness.getClasses().get(0).getEngines().get(0) , "test engine 2", "Incorrect number of classes");
-
-    }
-
-    @Test
-    public void testCreate()
-    {
-        List < String > applicationGroups = new ArrayList < > ();
-        applicationGroups.add("group1");
-
-        List < String > engines = new ArrayList < > ();
-        engines.add("test engine");
-
-        // With all parameters
-        AppClass appClass = new AppClass("class1", engines, applicationGroups);
-
-        // With string and list
-        AppClass appclass2 = new AppClass("class2", applicationGroups);
-
-        // Without parameters
-        AppClass appclass3 = new AppClass();
-
     }
 
     // TODO : correct empty array

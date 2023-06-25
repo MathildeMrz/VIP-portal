@@ -94,7 +94,17 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
                     + "FROM VIPGroups WHERE groupname=?");
 
             ps.setString(1, groupName);
-            ps.execute();
+            //ps.execute();
+
+            //////////ADDED//////////
+            int rs = ps.executeUpdate();
+
+            if (rs == 0) {
+                logger.error("There is no group registered with the name {}", groupName);
+                throw new DAOException("There is no group registered with the name : " + groupName);
+            }
+            //////////ADDED//////////
+
             ps.close();
 
         } catch (SQLException ex) {
@@ -116,7 +126,16 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
             ps.setBoolean(3, group.isGridFile());
             ps.setBoolean(4, group.isGridJobs());
             ps.setString(5, name);
-            ps.executeUpdate();
+            //ps.executeUpdate();
+
+            //////////ADDED//////////
+            int rs = ps.executeUpdate();
+            if (rs == 0) {
+                logger.error("There is no group registered with the name {}", name);
+                throw new DAOException("There is no group registered with the name : " + name);
+            }
+            //////////ADDED//////////
+
             ps.close();
 
         } catch (SQLException ex) {
@@ -128,7 +147,6 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
     @Override
     public List<Group> getGroups() throws DAOException {
         try {
-
             List<Group> groups = new ArrayList<Group>();
             PreparedStatement ps = getConnection().prepareStatement("SELECT "
                     + "groupname, public, gridfile, gridjobs FROM "

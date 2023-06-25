@@ -112,20 +112,22 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     public void remove(long id) throws DAOException {
 
         try {
-            if(isMessage(id))
-            {
                 PreparedStatement ps = getConnection().prepareStatement("DELETE FROM "
                         + "VIPSocialGroupMessage WHERE id = ?");
                 ps.setLong(1, id);
 
-                ps.executeUpdate();
+                //ps.executeUpdate();
+
+                //////////ADDED//////////
+                int nbRows = ps.executeUpdate();
+
+                if (nbRows == 0) {
+                    logger.error("There is no group message registered with the id {}", id);
+                    throw new DAOException(String.format("There is no group message registered with the id : %d", id));
+                }
+                //////////ADDED//////////
+
                 ps.close();
-            }
-            else
-            {
-                logger.error("There is no group message registered with the id {}", id);
-                throw new DAOException(String.format("There is no group message registered with the id : %d", id));
-            }
 
         }  catch (SQLException ex) {
             logger.error("Error removing group message {}", id, ex);
@@ -172,23 +174,4 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
             throw new DAOException(ex);
         }
     }
-
-    public boolean isMessage(long id) throws DAOException
-    {
-        try {
-            PreparedStatement ps = getConnection().prepareStatement("SELECT *"
-                    + "FROM VIPSocialGroupMessage "
-                    + "WHERE id=?");
-
-            ps.setString(1, String.valueOf(id));
-            ResultSet rs = ps.executeQuery();
-
-            return rs.next();
-
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

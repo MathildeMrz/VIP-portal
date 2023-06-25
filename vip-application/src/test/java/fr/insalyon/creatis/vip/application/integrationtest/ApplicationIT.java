@@ -73,6 +73,10 @@ public class ApplicationIT extends BaseSpringIT {
                 Assertions.assertNull(application.getFullName(), "getApplication should not fill fullname");
                 Assertions.assertEquals( "class1", application.getApplicationClasses().get(0), "Incorrect class of application");
                 Assertions.assertNull(application.getApplicationGroups(), "getApplication should not fill applicationGroups");
-
         }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* create application *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
 }

@@ -38,6 +38,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -100,11 +101,32 @@ public abstract class BaseSpringIT {
     }
 
     protected void createUser(String testEmail, String nameSuffix) throws GRIDAClientException, BusinessException {
-        User newUser = new User("firstName"+nameSuffix,
-                "LastName"+nameSuffix, testEmail, "Test institution",
+        User newUser = new User("test firstName "+nameSuffix,
+                "test lastName "+nameSuffix, testEmail, "test institution",
                 "testPassword", CountryCode.fr,
                 null);
         Mockito.when(gridaClient.exist(anyString())).thenReturn(true, false);
         configurationBusiness.signup(newUser, "", (Group) null);
     }
+
+    protected void createUserInGroup(String userEmail, String nameSuffix, String groupName) throws BusinessException, GRIDAClientException {
+        User newUser = new User("test firstname "+userEmail,
+                "test lastName "+userEmail, userEmail, "test institution",
+                "testPassword", CountryCode.fr,
+                null);
+        Mockito.when(gridaClient.exist(anyString())).thenReturn(true, false);
+        Group group = configurationBusiness.getGroup(groupName);
+        configurationBusiness.signup(newUser, "", group);
+    }
+
+    protected void createGroup()
+    {
+        List < String > applicationGroups = new ArrayList < > ();
+        applicationGroups.add("group1");
+
+        List < String > engines = new ArrayList < > ();
+        engines.add("test engine");
+
+    }
+
 }
