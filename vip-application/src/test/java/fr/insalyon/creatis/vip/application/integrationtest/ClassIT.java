@@ -82,8 +82,8 @@ public class ClassIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testAddClass() throws BusinessException {
-
+    public void testAddClass() throws BusinessException
+    {
         AppClass appClass = new AppClass("class2", engines, applicationGroups);
         classBusiness.addClass(appClass);
 
@@ -94,11 +94,14 @@ public class ClassIT extends BaseSpringIT {
     @Test
     public void testAddExistingClass() throws BusinessException {
 
-        AppClass appClass = new AppClass("class2", engines, applicationGroups);
-        classBusiness.addClass(appClass);
+        AppClass appClass = new AppClass("class1", engines, applicationGroups);
 
-        Assertions.assertEquals(classBusiness.getClasses().size(), 2, "Incorrect number of classes");
-        Assertions.assertEquals(classBusiness.getClassesName().get(1), "class2", "Incorrect name of class");
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        classBusiness.addClass(appClass)
+        );
+
+        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "A class named class1 already exists"));
     }
 
     /* ********************************************************************************************************************************************** */
@@ -171,13 +174,15 @@ public class ClassIT extends BaseSpringIT {
     }
 
     // TODO : correct empty array
-    /*@Test
-    public void testGetUserClassesName() throws BusinessException {
-        configurationBusiness.getOrCreateUser("test1@test.fr", "institution", "group1");
+    @Test
+    public void testGetUserClassesName() throws BusinessException, GRIDAClientException {
+        createUser("test1@test.fr", "group1");
+
+        System.out.println("OH OH OH : "+classBusiness.getClassesName());
         System.out.println("JJJJ " + classBusiness.getUserClassesName("test1@test.fr", true));
     }
 
-    // TODO : correct empty array
+    /*// TODO : correct empty array
     @Test
     public void testGetUserClasses() throws BusinessException {
         configurationBusiness.getOrCreateUser("test1@test.fr", "institution", "group1");

@@ -142,7 +142,9 @@ public class SocialServiceImpl extends AbstractRemoteServiceServlet implements S
 
     public void sendMessage(String[] recipients, String subject, String message)
             throws SocialException {
+
         try {
+            System.out.println("getSessionUser().getEmail() : "+getSessionUser().getEmail());
             trace(logger, "Sending message '" + subject + "' to '" + Arrays.asList(recipients) + "'.");
             messageBusiness.sendMessage(
                 getSessionUser(), recipients, subject, message);

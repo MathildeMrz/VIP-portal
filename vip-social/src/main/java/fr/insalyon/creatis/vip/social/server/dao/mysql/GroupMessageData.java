@@ -77,9 +77,6 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     public long add(String sender, String groupName, String title, String message) throws DAOException {
 
         try {
-
-            if(groupDao.isGroup(groupName))
-            {
                 PreparedStatement ps = getConnection().prepareStatement("INSERT INTO "
                         + "VIPSocialGroupMessage(sender, groupname, title, message, posted) "
                         + "VALUES(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -96,12 +93,6 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
                 ps.close();
 
                 return result;
-            }
-            else
-            {
-                logger.error("There is no group registered with the groupname {}", groupName);
-                throw new DAOException("There is no group registered with the groupname : " + groupName);
-            }
 
         } catch (SQLException ex) {
             logger.error("Error adding a group message {} by {}", title, sender, ex);

@@ -238,7 +238,8 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
             ResultSet rs = ps.executeQuery();
             List<User> users = new ArrayList<User>();
 
-            while (rs.next()) {
+            while (rs.next())
+            {
                 users.add(new User(
                         rs.getString("first_name"), rs.getString("last_name"),
                         rs.getString("email"), rs.getString("next_email"),

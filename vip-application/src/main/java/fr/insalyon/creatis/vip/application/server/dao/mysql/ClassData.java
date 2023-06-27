@@ -76,9 +76,9 @@ public class ClassData extends JdbcDaoSupport implements ClassDAO {
             ps.close();
 
         } catch (SQLException ex) {
-            if (ex.getMessage().contains("Duplicate entry")) {
+            if (ex.getMessage().contains("Unique index or primary key")) {
                 logger.error("A class named \"{}\" already exists.", appClass.getName());
-                throw new DAOException("A class named \"" + appClass.getName() + "\" already exists.");
+                throw new DAOException("A class named " + appClass.getName() + " already exists");
             } else {
                 logger.error("Error adding class {}", appClass.getName(), ex);
                 throw new DAOException(ex);

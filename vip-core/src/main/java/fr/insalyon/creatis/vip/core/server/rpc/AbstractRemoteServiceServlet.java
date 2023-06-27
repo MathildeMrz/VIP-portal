@@ -68,8 +68,7 @@ public abstract class AbstractRemoteServiceServlet extends RemoteServiceServlet 
     @Override
     public void init() throws ServletException {
         super.init();
-        applicationContext =
-                WebApplicationContextUtils.findWebApplicationContext(getServletContext());
+        applicationContext = WebApplicationContextUtils.findWebApplicationContext(getServletContext());
         server = applicationContext.getBean(Server.class);
         vipSessionBusiness = getBean(VipSessionBusiness.class);
     }

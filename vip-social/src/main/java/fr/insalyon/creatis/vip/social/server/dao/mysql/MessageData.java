@@ -75,8 +75,7 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
 
     public long add(String sender, String title, String message) throws DAOException {
         try {
-            //if(userDAO.isUser(sender))
-            //{
+
             PreparedStatement ps = getConnection().prepareStatement("INSERT INTO "
                     + "VIPSocialMessage(sender, title, message, posted) "
                     + "VALUES(?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -84,15 +83,16 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
             ps.setString(2, title);
             ps.setString(3, message);
             ps.setTimestamp(4, new Timestamp(new Date().getTime()));
-            //ps.execute();
+            ps.execute();
 
             //////////ADDED//////////
-            int nbRows = ps.executeUpdate();
+            //int nbRows = ps.executeUpdate();
 
-            if (nbRows == 0) {
+            //Not useful because getUser() was called before and already threw the exception
+            /*if (nbRows == 0) {
                 logger.error("There is no user registered with the e-mail {}", sender);
                 throw new DAOException("There is no user registered with the e-mail : " + sender);
-            }
+            }*/
             //////////ADDED//////////
 
             ResultSet rs = ps.getGeneratedKeys();
@@ -101,12 +101,6 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
             ps.close();
 
             return id;
-            /*}
-            else
-            {
-                logger.error("There is no user registered with the e-mail {}", sender);
-                throw new DAOException("There is no user registered with the e-mail : " + sender);
-            }*/
 
         } catch (SQLException ex) {
             logger.error("Error adding message {} by {}", title, sender, ex);
@@ -123,16 +117,17 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
             ps.setString(1, receiver);
             ps.setLong(2, messageId);
             ps.setBoolean(3, false);
-            //ps.execute();
+            ps.execute();
 
             //////////ADDED//////////(isBeforeFirst returns false if there is no result)
-            int nbRows = ps.executeUpdate();
+            /*int nbRows = ps.executeUpdate();
 
+            //Check is not useful because getUser() was called before and already threw the exception, and the message was automatically created so the id exists
             if (nbRows == 0) {
-                logger.error("There is/are no user and/or individual message registered with the given parameters {} - {}", receiver, messageId);
-                throw new DAOException("There is/are no user and/or individual message registered with the given parameters : " + receiver + " - " + messageId);
+                logger.error("There is/are no individual message registered with the given id {}", messageId);
+                throw new DAOException("There is/are no individual message registered with the given id : " + messageId);
             }
-            //////////ADDED//////////
+            //////////ADDED//////////*/
 
             ps.close();
 
@@ -303,16 +298,18 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
                     + "WHERE message_id = ? AND receiver = ?");
             ps.setLong(1, id);
             ps.setString(2, receiver);
-            //ps.executeUpdate();
+            ps.executeUpdate();
 
-            //////////ADDED//////////
+            // It's deliberate not to generate an exception because it's unlikely to happen and it wouldn't cause any problems: just no lines would be deleted.
+
+            /*//////////ADDED//////////
             int rowsNumber = ps.executeUpdate();
 
             if (rowsNumber == 0) {
                 logger.error("There is no user or individual message registered with this email : {} or individual message with this id : {}", receiver, id);
                 throw new DAOException(String.format("There is no user or individual message registered with this email : " + receiver + " or individual message with this id : %d", id));
             }
-            //////////ADDED//////////
+            //////////ADDED//////////*/
 
             ps = getConnection().prepareStatement("SELECT count(message_id) AS num "
                     + "FROM VIPSocialMessageSenderReceiver "
