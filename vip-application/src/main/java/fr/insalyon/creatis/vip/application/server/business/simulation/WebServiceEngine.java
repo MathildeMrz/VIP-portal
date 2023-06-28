@@ -34,15 +34,16 @@ package fr.insalyon.creatis.vip.application.server.business.simulation;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
 import fr.insalyon.creatis.vip.application.server.business.util.ProxyUtil;
 import fr.insalyon.creatis.vip.core.server.business.Server;
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
 import localhost.moteur_service_wsdl.Moteur_ServiceLocator;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.FileProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * Communicates with a moteur server through a web service.

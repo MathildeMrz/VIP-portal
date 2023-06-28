@@ -31,10 +31,10 @@
  */
 package fr.insalyon.creatis.vip.applicationimporter.client.view.applicationdisplay;
 
-import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesOutputFile;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesOutputFile;
 import fr.insalyon.creatis.vip.applicationimporter.client.view.Constants;
 
 import java.util.Set;

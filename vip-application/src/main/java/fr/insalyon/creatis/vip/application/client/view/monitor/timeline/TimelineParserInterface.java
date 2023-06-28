@@ -32,6 +32,7 @@
 package fr.insalyon.creatis.vip.application.client.view.monitor.timeline;
 
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+
 import java.util.Date;
 
 /**

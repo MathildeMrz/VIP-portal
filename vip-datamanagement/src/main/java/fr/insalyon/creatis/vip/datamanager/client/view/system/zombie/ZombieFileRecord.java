@@ -32,6 +32,7 @@
 package fr.insalyon.creatis.vip.datamanager.client.view.system.zombie;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+
 import java.util.Date;
 
 /**

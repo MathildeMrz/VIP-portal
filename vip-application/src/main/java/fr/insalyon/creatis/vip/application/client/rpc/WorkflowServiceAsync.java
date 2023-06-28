@@ -33,6 +33,7 @@ package fr.insalyon.creatis.vip.application.client.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import fr.insalyon.creatis.vip.application.client.bean.*;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

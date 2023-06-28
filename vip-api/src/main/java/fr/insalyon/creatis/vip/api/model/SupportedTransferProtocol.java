@@ -31,7 +31,8 @@
  */
 package fr.insalyon.creatis.vip.api.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Created by abonnet on 8/5/16.

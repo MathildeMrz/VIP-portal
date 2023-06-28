@@ -46,9 +46,10 @@ package fr.insalyon.creatis.vip.application.server.rpc;
 
 import com.google.gwt.logging.shared.RemoteLoggingService;
 import fr.insalyon.creatis.vip.core.server.rpc.AbstractRemoteServiceServlet;
-import java.util.logging.LogRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.logging.LogRecord;
 
 /**
  * Minimalist Servlet allowing to write logs (from the client side) in vip.log file on server side.

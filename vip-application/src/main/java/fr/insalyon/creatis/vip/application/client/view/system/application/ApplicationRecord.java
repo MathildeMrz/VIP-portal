@@ -33,8 +33,6 @@ package fr.insalyon.creatis.vip.application.client.view.system.application;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
-import java.util.List;
-
 /**
  *
  * @author Rafael Ferreira da Silva

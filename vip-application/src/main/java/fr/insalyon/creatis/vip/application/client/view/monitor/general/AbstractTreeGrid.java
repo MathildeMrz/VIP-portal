@@ -43,6 +43,7 @@ import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
 import fr.insalyon.creatis.vip.application.client.rpc.WorkflowServiceAsync;
 import fr.insalyon.creatis.vip.application.client.view.monitor.general.InOutTreeNode.Icon;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
 import java.util.List;
 
 /**

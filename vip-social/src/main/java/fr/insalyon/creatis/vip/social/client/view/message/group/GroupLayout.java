@@ -49,6 +49,7 @@ import fr.insalyon.creatis.vip.social.client.bean.GroupMessage;
 import fr.insalyon.creatis.vip.social.client.rpc.SocialService;
 import fr.insalyon.creatis.vip.social.client.rpc.SocialServiceAsync;
 import fr.insalyon.creatis.vip.social.client.view.common.MoreDataBoxLayout;
+
 import java.util.Date;
 import java.util.List;
 

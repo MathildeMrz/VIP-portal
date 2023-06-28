@@ -32,8 +32,7 @@
 package fr.insalyon.creatis.vip.datamanager.server.dao;
 
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
-import fr.insalyon.creatis.vip.datamanager.client.bean.*;
-import java.sql.Connection;
+import fr.insalyon.creatis.vip.datamanager.client.bean.ExternalPlatform;
 
 import java.util.List;
 

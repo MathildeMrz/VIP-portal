@@ -2,7 +2,10 @@ package fr.insalyon.creatis.vip.application.client.view.boutiquesParsing;
 
 import com.google.gwt.json.client.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 /**

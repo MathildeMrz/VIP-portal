@@ -33,6 +33,7 @@ package fr.insalyon.creatis.vip.core.client.view.system.user;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import fr.insalyon.creatis.vip.core.client.bean.User;
+
 import java.util.Date;
 
 /**

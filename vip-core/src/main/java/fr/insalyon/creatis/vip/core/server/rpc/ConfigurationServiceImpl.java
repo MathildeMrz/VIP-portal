@@ -32,7 +32,6 @@
 package fr.insalyon.creatis.vip.core.server.rpc;
 
 import fr.insalyon.creatis.grida.client.GRIDAClient;
-import fr.insalyon.creatis.vip.core.client.bean.Account;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.UsageStats;
 import fr.insalyon.creatis.vip.core.client.bean.User;

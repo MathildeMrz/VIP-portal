@@ -31,24 +31,15 @@
  */
 package fr.insalyon.creatis.vip.application.client.view.monitor.chart;
 
-import com.googlecode.gflot.client.DataPoint;
-import com.googlecode.gflot.client.PlotModel;
-import com.googlecode.gflot.client.Series;
-import com.googlecode.gflot.client.SeriesHandler;
-import com.googlecode.gflot.client.SimplePlot;
-import com.googlecode.gflot.client.options.AxisOptions;
-import com.googlecode.gflot.client.options.BarSeriesOptions;
-import com.googlecode.gflot.client.options.GlobalSeriesOptions;
-import com.googlecode.gflot.client.options.GridOptions;
-import com.googlecode.gflot.client.options.LegendOptions;
+import com.googlecode.gflot.client.*;
+import com.googlecode.gflot.client.options.*;
 import com.googlecode.gflot.client.options.LegendOptions.LabelFormatter;
 import com.googlecode.gflot.client.options.LegendOptions.LegendPosition;
-import com.googlecode.gflot.client.options.LineSeriesOptions;
-import com.googlecode.gflot.client.options.PlotOptions;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.layout.VLayout;
 import fr.insalyon.creatis.vip.application.client.view.monitor.job.TaskStatus;
 import fr.insalyon.creatis.vip.core.client.view.property.PropertyRecord;
+
 import java.util.List;
 
 /**

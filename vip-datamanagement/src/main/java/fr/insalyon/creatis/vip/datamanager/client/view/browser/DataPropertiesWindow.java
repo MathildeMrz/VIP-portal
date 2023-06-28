@@ -34,6 +34,7 @@ package fr.insalyon.creatis.vip.datamanager.client.view.browser;
 import fr.insalyon.creatis.vip.core.client.view.property.AbstractPropertyWindow;
 import fr.insalyon.creatis.vip.core.client.view.property.PropertyRecord;
 import fr.insalyon.creatis.vip.datamanager.client.bean.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 

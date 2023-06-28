@@ -36,7 +36,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -56,13 +55,12 @@ import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
 import fr.insalyon.creatis.vip.application.client.bean.Simulation;
 import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
 import fr.insalyon.creatis.vip.application.client.rpc.WorkflowServiceAsync;
+import fr.insalyon.creatis.vip.application.client.view.monitor.chart.JobStatsChart;
+import fr.insalyon.creatis.vip.application.client.view.monitor.chart.WorkflowStatsChart;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import fr.insalyon.creatis.vip.core.client.view.property.PropertyRecord;
-import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
 import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
-import fr.insalyon.creatis.vip.application.client.view.monitor.chart.WorkflowStatsChart;
-import fr.insalyon.creatis.vip.application.client.view.monitor.chart.JobStatsChart;
-import fr.insalyon.creatis.vip.application.client.view.monitor.chart.GeneralBarChart;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 

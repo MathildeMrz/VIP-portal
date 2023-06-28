@@ -32,9 +32,9 @@
 package fr.insalyon.creatis.vip.applicationimporter.client;
 
 import com.smartgwt.client.widgets.tab.Tab;
-import fr.insalyon.creatis.vip.core.client.Module;
-import fr.insalyon.creatis.vip.core.client.CoreModule;
 import fr.insalyon.creatis.vip.applicationimporter.client.view.HomeParser;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.Module;
 
 import java.util.Set;
 

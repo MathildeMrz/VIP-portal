@@ -33,11 +33,7 @@ package fr.insalyon.creatis.vip.gatelab.client.view.monitor;
 
 import com.smartgwt.client.widgets.Canvas;
 import fr.insalyon.creatis.vip.application.client.view.common.AbstractSimulationTab;
-import fr.insalyon.creatis.vip.application.client.view.monitor.ChartsTab;
-import fr.insalyon.creatis.vip.application.client.view.monitor.JobsTab;
-import fr.insalyon.creatis.vip.application.client.view.monitor.LogsTab;
-import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
-import fr.insalyon.creatis.vip.application.client.view.monitor.SummaryTab;
+import fr.insalyon.creatis.vip.application.client.view.monitor.*;
 import fr.insalyon.creatis.vip.core.client.CoreModule;
 import fr.insalyon.creatis.vip.gatelab.client.GateLabConstants;
 

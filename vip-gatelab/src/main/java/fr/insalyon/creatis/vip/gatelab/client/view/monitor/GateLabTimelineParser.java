@@ -35,6 +35,7 @@ import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
 import fr.insalyon.creatis.vip.application.client.view.monitor.timeline.SimulationBoxLayout;
 import fr.insalyon.creatis.vip.application.client.view.monitor.timeline.TimelineParserInterface;
 import fr.insalyon.creatis.vip.gatelab.client.GateLabConstants;
+
 import java.util.Date;
 
 /**

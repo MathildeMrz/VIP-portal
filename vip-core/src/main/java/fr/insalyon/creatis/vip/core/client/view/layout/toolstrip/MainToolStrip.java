@@ -32,7 +32,9 @@
 package fr.insalyon.creatis.vip.core.client.view.layout.toolstrip;
 
 import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.widgets.*;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 

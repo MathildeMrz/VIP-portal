@@ -34,6 +34,7 @@ package fr.insalyon.creatis.vip.core.client.view.main;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationParser;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationTileRecord;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationsTileGrid;
+
 import java.util.ArrayList;
 import java.util.List;
 

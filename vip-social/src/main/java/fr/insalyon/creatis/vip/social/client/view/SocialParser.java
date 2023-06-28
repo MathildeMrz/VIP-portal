@@ -31,7 +31,6 @@
  */
 package fr.insalyon.creatis.vip.social.client.view;
 
-import com.smartgwt.client.widgets.tab.Tab;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationParser;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import fr.insalyon.creatis.vip.social.client.SocialConstants;

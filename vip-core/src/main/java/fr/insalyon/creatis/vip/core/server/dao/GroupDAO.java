@@ -32,6 +32,7 @@
 package fr.insalyon.creatis.vip.core.server.dao;
 
 import fr.insalyon.creatis.vip.core.client.bean.Group;
+
 import java.util.List;
 
 /**

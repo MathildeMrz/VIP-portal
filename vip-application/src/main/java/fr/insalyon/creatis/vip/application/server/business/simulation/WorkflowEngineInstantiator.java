@@ -36,8 +36,6 @@ import fr.insalyon.creatis.vip.application.server.business.util.FileUtil;
 
 import java.io.File;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *

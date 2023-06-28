@@ -32,19 +32,16 @@
 package fr.insalyon.creatis.vip.applicationimporter.server.business;
 
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.zip.GZIPOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.io.*;
+import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 /**
  *

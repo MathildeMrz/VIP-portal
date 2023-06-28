@@ -33,8 +33,8 @@ package fr.insalyon.creatis.vip.application.client.view.monitor.chart;
 
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.layout.VLayout;
-import fr.insalyon.creatis.vip.application.client.view.monitor.job.TaskStatus;
 import fr.insalyon.creatis.vip.core.client.view.property.PropertyRecord;
+
 import java.util.List;
 
 /**

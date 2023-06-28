@@ -39,6 +39,7 @@ import fr.insalyon.creatis.vip.application.client.view.monitor.job.JobStatus;
 import fr.insalyon.creatis.vip.application.client.view.monitor.progress.ProcessorStatus;
 import fr.insalyon.creatis.vip.application.client.view.monitor.progress.ProgressLayout;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
 import java.util.List;
 
 /**

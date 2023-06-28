@@ -33,6 +33,7 @@ package fr.insalyon.creatis.vip.application.client.bean;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+
 import java.util.Date;
 
 /**

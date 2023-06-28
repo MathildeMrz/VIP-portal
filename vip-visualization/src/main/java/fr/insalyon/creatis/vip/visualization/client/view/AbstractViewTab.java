@@ -41,9 +41,6 @@ import fr.insalyon.creatis.vip.visualization.client.bean.VisualizationItem;
 import fr.insalyon.creatis.vip.visualization.client.rpc.VisualizationService;
 import fr.insalyon.creatis.vip.visualization.client.rpc.VisualizationServiceAsync;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 /** @author Tristan Glatard */
 public abstract class AbstractViewTab extends Tab {
 

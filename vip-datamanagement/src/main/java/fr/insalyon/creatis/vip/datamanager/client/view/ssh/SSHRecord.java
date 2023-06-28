@@ -31,9 +31,9 @@
  */
 package fr.insalyon.creatis.vip.datamanager.client.view.ssh;
 
-import fr.insalyon.creatis.vip.datamanager.client.bean.TransferType;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.bean.TransferType;
 
 /**
  *

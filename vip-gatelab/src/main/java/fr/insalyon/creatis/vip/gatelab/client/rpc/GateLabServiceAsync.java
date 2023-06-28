@@ -32,6 +32,7 @@
 package fr.insalyon.creatis.vip.gatelab.client.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import java.util.Map;
 
 /**

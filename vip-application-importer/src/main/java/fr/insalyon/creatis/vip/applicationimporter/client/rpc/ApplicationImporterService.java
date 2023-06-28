@@ -31,11 +31,11 @@
  */
 package fr.insalyon.creatis.vip.applicationimporter.client.rpc;
 
-import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
-import fr.insalyon.creatis.vip.applicationimporter.client.ApplicationImporterException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
+import fr.insalyon.creatis.vip.applicationimporter.client.ApplicationImporterException;
 
 import java.util.List;
 

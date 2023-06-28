@@ -55,7 +55,6 @@ import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  *

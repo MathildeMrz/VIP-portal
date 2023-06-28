@@ -32,7 +32,6 @@
 package fr.insalyon.creatis.vip.application.client.bean;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import org.opensaml.xml.encryption.Public;
 
 import java.util.List;
 

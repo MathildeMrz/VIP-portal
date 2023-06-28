@@ -34,8 +34,10 @@ package fr.insalyon.creatis.vip.core.client.view.application;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.tile.TileGrid;
-import com.smartgwt.client.widgets.tile.events.*;
-import com.smartgwt.client.widgets.viewer.*;
+import com.smartgwt.client.widgets.tile.events.RecordClickEvent;
+import com.smartgwt.client.widgets.tile.events.RecordClickHandler;
+import com.smartgwt.client.widgets.viewer.DetailFormatter;
+import com.smartgwt.client.widgets.viewer.DetailViewerField;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 
 import java.util.logging.Logger;

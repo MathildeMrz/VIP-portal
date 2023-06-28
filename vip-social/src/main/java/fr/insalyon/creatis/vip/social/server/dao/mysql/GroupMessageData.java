@@ -107,17 +107,7 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
                         + "VIPSocialGroupMessage WHERE id = ?");
                 ps.setLong(1, id);
 
-                //ps.executeUpdate();
-
-                //////////ADDED//////////
-                int nbRows = ps.executeUpdate();
-
-                if (nbRows == 0) {
-                    logger.error("There is no group message registered with the id {}", id);
-                    throw new DAOException(String.format("There is no group message registered with the id : %d", id));
-                }
-                //////////ADDED//////////
-
+                ps.executeUpdate();
                 ps.close();
 
         }  catch (SQLException ex) {
@@ -129,8 +119,6 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     public List<GroupMessage> getMessageByGroup(String groupName, int limit, Date startDate) throws DAOException {
 
         try {
-            if(groupDao.isGroup(groupName))
-            {
                 PreparedStatement ps = getConnection().prepareStatement("SELECT "
                         + "id, sender, groupname, title, message, posted "
                         + "FROM VIPSocialGroupMessage "
@@ -152,12 +140,6 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
                 ps.close();
 
                 return messages;
-            }
-            else
-            {
-                logger.error("There is no group registered with the groupname {}", groupName);
-                throw new DAOException("There is no group registered with the groupname : " + groupName);
-            }
 
 
         } catch (SQLException ex) {

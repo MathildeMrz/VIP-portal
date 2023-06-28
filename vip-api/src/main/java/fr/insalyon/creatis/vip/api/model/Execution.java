@@ -31,8 +31,10 @@
  */
 package fr.insalyon.creatis.vip.api.model;
 
-import java.util.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *

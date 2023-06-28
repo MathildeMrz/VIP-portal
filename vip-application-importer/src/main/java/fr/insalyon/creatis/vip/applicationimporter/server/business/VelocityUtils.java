@@ -33,14 +33,13 @@
 package fr.insalyon.creatis.vip.applicationimporter.server.business;
 
 import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
-
-import java.io.StringWriter;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.tools.generic.EscapeTool;
 import org.springframework.stereotype.Service;
+
+import java.io.StringWriter;
 
 /**
  *

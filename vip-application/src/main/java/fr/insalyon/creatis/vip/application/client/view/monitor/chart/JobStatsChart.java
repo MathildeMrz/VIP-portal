@@ -32,22 +32,14 @@
 package fr.insalyon.creatis.vip.application.client.view.monitor.chart;
 
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.widgets.grid.CellFormatter;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import fr.insalyon.creatis.vip.core.client.view.property.PropertyRecord;
-import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
-import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
-import fr.insalyon.creatis.vip.application.client.view.monitor.chart.WorkflowStatsChart;
-import fr.insalyon.creatis.vip.application.client.view.monitor.chart.JobStatsChart;
-import fr.insalyon.creatis.vip.application.client.view.monitor.chart.GeneralBarChart;
-import java.util.LinkedHashMap;
+
 import java.util.List;
 
 /**

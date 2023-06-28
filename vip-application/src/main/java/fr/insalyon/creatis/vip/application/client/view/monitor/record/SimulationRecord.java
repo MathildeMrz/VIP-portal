@@ -33,6 +33,7 @@ package fr.insalyon.creatis.vip.application.client.view.monitor.record;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+
 import java.util.Date;
 
 /**

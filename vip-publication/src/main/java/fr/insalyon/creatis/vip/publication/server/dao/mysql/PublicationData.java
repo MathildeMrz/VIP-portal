@@ -31,17 +31,9 @@
  */
 package fr.insalyon.creatis.vip.publication.server.dao.mysql;
 
-import fr.insalyon.creatis.vip.publication.client.bean.Publication;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import fr.insalyon.creatis.vip.publication.client.bean.Publication;
 import fr.insalyon.creatis.vip.publication.server.dao.PublicationDAO;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +42,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Nouha Boujelben
@@ -117,16 +114,7 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
             ps.setString(7, publication.getVipAuthor());
             ps.setString(8, publication.getVipApplication());
             ps.setLong(9, publication.getId());
-            //ps.executeUpdate();
-
-            //////////ADDED//////////
-            int nbRows = ps.executeUpdate();
-
-            if (nbRows == 0) {
-                logger.error("There is no publication registered with the id {}", publication.getId());
-                throw new DAOException(String.format("There is no publication registered with the id : %d", publication.getId()));
-            }
-            //////////ADDED//////////
+            ps.executeUpdate();
 
             ps.close();
 
@@ -143,16 +131,16 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
                     + "FROM VIPPublication WHERE id=?");
 
             ps.setLong(1, id);
-            //ps.execute();
+            ps.execute();
 
             //////////ADDED//////////
-            int nbRows = ps.executeUpdate();
+            /*int nbRows = ps.executeUpdate();
 
             if (nbRows == 0) {
                 logger.error("There is no publication registered with the id {}", id);
                 throw new DAOException(String.format("There is no publication registered with the id : %d", id));
             }
-            //////////ADDED//////////
+            //////////ADDED//////////*/
 
             ps.close();
         } catch (SQLException ex) {
@@ -207,12 +195,12 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
                     p = new Publication(rs.getLong("id"), rs.getString("title"), rs.getString("date"), rs.getString("doi"), rs.getString("authors"), rs.getString("type"), rs.getString("typeName"), rs.getString("VIPAuthor"), rs.getString("VIPApplication"));
                 }
                 //////////ADDED//////////
-                else
+                /*else
                 {
                     logger.error("There is no publication registered with the id {}", id);
                     throw new DAOException(String.format("There is no publication registered with the id : %d", id));
                 }
-                //////////ADDED//////////
+                //////////ADDED//////////*/
 
                 rs.close();
                 return p;

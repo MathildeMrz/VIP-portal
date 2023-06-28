@@ -33,7 +33,6 @@ package fr.insalyon.creatis.vip.gatelab.client;
 
 import com.smartgwt.client.widgets.tab.Tab;
 import fr.insalyon.creatis.vip.application.client.ApplicationModule;
-import fr.insalyon.creatis.vip.application.client.view.launch.LaunchTab;
 import fr.insalyon.creatis.vip.application.client.view.launch.RelaunchService;
 import fr.insalyon.creatis.vip.application.client.view.monitor.MonitorParser;
 import fr.insalyon.creatis.vip.application.client.view.monitor.timeline.TimelineParser;

@@ -50,6 +50,7 @@ import fr.insalyon.creatis.vip.social.client.SocialConstants;
 import fr.insalyon.creatis.vip.social.client.rpc.SocialService;
 import fr.insalyon.creatis.vip.social.client.rpc.SocialServiceAsync;
 import fr.insalyon.creatis.vip.social.client.view.common.AbstractComposeWindow;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 

@@ -32,6 +32,7 @@
 package fr.insalyon.creatis.vip.core.client.bean;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.sql.Timestamp;
 
 /**

@@ -34,13 +34,14 @@ package fr.insalyon.creatis.vip.gatelab.server.dao.derby;
 import fr.insalyon.creatis.vip.application.server.dao.h2.AbstractJobData;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.gatelab.server.dao.GateLabDAO;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /** Each GateLabData is specific to a single database, and so to a single simulation.
  * So a new instance is needed at each call and this needs the prototype scope

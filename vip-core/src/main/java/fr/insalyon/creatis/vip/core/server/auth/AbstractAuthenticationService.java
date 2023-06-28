@@ -31,26 +31,26 @@
  */
 package fr.insalyon.creatis.vip.core.server.auth;
 
-import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.CoreException;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
 import fr.insalyon.creatis.vip.core.server.business.VipSessionBusiness;
-import fr.insalyon.creatis.vip.core.server.dao.*;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  *
@@ -83,7 +83,7 @@ public abstract class AbstractAuthenticationService extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         try {
             processRequest(request, response);
-        } catch (BusinessException | CoreException ex) {
+        } catch (BusinessException | CoreException | DAOException ex) {
             logger.error("Error handling a request : {}. Ignoring", ex.getMessage());
         }
     }
@@ -94,12 +94,14 @@ public abstract class AbstractAuthenticationService extends HttpServlet {
             processRequest(request, response);
         } catch (BusinessException | CoreException ex) {
             logger.error("Error handling a request : {}. Ignoring", ex.getMessage());
+        } catch (DAOException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private void processRequest(
             HttpServletRequest request,
-            HttpServletResponse response) throws BusinessException, CoreException {
+            HttpServletResponse response) throws BusinessException, CoreException, DAOException {
 
         logger.info("Third-party authentication request.");
         String email;
@@ -138,7 +140,7 @@ public abstract class AbstractAuthenticationService extends HttpServlet {
     private void authSuccessResponse(
             HttpServletRequest request,
             HttpServletResponse response,
-            String email) throws BusinessException, CoreException {
+            String email) throws BusinessException, CoreException, DAOException {
 
         String groupName = getDefaultGroup();
         User user = configurationBusiness.getOrCreateUser(email, "Unknown", groupName);

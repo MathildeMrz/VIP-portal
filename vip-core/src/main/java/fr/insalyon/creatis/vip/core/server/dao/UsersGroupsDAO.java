@@ -34,6 +34,7 @@ package fr.insalyon.creatis.vip.core.server.dao;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+
 import java.util.List;
 import java.util.Map;
 

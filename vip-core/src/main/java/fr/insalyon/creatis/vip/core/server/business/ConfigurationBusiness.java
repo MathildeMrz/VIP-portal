@@ -35,7 +35,9 @@ import fr.insalyon.creatis.devtools.MD5;
 import fr.insalyon.creatis.grida.client.GRIDAClient;
 import fr.insalyon.creatis.grida.client.GRIDAClientException;
 import fr.insalyon.creatis.grida.client.GRIDAPoolClient;
-import fr.insalyon.creatis.vip.core.client.bean.*;
+import fr.insalyon.creatis.vip.core.client.bean.Group;
+import fr.insalyon.creatis.vip.core.client.bean.TermsOfUse;
+import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants.GROUP_ROLE;
 import fr.insalyon.creatis.vip.core.client.view.user.UserLevel;
@@ -46,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
@@ -946,10 +947,16 @@ public class ConfigurationBusiness {
     }
 
     public User getOrCreateUser(String email, String institution, String groupName)
-            throws BusinessException {
+            throws BusinessException, DAOException {
+
+        if (!email.contains("@")) {
+            logger.error("The email {} is invalid : it does not contain an @", email);
+            throw new BusinessException("The email "+ email +" is invalid : it does not contain an @");
+        }
 
         User user;
         try {
+
             user = getUserWithSession(email);
         } catch (DAOException ex) {
             //User doesn't exist: let's create an account

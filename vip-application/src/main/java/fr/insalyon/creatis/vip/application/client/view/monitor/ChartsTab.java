@@ -59,6 +59,7 @@ import fr.insalyon.creatis.vip.application.client.view.monitor.chart.SitesBarCha
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
 import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 

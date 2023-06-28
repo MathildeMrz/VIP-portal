@@ -32,11 +32,7 @@
 package fr.insalyon.creatis.vip.application.client.view.monitor;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.googlecode.gflot.client.DataPoint;
-import com.googlecode.gflot.client.PlotModel;
-import com.googlecode.gflot.client.Series;
-import com.googlecode.gflot.client.SeriesHandler;
-import com.googlecode.gflot.client.SimplePlot;
+import com.googlecode.gflot.client.*;
 import com.googlecode.gflot.client.options.BarSeriesOptions;
 import com.googlecode.gflot.client.options.GlobalSeriesOptions;
 import com.googlecode.gflot.client.options.LegendOptions;
@@ -68,6 +64,7 @@ import fr.insalyon.creatis.vip.application.client.view.monitor.record.JobRecord;
 import fr.insalyon.creatis.vip.application.client.view.monitor.record.SummaryRecord;
 import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
 import java.util.ArrayList;
 import java.util.List;
 

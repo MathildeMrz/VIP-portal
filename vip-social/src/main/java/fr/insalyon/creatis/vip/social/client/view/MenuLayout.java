@@ -31,7 +31,6 @@
  */
 package fr.insalyon.creatis.vip.social.client.view;
 
-import fr.insalyon.creatis.vip.social.client.view.common.AbstractMainLayout;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
@@ -44,6 +43,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
 import fr.insalyon.creatis.vip.social.client.SocialConstants;
+import fr.insalyon.creatis.vip.social.client.view.common.AbstractMainLayout;
 import fr.insalyon.creatis.vip.social.client.view.message.MessageLayout;
 import fr.insalyon.creatis.vip.social.client.view.message.group.GroupsLayout;
 import fr.insalyon.creatis.vip.social.client.view.message.sent.SentMessageLayout;

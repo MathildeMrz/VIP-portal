@@ -6,6 +6,7 @@ import fr.insalyon.creatis.vip.core.client.view.CoreException;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
 import fr.insalyon.creatis.vip.core.server.business.VipSessionBusiness;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,8 @@ public class EgiController {
             vipSessionBusiness.setVIPSession(request, response, vipUser); // creates VIP cookies and session
         } catch (BusinessException | CoreException e) {
             throw new ApiException(ApiException.ApiError.WRONG_OIDC_LOGIN, e);
+        } catch (DAOException e) {
+            throw new RuntimeException(e);
         }
 
         return new RedirectView(getRootUrl(request)); // redirect on the home page where the VIP cookies will authenticate the user

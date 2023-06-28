@@ -50,8 +50,8 @@ import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
 import fr.insalyon.creatis.vip.datamanager.client.view.ValidatorUtil;
 import fr.insalyon.creatis.vip.datamanager.client.view.common.BasicBrowserToolStrip;
 import fr.insalyon.creatis.vip.datamanager.client.view.operation.OperationLayout;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

@@ -43,8 +43,6 @@ import fr.insalyon.creatis.vip.social.client.view.SocialException;
 import fr.insalyon.creatis.vip.social.server.business.MessageBusiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletException;
 import java.util.Arrays;

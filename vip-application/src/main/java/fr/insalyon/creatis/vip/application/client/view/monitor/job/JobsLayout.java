@@ -32,16 +32,8 @@
 package fr.insalyon.creatis.vip.application.client.view.monitor.job;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.googlecode.gflot.client.DataPoint;
-import com.googlecode.gflot.client.PlotModel;
-import com.googlecode.gflot.client.Series;
-import com.googlecode.gflot.client.SeriesHandler;
-import com.googlecode.gflot.client.SimplePlot;
-import com.googlecode.gflot.client.options.AxisOptions;
-import com.googlecode.gflot.client.options.BarSeriesOptions;
-import com.googlecode.gflot.client.options.GlobalSeriesOptions;
-import com.googlecode.gflot.client.options.LegendOptions;
-import com.googlecode.gflot.client.options.PlotOptions;
+import com.googlecode.gflot.client.*;
+import com.googlecode.gflot.client.options.*;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -50,6 +42,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import fr.insalyon.creatis.vip.application.client.bean.Job;
 import fr.insalyon.creatis.vip.application.client.rpc.JobService;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

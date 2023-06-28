@@ -31,8 +31,6 @@
  */
 package fr.insalyon.creatis.vip.core.client.view.layout;
 
-import com.google.gwt.core.client.Callback;
-import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -51,11 +49,8 @@ import fr.insalyon.creatis.vip.core.client.view.auth.ActivationTab;
 import fr.insalyon.creatis.vip.core.client.view.auth.SignInTab;
 import fr.insalyon.creatis.vip.core.client.view.common.MessageWindow;
 import fr.insalyon.creatis.vip.core.client.view.layout.toolstrip.MainToolStrip;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+
 import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**

@@ -44,12 +44,7 @@ knowledge of the CeCILL-B license and that you accept its terms.
  */
 package fr.insalyon.creatis.vip.datamanager.client.view.browser;
 
-import com.google.gwt.core.client.Callback;
-import com.google.gwt.core.client.ScriptInjector;
-import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.smartgwt.client.widgets.HTMLPane;
-import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 
 /**
  *

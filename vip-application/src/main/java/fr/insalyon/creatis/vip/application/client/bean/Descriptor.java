@@ -32,6 +32,7 @@
 package fr.insalyon.creatis.vip.application.client.bean;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.util.List;
 
 /**

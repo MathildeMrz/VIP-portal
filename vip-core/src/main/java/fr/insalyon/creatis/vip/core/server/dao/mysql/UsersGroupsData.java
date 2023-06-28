@@ -38,13 +38,7 @@ import fr.insalyon.creatis.vip.core.client.view.user.UserLevel;
 import fr.insalyon.creatis.vip.core.client.view.util.CountryCode;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.core.server.dao.GroupDAO;
-import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
 import fr.insalyon.creatis.vip.core.server.dao.UsersGroupsDAO;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +47,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  *
@@ -81,8 +79,7 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
             throws DAOException {
 
         try {
-            if(groupDao.isGroup(groupName))
-            {
+
                 PreparedStatement ps = getConnection().prepareStatement(
                         "INSERT INTO VIPUsersGroups(email, groupname, role) "
                                 + "VALUES(?, ?, ?)");
@@ -92,12 +89,7 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
                 ps.setString(3, role.name());
                 ps.execute();
                 ps.close();
-            }
-            else
-            {
-                logger.error("There is no group registered with the groupname {}", groupName);
-                throw new DAOException("There is no group registered with the groupname : " + groupName);
-            }
+
 
         } catch (SQLException ex) {
             logger.error("Error adding group {} to {}", groupName, email, ex);
@@ -300,7 +292,6 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
     public List<User> getUsersFromGroup(String groupName) throws DAOException {
 
         try {
-            if(groupDao.isGroup(groupName)) {
                 PreparedStatement ps = getConnection().prepareStatement("SELECT "
                         + "us.email AS uemail, next_email, first_name, last_name, institution, "
                         + "code, confirmed, folder, registration, last_login, "
@@ -334,12 +325,6 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
                 }
                 ps.close();
                 return users;
-            }
-            else
-            {
-                logger.error("There is no group registered with the groupname {}", groupName);
-                throw new DAOException("There is no group registered with the groupname : " + groupName);
-            }
 
         } catch (SQLException ex) {
             logger.error("Error getting users from group {} ", groupName, ex);

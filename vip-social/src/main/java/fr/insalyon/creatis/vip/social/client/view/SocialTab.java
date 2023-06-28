@@ -31,12 +31,12 @@
  */
 package fr.insalyon.creatis.vip.social.client.view;
 
-import fr.insalyon.creatis.vip.social.client.view.common.AbstractMainLayout;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.tab.Tab;
 import fr.insalyon.creatis.vip.social.client.SocialConstants;
+import fr.insalyon.creatis.vip.social.client.view.common.AbstractMainLayout;
 
 /**
  *

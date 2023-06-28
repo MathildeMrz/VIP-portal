@@ -1,9 +1,8 @@
 package fr.insalyon.creatis.vip.api.controller;
 
-import fr.insalyon.creatis.vip.api.exception.ApiException;
 import fr.insalyon.creatis.vip.api.business.KeycloakBusiness;
+import fr.insalyon.creatis.vip.api.exception.ApiException;
 import org.keycloak.representations.AccessTokenResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;

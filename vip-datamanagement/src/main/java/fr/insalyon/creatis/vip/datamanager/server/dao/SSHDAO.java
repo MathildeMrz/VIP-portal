@@ -33,6 +33,7 @@ package fr.insalyon.creatis.vip.datamanager.server.dao;
 
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.datamanager.client.bean.SSH;
+
 import java.util.List;
 
 /**

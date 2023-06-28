@@ -42,6 +42,7 @@ import com.smartgwt.client.widgets.layout.FlowLayout;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
 import java.util.Iterator;
 import java.util.Set;
 

@@ -38,9 +38,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Label;
-import fr.insalyon.creatis.vip.applicationimporter.client.ApplicationImporterModule;
 import fr.insalyon.creatis.vip.application.client.ApplicationModule;
-
+import fr.insalyon.creatis.vip.applicationimporter.client.ApplicationImporterModule;
 import fr.insalyon.creatis.vip.core.client.CoreModule;
 import fr.insalyon.creatis.vip.core.client.Modules;
 import fr.insalyon.creatis.vip.core.client.bean.UsageStats;

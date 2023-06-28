@@ -34,6 +34,7 @@ package fr.insalyon.creatis.vip.application.server.dao;
 import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
 import fr.insalyon.creatis.vip.application.client.bean.Application;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+
 import java.util.List;
 
 /**

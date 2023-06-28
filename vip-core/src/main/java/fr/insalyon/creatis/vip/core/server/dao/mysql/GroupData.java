@@ -94,15 +94,15 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
                     + "FROM VIPGroups WHERE groupname=?");
 
             ps.setString(1, groupName);
-            //ps.execute();
+            ps.execute();
 
             //////////ADDED//////////
-            int rs = ps.executeUpdate();
+            /*int rs = ps.executeUpdate();
 
             if (rs == 0) {
                 logger.error("There is no group registered with the name {}", groupName);
                 throw new DAOException("There is no group registered with the name : " + groupName);
-            }
+            }*/
             //////////ADDED//////////
 
             ps.close();

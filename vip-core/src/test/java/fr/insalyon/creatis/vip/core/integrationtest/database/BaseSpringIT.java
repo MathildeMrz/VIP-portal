@@ -26,9 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Utility superclass to launch tests with the whole spring configuration, as
@@ -41,6 +40,7 @@ import static org.mockito.ArgumentMatchers.*;
  * The "test-db" profile disable the default jndi datasource and uses a
  * h2 in-memory database instead
  */
+
 @SpringJUnitConfig(SpringCoreConfig.class) // launch all spring environment for testing, also take test bean though automatic package scan
 @ActiveProfiles({"test-db", "test"}) // to take random h2 database and not the test h2 jndi one
 @TestPropertySource(properties = "db.tableEngine=") // to disable the default mysql/innodb engine on database init
@@ -69,9 +69,18 @@ public abstract class BaseSpringIT {
     @Autowired
     protected GRIDAClient gridaClient;
 
+    public String adminEmail;
+    public final String emailUser1 = "test1@test.fr";
+    public final String emailUser2 = "test2@test.fr";
+    public final String emailUser3 = "test3@test.fr";
+    public final String emailUser4 = "test4@test.fr";
+    public final String nameGroup1 = "group1";
+
     @BeforeEach
     protected void setUp() throws BusinessException, GRIDAClientException, DAOException {
+        System.out.println("CCCCCCC : "+configurationBusiness.getGroups().size());
         ServerMockConfig.reset(server);
+        System.out.println("CCCCCCC : "+configurationBusiness.getGroups().size());
     }
 
     protected void assertRowsNbInTable(String tableName, int expectedNb) {

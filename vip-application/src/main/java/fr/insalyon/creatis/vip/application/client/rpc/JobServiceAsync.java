@@ -36,6 +36,7 @@ import fr.insalyon.creatis.vip.application.client.bean.Job;
 import fr.insalyon.creatis.vip.application.client.bean.Node;
 import fr.insalyon.creatis.vip.application.client.bean.Task;
 import fr.insalyon.creatis.vip.application.client.view.monitor.job.SimulationFileType;
+
 import java.util.List;
 import java.util.Map;
 

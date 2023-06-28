@@ -32,13 +32,8 @@
 package fr.insalyon.creatis.vip.datamanager.client.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import fr.insalyon.creatis.vip.datamanager.client.bean.DMCachedFile;
-import fr.insalyon.creatis.vip.datamanager.client.bean.DMZombieFile;
-import fr.insalyon.creatis.vip.datamanager.client.bean.Data;
-import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation;
-import fr.insalyon.creatis.vip.datamanager.client.bean.SSH;
-import fr.insalyon.creatis.vip.datamanager.client.view.DataManagerException;
-import java.net.URL;
+import fr.insalyon.creatis.vip.datamanager.client.bean.*;
+
 import java.util.Date;
 import java.util.List;
 

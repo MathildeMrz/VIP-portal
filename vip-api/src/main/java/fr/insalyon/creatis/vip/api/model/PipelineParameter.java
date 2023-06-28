@@ -31,9 +31,7 @@
  */
 package fr.insalyon.creatis.vip.api.model;
 
-import com.fasterxml.jackson.annotation.*;
-
-import java.lang.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
