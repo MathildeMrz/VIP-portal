@@ -9,14 +9,10 @@ name: code_quality_pmd
 
 on:
   push:
-    branches: [ "develop" ]
-    paths-ignore:
-      - '**.**'
+    branches: [ "master" ]
    
   pull_request:
-    branches: [ "develop" ]
-    paths-ignore:
-      - '**.**'
+    branches: [ "master" ]
      
   schedule:
     - cron: '40 1 * * 0'
