@@ -10,14 +10,10 @@ name: VIP Java CI with Maven
 
 on: 
   push:
-    branches: [ "master" ]
-    paths-ignore:
-      - '**.github/workflows/**'
+    branches: [ "develop" ]
       
   pull_request:
-    branches: [ "master" ]
-    paths-ignore:
-      - '**.github/workflows/**'
+    branches: [ "develop" ]
 
 jobs:
   
