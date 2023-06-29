@@ -1,3 +1,7 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
 env:
   PRE_BUILD_COMMAND: git config --global --add safe.directory /github/workspace
   
@@ -34,20 +38,18 @@ jobs:
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
           fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-      
       - uses: actions/setup-java@v3
-      
         with:
           distribution: 'temurin'
           java-version: '11'
-          
       - uses: pmd/pmd-github-action@v1
         with:
           rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
                                        
-      - name: Rename results file
-        run: |  
+      - name: Create results folder
+        run: |
+              mkdir -m 777 -p results              
               currentDate=$(date +%Y-%m-%d-%H-%M-%S)
               newFileName="results-${currentDate}.sarif"
               mv pmd-report.sarif "${newFileName}"
