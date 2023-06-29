@@ -20,9 +20,10 @@ public class PublicationsIT extends BaseSpringIT {
     private Server server;
 
     private long idPublicationCreated;
-    
+
 
     private String adminMail;
+    
 
     @BeforeEach
     public void setUp() throws BusinessException, DAOException, GRIDAClientException {
