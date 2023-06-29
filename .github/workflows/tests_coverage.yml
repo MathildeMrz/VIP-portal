@@ -43,16 +43,16 @@ jobs:
             - name: Build Maven
               run: mvn clean install
               
-            - name: Copy jacoco-aggregate
-              run: cp -r coverage/target/site/jacoco-aggregate jacoco-aggregate
+            #- name: Copy jacoco-aggregate
+            #  run: cp -r coverage/target/site/jacoco-aggregate jacoco-aggregate
               
-            #- name: Commit and push changes
-            #  run: |   
-            #      git add -f coverage/target/site/jacoco-aggregate
-            #      git config --local user.email "mathilde.marza@insa-lyon.fr"
-            #      git config --local user.name "MathildeMrz"
-            #      git commit -m "Update coverage"
-            #      git push
+            - name: Commit and push changes
+              run: |   
+                  git add -f coverage/target/site/jacoco-aggregate
+                  git config --local user.email "mathilde.marza@insa-lyon.fr"
+                  git config --local user.name "MathildeMrz"
+                  git commit -m "Update coverage"
+                  git push
 
             - name: Checkout
               uses: actions/checkout@v3
