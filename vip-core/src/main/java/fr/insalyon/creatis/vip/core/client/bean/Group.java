@@ -48,10 +48,16 @@ public class Group implements IsSerializable {
     }
 
     public Group(String name, boolean publicGroup,boolean gridFile,boolean gridJobs) {
+        System.out.println("NNNNNEW GROUP");
         this.name = name;
         this.publicGroup = publicGroup;
         this.gridFile=gridFile;
         this.gridJobs=gridJobs;
+
+        System.out.println("name = "+this.name);
+        System.out.println("this.publicGroup = "+this.publicGroup);
+        System.out.println("this.gridFile = "+this.gridFile);
+        System.out.println("this.gridJobs = "+this.gridJobs);
         
     }
 

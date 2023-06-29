@@ -94,7 +94,6 @@ public class ConfigurationBusiness {
         this.termsUseDAO = termsUseDAO;
         this.userDAO = userDAO;
         this.usersGroupsDAO = usersGroupsDAO;
-        System.out.println("Iciii 2 "+ this.server.getAdminEmail());
     }
 
     public void configure() throws BusinessException {
@@ -220,6 +219,7 @@ public class ConfigurationBusiness {
             for (Group group : groups) {
                 if (mapPrivateGroups || automaticCreation || group.isPublicGroup()) {
                     usersGroupsDAO.add(user.getEmail(), group.getName(), GROUP_ROLE.User);
+
                 } else {
                     logger.info("Don't map user " + user.getEmail() + " to private group " + group.getName());
                 }

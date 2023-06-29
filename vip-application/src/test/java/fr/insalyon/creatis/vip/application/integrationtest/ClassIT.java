@@ -176,9 +176,6 @@ public class ClassIT extends BaseSpringIT {
     @Test
     public void testGetUserClassesName() throws BusinessException, GRIDAClientException {
         createUser("test1@test.fr", "group1");
-
-        System.out.println("OH OH OH : "+classBusiness.getClassesName());
-        System.out.println("JJJJ " + classBusiness.getUserClassesName("test1@test.fr", true));
     }
 
     /*// TODO : correct empty array

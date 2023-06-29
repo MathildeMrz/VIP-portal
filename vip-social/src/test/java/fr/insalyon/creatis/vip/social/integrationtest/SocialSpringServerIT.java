@@ -493,8 +493,6 @@ public class SocialSpringServerIT extends BaseSpringIT {
     }
 
 
-
-
     @Test
     public void testCatchInexistingGroupMessage() throws BusinessException {
         Exception exception = assertThrows

@@ -78,9 +78,7 @@ public abstract class BaseSpringIT {
 
     @BeforeEach
     protected void setUp() throws BusinessException, GRIDAClientException, DAOException {
-        System.out.println("CCCCCCC : "+configurationBusiness.getGroups().size());
         ServerMockConfig.reset(server);
-        System.out.println("CCCCCCC : "+configurationBusiness.getGroups().size());
     }
 
     protected void assertRowsNbInTable(String tableName, int expectedNb) {
@@ -103,13 +101,13 @@ public abstract class BaseSpringIT {
     }
 
     protected void createUserInGroup(String userEmail, String nameSuffix, String groupName) throws BusinessException, GRIDAClientException {
-        User newUser = new User("test firstname "+userEmail,
-                "test lastName "+userEmail, userEmail, "test institution",
+        User newUser = new User("test firstName "+nameSuffix,
+                "test lastName "+nameSuffix, userEmail, "test institution",
                 "testPassword", CountryCode.fr,
                 null);
         Mockito.when(gridaClient.exist(anyString())).thenReturn(true, false);
         Group group = configurationBusiness.getGroup(groupName);
-        configurationBusiness.signup(newUser, "", group);
+        configurationBusiness.signup(newUser, "", false, true, group);
     }
 
     protected void signInUser() throws BusinessException {

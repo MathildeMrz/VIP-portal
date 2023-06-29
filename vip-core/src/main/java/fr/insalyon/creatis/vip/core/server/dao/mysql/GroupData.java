@@ -67,6 +67,7 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
     public void add(Group group) throws DAOException {
 
         try {
+            System.out.println("Trying to add "+group.getName());
             PreparedStatement ps = getConnection().prepareStatement(
                     "INSERT INTO VIPGroups(groupname, public, gridfile, gridjobs) VALUES(?, ?, ?, ?)");
             ps.setString(1, group.getName());
