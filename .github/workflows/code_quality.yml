@@ -53,6 +53,11 @@ jobs:
               mv pmd-report.sarif "${newFileName}"
               cp -r "${newFileName}" results/
               echo "Sarif code quality report created"
+              
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: "results/"
   
   ##########################################################################################################################################################################################
   ############################################################################# Store quality code Sarif analysis ##########################################################################
