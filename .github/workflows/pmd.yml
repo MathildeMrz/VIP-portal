@@ -9,14 +9,14 @@ name: code_quality_pmd
 
 on:
   push:
-    branches: [ "master" ]
-    #paths-ignore:
-    #  - '**.github/workflows/**'
+    branches: [ "develop" ]
+    paths-ignore:
+      - '**.**'
    
   pull_request:
-    branches: [ "master" ]
+    branches: [ "develop" ]
     paths-ignore:
-      - '**.github/workflows/**'
+      - '**.**'
      
   schedule:
     - cron: '40 1 * * 0'
@@ -38,29 +38,30 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    
       - uses: actions/checkout@v3
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
           fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+      
       - uses: actions/setup-java@v3
+      
         with:
           distribution: 'temurin'
           java-version: '11'
+          
       - uses: pmd/pmd-github-action@v1
         with:
           rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
                                        
-      - name: Create results folder
-        run: |
-              mkdir -m 777 -p results              
+      - name: Rename results file
+        run: |  
               currentDate=$(date +%Y-%m-%d-%H-%M-%S)
               newFileName="results-${currentDate}.sarif"
               mv pmd-report.sarif "${newFileName}"
               cp -r "${newFileName}" results/
               echo "Sarif code quality report created"
-
-
   
   ##########################################################################################################################################################################################
   ############################################################################# Store quality code Sarif analysis ##########################################################################
