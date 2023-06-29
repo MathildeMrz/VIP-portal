@@ -6,13 +6,9 @@ name: tests_coverage_jacoco
 on:
   push:
     branches: ["develop"]
-    #paths-ignore:
-    #  - '**.github/coverage/**'
 
   pull_request:
     branches: ["develop"]
-    #paths-ignore:
-    #  - "**.github/coverage/**"
 
   schedule:
     - cron: "0 0 1 * *" # Once a month
