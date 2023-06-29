@@ -11,12 +11,12 @@ on:
   push:
     branches: [ "master" ]
     paths-ignore:
-      - '**.github/workflows/**'
+      - '**.github/coverage/**'
    
   pull_request:
     branches: [ "master" ]
     paths-ignore:
-      - '**.github/workflows/**'
+      - '**.github/coverage/**'
      
   schedule:
     - cron: '40 1 * * 0'
