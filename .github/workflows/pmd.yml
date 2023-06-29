@@ -34,10 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    
       - uses: actions/checkout@v3
-        with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
@@ -46,15 +44,10 @@ jobs:
         with:
           rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
-                                       
-#      - name: Create results folder
-#        run: |
-#              mkdir -m 777 -p results              
-#              currentDate=$(date +%Y-%m-%d-%H-%M-%S)
-#              newFileName="results-${currentDate}.sarif"
-#              mv pmd-report.sarif "${newFileName}"
-#              cp -r "${newFileName}" results/
-#              echo "Sarif code quality report created"
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: pmd-report.sarif
                 
   ##########################################################################################################################################################################################
   ############################################################################# Store quality code Sarif analysis ##########################################################################
