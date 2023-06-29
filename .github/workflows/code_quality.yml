@@ -9,12 +9,12 @@ name: code_quality_pmd
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "develop" ]
     paths-ignore:
       - '**.github/coverage/**'
    
   pull_request:
-    branches: [ "master" ]
+    branches: [ "develop" ]
     paths-ignore:
       - '**.github/coverage/**'
      
