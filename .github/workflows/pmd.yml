@@ -36,43 +36,57 @@ jobs:
     steps:
     
       - uses: actions/checkout@v3
-        with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-      
       - uses: actions/setup-java@v3
-      
         with:
           distribution: 'temurin'
           java-version: '11'
-          
       - uses: pmd/pmd-github-action@v1
         with:
           rulesets: 'ruleset.xml'
           analyzeModifiedFilesOnly: false
-                                       
-      - name: Rename results file
-        run: |  
-              currentDate=$(date +%Y-%m-%d-%H-%M-%S)
-              newFileName="results-${currentDate}.sarif"
-              mv pmd-report.sarif "${newFileName}"
-              cp -r "${newFileName}" results/
-              echo "Sarif code quality report created"
-  
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: pmd-report.sarif
+
+#     - uses: actions/checkout@v3
+#        with:
+#          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+#          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+#      
+#      - uses: actions/setup-java@v3
+#      
+#        with:
+#          distribution: 'temurin'
+#          java-version: '11'
+#          
+#      - uses: pmd/pmd-github-action@v1
+#        with:
+#          rulesets: 'ruleset.xml'
+#          analyzeModifiedFilesOnly: false
+#                                       
+#      - name: Rename results file
+#        run: |  
+#              currentDate=$(date +%Y-%m-%d-%H-%M-%S)
+#              newFileName="results-${currentDate}.sarif"
+#              mv pmd-report.sarif "${newFileName}"
+#              cp -r "${newFileName}" results/
+#              echo "Sarif code quality report created"
+#  
   ##########################################################################################################################################################################################
   ############################################################################# Store quality code Sarif analysis ##########################################################################
   ##########################################################################################################################################################################################
           
-      - name: Commit results
-        run: |             
-              git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
-              git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
-              git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-              git add results
-              git commit -m "Push results folder"
-
-      - name: Push results
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.SECURITY_TOKEN }}
-          branch: ${{ github.ref }}   
+#      - name: Commit results
+        #run: |             
+        #      git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
+        #      git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
+#              git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
+#              git add results
+#              git commit -m "Push results folder"
+#
+#      - name: Push results
+#        uses: ad-m/github-push-action@master
+#        with:
+#          github_token: ${{ secrets.SECURITY_TOKEN }}
+#          branch: ${{ github.ref }}   
