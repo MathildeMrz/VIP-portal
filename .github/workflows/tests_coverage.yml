@@ -23,60 +23,24 @@ permissions:
   pages: write
 
 jobs:
-  ##########################################################################################################################################################################################
-  ################################################################################# Tests coverage analysis ################################################################################
-  ##########################################################################################################################################################################################
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: "11"
-          distribution: "temurin"
-
-      - name: Build Maven
-        run: mvn clean install
-
-      - name: Commit and push changes
-        run: |   
-          git add -f coverage/target/site/jacoco-aggregate
-          git config --local user.email "mathilde.marza@insa-lyon.fr"
-          git config --local user.name "MathildeMrz"
-          git commit -m "Update coverage"
-          git push
-      
-  ##########################################################################################################################################################################################
-  ############################################################################ Jacoco static page creation build ###########################################################################
-  ##########################################################################################################################################################################################
   deploy:
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        
-      - name: test
-        run: |   
-          ls coverage/target/site/jacoco-aggregate
-          
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-        
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: coverage-report
-          path: coverage/target/site/jacoco-aggregate/
-          
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
-        with:
-          artifact-name: coverage-report
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      runs-on: ubuntu-latest
+      steps:
+
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Setup Pages
+          uses: actions/configure-pages@v3
+
+        - name: Upload artifact
+          uses: actions/upload-pages-artifact@v1
+          with:
+           path: "coverage/target/site/jacoco-aggregate/"
+
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v2
