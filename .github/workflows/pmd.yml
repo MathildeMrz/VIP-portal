@@ -3,7 +3,7 @@ env:
   
 name: code_quality_pmd
 
-on:
+on: 
   push:
     branches: [ "develop" ]
    
