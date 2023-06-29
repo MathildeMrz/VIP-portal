@@ -52,7 +52,7 @@ jobs:
                   git config --local user.email "mathilde.marza@insa-lyon.fr"
                   git config --local user.name "MathildeMrz"
                   git commit -m "Update coverage"
-                  git push
+                  git push origin develop
 
             - name: Checkout
               uses: actions/checkout@v3
