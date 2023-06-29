@@ -20,7 +20,7 @@ public class PublicationsIT extends BaseSpringIT {
     private Server server;
 
     private long idPublicationCreated;
-    
+
 
     private String adminMail;
 
