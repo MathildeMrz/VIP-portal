@@ -79,7 +79,6 @@ public abstract class BaseSpringIT {
     protected final String emailUser4 = "test4@test.fr";
     protected final String nameGroup1 = "group1";
 
-    protected User admin;
     protected User user1;
     protected User user2;
     protected User user3;
