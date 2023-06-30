@@ -40,7 +40,6 @@ import fr.insalyon.creatis.vip.core.client.view.application.ApplicationParser;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class ApplicationSystemParser extends ApplicationParser {
@@ -62,16 +61,16 @@ public class ApplicationSystemParser extends ApplicationParser {
 
         if (applicationName.equals(ApplicationConstants.APP_APPLICATION)) {
             Layout.getInstance().addTab(
-                ApplicationConstants.TAB_MANAGE_APPLICATION,
-                () -> new ManageApplicationsTab(false));
+                    ApplicationConstants.TAB_MANAGE_APPLICATION,
+                    () -> new ManageApplicationsTab(false));
             return true;
         } else if (applicationName.equals(ApplicationConstants.APP_CLASSES)) {
             Layout.getInstance().addTab(
-                ApplicationConstants.TAB_MANAGE_CLASSES, ManageClassesTab::new);
+                    ApplicationConstants.TAB_MANAGE_CLASSES, ManageClassesTab::new);
             return true;
         } else if (applicationName.equals(ApplicationConstants.APP_ENGINE)) {
             Layout.getInstance().addTab(
-                ApplicationConstants.TAB_MANAGE_ENGINE, ManageEnginesTab::new);
+                    ApplicationConstants.TAB_MANAGE_ENGINE, ManageEnginesTab::new);
             return true;
         }
         return false;

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BoutiquesInput.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.bean.boutiquesTools</a> &gt; <span class="el_source">BoutiquesInput.java</span></div><h1>BoutiquesInput.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.bean.boutiquesTools;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BoutiquesInput.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.bean.boutiquesTools</a> &gt; <span class="el_source">BoutiquesInput.java</span></div><h1>BoutiquesInput.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.bean.boutiquesTools;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -28,20 +28,23 @@ public abstract class BoutiquesInput implements IsSerializable {
 
     private boolean list;
     private String commandLineFlag;
-<span class="nc" id="L31">    public enum InputType {</span>
-<span class="nc" id="L32">        STRING(&quot;String&quot;), FILE(&quot;File&quot;), NUMBER(&quot;Number&quot;), FLAG(&quot;Flag&quot;);</span>
+
+<span class="nc" id="L32">    public enum InputType {</span>
+<span class="nc" id="L33">        STRING(&quot;String&quot;), FILE(&quot;File&quot;), NUMBER(&quot;Number&quot;), FLAG(&quot;Flag&quot;);</span>
 
         private final String camelName;
-<span class="nc" id="L35">        InputType(String camelName) {</span>
-<span class="nc" id="L36">            this.camelName = camelName;</span>
-<span class="nc" id="L37">        }</span>
-        public String getCamelName(){
-<span class="nc" id="L39">            return this.camelName;</span>
+
+<span class="nc" id="L37">        InputType(String camelName) {</span>
+<span class="nc" id="L38">            this.camelName = camelName;</span>
+<span class="nc" id="L39">        }</span>
+
+        public String getCamelName() {
+<span class="nc" id="L42">            return this.camelName;</span>
         }
     }
 
-<span class="nc" id="L43">    public BoutiquesInput() {</span>
-<span class="nc" id="L44">    }</span>
+<span class="nc" id="L46">    public BoutiquesInput() {</span>
+<span class="nc" id="L47">    }</span>
 
     /**
      * @param id                    String
@@ -61,96 +64,96 @@ public abstract class BoutiquesInput implements IsSerializable {
     public BoutiquesInput(String id, String name, String description, InputType type, boolean isOptional,
                           Set&lt;String&gt; disablesInputsId, Set&lt;String&gt; requiresInputsId,
                           Set&lt;String&gt; possibleValues, Map&lt;String, Set&lt;String&gt;&gt; valueDisablesInputsId,
-<span class="nc" id="L64">                          Map&lt;String, Set&lt;String&gt;&gt; valueRequiresInputsId){</span>
-<span class="nc" id="L65">        this.id = id;</span>
-<span class="nc" id="L66">        this.name = name;</span>
-<span class="nc" id="L67">        this.description = description;</span>
-<span class="nc" id="L68">        this.type = type;</span>
-<span class="nc" id="L69">        this.isOptional = isOptional;</span>
-<span class="nc" id="L70">        this.disablesInputsId = disablesInputsId;</span>
-<span class="nc" id="L71">        this.requiresInputsId = requiresInputsId;</span>
-<span class="nc" id="L72">        this.possibleValues = possibleValues;</span>
-<span class="nc" id="L73">        this.valueDisablesInputsId = valueDisablesInputsId;</span>
-<span class="nc" id="L74">        this.valueRequiresInputsId = valueRequiresInputsId;</span>
-<span class="nc" id="L75">    }</span>
+<span class="nc" id="L67">                          Map&lt;String, Set&lt;String&gt;&gt; valueRequiresInputsId) {</span>
+<span class="nc" id="L68">        this.id = id;</span>
+<span class="nc" id="L69">        this.name = name;</span>
+<span class="nc" id="L70">        this.description = description;</span>
+<span class="nc" id="L71">        this.type = type;</span>
+<span class="nc" id="L72">        this.isOptional = isOptional;</span>
+<span class="nc" id="L73">        this.disablesInputsId = disablesInputsId;</span>
+<span class="nc" id="L74">        this.requiresInputsId = requiresInputsId;</span>
+<span class="nc" id="L75">        this.possibleValues = possibleValues;</span>
+<span class="nc" id="L76">        this.valueDisablesInputsId = valueDisablesInputsId;</span>
+<span class="nc" id="L77">        this.valueRequiresInputsId = valueRequiresInputsId;</span>
+<span class="nc" id="L78">    }</span>
 
     /**
      * @return Input name as String
      */
     public String getName() {
-<span class="nc" id="L81">        return this.name;</span>
+<span class="nc" id="L84">        return this.name;</span>
     }
 
     /**
      * @return Input ID as String
      */
     public String getId() {
-<span class="nc" id="L88">        return this.id;</span>
+<span class="nc" id="L91">        return this.id;</span>
     }
 
     /**
      * @return Input description as String, or null if there is no description
      */
-    public String getDescription(){
-<span class="nc" id="L95">        return this.description;</span>
+    public String getDescription() {
+<span class="nc" id="L98">        return this.description;</span>
     }
 
     /**
      * @return boolean: true id this is an optional input, else otherwise
      */
     public boolean isOptional() {
-<span class="nc" id="L102">        return this.isOptional;</span>
+<span class="nc" id="L105">        return this.isOptional;</span>
     }
 
     /**
      * @return array of Strings representing IDs of inputs disabled by this, or null if there is not any
      */
     public Set&lt;String&gt; getDisablesInputsId() {
-<span class="nc" id="L109">        return this.disablesInputsId;</span>
+<span class="nc" id="L112">        return this.disablesInputsId;</span>
     }
 
     /**
      * @return array of Strings representing IDs of inputs required by this, or null if there is not any
      */
     public Set&lt;String&gt; getRequiresInputsId() {
-<span class="nc" id="L116">        return this.requiresInputsId;</span>
+<span class="nc" id="L119">        return this.requiresInputsId;</span>
     }
 
     /**
      * @return InputType representing the type of this
      */
-    public InputType getType(){
-<span class="nc" id="L123">        return this.type;</span>
+    public InputType getType() {
+<span class="nc" id="L126">        return this.type;</span>
     }
 
     /**
      * @return String representing the type of this
      */
-    public String getTypeString(){
-<span class="nc" id="L130">        return this.type.getCamelName();</span>
+    public String getTypeString() {
+<span class="nc" id="L133">        return this.type.getCamelName();</span>
     }
 
     /**
      * @return Map of String values of this to array of String IDs of inputs disabled by corresponding values.
-     *         Return value can be null if this has no 'value-disables' dependency
+     * Return value can be null if this has no 'value-disables' dependency
      */
-    public Map&lt;String, Set&lt;String&gt;&gt; getValueDisablesInputsId(){
-<span class="nc" id="L138">        return this.valueDisablesInputsId;</span>
+    public Map&lt;String, Set&lt;String&gt;&gt; getValueDisablesInputsId() {
+<span class="nc" id="L141">        return this.valueDisablesInputsId;</span>
     }
 
     /**
      * @return Map of String values of this to array of String IDs of inputs required by corresponding values
-     *         Return value can be null if this has no 'value-requires' dependency
+     * Return value can be null if this has no 'value-requires' dependency
      */
-    public Map&lt;String, Set&lt;String&gt;&gt; getValueRequiresInputsId(){
-<span class="nc" id="L146">        return this.valueRequiresInputsId;</span>
+    public Map&lt;String, Set&lt;String&gt;&gt; getValueRequiresInputsId() {
+<span class="nc" id="L149">        return this.valueRequiresInputsId;</span>
     }
 
     /**
      * @return Array of Strings representing possible value choices for this input, or null if any value can be entered
      */
-    public Set&lt;String&gt; getPossibleValues(){
-<span class="nc" id="L153">        return possibleValues;</span>
+    public Set&lt;String&gt; getPossibleValues() {
+<span class="nc" id="L156">        return possibleValues;</span>
     }
 
     /**
@@ -159,32 +162,32 @@ public abstract class BoutiquesInput implements IsSerializable {
     public abstract Object getDefaultValue();
 
     public String getValueKey() {
-<span class="nc" id="L162">        return valueKey;</span>
+<span class="nc" id="L165">        return valueKey;</span>
     }
 
     public boolean isList() {
-<span class="nc" id="L166">        return list;</span>
+<span class="nc" id="L169">        return list;</span>
     }
 
     public String getCommandLineFlag() {
-<span class="nc" id="L170">        return commandLineFlag;</span>
+<span class="nc" id="L173">        return commandLineFlag;</span>
     }
 
     public void setValueKey(String valueKey) {
-<span class="nc" id="L174">        this.valueKey = valueKey;</span>
-<span class="nc" id="L175">    }</span>
+<span class="nc" id="L177">        this.valueKey = valueKey;</span>
+<span class="nc" id="L178">    }</span>
 
     public void setList(boolean list) {
-<span class="nc" id="L178">        this.list = list;</span>
-<span class="nc" id="L179">    }</span>
+<span class="nc" id="L181">        this.list = list;</span>
+<span class="nc" id="L182">    }</span>
 
     public void setCommandLineFlag(String commandLineFlag) {
-<span class="nc" id="L182">        this.commandLineFlag = commandLineFlag;</span>
-<span class="nc" id="L183">    }</span>
+<span class="nc" id="L185">        this.commandLineFlag = commandLineFlag;</span>
+<span class="nc" id="L186">    }</span>
 
     public void setPossibleValues(Set&lt;String&gt; possibleValues) {
-<span class="nc" id="L186">        this.possibleValues = possibleValues;</span>
-<span class="nc" id="L187">    }</span>
+<span class="nc" id="L189">        this.possibleValues = possibleValues;</span>
+<span class="nc" id="L190">    }</span>
 
 
 }

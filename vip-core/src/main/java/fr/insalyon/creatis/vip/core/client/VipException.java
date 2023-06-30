@@ -53,13 +53,12 @@ public abstract class VipException extends Exception implements IsSerializable {
 
     protected static String formatMessage(
             VipError vipError,
-            Object ...params )
-    {
+            Object... params) {
         Optional<VipErrorMessage> vipErrorMessage =
-                Optional.ofNullable( apiErrors.get(vipError) );
+                Optional.ofNullable(apiErrors.get(vipError));
 
         String message;
-        if ( ! vipErrorMessage.isPresent()) {
+        if (!vipErrorMessage.isPresent()) {
             // cannot use slf4j as we are in a gwt client class
             System.err.println(format("Wrong use of vip exception with code {}, No message " +
                             "configured. Ignoring and using a general message",
@@ -67,14 +66,14 @@ public abstract class VipException extends Exception implements IsSerializable {
             message = "VIP Internal error";
         } else if (params.length != vipErrorMessage.get().paramsNb) {
             System.err.println(format("Wrong parameters list for a vip exception message." +
-                    "expected {}, got {}. Exception code : {}." +
-                    " Ignoring and using non-formatted message",
+                            "expected {}, got {}. Exception code : {}." +
+                            " Ignoring and using non-formatted message",
                     vipErrorMessage.get().paramsNb, params.length,
                     vipError.getCode()));
             message = vipErrorMessage.get().messageFormat;
         } else {
             message = vipErrorMessage
-                    .map( vem -> format(vem.messageFormat, params) )
+                    .map(vem -> format(vem.messageFormat, params))
                     .get();
         }
         return message + " (Error code " + vipError.getCode() + ")";
@@ -95,6 +94,7 @@ public abstract class VipException extends Exception implements IsSerializable {
     }
 
     private Integer vipErrorCode = null;
+
     public Optional<Integer> getVipErrorCode() {
         return Optional.ofNullable(vipErrorCode);
     }
@@ -118,12 +118,12 @@ public abstract class VipException extends Exception implements IsSerializable {
 
     // VIP error constructors
 
-    public VipException(VipError vipError, Object ...params) {
+    public VipException(VipError vipError, Object... params) {
         super(formatMessage(vipError, params));
         this.vipErrorCode = vipError.getCode();
     }
 
-    public VipException(VipError vipError, Throwable cause, Object ...params) {
+    public VipException(VipError vipError, Throwable cause, Object... params) {
         super(formatMessage(vipError, params), cause);
         this.vipErrorCode = vipError.getCode();
     }

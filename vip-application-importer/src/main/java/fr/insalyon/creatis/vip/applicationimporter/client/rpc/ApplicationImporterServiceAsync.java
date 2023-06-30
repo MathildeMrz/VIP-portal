@@ -41,9 +41,9 @@ public interface ApplicationImporterServiceAsync {
     public void readAndValidateBoutiquesFile(String fileLFN, AsyncCallback<String> callback);
 
     public void createApplication(BoutiquesApplication bt, String type, String tag, boolean isRunOnGrid, boolean overwriteVersion, String fileAccessProtocol, AsyncCallback<Void> callback);
-    
+
     public void getApplicationImporterRootFolder(AsyncCallback<String> asyncCallback);
-    
-    public void getApplicationImporterRequirements(AsyncCallback<List<String>>  asyncCallback);
+
+    public void getApplicationImporterRequirements(AsyncCallback<List<String>> asyncCallback);
 
 }

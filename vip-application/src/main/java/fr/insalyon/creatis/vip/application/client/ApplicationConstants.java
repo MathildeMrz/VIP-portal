@@ -34,7 +34,6 @@ package fr.insalyon.creatis.vip.application.client;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class ApplicationConstants {
@@ -126,7 +125,7 @@ public class ApplicationConstants {
 
     public static String getLaunchTabID(String applicationName) {
         return "launch_"
-            + CoreConstants.replaceSpacesInIds(applicationName)
-            + "_tab";
+                + CoreConstants.replaceSpacesInIds(applicationName)
+                + "_tab";
     }
 }

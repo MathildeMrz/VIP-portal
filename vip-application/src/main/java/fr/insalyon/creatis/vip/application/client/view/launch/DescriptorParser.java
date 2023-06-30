@@ -13,19 +13,19 @@ import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesS
  */
 public class DescriptorParser {
     /**
-     * @param descriptor            Descriptor of the application
-     * @param applicationName       String name of the application
-     * @param applicationVersion    String version of the application
+     * @param descriptor         Descriptor of the application
+     * @param applicationName    String name of the application
+     * @param applicationVersion String version of the application
      * @return BoutiquesApplication representing the same application as provided Descriptor
      */
     public BoutiquesApplication descriptorToBoutiquesApplication(Descriptor descriptor, String applicationName,
-                                                                 String applicationVersion){
+                                                                 String applicationVersion) {
         BoutiquesApplication application = new BoutiquesApplication(applicationName, descriptor.getDescription(),
                 applicationVersion);
-        for(Source input : descriptor.getSources()){
+        for (Source input : descriptor.getSources()) {
             BoutiquesInput boutiquesInput = null;
             // it is a flag when type is NOT "URI", and 'vip-type-restriction' is "flag"
-            if ( ( ! "URI".equals(input.getType())) &&
+            if ((!"URI".equals(input.getType())) &&
                     input.getVipTypeRestriction() != null &&
                     "flag".equals(input.getVipTypeRestriction())) {
                 boutiquesInput = handleFlags(input);

@@ -15,7 +15,8 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // testing framework must recreate a MessageBusiness after each test method
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+// testing framework must recreate a MessageBusiness after each test method
 public class EngineIT extends BaseSpringIT {
 
     @Autowired
@@ -27,6 +28,7 @@ public class EngineIT extends BaseSpringIT {
         Engine engine = new Engine("test engine", "test endpoint", "enabled");
         engineBusiness.add(engine);
     }
+
     @Test
     public void testInitialization() throws BusinessException {
         Assertions.assertEquals(1, engineBusiness.get().size());
@@ -40,8 +42,7 @@ public class EngineIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCreate()
-    {
+    public void testCreate() {
         // Without parameters
         Engine engine = new Engine();
     }
@@ -62,8 +63,7 @@ public class EngineIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchAddExistingEngine() throws BusinessException
-    {
+    public void testCatchAddExistingEngine() throws BusinessException {
         Engine engine = new Engine("test engine", "test endpoint 2", "enabled");
 
         Exception exception = assertThrows(

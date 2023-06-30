@@ -26,7 +26,7 @@ public class KeycloakBusiness {
     private static final byte ALLOWED_ATTEMPTS = 2;
 
     @Autowired
-    KeycloakBusiness(Environment env){
+    KeycloakBusiness(Environment env) {
         this.env = env;
     }
 
@@ -61,7 +61,7 @@ public class KeycloakBusiness {
             }
         }
 
-        if (responseEntity == null){
+        if (responseEntity == null) {
             throw new ApiException("token not refreshed after " + attempt + " attempts");
         }
         return responseEntity;

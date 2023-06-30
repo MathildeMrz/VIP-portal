@@ -7,11 +7,13 @@ import fr.insalyon.creatis.vip.core.server.business.Server;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.publication.client.bean.Publication;
 import fr.insalyon.creatis.vip.publication.server.business.PublicationBusiness;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.apache.commons.lang.StringUtils;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PublicationsIT extends BaseSpringIT {
 
     @Autowired
@@ -20,9 +22,9 @@ public class PublicationsIT extends BaseSpringIT {
     private Server server;
 
     private long idPublicationCreated;
-
-
     private String adminMail;
+
+
 
     @BeforeEach
     public void setUp() throws BusinessException, DAOException, GRIDAClientException {
@@ -40,30 +42,26 @@ public class PublicationsIT extends BaseSpringIT {
         Assertions.assertEquals(publicationBusiness.getPublication(idPublicationCreated).getVipApplication(), null, "Incorrect VIPApplication value");
     }
 
-    /* ********************************************************************************************************************************************** */
-    /* ************************************************************* create publication *********************************************************** */
-    /* ********************************************************************************************************************************************** */
-
-    /*@Test
-    public void testCreatePublication() throws BusinessException {
-        // With id
-        Publication publication = new Publication(1L, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
-
-        // Without id
-        Publication publication2 = new Publication("Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
-
-        // Without parameter
-        Publication publication3 = new Publication();
-    }*/
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* add publication *********************************************************** */
+    /* ************************************************************* create and add publication *********************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
     public void testAddPublication() throws BusinessException {
-        Publication publication = new Publication(null, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
+        // With id
+        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
         publicationBusiness.addPublication(publication);
+
+        // Without id
+        Publication publication2 = new Publication("Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminMail, null);
+        publicationBusiness.addPublication(publication2);
+
+        // Without parameter
+        Publication publication3 = new Publication();
+        publicationBusiness.addPublication(publication3);
+
+        Assertions.assertEquals(4, publicationBusiness.getPublications().size(), "Incorrect publications number");
     }
 
     @Test
@@ -74,9 +72,22 @@ public class PublicationsIT extends BaseSpringIT {
         publicationBusiness.addPublication(publication);
     }
 
+    @Test
+    public void testCatchAddPublicationInexistingVipAuthor() throws BusinessException {
+        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", "inexisting_vip_author@test.fr", null);
+
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        publicationBusiness.addPublication(publication)
+        );
+
+        // INSERT + inexisting foreign key vipAuthor => violation
+        assertTrue(StringUtils.contains(exception.getMessage(), "JdbcSQLException: Referential integrity constraint violation"));
+    }
+
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* update publication *********************************************************** */
+    /* ************************************************************** update publication ************************************************************ */
     /* ********************************************************************************************************************************************** */
 
     @Test
@@ -116,11 +127,27 @@ public class PublicationsIT extends BaseSpringIT {
 
     @Test
     public void testCatchUpdateInexistingPublication() throws BusinessException {
-        Publication publication = new Publication(2L, "Publication title", "21/06/2023", "01010100", "author2, author3", "type", "typeName", adminMail, null);
+        Publication publication = new Publication(100L, "Publication title", "21/06/2023", "01010100", "author2, author3", "type", "typeName", adminMail, null);
 
         // UPDATE + inexisting primary key idPublication => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be updated
         publicationBusiness.updatePublication(publication);
+        Assertions.assertEquals(1, publicationBusiness.getPublications().size(), "Incorrect number of publications");
+
+    }
+
+    @Test
+    public void testCatchUpdatePublicationInexistingVipAuthor() throws BusinessException {
+        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author2, author3", "type", "typeName", "inexistingVipAuthor@test.fr", null);
+
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        publicationBusiness.updatePublication(publication)
+        );
+
+        // UPDATE + inexisting foreign key vipAuthor => violation
+        assertTrue(StringUtils.contains(exception.getMessage(), "JdbcSQLException: Referential integrity constraint violation"));
+        assertEquals(adminMail, publicationBusiness.getPublication(idPublicationCreated).getVipAuthor(), "Incorrect vipAuthor publication updated");
     }
 
     /* ********************************************************************************************************************************************** */
@@ -130,6 +157,7 @@ public class PublicationsIT extends BaseSpringIT {
     @Test
     public void testGetPublication() throws BusinessException {
         Publication publication = publicationBusiness.getPublication(idPublicationCreated);
+
         Assertions.assertEquals("author1, author2", publication.getAuthors(), "Incorrect publication authors");
         Assertions.assertEquals(idPublicationCreated, publication.getId(), "Incorrect publication id");
         Assertions.assertEquals("21/06/2023", publication.getDate(), "Incorrect publication DOI");
@@ -144,7 +172,8 @@ public class PublicationsIT extends BaseSpringIT {
     public void testCatchGetInexistingPublication() throws BusinessException {
         // SELECT + inexisting primary key publicationId => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be selected
-        publicationBusiness.getPublication(2L);
+        Publication publication = publicationBusiness.getPublication(100L);
+        assertNull(publication);
     }
 
     /* ********************************************************************************************************************************************** */
@@ -154,16 +183,15 @@ public class PublicationsIT extends BaseSpringIT {
     @Test
     public void testRemovePublication() throws BusinessException {
         publicationBusiness.removePublication(idPublicationCreated);
-        Assertions.assertEquals(publicationBusiness.getPublications().size(), 0, "Incorrect number of publications");
+        Assertions.assertEquals(0, publicationBusiness.getPublications().size(), "Incorrect number of publications");
     }
 
     @Test
     public void testCatchRemoveInexistantPublication() throws BusinessException {
-
         // DELETE + inexisting primary key publicationId => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be deleted
-        publicationBusiness.removePublication(2L);
-
+        publicationBusiness.removePublication(100L);
+        Assertions.assertEquals(1, publicationBusiness.getPublications().size(), "Incorrect number of publications");
     }
 
 }

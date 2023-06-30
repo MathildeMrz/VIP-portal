@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class GeneralTileGrid extends ApplicationsTileGrid {
@@ -61,7 +60,7 @@ public class GeneralTileGrid extends ApplicationsTileGrid {
 
         if (applicationName.equals(CoreConstants.APP_ACCOUNT)) {
             Layout.getInstance().addTab(
-                CoreConstants.TAB_ACCOUNT, AccountTab::new);
+                    CoreConstants.TAB_ACCOUNT, AccountTab::new);
             return;
         }
 

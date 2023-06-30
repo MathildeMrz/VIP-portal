@@ -53,7 +53,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Service
@@ -94,9 +93,9 @@ public class ApplicationBusiness {
     public List<Application> getPublicApplicationsWithGroups() throws BusinessException {
 
         try {
-            Map<String,AppClass> allClasses = classDAO.getClasses().stream().collect(Collectors.toMap(
-                        AppClass::getName, appClass -> appClass));
-            Map<String,Group> allGroups = groupDAO.getGroups().stream().collect(Collectors.toMap(
+            Map<String, AppClass> allClasses = classDAO.getClasses().stream().collect(Collectors.toMap(
+                    AppClass::getName, appClass -> appClass));
+            Map<String, Group> allGroups = groupDAO.getGroups().stream().collect(Collectors.toMap(
                     Group::getName, group -> group));
             Set<String> allVisibleApplicationNames = applicationDAO.getAllVisibleVersions().stream()
                     .map(AppVersion::getApplicationName).collect(Collectors.toSet());
@@ -114,7 +113,7 @@ public class ApplicationBusiness {
                         .map(group -> group.getName())
                         .collect(Collectors.toSet());
 
-                if (currentAppPublicGroups.isEmpty()){
+                if (currentAppPublicGroups.isEmpty()) {
                     continue;
                 }
 
@@ -140,7 +139,7 @@ public class ApplicationBusiness {
                 throw new BusinessException("Wrong application name");
             }
             // need to fetch all the groups to get their properties
-            Map<String,Group> allGroups = groupDAO.getGroups().stream().collect(
+            Map<String, Group> allGroups = groupDAO.getGroups().stream().collect(
                     Collectors.toMap(Group::getName, group -> group));
             List<Group> appGroups = new ArrayList<>();
             for (String className : application.getApplicationClasses()) {

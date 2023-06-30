@@ -38,14 +38,14 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
  * classes and to create/inject automatically all the beans / service. Note that
  * the GWT servlet cannot be created this way (they are created by the application
  * server / tomcat) through the web.xml file.
- *
+ * <p>
  * This also configures the database/transaction/connection : spring will
  * automatically handle transactions and connection creation (and closing)
  * by annotating classes with @Transactional and using spring utils to get
  * the connection in the dao
- *
+ * <p>
  * This also creates spring beans for services coming from maven dependencies (grida and sma)
- *
+ * <p>
  * This also manage the vip configuration folder, defaulting to "$HOME/.vip" but
  * allowing change for tests and local use.
  */
@@ -117,7 +117,7 @@ public class SpringCoreConfig {
 
     // to verify the @Value injection existence
     @Bean
-    public static PropertySourcesPlaceholderConfigurer properties(){
+    public static PropertySourcesPlaceholderConfigurer properties() {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
@@ -145,17 +145,17 @@ public class SpringCoreConfig {
             logger.info("found vipConfigFolder property : {}", configFolder);
         } else {
             // if not, look in user home folder
-            configFolder = env.getProperty("user.home")  + Server.VIP_DIR;
+            configFolder = env.getProperty("user.home") + Server.VIP_DIR;
             logger.info("vipConfigFolder property not found, using user-home : {}", configFolder);
         }
         Resource vipConfigFolder;
-        if ( configFolder.startsWith(CLASSPATH_URL_PREFIX)) {
+        if (configFolder.startsWith(CLASSPATH_URL_PREFIX)) {
             vipConfigFolder = new ClassPathResource(configFolder.substring(CLASSPATH_URL_PREFIX.length()));
         } else {
             vipConfigFolder = new FileSystemResource(configFolder);
         }
-        if ( ! vipConfigFolder.exists() &&
-                ! vipConfigFolder.getFile().mkdir()) {
+        if (!vipConfigFolder.exists() &&
+                !vipConfigFolder.getFile().mkdir()) {
             logger.error("Cannot create VIP config folder : {}", vipConfigFolder);
             throw new BeanInitializationException("Cannot create VIP config folder");
         }

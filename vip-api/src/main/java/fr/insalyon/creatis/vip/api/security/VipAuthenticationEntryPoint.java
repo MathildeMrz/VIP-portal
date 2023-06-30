@@ -53,7 +53,7 @@ import java.io.IOException;
 
 /**
  * Created by abonnet on 7/26/16.
- *
+ * <p>
  * Entry point that writes error response in json with a Jackson object mapper.
  */
 @Component
@@ -76,7 +76,7 @@ public class VipAuthenticationEntryPoint implements AuthenticationEntryPoint, Au
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         // keycloak may already have set it up
-        if ( ! response.containsHeader("WWW-Authenticate")) {
+        if (!response.containsHeader("WWW-Authenticate")) {
             response.addHeader("WWW-Authenticate", "API-key");
         }
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

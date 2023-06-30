@@ -61,7 +61,6 @@ import java.security.cert.*;
 import java.util.*;
 
 /**
- *
  * @author Rafael Silva
  */
 @Component
@@ -145,7 +144,7 @@ public class ProxyClient {
     }
 
     private X509Certificate readCertificate(File proxyFile)
-        throws FileNotFoundException, IOException, CertificateException {
+            throws FileNotFoundException, IOException, CertificateException {
         try (FileInputStream fis = new FileInputStream(proxyFile)) {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             return (X509Certificate) cf.generateCertificate(fis);
@@ -270,7 +269,7 @@ public class ProxyClient {
         KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
         keyPair = keyGenerator.generateKeyPair();
 
-        X500Principal subject = new X500Principal ("CN=irrelevant");
+        X500Principal subject = new X500Principal("CN=irrelevant");
         ContentSigner signGen = new JcaContentSignerBuilder("SHA1withRSA").build(keyPair.getPrivate());
         PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(subject, keyPair.getPublic());
         PKCS10CertificationRequest cert = builder.build(signGen);
@@ -367,7 +366,7 @@ public class ProxyClient {
         pki = PrivateKeyInfo.getInstance(keyInfo);
         ASN1Primitive innerType = pki.parsePrivateKey().toASN1Primitive();
         // build and return the actual key
-        ASN1Sequence privKey  = (ASN1Sequence)innerType;
+        ASN1Sequence privKey = (ASN1Sequence) innerType;
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         DEROutputStream der = new DEROutputStream(bout);
         der.writeObject(privKey);
@@ -492,7 +491,7 @@ public class ProxyClient {
                             subject);
                     throw new CertificateException(
                             "Server certificate subject CN contains unknown service element: "
-                            + subject);
+                                    + subject);
                 }
             }
             String myHostname = server.getMyProxyHost();
@@ -508,9 +507,9 @@ public class ProxyClient {
                         CN, server.getMyProxyHost());
                 throw new CertificateException(
                         "Server certificate subject CN (" + CN
-                        + ") does not match server hostname ("
-                        + server.getMyProxyHost()
-                        + ").");
+                                + ") does not match server hostname ("
+                                + server.getMyProxyHost()
+                                + ").");
             }
         }
     }

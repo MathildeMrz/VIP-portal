@@ -47,27 +47,27 @@ import java.util.function.Function;
  */
 public class ErrorCodeAndMessageTestUtils {
 
-    public static final Map<String,Function> errorCodeAndMessageSuppliers;
+    public static final Map<String, Function> errorCodeAndMessageSuppliers;
 
     static {
         errorCodeAndMessageSuppliers = getErrorCodeAndMessageSuppliers();
     }
 
-    public static Map<String,Function> getErrorCodeAndMessageSuppliers() {
+    public static Map<String, Function> getErrorCodeAndMessageSuppliers() {
         return JsonCustomObjectMatcher.formatSuppliers(
                 Arrays.asList("errorCode", "errorMessage"),
                 ErrorCodeAndMessage::getErrorCode,
                 ErrorCodeAndMessage::getErrorMessage);
     }
 
-    public static Matcher<Map<String,?>> jsonCorrespondsToErrorCodeAndMessage(
+    public static Matcher<Map<String, ?>> jsonCorrespondsToErrorCodeAndMessage(
             ErrorCodeAndMessage errorCodeAndMessage
     ) {
         Map<Class, Map<String, Function>> suppliersRegistry = new HashMap<>();
         return JsonCustomObjectMatcher.jsonCorrespondsTo(errorCodeAndMessage, errorCodeAndMessageSuppliers, suppliersRegistry);
     }
 
-    public static Matcher<Map<String,?>> jsonCorrespondsToErrorCodeAndMessage(
+    public static Matcher<Map<String, ?>> jsonCorrespondsToErrorCodeAndMessage(
             Integer code, String message
     ) {
         ErrorCodeAndMessage errorCodeAndMessage = new ErrorCodeAndMessage(
@@ -76,7 +76,7 @@ public class ErrorCodeAndMessageTestUtils {
         return JsonCustomObjectMatcher.jsonCorrespondsTo(errorCodeAndMessage, errorCodeAndMessageSuppliers, suppliersRegistry);
     }
 
-    public static Matcher<Map<String,?>> jsonCorrespondsToErrorCodeAndMessage(
+    public static Matcher<Map<String, ?>> jsonCorrespondsToErrorCodeAndMessage(
             VipError vipError
     ) {
         ErrorCodeAndMessage errorCodeAndMessage = new ErrorCodeAndMessage(

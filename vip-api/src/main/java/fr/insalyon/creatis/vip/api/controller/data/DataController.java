@@ -86,7 +86,7 @@ public class DataController extends ApiController {
     public ExistsApiResponse doesPathExists() throws ApiException {
         String completePath = extractWildcardPath(httpServletRequest);
         logMethodInvocation(logger, "doesPathExists", currentUser().getEmail(), completePath);
-            // business call
+        // business call
         return new ExistsApiResponse(dataApiBusiness.doesFileExist(completePath));
     }
 

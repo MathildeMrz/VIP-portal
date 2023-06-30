@@ -1,19 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Task.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.bean</a> &gt; <span class="el_source">Task.java</span></div><h1>Task.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Task.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.bean</a> &gt; <span class="el_source">Task.java</span></div><h1>Task.java</h1><pre class="source lang-java linenums">/*
  * Copyright and authors: see LICENSE.txt in base repository.
  *
  * This software is a web portal for pipeline execution on distributed systems.
  *
  * This software is governed by the CeCILL-B license under French law and
- * abiding by the rules of distribution of free software.  You can  use, 
+ * abiding by the rules of distribution of free software.  You can  use,
  * modify and/ or redistribute the software under the terms of the CeCILL-B
  * license as circulated by CEA, CNRS and INRIA at the following URL
- * &quot;http://www.cecill.info&quot;. 
+ * &quot;http://www.cecill.info&quot;.
  *
  * As a counterpart to the access to the source code and  rights to copy,
  * modify and redistribute granted by the license, users are provided only
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
- * liability. 
+ * liability.
  *
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
@@ -22,9 +22,9 @@
  * therefore means  that it is reserved for developers  and  experienced
  * professionals having in-depth computer knowledge. Users are therefore
  * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or 
- * data to be ensured and,  more generally, to use and operate it in the 
- * same conditions as regards security. 
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
  *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-B license and that you accept its terms.
@@ -35,7 +35,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import fr.insalyon.creatis.vip.application.client.view.monitor.job.TaskStatus;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class Task implements IsSerializable {
@@ -51,105 +50,105 @@ public class Task implements IsSerializable {
     private int minorStatus;
     private int jobID;
 
-<span class="nc" id="L54">    public Task() {</span>
-<span class="nc" id="L55">    }</span>
+<span class="nc" id="L53">    public Task() {</span>
+<span class="nc" id="L54">    }</span>
 
-<span class="nc" id="L57">    public Task(int jobID, TaskStatus status, String command) {</span>
+<span class="nc" id="L56">    public Task(int jobID, TaskStatus status, String command) {</span>
 
-<span class="nc" id="L59">        this.jobID = jobID;</span>
-<span class="nc" id="L60">        this.status = status;</span>
-<span class="nc" id="L61">        this.command = command;</span>
-<span class="nc" id="L62">    }</span>
+<span class="nc" id="L58">        this.jobID = jobID;</span>
+<span class="nc" id="L59">        this.status = status;</span>
+<span class="nc" id="L60">        this.command = command;</span>
+<span class="nc" id="L61">    }</span>
 
     public Task(String id, TaskStatus status, String command, String fileName,
-            int exitCode, String siteName, String nodeName, int minorStatus,
-<span class="nc" id="L66">            String... parameters) {</span>
+                int exitCode, String siteName, String nodeName, int minorStatus,
+<span class="nc" id="L65">                String... parameters) {</span>
 
-<span class="nc" id="L68">        this.id = id;</span>
-<span class="nc" id="L69">        this.status = status;</span>
-<span class="nc" id="L70">        this.command = command;</span>
-<span class="nc" id="L71">        this.fileName = fileName;</span>
-<span class="nc" id="L72">        this.exitCode = exitCode;</span>
-<span class="nc" id="L73">        this.siteName = siteName;</span>
-<span class="nc" id="L74">        this.nodeName = nodeName;</span>
-<span class="nc" id="L75">        this.parameters = parameters;</span>
-<span class="nc" id="L76">        this.minorStatus = minorStatus;</span>
-<span class="nc" id="L77">    }</span>
+<span class="nc" id="L67">        this.id = id;</span>
+<span class="nc" id="L68">        this.status = status;</span>
+<span class="nc" id="L69">        this.command = command;</span>
+<span class="nc" id="L70">        this.fileName = fileName;</span>
+<span class="nc" id="L71">        this.exitCode = exitCode;</span>
+<span class="nc" id="L72">        this.siteName = siteName;</span>
+<span class="nc" id="L73">        this.nodeName = nodeName;</span>
+<span class="nc" id="L74">        this.parameters = parameters;</span>
+<span class="nc" id="L75">        this.minorStatus = minorStatus;</span>
+<span class="nc" id="L76">    }</span>
 
     public String getCommand() {
-<span class="nc" id="L80">        return command;</span>
+<span class="nc" id="L79">        return command;</span>
     }
 
     public void setCommand(String command) {
-<span class="nc" id="L84">        this.command = command;</span>
-<span class="nc" id="L85">    }</span>
+<span class="nc" id="L83">        this.command = command;</span>
+<span class="nc" id="L84">    }</span>
 
     public String getFileName() {
-<span class="nc" id="L88">        return fileName;</span>
+<span class="nc" id="L87">        return fileName;</span>
     }
 
     public void setFileName(String fileName) {
-<span class="nc" id="L92">        this.fileName = fileName;</span>
-<span class="nc" id="L93">    }</span>
+<span class="nc" id="L91">        this.fileName = fileName;</span>
+<span class="nc" id="L92">    }</span>
 
     public String getId() {
-<span class="nc" id="L96">        return id;</span>
+<span class="nc" id="L95">        return id;</span>
     }
 
     public void setId(String id) {
-<span class="nc" id="L100">        this.id = id;</span>
-<span class="nc" id="L101">    }</span>
+<span class="nc" id="L99">        this.id = id;</span>
+<span class="nc" id="L100">    }</span>
 
     public TaskStatus getStatus() {
-<span class="nc" id="L104">        return status;</span>
+<span class="nc" id="L103">        return status;</span>
     }
 
     public void setStatus(TaskStatus status) {
-<span class="nc" id="L108">        this.status = status;</span>
-<span class="nc" id="L109">    }</span>
+<span class="nc" id="L107">        this.status = status;</span>
+<span class="nc" id="L108">    }</span>
 
     public int getExitCode() {
-<span class="nc" id="L112">        return exitCode;</span>
+<span class="nc" id="L111">        return exitCode;</span>
     }
 
     public String getNodeName() {
-<span class="nc" id="L116">        return nodeName;</span>
+<span class="nc" id="L115">        return nodeName;</span>
     }
 
     public void setNodeName(String nodeName) {
-<span class="nc" id="L120">        this.nodeName = nodeName;</span>
-<span class="nc" id="L121">    }</span>
+<span class="nc" id="L119">        this.nodeName = nodeName;</span>
+<span class="nc" id="L120">    }</span>
 
     public String getSiteName() {
-<span class="nc" id="L124">        return siteName;</span>
+<span class="nc" id="L123">        return siteName;</span>
     }
 
     public void setSiteName(String siteName) {
-<span class="nc" id="L128">        this.siteName = siteName;</span>
-<span class="nc" id="L129">    }</span>
+<span class="nc" id="L127">        this.siteName = siteName;</span>
+<span class="nc" id="L128">    }</span>
 
     public String[] getParameters() {
-<span class="nc" id="L132">        return parameters;</span>
+<span class="nc" id="L131">        return parameters;</span>
     }
 
     public void setParameters(String[] parameters) {
-<span class="nc" id="L136">        this.parameters = parameters;</span>
-<span class="nc" id="L137">    }</span>
+<span class="nc" id="L135">        this.parameters = parameters;</span>
+<span class="nc" id="L136">    }</span>
 
     public int getMinorStatus() {
-<span class="nc" id="L140">        return minorStatus;</span>
+<span class="nc" id="L139">        return minorStatus;</span>
     }
 
     public void setMinorStatus(int minorStatus) {
-<span class="nc" id="L144">        this.minorStatus = minorStatus;</span>
-<span class="nc" id="L145">    }</span>
+<span class="nc" id="L143">        this.minorStatus = minorStatus;</span>
+<span class="nc" id="L144">    }</span>
 
     public int getJobID() {
-<span class="nc" id="L148">        return jobID;</span>
+<span class="nc" id="L147">        return jobID;</span>
     }
 
     public void setJobID(int jobID) {
-<span class="nc" id="L152">        this.jobID = jobID;</span>
-<span class="nc" id="L153">    }</span>
+<span class="nc" id="L151">        this.jobID = jobID;</span>
+<span class="nc" id="L152">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

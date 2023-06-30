@@ -14,8 +14,9 @@ import javax.sql.DataSource;
 @Configuration
 public class DataSourceConfig {
 
-    @Bean(destroyMethod="") // needed because the application server (tomcat) must close it, not Spring
-    @Qualifier("db-datasource") // there are several Datasource in spring context, qualifier is needed to avoid ambiguity
+    @Bean(destroyMethod = "") // needed because the application server (tomcat) must close it, not Spring
+    @Qualifier("db-datasource")
+    // there are several Datasource in spring context, qualifier is needed to avoid ambiguity
     @Profile({"default", "prod", "jndi-db"})  // needed to change database config in tests
     public DataSource jndiDataSource() {
         return new JndiDataSourceLookup().getDataSource("jdbc/vip");

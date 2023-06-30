@@ -51,7 +51,7 @@ import javax.validation.Valid;
  * Created by abonnet on 8/21/17.
  */
 @RestController
-public class AuthenticationController extends ApiController{
+public class AuthenticationController extends ApiController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -68,7 +68,7 @@ public class AuthenticationController extends ApiController{
     public AuthenticationInfo authenticate(
             @RequestBody @Valid AuthenticationCredentials authenticationCredentials)
             throws ApiException {
-        logMethodInvocation(logger,"authenticate", authenticationCredentials.getUsername());
+        logMethodInvocation(logger, "authenticate", authenticationCredentials.getUsername());
         return apiBusiness.authenticate(authenticationCredentials);
     }
 
@@ -76,7 +76,7 @@ public class AuthenticationController extends ApiController{
     public AuthenticationInfo createSession(
             @RequestBody @Valid AuthenticationCredentials authenticationCredentials)
             throws ApiException {
-        logMethodInvocation(logger,"createSession", authenticationCredentials.getUsername());
+        logMethodInvocation(logger, "createSession", authenticationCredentials.getUsername());
         return apiBusiness.authenticateSession(authenticationCredentials);
     }
 

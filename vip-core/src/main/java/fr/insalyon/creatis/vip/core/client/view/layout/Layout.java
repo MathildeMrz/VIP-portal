@@ -54,7 +54,6 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class Layout {
@@ -116,14 +115,13 @@ public class Layout {
 
     /**
      * Authenticates a user.
-     *
      */
     public void authenticate(User user) {
         if (user != null && Cookies.isCookieEnabled()) {
             Cookies.setCookie(CoreConstants.COOKIES_USER, user.getEmail(),
-                              CoreConstants.COOKIES_EXPIRATION_DATE, null, "/", false);
+                    CoreConstants.COOKIES_EXPIRATION_DATE, null, "/", false);
             Cookies.setCookie(CoreConstants.COOKIES_SESSION, user.getSession(),
-                              CoreConstants.COOKIES_EXPIRATION_DATE, null, "/", false);
+                    CoreConstants.COOKIES_EXPIRATION_DATE, null, "/", false);
 
             if (user.isConfirmed()) {
                 Modules.getInstance().initializeModules(user);
@@ -145,7 +143,6 @@ public class Layout {
 
     /**
      * Signs out.
-     *
      */
     public void signout() {
 
@@ -205,7 +202,6 @@ public class Layout {
     }
 
     /**
-     *
      * @param message
      * @param delay
      */
@@ -214,7 +210,6 @@ public class Layout {
     }
 
     /**
-     *
      * @param message
      */
     public void setNoticeMessage(String message) {
@@ -222,7 +217,6 @@ public class Layout {
     }
 
     /**
-     *
      * @param message
      * @param delay
      */
@@ -231,7 +225,6 @@ public class Layout {
     }
 
     /**
-     *
      * @param message
      */
     public void setWarningMessage(String message) {
@@ -239,7 +232,6 @@ public class Layout {
     }
 
     /**
-     *
      * @param message
      * @param delay
      */

@@ -58,7 +58,7 @@ public interface ApplicationImporterService extends RemoteService {
     void createApplication(BoutiquesApplication bt, String type, String tag, boolean isRunOnGrid, boolean overwriteVersion, String fileAccessProtocol) throws ApplicationImporterException;
 
     String getApplicationImporterRootFolder() throws ApplicationImporterException;
-    
+
     List<String> getApplicationImporterRequirements() throws ApplicationImporterException;
-    
+
 }

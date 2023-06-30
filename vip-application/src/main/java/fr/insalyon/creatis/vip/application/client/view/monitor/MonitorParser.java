@@ -39,7 +39,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class MonitorParser {
@@ -66,11 +65,11 @@ public class MonitorParser {
     }
 
     public Layout.TabFactoryAndId parse(
-        final String simulationId,
-        final String simulationName,
-        final String applicationName,
-        final SimulationStatus status,
-        final Date launchedDate) {
+            final String simulationId,
+            final String simulationName,
+            final String applicationName,
+            final SimulationStatus status,
+            final Date launchedDate) {
 
         for (MonitorParserInterface parser : parsers) {
             if (parser.parse(applicationName)) {
@@ -78,7 +77,7 @@ public class MonitorParser {
             }
         }
         return new Layout.TabFactoryAndId(
-            () -> new SimulationTab(simulationId, simulationName, status),
-            AbstractSimulationTab.tabIdFrom(simulationId));
+                () -> new SimulationTab(simulationId, simulationName, status),
+                AbstractSimulationTab.tabIdFrom(simulationId));
     }
 }

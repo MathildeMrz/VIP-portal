@@ -49,11 +49,11 @@ import static org.springframework.util.ClassUtils.isPrimitiveOrWrapper;
 
 /**
  * Created by abonnet on 8/3/16
- *
+ * <p>
  * // TODO verify generic types of suppliers
  * // TODO study and correct error message
  */
-public class JsonCustomObjectMatcher<T> extends TypeSafeDiagnosingMatcher<Map<String,?>> {
+public class JsonCustomObjectMatcher<T> extends TypeSafeDiagnosingMatcher<Map<String, ?>> {
 
     private final T expectedBean;
     private final Matcher<Integer> nonNullPropertiesCountMatcher;
@@ -67,12 +67,12 @@ public class JsonCustomObjectMatcher<T> extends TypeSafeDiagnosingMatcher<Map<St
 
     public JsonCustomObjectMatcher(T expectedBean,
                                    Map<String, Function> suppliers,
-                                   Map<Class,Map<String,Function>> suppliersRegistry) {
+                                   Map<Class, Map<String, Function>> suppliersRegistry) {
         super(Map.class);
         this.expectedBean = expectedBean;
         propertyMatchers = new ArrayList<>(suppliers.size());
         suppliersRegistry.put(expectedBean.getClass(), suppliers);
-        for (Entry<String,Function> supplierEntry : suppliers.entrySet()) {
+        for (Entry<String, Function> supplierEntry : suppliers.entrySet()) {
             String property = supplierEntry.getKey();
             Object expectedValue = supplierEntry.getValue().apply(expectedBean);
             if (expectedValue != null) {
@@ -89,7 +89,7 @@ public class JsonCustomObjectMatcher<T> extends TypeSafeDiagnosingMatcher<Map<St
     }
 
     @Override
-    public boolean matchesSafely(Map<String,?> map, Description mismatch) {
+    public boolean matchesSafely(Map<String, ?> map, Description mismatch) {
         Integer nonNullValues = countNonNullValue(map);
         if (!nonNullPropertiesCountMatcher.matches(nonNullValues)) {
             nonNullPropertiesCountMatcher.describeMismatch(nonNullValues, mismatch);
@@ -111,9 +111,9 @@ public class JsonCustomObjectMatcher<T> extends TypeSafeDiagnosingMatcher<Map<St
                 .appendList(" [", ", ", "]", propertyMatchers);
     }
 
-    public int countNonNullValue(Map<String,?> map) {
+    public int countNonNullValue(Map<String, ?> map) {
         int counter = 0;
-        for (Entry<String,?> entry : map.entrySet()) {
+        for (Entry<String, ?> entry : map.entrySet()) {
             if (entry.getValue() != null) {
                 counter++;
             }
@@ -121,13 +121,13 @@ public class JsonCustomObjectMatcher<T> extends TypeSafeDiagnosingMatcher<Map<St
         return counter;
     }
 
-    private static class JsonMapMatcher extends TypeSafeDiagnosingMatcher<Map<String,?>> {
+    private static class JsonMapMatcher extends TypeSafeDiagnosingMatcher<Map<String, ?>> {
 
         private final Matcher<Integer> sizeMatcher;
         private final List<Matcher<?>> mapEntriesMatchers = new ArrayList<>();
 
         private JsonMapMatcher(
-                Map<?,?> expectedMap,
+                Map<?, ?> expectedMap,
                 Map<Class, Map<String, Function>> suppliersRegistry) {
             sizeMatcher = equalTo(expectedMap.size());
             for (Map.Entry<?, ?> expectedEntry : expectedMap.entrySet()) {
@@ -200,7 +200,7 @@ public class JsonCustomObjectMatcher<T> extends TypeSafeDiagnosingMatcher<Map<St
                 // if its an enum, the actual value should be equal
                 return equalTo(expectedValue.toString()); // tostring to avoid type difference
             } else if (Map.class.isAssignableFrom(expectedValueType)) {
-                Map<?,?> map = (Map) expectedValue;
+                Map<?, ?> map = (Map) expectedValue;
                 return new JsonMapMatcher(map, suppliersRegistry);
             } else {
                 return getCustomObjectMatcherFromRegistry(expectedValue, suppliersRegistry);
@@ -211,7 +211,7 @@ public class JsonCustomObjectMatcher<T> extends TypeSafeDiagnosingMatcher<Map<St
     private static Matcher<Map<String, ?>> getCustomObjectMatcherFromRegistry(
             Object o,
             Map<Class, Map<String, Function>> suppliersRegistry) {
-        for (Entry<Class, Map<String,Function>> supplierEntry : suppliersRegistry.entrySet()) {
+        for (Entry<Class, Map<String, Function>> supplierEntry : suppliersRegistry.entrySet()) {
             if (supplierEntry.getKey().isAssignableFrom(o.getClass())) {
                 return jsonCorrespondsTo(o, supplierEntry.getValue(), suppliersRegistry);
             }
@@ -219,13 +219,13 @@ public class JsonCustomObjectMatcher<T> extends TypeSafeDiagnosingMatcher<Map<St
         throw new RuntimeException("cant find supplier for type " + o.getClass().getSimpleName());
     }
 
-    public static <T> Matcher<Map<String,?>> jsonCorrespondsTo(
+    public static <T> Matcher<Map<String, ?>> jsonCorrespondsTo(
             T expectedBean,
             Map<String, Function> suppliers) {
         return new JsonCustomObjectMatcher<T>(expectedBean, suppliers);
     }
 
-    public static <T> Matcher<Map<String,?>> jsonCorrespondsTo(
+    public static <T> Matcher<Map<String, ?>> jsonCorrespondsTo(
             T expectedBean,
             Map<String, Function> suppliers,
             Map<Class, Map<String, Function>> suppliersRegistry) {
@@ -233,12 +233,12 @@ public class JsonCustomObjectMatcher<T> extends TypeSafeDiagnosingMatcher<Map<St
     }
 
     public static <T> Map<String, Function> formatSuppliers(
-            List<String> mapKeys, Function<T,?>... suppliers) {
+            List<String> mapKeys, Function<T, ?>... suppliers) {
         if (mapKeys.size() != suppliers.length) {
             throw new IllegalArgumentException("wrong suppliers number given");
         }
         Map<String, Function> suppliersMap = new HashMap<>();
-        for (int it=0; it<suppliers.length; it++) {
+        for (int it = 0; it < suppliers.length; it++) {
             suppliersMap.put(mapKeys.get(it), suppliers[it]);
         }
         return suppliersMap;

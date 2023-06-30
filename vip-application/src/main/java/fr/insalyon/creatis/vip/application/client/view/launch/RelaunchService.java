@@ -11,7 +11,7 @@ public class RelaunchService {
     public interface ApplicationRelauncher {
         boolean relaunchIfSupported(
                 String applicationName, String applicationVersion, String applicationClass,
-                String simulationName, Map<String,String> inputs, String tabId);
+                String simulationName, Map<String, String> inputs, String tabId);
     }
 
     private static RelaunchService instance;
@@ -30,7 +30,7 @@ public class RelaunchService {
 
     public void relaunch(
             String applicationName, String applicationVersion, String applicationClass, String simulationName,
-            Map<String,String> inputs, String tabId) {
+            Map<String, String> inputs, String tabId) {
         for (ApplicationRelauncher applicationRelauncher : applicationRelaunchers) {
             if (applicationRelauncher.relaunchIfSupported(
                     applicationName, applicationVersion, applicationClass, simulationName, inputs, tabId)) {

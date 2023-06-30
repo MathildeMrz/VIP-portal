@@ -49,7 +49,6 @@ import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
 import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
 
 /**
- *
  * @author Rafael Silva
  */
 public class ViewerWindow extends Window {
@@ -91,6 +90,7 @@ public class ViewerWindow extends Window {
 
     /**
      * Views string content
+     *
      * @param title
      * @param simulationID
      * @param content
@@ -104,6 +104,7 @@ public class ViewerWindow extends Window {
 
     /**
      * Views file content
+     *
      * @param title
      * @param simulationID
      * @param folder
@@ -111,7 +112,7 @@ public class ViewerWindow extends Window {
      * @param extension
      */
     public ViewerWindow(String title, String simulationID, String folder,
-            String fileName, String extension) {
+                        String fileName, String extension) {
         this.file = true;
         this.folder = folder;
         this.fileName = fileName;
@@ -172,10 +173,10 @@ public class ViewerWindow extends Window {
             public void onClick(ClickEvent event) {
                 com.google.gwt.user.client.Window.open(
                         GWT.getModuleBaseURL()
-                        + "/getfileservice?filepath=" + "/" + simulationID
-                        + "/" + folder + "/" + fileName + extension
-                        + "&" + CoreConstants.COOKIES_SESSION
-                        + "=" + Cookies.getCookie(CoreConstants.COOKIES_SESSION),
+                                + "/getfileservice?filepath=" + "/" + simulationID
+                                + "/" + folder + "/" + fileName + extension
+                                + "&" + CoreConstants.COOKIES_SESSION
+                                + "=" + Cookies.getCookie(CoreConstants.COOKIES_SESSION),
                         "", "");
             }
         });

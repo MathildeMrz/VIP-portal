@@ -54,7 +54,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class SimulationsToolStrip extends ToolStrip {
@@ -69,69 +68,69 @@ public class SimulationsToolStrip extends ToolStrip {
         // Refresh Button
         this.addButton(WidgetUtil.getToolStripButton("Refresh",
                 CoreConstants.ICON_REFRESH, null, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getSimulationsTab().loadData();
-            }
-        }));
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        getSimulationsTab().loadData();
+                    }
+                }));
 
         // Search Button
         this.addButton(WidgetUtil.getToolStripButton("Search",
                 ApplicationConstants.ICON_SEARCH, null, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getSimulationsTab().expandSearchSection();
-            }
-        }));
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        getSimulationsTab().expandSearchSection();
+                    }
+                }));
 
         //Kill Executions Button
         this.addButton(WidgetUtil.getToolStripButton("Kill Executions",
                 ApplicationConstants.ICON_KILL, null, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                SC.ask("Do you really want to kill the selected running executions?", new BooleanCallback() {
                     @Override
-                    public void execute(Boolean value) {
-                        if (value) {
-                            killSimulations();
-                        }
+                    public void onClick(ClickEvent event) {
+                        SC.ask("Do you really want to kill the selected running executions?", new BooleanCallback() {
+                            @Override
+                            public void execute(Boolean value) {
+                                if (value) {
+                                    killSimulations();
+                                }
+                            }
+                        });
                     }
-                });
-            }
-        }));
+                }));
 
         // Clean Executions Button
         this.addButton(WidgetUtil.getToolStripButton("Clean Executions",
                 ApplicationConstants.ICON_CLEAN, null, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                SC.confirm("Do you really want to clean the selected completed/killed executions?", new BooleanCallback() {
                     @Override
-                    public void execute(Boolean value) {
-                        if (value) {
-                            cleanSimulations();
-                        }
+                    public void onClick(ClickEvent event) {
+                        SC.confirm("Do you really want to clean the selected completed/killed executions?", new BooleanCallback() {
+                            @Override
+                            public void execute(Boolean value) {
+                                if (value) {
+                                    cleanSimulations();
+                                }
+                            }
+                        });
                     }
-                });
-            }
-        }));
+                }));
         //Report issue Button
         this.addButton(WidgetUtil.getToolStripButton("Report Issue About This Execution",
                 ApplicationConstants.ICON_REPORT_ISSUE, null, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                ListGridRecord[] records = getSimulationsTab().getGridSelection();
-                List<String> simulationIDs = new ArrayList<String>();
-                List<String> simulationNames = new ArrayList<String>();
-                for (ListGridRecord record : records) {
-                    SimulationRecord data = (SimulationRecord) record;
-                    SimulationStatus status = SimulationStatus.valueOf(data.getStatus());
-                    simulationIDs.add(data.getSimulationId());
-                    simulationNames.add(data.getSimulationName());
-                }
-                sendMailToVIP(simulationIDs, simulationNames);
-            }
-        }));
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        ListGridRecord[] records = getSimulationsTab().getGridSelection();
+                        List<String> simulationIDs = new ArrayList<String>();
+                        List<String> simulationNames = new ArrayList<String>();
+                        for (ListGridRecord record : records) {
+                            SimulationRecord data = (SimulationRecord) record;
+                            SimulationStatus status = SimulationStatus.valueOf(data.getStatus());
+                            simulationIDs.add(data.getSimulationId());
+                            simulationNames.add(data.getSimulationName());
+                        }
+                        sendMailToVIP(simulationIDs, simulationNames);
+                    }
+                }));
 
 
         if (CoreModule.user.isSystemAdministrator()) {
@@ -139,79 +138,78 @@ public class SimulationsToolStrip extends ToolStrip {
             // Purge Executions
             this.addButton(WidgetUtil.getToolStripButton("Purge Executions",
                     CoreConstants.ICON_CLEAR, null, new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    SC.ask("Do you really want to purge the selected cleaned executions?", new BooleanCallback() {
                         @Override
-                        public void execute(Boolean value) {
-                            if (value) {
-                                purgeSimulations();
-                            }
+                        public void onClick(ClickEvent event) {
+                            SC.ask("Do you really want to purge the selected cleaned executions?", new BooleanCallback() {
+                                @Override
+                                public void execute(Boolean value) {
+                                    if (value) {
+                                        purgeSimulations();
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
-            }));
+                    }));
 
             // kill Simulation With Reason
             this.addButton(WidgetUtil.getToolStripButton("Kill Execution With Reason",
                     ApplicationConstants.ICON_KILLWR, null, new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    SC.ask("Do you really want to kill the selected running executions?", new BooleanCallback() {
                         @Override
-                        public void execute(Boolean value) {
-                            if (value) {
-                                killSimulationWithReason();
-                            }
+                        public void onClick(ClickEvent event) {
+                            SC.ask("Do you really want to kill the selected running executions?", new BooleanCallback() {
+                                @Override
+                                public void execute(Boolean value) {
+                                    if (value) {
+                                        killSimulationWithReason();
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
-            }));
+                    }));
 
             // Mark Simulation as Completed
             this.addButton(WidgetUtil.getToolStripButton("Mark Executions Completed",
                     ApplicationConstants.ICON_MARK_COMPLETED, null, new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    SC.ask("Do you really want to mark as completed the selected killed executions?", new BooleanCallback() {
                         @Override
-                        public void execute(Boolean value) {
-                            if (value) {
-                                markSimulationsCompleted();
-                            }
+                        public void onClick(ClickEvent event) {
+                            SC.ask("Do you really want to mark as completed the selected killed executions?", new BooleanCallback() {
+                                @Override
+                                public void execute(Boolean value) {
+                                    if (value) {
+                                        markSimulationsCompleted();
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
-            }));
+                    }));
 
 
             // Stats Button
             this.addSeparator();
             this.addButton(WidgetUtil.getToolStripButton("Performance Statistics",
                     ApplicationConstants.ICON_CHART, null, new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    StatsTab statsTab = (StatsTab) Layout.getInstance().addTab(
-                        ApplicationConstants.TAB_STATS, StatsTab::new);
-                    statsTab.setSimulationsList(getSimulationsTab().getSimulationsList());
-                }
-            }));
+                        @Override
+                        public void onClick(ClickEvent event) {
+                            StatsTab statsTab = (StatsTab) Layout.getInstance().addTab(
+                                    ApplicationConstants.TAB_STATS, StatsTab::new);
+                            statsTab.setSimulationsList(getSimulationsTab().getSimulationsList());
+                        }
+                    }));
         }
 
         // Status Button
         this.addFill();
         this.addButton(WidgetUtil.getToolStripButton("System Load",
                 ApplicationConstants.ICON_STATUS, "Current status of the system.", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                new SystemLoadLayout(event.getX(), event.getY()).show();
-            }
-        }));
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        new SystemLoadLayout(event.getX(), event.getY()).show();
+                    }
+                }));
     }
 
     /**
      * Sends a request to kill the selected running simulations
-     *
      */
     private void killSimulations() {
 
@@ -279,13 +277,12 @@ public class SimulationsToolStrip extends ToolStrip {
                 public void onSuccess(Void result) {
                     modal.hide();
                     getSimulationsTab().loadData();
-                    openWindowToSendMail("Your " + "\""+applicationName+"\"" + " execution",
+                    openWindowToSendMail("Your " + "\"" + applicationName + "\"" + " execution",
                             "Dear " + user + ",<br /><br />"
-                                    + " I had to kill your " + "\""+ applicationName+ "\"" + " execution "
-                                    + "\""+ simulationName+ "\""+ " submitted on " + date
+                                    + " I had to kill your " + "\"" + applicationName + "\"" + " execution "
+                                    + "\"" + simulationName + "\"" + " submitted on " + date
                                     + " because all the jobs were failing with the following error:"
-                                    + "<br /><br /><br /><br />",user);
-
+                                    + "<br /><br /><br /><br />", user);
 
 
                 }
@@ -297,7 +294,6 @@ public class SimulationsToolStrip extends ToolStrip {
 
     /**
      * Sends a request to clean the selected completed/killed simulations
-     *
      */
     private void cleanSimulations() {
 
@@ -335,7 +331,6 @@ public class SimulationsToolStrip extends ToolStrip {
 
     /**
      * Sends a request to purge the selected cleaned simulations
-     *
      */
     private void purgeSimulations() {
 
@@ -404,7 +399,7 @@ public class SimulationsToolStrip extends ToolStrip {
         return (SimulationsTab) Layout.getInstance().getTab(ApplicationConstants.TAB_MONITOR);
     }
 
-    private void openWindowToSendMail(String subjectValue, String message,String userFullName) {
+    private void openWindowToSendMail(String subjectValue, String message, String userFullName) {
         MessageComposerWindow messageWindow = new MessageComposerWindow();
         messageWindow.show();
         messageWindow.setSubjectValue(subjectValue);

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CoreUtil.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.business</a> &gt; <span class="el_source">CoreUtil.java</span></div><h1>CoreUtil.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CoreUtil.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.business</a> &gt; <span class="el_source">CoreUtil.java</span></div><h1>CoreUtil.java</h1><pre class="source lang-java linenums">/*
  * Copyright and authors: see LICENSE.txt in base repository.
  *
  * This software is a web portal for pipeline execution on distributed systems.
@@ -34,38 +34,37 @@ package fr.insalyon.creatis.vip.core.server.business;
 import java.text.Normalizer;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
-<span class="nc" id="L40">public class CoreUtil {</span>
+<span class="nc" id="L39">public class CoreUtil {</span>
 
     /*
         remove accents and non-ascii characters
     */
     public static String getCleanString(String s) {
-<span class="fc" id="L46">        return getCleanString(s, true, true);</span>
+<span class="fc" id="L45">        return getCleanString(s, true, true);</span>
     }
 
     public static String getCleanString(
             String s, boolean removeAccents, boolean onlyKeepAscii) {
-<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if ( removeAccents) {</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (removeAccents) {</span>
             // Normalizer.normalize with NFKD form decompose accentuated
             // letters into separate &quot;accent mark + base letter&quot; characters
-<span class="fc" id="L54">            s = Normalizer.normalize(s, Normalizer.Form.NFKD);</span>
+<span class="fc" id="L53">            s = Normalizer.normalize(s, Normalizer.Form.NFKD);</span>
         }
 
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if (onlyKeepAscii) {</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        if (onlyKeepAscii) {</span>
             // the [^\\p{ASCII}] regex remove all non-ascii characters
             // so also the separated accents char if removeAccents is true
-<span class="fc" id="L60">            return s.replaceAll(&quot;[^\\p{ASCII}]&quot;, &quot;&quot;);</span>
-<span class="nc bnc" id="L61" title="All 2 branches missed.">        } else if (removeAccents) {</span>
+<span class="fc" id="L59">            return s.replaceAll(&quot;[^\\p{ASCII}]&quot;, &quot;&quot;);</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        } else if (removeAccents) {</span>
             // the '\p{M}' regex remove all the combining marks (accents and
             // other exotic stuff) and is less strict than onlyKeepAscii
             // for instance it will keep 'œ' '«' '»' '°'
-<span class="nc" id="L65">            return s.replaceAll(&quot;\\p{M}&quot;, &quot;&quot;);</span>
+<span class="nc" id="L64">            return s.replaceAll(&quot;\\p{M}&quot;, &quot;&quot;);</span>
         } else {
             // nothing to do
-<span class="nc" id="L68">            return s;</span>
+<span class="nc" id="L67">            return s;</span>
         }
     }
 }

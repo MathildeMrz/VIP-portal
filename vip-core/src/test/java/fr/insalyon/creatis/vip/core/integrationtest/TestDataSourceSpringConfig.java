@@ -14,7 +14,7 @@ import javax.sql.DataSource;
  * h2 memory embedded database for tests, which is erased at the end of a
  * test run.
  * the datasource is also wrapped by a mockito spy to verify how it is used
- *
+ * <p>
  * only activated when there is the "test-db" profile
  */
 @Configuration

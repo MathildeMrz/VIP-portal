@@ -48,7 +48,7 @@ import java.util.function.Function;
  */
 public class PathTestUtils {
 
-    private static Map<String,Function> pathSuppliers;
+    private static Map<String, Function> pathSuppliers;
 
     /*
        vip  /user1      /testFile1
@@ -89,19 +89,19 @@ public class PathTestUtils {
         testGroupTestDiPathProperties = getPath(groupTestDir, true, null, null, "text/directory");
         testDir1PathProperties = getPath(testDir1, true, null, null, "text/directory");
 
-        testFile1PathProperties = getPath(testFile1, false, getTS(4,4,2015), null, "text/xml");
-        testFile2PathProperties = getPath(testFile2, false, getTS(21,12,2016), null, "application/json");
-        testFile3PathProperties = getPath(testFile3, false, getTS(1,1,2001), null, "application/octet-stream");
-        testFile4PathProperties = getPath(testFile4, false, getTS(30,7,2014), null, "application/pdf");
-        testFile5PathProperties = getPath(testFile5, false, getTS(15,6,1999), null, "application/zip");
-        testFile6PathProperties = getPath(testFile6, false, getTS(28,8,2014), null, "application/octet-stream");
+        testFile1PathProperties = getPath(testFile1, false, getTS(4, 4, 2015), null, "text/xml");
+        testFile2PathProperties = getPath(testFile2, false, getTS(21, 12, 2016), null, "application/json");
+        testFile3PathProperties = getPath(testFile3, false, getTS(1, 1, 2001), null, "application/octet-stream");
+        testFile4PathProperties = getPath(testFile4, false, getTS(30, 7, 2014), null, "application/pdf");
+        testFile5PathProperties = getPath(testFile5, false, getTS(15, 6, 1999), null, "application/zip");
+        testFile6PathProperties = getPath(testFile6, false, getTS(28, 8, 2014), null, "application/octet-stream");
 
         pathSuppliers = getPathSuppliers();
     }
 
     private static Long getTS(int day, int month, int year) {
         // return timestamp in seconds
-        return new GregorianCalendar(year, month-1, day).getTimeInMillis() / 1000;
+        return new GregorianCalendar(year, month - 1, day).getTimeInMillis() / 1000;
     }
 
     public static Data getAbsoluteData(Data data) {
@@ -116,11 +116,11 @@ public class PathTestUtils {
     }
 
     public static Long getDataModitTS(Data data) {
-        if (data == vipRoot) return getTS(13,2,2015);
-        if (data == user1Dir) return getTS(21,9,2011);
-        if (data == user2Dir) return getTS(1,10,2012);
-        if (data == groupTestDir) return getTS(3,11,2010);
-        if (data == testDir1) return getTS(7,3,2016);
+        if (data == vipRoot) return getTS(13, 2, 2015);
+        if (data == user1Dir) return getTS(21, 9, 2011);
+        if (data == user2Dir) return getTS(1, 10, 2012);
+        if (data == groupTestDir) return getTS(3, 11, 2010);
+        if (data == testDir1) return getTS(7, 3, 2016);
         throw new RuntimeException("Getting modif date of invalid data");
     }
 
@@ -168,7 +168,7 @@ public class PathTestUtils {
     }
 
     public static PathProperties getPath(Data data, boolean isDirectory,
-            Long modificationDate, String executionId, String mimeType) {
+                                         Long modificationDate, String executionId, String mimeType) {
         PathProperties pathProperties = new PathProperties();
         pathProperties.setPath(getAbsolutePath(data));
         pathProperties.setIsDirectory(isDirectory);
@@ -180,7 +180,7 @@ public class PathTestUtils {
         return pathProperties;
     }
 
-    private static Map<String,Function> getPathSuppliers() {
+    private static Map<String, Function> getPathSuppliers() {
         return JsonCustomObjectMatcher.formatSuppliers(
                 Arrays.asList("path", "lastModificationDate", "isDirectory", "exists",
                         "size", "executionId", "mimeType"),
@@ -193,7 +193,7 @@ public class PathTestUtils {
                 PathProperties::getMimeType);
     }
 
-    public static Matcher<Map<String,?>> jsonCorrespondsToPath(PathProperties pathProperties) {
+    public static Matcher<Map<String, ?>> jsonCorrespondsToPath(PathProperties pathProperties) {
         Map<Class, Map<String, Function>> suppliersRegistry = new HashMap<>();
         return JsonCustomObjectMatcher.jsonCorrespondsTo(pathProperties, pathSuppliers, suppliersRegistry);
     }

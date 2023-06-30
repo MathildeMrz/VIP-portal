@@ -57,7 +57,8 @@ import static org.mockito.ArgumentMatchers.*;
     database without jndi, and should be enough to detect most database issues
     in a automatic way
  */
-@SpringJUnitConfig(SpringCoreConfig.class) // launch all spring environment for testing, also take test bean though automatic package scan
+@SpringJUnitConfig(SpringCoreConfig.class)
+// launch all spring environment for testing, also take test bean though automatic package scan
 @TestPropertySource(properties = "db.tableEngine=") // to disable the default mysql/innodb engine on database init
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles({"jndi-db", "test"}) // to use default jndi datasource but avoid default server config
@@ -185,7 +186,7 @@ public class SpringJndiIT {
         }
         Mockito.reset(emailBusiness);
         assertEquals(exception, exceptionCatched);
-        assertEquals(shouldRollback ? 2:1, countUser.get());
+        assertEquals(shouldRollback ? 2 : 1, countUser.get());
         if (shouldRollback) {
             // clean if necessary
             configurationBusiness.removeUser(testEmail, false);
@@ -210,7 +211,11 @@ public class SpringJndiIT {
         // and not spring DataAccessException
         JdbcTemplate jdbcTemplate = new JdbcTemplate(lazyDataSource);
         // close the datasource to make the next request fail
-        try { jdbcTemplate.execute("SHUTDOWN"); } catch (Exception e) {e.printStackTrace();}
+        try {
+            jdbcTemplate.execute("SHUTDOWN");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         assertThrows(BusinessException.class, () -> configurationBusiness.addTermsUse());
     }
 
@@ -219,7 +224,11 @@ public class SpringJndiIT {
     public void connectionShouldBeLazyInTransaction() throws SQLException, MalformedURLException {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(lazyDataSource);
         // close the datasource to make the next request fail
-        try { jdbcTemplate.execute("SHUTDOWN"); } catch (Exception e) {e.printStackTrace();}
+        try {
+            jdbcTemplate.execute("SHUTDOWN");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // getConnection throw an exception but should not be called as 'getLoginUrlCas' do not need db access
         String res = configurationBusiness.getLoginUrlCas(new URL("file:/plop"));
         assertEquals(ServerMockConfig.TEST_CAS_URL + "/login?service=file:/plop", res);

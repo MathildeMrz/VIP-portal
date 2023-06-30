@@ -50,9 +50,9 @@ import static fr.insalyon.creatis.vip.api.CarminProperties.CORS_AUTHORIZED_DOMAI
  * Configure the spring mvc DispatcherServlet. Few things to do, as the
  * controllers and dependencies are automatically configured through
  * scanning.
- *
+ * <p>
  * Created by abonnet on 7/13/16.
- *
+ * <p>
  * Modified by khalilkes
  */
 @EnableWebMvc
@@ -94,8 +94,8 @@ public class SpringWebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
-            .allowedOrigins(env.getRequiredProperty(CORS_AUTHORIZED_DOMAINS, String[].class));
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
+                .allowedOrigins(env.getRequiredProperty(CORS_AUTHORIZED_DOMAINS, String[].class));
     }
 
     /*

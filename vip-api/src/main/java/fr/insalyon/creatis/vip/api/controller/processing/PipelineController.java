@@ -50,7 +50,6 @@ import java.util.List;
 
 /**
  * Created by abonnet on 7/28/16.
- *
  */
 @RestController
 @RequestMapping("pipelines")

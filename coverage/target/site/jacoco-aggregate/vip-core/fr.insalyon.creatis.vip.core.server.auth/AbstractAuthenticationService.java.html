@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractAuthenticationService.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.auth</a> &gt; <span class="el_source">AbstractAuthenticationService.java</span></div><h1>AbstractAuthenticationService.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractAuthenticationService.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.auth</a> &gt; <span class="el_source">AbstractAuthenticationService.java</span></div><h1>AbstractAuthenticationService.java</h1><pre class="source lang-java linenums">/*
  * Copyright and authors: see LICENSE.txt in base repository.
  *
  * This software is a web portal for pipeline execution on distributed systems.
@@ -53,12 +53,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- *
  * @author glatard
  */
-<span class="nc" id="L59">public abstract class AbstractAuthenticationService extends HttpServlet {</span>
+<span class="nc" id="L58">public abstract class AbstractAuthenticationService extends HttpServlet {</span>
 
-<span class="nc" id="L61">    private static final Logger logger = LoggerFactory.getLogger(AbstractAuthenticationService.class);</span>
+<span class="nc" id="L60">    private static final Logger logger = LoggerFactory.getLogger(AbstractAuthenticationService.class);</span>
 
     protected abstract void checkValidRequest(HttpServletRequest request) throws BusinessException;
 
@@ -72,69 +71,69 @@ import java.io.PrintWriter;
 
     @Override
     public void init() throws ServletException {
-<span class="nc" id="L75">        super.init();</span>
-<span class="nc" id="L76">        ApplicationContext applicationContext = WebApplicationContextUtils.findWebApplicationContext(getServletContext());</span>
-<span class="nc" id="L77">        userDAO = applicationContext.getBean(UserDAO.class);</span>
-<span class="nc" id="L78">        configurationBusiness = applicationContext.getBean(ConfigurationBusiness.class);</span>
-<span class="nc" id="L79">        vipSessionBusiness = applicationContext.getBean(VipSessionBusiness.class);</span>
-<span class="nc" id="L80">    }</span>
+<span class="nc" id="L74">        super.init();</span>
+<span class="nc" id="L75">        ApplicationContext applicationContext = WebApplicationContextUtils.findWebApplicationContext(getServletContext());</span>
+<span class="nc" id="L76">        userDAO = applicationContext.getBean(UserDAO.class);</span>
+<span class="nc" id="L77">        configurationBusiness = applicationContext.getBean(ConfigurationBusiness.class);</span>
+<span class="nc" id="L78">        vipSessionBusiness = applicationContext.getBean(VipSessionBusiness.class);</span>
+<span class="nc" id="L79">    }</span>
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         try {
-<span class="nc" id="L85">            processRequest(request, response);</span>
-<span class="nc" id="L86">        } catch (BusinessException | CoreException | DAOException ex) {</span>
-<span class="nc" id="L87">            logger.error(&quot;Error handling a request : {}. Ignoring&quot;, ex.getMessage());</span>
-<span class="nc" id="L88">        }</span>
-<span class="nc" id="L89">    }</span>
+<span class="nc" id="L84">            processRequest(request, response);</span>
+<span class="nc" id="L85">        } catch (BusinessException | CoreException | DAOException ex) {</span>
+<span class="nc" id="L86">            logger.error(&quot;Error handling a request : {}. Ignoring&quot;, ex.getMessage());</span>
+<span class="nc" id="L87">        }</span>
+<span class="nc" id="L88">    }</span>
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
-<span class="nc" id="L94">            processRequest(request, response);</span>
-<span class="nc" id="L95">        } catch (BusinessException | CoreException ex) {</span>
-<span class="nc" id="L96">            logger.error(&quot;Error handling a request : {}. Ignoring&quot;, ex.getMessage());</span>
-<span class="nc" id="L97">        } catch (DAOException e) {</span>
-<span class="nc" id="L98">            throw new RuntimeException(e);</span>
-<span class="nc" id="L99">        }</span>
-<span class="nc" id="L100">    }</span>
+<span class="nc" id="L93">            processRequest(request, response);</span>
+<span class="nc" id="L94">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L95">            logger.error(&quot;Error handling a request : {}. Ignoring&quot;, ex.getMessage());</span>
+<span class="nc" id="L96">        } catch (DAOException e) {</span>
+<span class="nc" id="L97">            throw new RuntimeException(e);</span>
+<span class="nc" id="L98">        }</span>
+<span class="nc" id="L99">    }</span>
 
     private void processRequest(
             HttpServletRequest request,
             HttpServletResponse response) throws BusinessException, CoreException, DAOException {
 
-<span class="nc" id="L106">        logger.info(&quot;Third-party authentication request.&quot;);</span>
+<span class="nc" id="L105">        logger.info(&quot;Third-party authentication request.&quot;);</span>
         String email;
         try {
-<span class="nc" id="L109">            checkValidRequest(request);</span>
-<span class="nc" id="L110">            email = getEmail();</span>
-<span class="nc" id="L111">        } catch (BusinessException ex) {</span>
-<span class="nc" id="L112">            logger.info(ex.getMessage());</span>
-<span class="nc" id="L113">            authFailedResponse(request, response);</span>
-<span class="nc" id="L114">            return;</span>
-<span class="nc" id="L115">        }</span>
+<span class="nc" id="L108">            checkValidRequest(request);</span>
+<span class="nc" id="L109">            email = getEmail();</span>
+<span class="nc" id="L110">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L111">            logger.info(ex.getMessage());</span>
+<span class="nc" id="L112">            authFailedResponse(request, response);</span>
+<span class="nc" id="L113">            return;</span>
+<span class="nc" id="L114">        }</span>
         //verify email format
-<span class="nc bnc" id="L117" title="All 4 branches missed.">        if (email == null || !isValidEmailAddress(email)) {</span>
-<span class="nc" id="L118">            logger.info(&quot;Invalid email: &quot; + email);</span>
-<span class="nc" id="L119">            authFailedResponse(request, response);</span>
-<span class="nc" id="L120">            return;</span>
+<span class="nc bnc" id="L116" title="All 4 branches missed.">        if (email == null || !isValidEmailAddress(email)) {</span>
+<span class="nc" id="L117">            logger.info(&quot;Invalid email: &quot; + email);</span>
+<span class="nc" id="L118">            authFailedResponse(request, response);</span>
+<span class="nc" id="L119">            return;</span>
         }
-<span class="nc" id="L122">        resetFailedAuthenticationCount(email);</span>
+<span class="nc" id="L121">        resetFailedAuthenticationCount(email);</span>
         //authenticate email in VIP
-<span class="nc" id="L124">        authSuccessResponse(request, response, email);</span>
-<span class="nc" id="L125">    }</span>
+<span class="nc" id="L123">        authSuccessResponse(request, response, email);</span>
+<span class="nc" id="L124">    }</span>
 
     private void resetFailedAuthenticationCount(String email) {
         try {
-<span class="nc" id="L129">            userDAO.resetNFailedAuthentications(email);</span>
-<span class="nc" id="L130">            logger.debug(&quot;Reset auth count for &quot; + email);</span>
-<span class="nc" id="L131">        } catch (DAOException e) {</span>
-<span class="nc" id="L132">            logger.error(&quot;Error resetting failed auth counter for {}. Ignoring it&quot;, email, e);</span>
-<span class="nc" id="L133">        }</span>
-<span class="nc" id="L134">    }</span>
+<span class="nc" id="L128">            userDAO.resetNFailedAuthentications(email);</span>
+<span class="nc" id="L129">            logger.debug(&quot;Reset auth count for &quot; + email);</span>
+<span class="nc" id="L130">        } catch (DAOException e) {</span>
+<span class="nc" id="L131">            logger.error(&quot;Error resetting failed auth counter for {}. Ignoring it&quot;, email, e);</span>
+<span class="nc" id="L132">        }</span>
+<span class="nc" id="L133">    }</span>
 
     private String getBaseURL() {
-<span class="nc" id="L137">        return &quot;/&quot;;</span>
+<span class="nc" id="L136">        return &quot;/&quot;;</span>
     }
 
     private void authSuccessResponse(
@@ -142,60 +141,59 @@ import java.io.PrintWriter;
             HttpServletResponse response,
             String email) throws BusinessException, CoreException, DAOException {
 
-<span class="nc" id="L145">        String groupName = getDefaultGroup();</span>
-<span class="nc" id="L146">        User user = configurationBusiness.getOrCreateUser(email, &quot;Unknown&quot;, groupName);</span>
+<span class="nc" id="L144">        String groupName = getDefaultGroup();</span>
+<span class="nc" id="L145">        User user = configurationBusiness.getOrCreateUser(email, &quot;Unknown&quot;, groupName);</span>
         //third-party authentication services will *not* be trusted to let admins in
-<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (user.isSystemAdministrator()) {</span>
-<span class="nc" id="L149">            authFailedResponse(request, response);</span>
-<span class="nc" id="L150">            return;</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (user.isSystemAdministrator()) {</span>
+<span class="nc" id="L148">            authFailedResponse(request, response);</span>
+<span class="nc" id="L149">            return;</span>
         }
-<span class="nc" id="L152">        vipSessionBusiness.setVIPSession(request, response, user);</span>
+<span class="nc" id="L151">        vipSessionBusiness.setVIPSession(request, response, user);</span>
         try {
-<span class="nc" id="L154">            response.sendRedirect(getBaseURL());</span>
-<span class="nc" id="L155">        } catch (IOException ex) {</span>
-<span class="nc" id="L156">            throw new BusinessException(ex);</span>
-<span class="nc" id="L157">        }</span>
-<span class="nc" id="L158">        logger.info(&quot;User &quot; + email + &quot; connected.&quot;);</span>
-<span class="nc" id="L159">        response.setStatus(HttpServletResponse.SC_OK);</span>
-<span class="nc" id="L160">        setResponseText(email, response);</span>
-<span class="nc" id="L161">    }</span>
+<span class="nc" id="L153">            response.sendRedirect(getBaseURL());</span>
+<span class="nc" id="L154">        } catch (IOException ex) {</span>
+<span class="nc" id="L155">            throw new BusinessException(ex);</span>
+<span class="nc" id="L156">        }</span>
+<span class="nc" id="L157">        logger.info(&quot;User &quot; + email + &quot; connected.&quot;);</span>
+<span class="nc" id="L158">        response.setStatus(HttpServletResponse.SC_OK);</span>
+<span class="nc" id="L159">        setResponseText(email, response);</span>
+<span class="nc" id="L160">    }</span>
 
     private void setResponseText(String message, HttpServletResponse response) throws BusinessException {
-<span class="nc" id="L164">        PrintWriter out = null;</span>
+<span class="nc" id="L163">        PrintWriter out = null;</span>
         try {
-<span class="nc" id="L166">            response.setContentType(&quot;text/html&quot;);</span>
-<span class="nc" id="L167">            response.setHeader(&quot;Pragma&quot;, &quot;No-cache&quot;);</span>
-<span class="nc" id="L168">            response.setDateHeader(&quot;Expires&quot;, 0);</span>
-<span class="nc" id="L169">            response.setHeader(&quot;Cache-Control&quot;, &quot;no-cache&quot;);</span>
-<span class="nc" id="L170">            response.setContentLength(message.length());</span>
-<span class="nc" id="L171">            out = response.getWriter();</span>
-<span class="nc" id="L172">            out.println(message);</span>
-<span class="nc" id="L173">            out.flush();</span>
-<span class="nc" id="L174">        } catch (IOException ex) {</span>
-<span class="nc" id="L175">            logger.error(&quot;Error writing auth response &quot; + message, ex);</span>
-<span class="nc" id="L176">            throw new BusinessException(ex);</span>
+<span class="nc" id="L165">            response.setContentType(&quot;text/html&quot;);</span>
+<span class="nc" id="L166">            response.setHeader(&quot;Pragma&quot;, &quot;No-cache&quot;);</span>
+<span class="nc" id="L167">            response.setDateHeader(&quot;Expires&quot;, 0);</span>
+<span class="nc" id="L168">            response.setHeader(&quot;Cache-Control&quot;, &quot;no-cache&quot;);</span>
+<span class="nc" id="L169">            response.setContentLength(message.length());</span>
+<span class="nc" id="L170">            out = response.getWriter();</span>
+<span class="nc" id="L171">            out.println(message);</span>
+<span class="nc" id="L172">            out.flush();</span>
+<span class="nc" id="L173">        } catch (IOException ex) {</span>
+<span class="nc" id="L174">            logger.error(&quot;Error writing auth response &quot; + message, ex);</span>
+<span class="nc" id="L175">            throw new BusinessException(ex);</span>
         } finally {
-<span class="nc" id="L178">            out.close();</span>
+<span class="nc" id="L177">            out.close();</span>
         }
-<span class="nc" id="L180">    }</span>
-
+<span class="nc" id="L179">    }</span>
 
 
     private void authFailedResponse(
             HttpServletRequest request, HttpServletResponse response) {
-<span class="nc" id="L186">        logger.info(&quot;Third-party authentication failed.&quot;);</span>
-<span class="nc" id="L187">        response.setStatus(HttpServletResponse.SC_FORBIDDEN);</span>
-<span class="nc" id="L188">    }</span>
+<span class="nc" id="L184">        logger.info(&quot;Third-party authentication failed.&quot;);</span>
+<span class="nc" id="L185">        response.setStatus(HttpServletResponse.SC_FORBIDDEN);</span>
+<span class="nc" id="L186">    }</span>
 
     private boolean isValidEmailAddress(String email) {
-<span class="nc" id="L191">        boolean result = true;</span>
+<span class="nc" id="L189">        boolean result = true;</span>
         try {
-<span class="nc" id="L193">            InternetAddress emailAddr = new InternetAddress(email);</span>
-<span class="nc" id="L194">            emailAddr.validate();</span>
-<span class="nc" id="L195">        } catch (AddressException ex) {</span>
-<span class="nc" id="L196">            result = false;</span>
-<span class="nc" id="L197">        }</span>
-<span class="nc" id="L198">        return result;</span>
+<span class="nc" id="L191">            InternetAddress emailAddr = new InternetAddress(email);</span>
+<span class="nc" id="L192">            emailAddr.validate();</span>
+<span class="nc" id="L193">        } catch (AddressException ex) {</span>
+<span class="nc" id="L194">            result = false;</span>
+<span class="nc" id="L195">        }</span>
+<span class="nc" id="L196">        return result;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

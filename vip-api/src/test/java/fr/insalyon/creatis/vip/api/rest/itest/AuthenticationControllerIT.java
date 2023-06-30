@@ -57,17 +57,17 @@ public class AuthenticationControllerIT extends BaseVIPSpringIT {
     public void okAuthentication() throws Exception {
         ConfigurationBusiness configBness = getConfigurationBusiness();
         String email = UserTestUtils.baseUser1.getEmail();
-        String apikey="plopplop";
+        String apikey = "plopplop";
         when(configBness.signin(anyString(), anyString()))
-            .thenThrow(new RuntimeException());
+                .thenThrow(new RuntimeException());
         doReturn(UserTestUtils.baseUser1)
-            .when(configBness)
-            .signin(eq(email),eq("coucou"));
+                .when(configBness)
+                .signin(eq(email), eq("coucou"));
         when(configBness.getUserApikey(eq(email))).thenReturn(apikey);
         mockMvc.perform(
-                post("/rest/authenticate")
-                        .contentType("application/json")
-                        .content(getResourceAsString("jsonObjects/user-credentials.json")))
+                        post("/rest/authenticate")
+                                .contentType("application/json")
+                                .content(getResourceAsString("jsonObjects/user-credentials.json")))
                 .andDo(print())
                 .andExpect(jsonPath(
                         "$",
@@ -80,14 +80,15 @@ public class AuthenticationControllerIT extends BaseVIPSpringIT {
     @Test
     public void missingInfoAuthentication() throws Exception {
         mockMvc.perform(
-                post("/rest/authenticate")
-                        .contentType("application/json")
-                        .content("{}"))
+                        post("/rest/authenticate")
+                                .contentType("application/json")
+                                .content("{}"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.errorCode")
-                        .value(ApiError.INPUT_FIELD_NOT_VALID.getCode()));;
+                        .value(ApiError.INPUT_FIELD_NOT_VALID.getCode()));
+        ;
     }
 
 }

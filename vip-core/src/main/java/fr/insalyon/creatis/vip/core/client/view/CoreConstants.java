@@ -36,7 +36,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.Date;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class CoreConstants implements IsSerializable {
@@ -138,7 +137,7 @@ public class CoreConstants implements IsSerializable {
     public static final String ICON_WARNING = IMG_FOLDER + "icon-warning.png";
     public static final String ICON_WORLD = IMG_FOLDER + "flags/_world.png";
     public static final String ICON_TERMS_USE = IMG_FOLDER + "icon-terms_of_use.png";
-    public static final String ICON_RUNNING_SIMULATIONS = IMG_FOLDER +"icon-runningSimulation.png";
+    public static final String ICON_RUNNING_SIMULATIONS = IMG_FOLDER + "icon-runningSimulation.png";
     public static final String ICON_VIP_LOGO = IMG_FOLDER + "vip-logo.png";
     public static final String ICON_VIP_LOGO_WITHOUT_TEXT = IMG_FOLDER + "vip-logo-without-text.png";
     public static final String EGI_CHECK_IN_LOGO = IMG_FOLDER + "egi-check-in-color.svg";
@@ -182,7 +181,7 @@ public class CoreConstants implements IsSerializable {
     public static final String APP_IMPORTER_ROOT_FOLDER = "boutiques.application.rootFolder";
     public static final String APP_REQUIREMENTS = "boutiques.application.requirements";
     //Publication
-    public static final String  PUB_MONTHS_UPDATES = "last.publication.update";
+    public static final String PUB_MONTHS_UPDATES = "last.publication.update";
     //Zenodo publication
     public static final String PUBLICATION_SYSTEM_COMMAND = "publication.system-command";
     // External storage, girder.
@@ -194,7 +193,9 @@ public class CoreConstants implements IsSerializable {
     public static enum GROUP_ROLE implements IsSerializable {
 
         Admin, User, None
-    };
+    }
+
+    ;
 
 
     public static String getTileGridId(String tileName) {

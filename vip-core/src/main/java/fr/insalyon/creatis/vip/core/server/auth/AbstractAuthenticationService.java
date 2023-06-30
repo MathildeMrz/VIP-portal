@@ -53,7 +53,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- *
  * @author glatard
  */
 public abstract class AbstractAuthenticationService extends HttpServlet {
@@ -178,7 +177,6 @@ public abstract class AbstractAuthenticationService extends HttpServlet {
             out.close();
         }
     }
-
 
 
     private void authFailedResponse(

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SpringCoreConfig.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server</a> &gt; <span class="el_source">SpringCoreConfig.java</span></div><h1>SpringCoreConfig.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.core.server;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SpringCoreConfig.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server</a> &gt; <span class="el_source">SpringCoreConfig.java</span></div><h1>SpringCoreConfig.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.core.server;
 
 import fr.insalyon.creatis.grida.client.GRIDACacheClient;
 import fr.insalyon.creatis.grida.client.GRIDAClient;
@@ -38,14 +38,14 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
  * classes and to create/inject automatically all the beans / service. Note that
  * the GWT servlet cannot be created this way (they are created by the application
  * server / tomcat) through the web.xml file.
- *
+ * &lt;p&gt;
  * This also configures the database/transaction/connection : spring will
  * automatically handle transactions and connection creation (and closing)
  * by annotating classes with @Transactional and using spring utils to get
  * the connection in the dao
- *
+ * &lt;p&gt;
  * This also creates spring beans for services coming from maven dependencies (grida and sma)
- *
+ * &lt;p&gt;
  * This also manage the vip configuration folder, defaulting to &quot;$HOME/.vip&quot; but
  * allowing change for tests and local use.
  */
@@ -117,7 +117,7 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 
     // to verify the @Value injection existence
     @Bean
-    public static PropertySourcesPlaceholderConfigurer properties(){
+    public static PropertySourcesPlaceholderConfigurer properties() {
 <span class="fc" id="L121">        return new PropertySourcesPlaceholderConfigurer();</span>
     }
 
@@ -145,17 +145,17 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 <span class="fc" id="L145">            logger.info(&quot;found vipConfigFolder property : {}&quot;, configFolder);</span>
         } else {
             // if not, look in user home folder
-<span class="fc" id="L148">            configFolder = env.getProperty(&quot;user.home&quot;)  + Server.VIP_DIR;</span>
+<span class="fc" id="L148">            configFolder = env.getProperty(&quot;user.home&quot;) + Server.VIP_DIR;</span>
 <span class="fc" id="L149">            logger.info(&quot;vipConfigFolder property not found, using user-home : {}&quot;, configFolder);</span>
         }
         Resource vipConfigFolder;
-<span class="fc bfc" id="L152" title="All 2 branches covered.">        if ( configFolder.startsWith(CLASSPATH_URL_PREFIX)) {</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        if (configFolder.startsWith(CLASSPATH_URL_PREFIX)) {</span>
 <span class="fc" id="L153">            vipConfigFolder = new ClassPathResource(configFolder.substring(CLASSPATH_URL_PREFIX.length()));</span>
         } else {
 <span class="fc" id="L155">            vipConfigFolder = new FileSystemResource(configFolder);</span>
         }
-<span class="fc bfc" id="L157" title="All 2 branches covered.">        if ( ! vipConfigFolder.exists() &amp;&amp;</span>
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                ! vipConfigFolder.getFile().mkdir()) {</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (!vipConfigFolder.exists() &amp;&amp;</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">                !vipConfigFolder.getFile().mkdir()) {</span>
 <span class="nc" id="L159">            logger.error(&quot;Cannot create VIP config folder : {}&quot;, vipConfigFolder);</span>
 <span class="nc" id="L160">            throw new BeanInitializationException(&quot;Cannot create VIP config folder&quot;);</span>
         }

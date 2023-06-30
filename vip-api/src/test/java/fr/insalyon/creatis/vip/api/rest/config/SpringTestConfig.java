@@ -50,9 +50,9 @@ import static org.mockito.ArgumentMatchers.any;
 
 /**
  * Created by abonnet on 7/26/16.
- *
+ * <p>
  * Spring test config that mock bean that interacts with vip outside vip-api
- *
+ * <p>
  * TODO : after spring is now everywhere, this does not work anymore, work needed here
  */
 @Import(SpringWebConfig.class)

@@ -29,11 +29,11 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 /**
  * Integration tests that verify the spring database/transactions configuration
  * with the in-memory database.
- *
+ * <p>
  * These tests are ordered as this is needed for the last ones.
  */
 @TestMethodOrder(OrderAnnotation.class)
-public class SpringDatabaseIT extends BaseSpringIT{
+public class SpringDatabaseIT extends BaseSpringIT {
     
     /*
         verify database init and that only one connection is shared in a test
@@ -125,7 +125,7 @@ public class SpringDatabaseIT extends BaseSpringIT{
         }
         Mockito.reset(emailBusiness);
         assertEquals(exception, exceptionCatched);
-        assertEquals(shouldRollback ? 2:1, countUser.get());
+        assertEquals(shouldRollback ? 2 : 1, countUser.get());
         if (shouldRollback) {
             // clean if necessary
             configurationBusiness.removeUser(testEmail, false);

@@ -41,8 +41,8 @@ public class StatsApiBusiness {
         // build search criteria
         UserSearchCriteria searchCriteria =
                 new UserSearchCriteria()
-                .withRegistrationStart(parseDate(startDateString))
-                .withRegistrationEnd(parseDate(endDateString));
+                        .withRegistrationStart(parseDate(startDateString))
+                        .withRegistrationEnd(parseDate(endDateString));
 
         // do search
         Long usersRegisteredNumber;
@@ -91,7 +91,7 @@ public class StatsApiBusiness {
                 .withCountry(getCountry(country))
                 .withRegistrationStart(parseDate(startDateString)));
     }
-    
+
     public UsersList getAllUsersFromCountryBetweenDates(
             String country, String startDateString, String endDateString)
             throws ApiException {
@@ -189,6 +189,7 @@ public class StatsApiBusiness {
 
     private final String DATE_TIME_FORMAT = "dd-MM-yyyy";
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+
     private LocalDate parseDate(String dateString) throws ApiException {
         if (dateString == null) {
             return null;

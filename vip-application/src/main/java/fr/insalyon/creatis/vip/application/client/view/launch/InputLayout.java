@@ -43,13 +43,13 @@ public abstract class InputLayout extends VLayout {
      * In a Map with Sets as values, add newValue to the Set corresponding to given key. If this Set does not exist yet,
      * create it containing only newValue
      *
-     * @param map       Map of Objects to Sets of Objects
-     * @param key       Object
-     * @param newValue  Object
+     * @param map      Map of Objects to Sets of Objects
+     * @param key      Object
+     * @param newValue Object
      */
     public static <K, V> void addToSetInMap(Map<K, Set<V>> map, K key,
-                                         V newValue){
-        if(map.containsKey(key)){
+                                            V newValue) {
+        if (map.containsKey(key)) {
             map.get(key).add(newValue);
         } else {
             map.put(key, new HashSet<>(Collections.singleton(newValue)));
@@ -59,10 +59,10 @@ public abstract class InputLayout extends VLayout {
     /**
      * Initialises graphical labels and input field
      *
-     * @param input         BoutiquesInput to be represented
-     * @param parentLayout  LaunchFormLayout containing this
+     * @param input        BoutiquesInput to be represented
+     * @param parentLayout LaunchFormLayout containing this
      */
-    public InputLayout(BoutiquesInput input, LaunchFormLayout parentLayout){
+    public InputLayout(BoutiquesInput input, LaunchFormLayout parentLayout) {
         this(input, parentLayout, true);
     }
 
@@ -70,9 +70,9 @@ public abstract class InputLayout extends VLayout {
      * Initialize graphical labels and input field in option. If createMasterForm is false, then the child
      * constructor must call createMasterForm itself or create the masterForm in a different way
      *
-     * @param input             BoutiquesInput to be represented
-     * @param parentLayout      LaunchFormLayout containing this
-     * @param createMasterForm  true to create the masterForm
+     * @param input            BoutiquesInput to be represented
+     * @param parentLayout     LaunchFormLayout containing this
+     * @param createMasterForm true to create the masterForm
      */
     protected InputLayout(BoutiquesInput input, LaunchFormLayout parentLayout, boolean createMasterForm) {
         super(0);
@@ -81,8 +81,8 @@ public abstract class InputLayout extends VLayout {
         this.parentLayout = parentLayout;
         this.input = input;
         // Name
-        String nameText =  "<b>" + input.getName();
-        if (!input.isOptional()){
+        String nameText = "<b>" + input.getName();
+        if (!input.isOptional()) {
             nameText += "<font color=\"red\">*</font>";
         }
         nameText += "</b>";
@@ -90,8 +90,8 @@ public abstract class InputLayout extends VLayout {
         // Description
         String description = input.getDescription();
         Label descriptionLabel = null;
-        if (description != null && !description.isEmpty()){
-            descriptionLabel = WidgetUtil.getLabel(description,15);
+        if (description != null && !description.isEmpty()) {
+            descriptionLabel = WidgetUtil.getLabel(description, 15);
             descriptionLabel.setWidth(400);
         }
         this.configureLayout(nameLabel, descriptionLabel, createMasterForm);
@@ -100,7 +100,7 @@ public abstract class InputLayout extends VLayout {
     protected void configureLayout(Label nameLabel, Label descriptionLabel, boolean createMasterForm) {
         this.addMember(nameLabel);
         // Description
-        if (descriptionLabel != null){
+        if (descriptionLabel != null) {
             this.addMember(descriptionLabel);
         }
         if (createMasterForm) {
@@ -114,7 +114,7 @@ public abstract class InputLayout extends VLayout {
      *
      * @return PickerIcon representing the "add value" button
      */
-    private PickerIcon configureAddValueIcon(){
+    private PickerIcon configureAddValueIcon() {
         PickerIcon icon = new PickerIcon(PickerIconName.SEARCH, event -> this.createAdditionalForm());
         icon.setSrc(ApplicationConstants.ICON_PICKER_MORE);
         icon.setHeight(20);
@@ -128,7 +128,7 @@ public abstract class InputLayout extends VLayout {
      *
      * @return PickerIcon representing the "remove value" button
      */
-    private PickerIcon configureRemoveValueIcon(){
+    private PickerIcon configureRemoveValueIcon() {
         PickerIcon icon = new PickerIcon(PickerIconName.SEARCH, event -> this.removeAddedForm(event.getForm()));
         icon.setSrc(ApplicationConstants.ICON_PICKER_LESS);
         icon.setHeight(20);
@@ -141,9 +141,9 @@ public abstract class InputLayout extends VLayout {
      * Create and return a new input field and add it to this layout
      *
      * @param iconToAdd PickerIcon attached to created input field
-     * @return          DynamicForm representing created input field
+     * @return DynamicForm representing created input field
      */
-    protected DynamicForm newForm(PickerIcon iconToAdd){
+    protected DynamicForm newForm(PickerIcon iconToAdd) {
         final DynamicForm inputForm = new DynamicForm();
         final FormItem inputField = this.getFormItem();
         inputField.setName(MAIN_FIELD_NAME);
@@ -159,17 +159,19 @@ public abstract class InputLayout extends VLayout {
 
     /**
      * Create master input field for current layout
+     *
      * @see #newForm(PickerIcon)
      */
-    protected void createMasterForm(){
+    protected void createMasterForm() {
         this.masterForm = this.newForm(this.canAddValue ? this.addValueIcon : null);
     }
 
     /**
      * Create an additional input field for current layout
+     *
      * @see #newForm(PickerIcon)
      */
-    protected void createAdditionalForm(){
+    protected void createAdditionalForm() {
         DynamicForm additionalForm = this.newForm(this.removeValueIcon);
         this.additionalForms.add(additionalForm);
         this.onValueChanged();
@@ -178,12 +180,12 @@ public abstract class InputLayout extends VLayout {
     /**
      * Remove an additional input field from current layout
      *
-     * @param formToRemove  DynamicForm to remove
+     * @param formToRemove DynamicForm to remove
      * @throws IllegalArgumentException if formToRemove is not in this.additionalForms
      * @see #createAdditionalForm()
      */
-    private void removeAddedForm(DynamicForm formToRemove) throws IllegalArgumentException{
-        if(!this.additionalForms.remove(formToRemove)){
+    private void removeAddedForm(DynamicForm formToRemove) throws IllegalArgumentException {
+        if (!this.additionalForms.remove(formToRemove)) {
             throw new IllegalArgumentException("Provided form is not contained in this InputLayout's additional forms.");
         }
         LaunchFormLayout.assertCondition(this.hasMember(formToRemove),
@@ -197,7 +199,7 @@ public abstract class InputLayout extends VLayout {
      *
      * @param mainField FormItem
      */
-    protected void addValueChangeHandler(FormItem mainField){
+    protected void addValueChangeHandler(FormItem mainField) {
         mainField.addChangedHandler(changedEvent -> this.onValueChanged(mainField));
     }
 
@@ -206,7 +208,7 @@ public abstract class InputLayout extends VLayout {
      *
      * @param disabledInput Target InputLayout
      */
-    public void addDisables(InputLayout disabledInput){
+    public void addDisables(InputLayout disabledInput) {
         this.disables.add(disabledInput);
         disabledInput.addDisabledBy(this);
         disabledInput.checkDependencies();
@@ -217,7 +219,7 @@ public abstract class InputLayout extends VLayout {
      *
      * @param disablingInput Target InputLayout
      */
-    protected  void addDisabledBy(InputLayout disablingInput){
+    protected void addDisabledBy(InputLayout disablingInput) {
         this.disabledBy.add(disablingInput);
     }
 
@@ -227,7 +229,7 @@ public abstract class InputLayout extends VLayout {
      * @param disablingInput Target InputLayout
      * @param disablingValue String representing specified value
      */
-    protected void addDisabledByValue(ValueChoiceInputLayout disablingInput, String disablingValue){
+    protected void addDisabledByValue(ValueChoiceInputLayout disablingInput, String disablingValue) {
         addToSetInMap(this.disabledByValue, disablingInput, disablingValue);
     }
 
@@ -236,7 +238,7 @@ public abstract class InputLayout extends VLayout {
      *
      * @param requiredInput Target InputLayout
      */
-    public void addRequires(InputLayout requiredInput){
+    public void addRequires(InputLayout requiredInput) {
         this.requires.add(requiredInput);
         requiredInput.addRequiredBy(this);
         this.checkDependencies();
@@ -247,7 +249,7 @@ public abstract class InputLayout extends VLayout {
      *
      * @param requiringInput Target InputLayout
      */
-    protected  void addRequiredBy(InputLayout requiringInput){
+    protected void addRequiredBy(InputLayout requiringInput) {
         this.requiredBy.add(requiringInput);
     }
 
@@ -264,8 +266,8 @@ public abstract class InputLayout extends VLayout {
     /**
      * Check dependencies with other inputs to enable or disable this as appropriate
      */
-    protected void checkDependencies(){
-        if(!this.hasUniqueValue()) {
+    protected void checkDependencies() {
+        if (!this.hasUniqueValue()) {
             return;
         }
         boolean wasEmpty = this.isMasterEmpty();
@@ -273,22 +275,22 @@ public abstract class InputLayout extends VLayout {
         Set<String> disablingInputNames = this.filledDisablingInputs();
         Set<String> requiredInputNames = this.emptyRequiredInputs();
         Map<String, String> disablingValues = this.disablingInputValues();
-        if((disablingInputNames.size() + requiredInputNames.size() + disablingValues.size()) == 0){
+        if ((disablingInputNames.size() + requiredInputNames.size() + disablingValues.size()) == 0) {
             this.enableInput();
         } else {
             // Disable input, with a help hover message explaining why
             StringBuilder disabledHoverMessage = new StringBuilder("This value will be ignored because :<ul>");
-            if(disablingInputNames.size() > 0){
+            if (disablingInputNames.size() > 0) {
                 disabledHoverMessage.append("<li>following input(s) are non-empty: ")
                         .append(disablingInputNames)
                         .append(".</li>");
             }
-            if(requiredInputNames.size() > 0){
+            if (requiredInputNames.size() > 0) {
                 disabledHoverMessage.append("<li>following input(s) are empty: ")
                         .append(requiredInputNames)
                         .append(".</li>");
             }
-            if(disablingValues.size() > 0) {
+            if (disablingValues.size() > 0) {
                 disablingValues.forEach(
                         (inputName, value) -> disabledHoverMessage.append("<li>input [")
                                 .append(inputName)
@@ -301,7 +303,7 @@ public abstract class InputLayout extends VLayout {
                 field.setPrompt(disabledHoverMessage.toString());
             }
         }
-        if (this.isMasterEmpty() != wasEmpty){
+        if (this.isMasterEmpty() != wasEmpty) {
             // Status changed, this may enable/disable dependent inputs
             this.onValueChanged();
         }
@@ -310,7 +312,7 @@ public abstract class InputLayout extends VLayout {
     /**
      * @return Set of Strings representing names of inputs that are non empty and disable this.
      */
-    protected Set<String> filledDisablingInputs(){
+    protected Set<String> filledDisablingInputs() {
         return this.disabledBy.stream()
                 .filter(InputLayout::isUniqueFilled)
                 .map(InputLayout::getInputName)
@@ -320,7 +322,7 @@ public abstract class InputLayout extends VLayout {
     /**
      * @return Set of Strings representing names of inputs that are empty and required by this (thus disabling this).
      */
-    protected Set<String> emptyRequiredInputs(){
+    protected Set<String> emptyRequiredInputs() {
         return this.requires.stream()
                 .filter(InputLayout::isUniqueEmpty)
                 .map(InputLayout::getInputName)
@@ -329,17 +331,17 @@ public abstract class InputLayout extends VLayout {
 
     /**
      * @return Map of Strings representing inputs for which current value disables this. Keys are input names and values
-     *         are corresponding current values
+     * are corresponding current values
      */
-    protected Map<String, String> disablingInputValues(){
+    protected Map<String, String> disablingInputValues() {
         Map<String, String> disablingValues = new TreeMap<>();
         this.disabledByValue.forEach((disablingInput, disablingValueSet) -> {
-            if(disablingInput.isUniqueFilled()){
+            if (disablingInput.isUniqueFilled()) {
                 Object masterValue = ValueList.formValue(disablingInput.masterForm);
                 LaunchFormLayout.assertCondition(masterValue != null,
                         "Illegal state: master input field is not empty but has null value.");
                 String currentValue = masterValue.toString();
-                if(disablingValueSet.contains(currentValue)){
+                if (disablingValueSet.contains(currentValue)) {
                     disablingValues.put(disablingInput.getInputName(), currentValue);
                 }
             }
@@ -351,10 +353,10 @@ public abstract class InputLayout extends VLayout {
      * Enable, disable and validate this as well as dependant inputs. Meant to be called each time a modification
      * happens on the values tracked by this (value changed by user, addition or removal of an additional form...)
      *
-     * @param focusedItem   FormItem currently focused, in order to give it focus back after validation of inputs
+     * @param focusedItem FormItem currently focused, in order to give it focus back after validation of inputs
      * @see #onValueChanged()
      */
-    protected void onValueChanged(FormItem focusedItem){
+    protected void onValueChanged(FormItem focusedItem) {
         this.onValueChanged();
         focusedItem.focusInItem();
     }
@@ -363,8 +365,8 @@ public abstract class InputLayout extends VLayout {
      * Enable, disable and validate this as well as dependant inputs. Meant to be called each time a modification
      * happens on the values tracked by this (value changed by user, addition or removal of an additional form...)
      */
-    protected void onValueChanged(){
-        if(this.hasUniqueValue()){
+    protected void onValueChanged() {
+        if (this.hasUniqueValue()) {
             this.parentLayout.removeUnsupportedDependencies(this.getInputId());
 
             this.checkDependencies();
@@ -385,8 +387,8 @@ public abstract class InputLayout extends VLayout {
     /**
      * Enable main field (additional fields cannot be disabled
      */
-    protected void enableInput(){
-        for(FormItem field : this.masterForm.getFields()){
+    protected void enableInput() {
+        for (FormItem field : this.masterForm.getFields()) {
             field.setPrompt(null);
             field.enable();
         }
@@ -395,7 +397,7 @@ public abstract class InputLayout extends VLayout {
 
     public void makeUnmodifiablePermanently() {
         this.unmodifiable = true;
-        for(FormItem field : masterForm.getFields()){
+        for (FormItem field : masterForm.getFields()) {
             field.disable();
             field.setPrompt("This input cannot be changed");
             field.setAttribute(UNMODIFIABLE_ATTR, true);
@@ -411,7 +413,7 @@ public abstract class InputLayout extends VLayout {
      * Validate this, and update parentLayout invalid inputs error message as appropriate
      */
     protected void validateInput() {
-        if(this.masterForm.validate(false) && validateAdditionalForms()) {
+        if (this.masterForm.validate(false) && validateAdditionalForms()) {
             this.parentLayout.removeValidationErrorOnInput(this);
         } else {
             this.parentLayout.addValidationErrorOnInput(this);
@@ -456,8 +458,8 @@ public abstract class InputLayout extends VLayout {
     /**
      * Overwrite given input field with provided value
      *
-     * @param overWrittenForm   DynamicForm representing the input field to overwrite
-     * @param value             Object representing the value to write
+     * @param overWrittenForm DynamicForm representing the input field to overwrite
+     * @param value           Object representing the value to write
      */
     protected void setValue(DynamicForm overWrittenForm, Object value) {
         overWrittenForm.getField(MAIN_FIELD_NAME).setValue(value);
@@ -466,14 +468,14 @@ public abstract class InputLayout extends VLayout {
     /**
      * @return boolean: true if this input currently displays only one input field (unique value).
      */
-    public boolean hasUniqueValue(){
+    public boolean hasUniqueValue() {
         return (this.additionalForms.size() <= 0);
     }
 
     /**
      * @return boolean: true if main input field is empty
      */
-    public boolean isMasterEmpty(){
+    public boolean isMasterEmpty() {
         return (ValueList.formValue(this.masterForm) == null);
     }
 
@@ -482,7 +484,7 @@ public abstract class InputLayout extends VLayout {
      * @see #hasUniqueValue()
      * @see #isMasterEmpty()
      */
-    public boolean isUniqueEmpty(){
+    public boolean isUniqueEmpty() {
         return this.hasUniqueValue() && this.isMasterEmpty();
     }
 
@@ -491,42 +493,42 @@ public abstract class InputLayout extends VLayout {
      * @see #hasUniqueValue()
      * @see #isMasterEmpty()
      */
-    public boolean isUniqueFilled(){
+    public boolean isUniqueFilled() {
         return this.hasUniqueValue() && !this.isMasterEmpty();
     }
 
     /**
      * @return ValueSet representing current values of this input
      */
-    public ValueSet getValueList(){
+    public ValueSet getValueList() {
         return new ValueList(this.masterForm, this.additionalForms);
     }
 
     /**
      * @return Human-readable input name as String
      */
-    public String getInputName(){
+    public String getInputName() {
         return this.input.getName();
     }
 
     /**
      * @return Unique input ID as String
      */
-    public String getInputId(){
+    public String getInputId() {
         return this.input.getId();
     }
 
     /**
      * @return boolean: true if this is an optional input
      */
-    public boolean isOptional(){
+    public boolean isOptional() {
         return this.input.isOptional();
     }
 
     /**
      * @return Object representing this input's default value
      */
-    public Object getDefaultValue(){
+    public Object getDefaultValue() {
         return this.input.getDefaultValue();
     }
 

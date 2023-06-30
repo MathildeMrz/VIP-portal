@@ -55,12 +55,11 @@ import static org.mockito.ArgumentMatchers.any;
 
 /**
  * Created by abonnet on 7/21/16.
- *
+ * <p>
  * Test the the global spring configuration
- *
+ * <p>
  * The less mock should be used to be as close as possible to the production
  * environment.
- *
  */
 @SpringJUnitWebConfig
 public class DefaultSpringConfigurationIT {

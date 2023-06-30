@@ -55,7 +55,6 @@ import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class SimulationsContextMenu extends Menu {
@@ -69,8 +68,8 @@ public class SimulationsContextMenu extends Menu {
     private String simulationUser;
 
     public SimulationsContextMenu(ModalWindow modal, final String simulationID,
-            final String title, final SimulationStatus status, String applicationName,
-            String applicationVersion, String applicationClass, String simulationUser) {
+                                  final String title, final SimulationStatus status, String applicationName,
+                                  String applicationVersion, String applicationClass, String simulationUser) {
 
         this.modal = modal;
         this.simulationID = simulationID;
@@ -90,8 +89,8 @@ public class SimulationsContextMenu extends Menu {
             @Override
             public void onClick(MenuItemClickEvent event) {
                 Layout.getInstance().addTab(
-                    AbstractSimulationTab.tabIdFrom(simulationID),
-                    () -> new SimulationTab(simulationID, title, status));
+                        AbstractSimulationTab.tabIdFrom(simulationID),
+                        () -> new SimulationTab(simulationID, title, status));
             }
         });
 
@@ -318,7 +317,7 @@ public class SimulationsContextMenu extends Menu {
             public void onSuccess(final Map<String, String> result) {
                 modal.hide();
                 String tabId =
-                    ApplicationConstants.getLaunchTabID(applicationName);
+                        ApplicationConstants.getLaunchTabID(applicationName);
                 Layout.getInstance().removeTab(tabId);
                 RelaunchService.getInstance().relaunch(
                         applicationName, applicationVersion, applicationClass, simulationName, result, tabId);

@@ -101,8 +101,8 @@ public class VIPLayout extends AbstractFormLayout {
 
     }
 
-    public void setApplicationLocationValue(){
-        
+    public void setApplicationLocationValue() {
+
         final AsyncCallback<String> callback = new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -115,15 +115,15 @@ public class VIPLayout extends AbstractFormLayout {
                 if (ValidatorUtil.validateRootPath(result, "create a folder in")
                         && ValidatorUtil.validateUserLevel(result, "create a folder in")) {
                     applicationLocation.setValue(result);
-                }else{
+                } else {
                     applicationLocation.setValue("/vip/Home");
-                }       
+                }
             }
         };
         ApplicationImporterService.Util.getInstance().getApplicationImporterRootFolder(callback);
 
     }
-    
+
 
     /**
      * Get the location where to create the application
@@ -148,7 +148,7 @@ public class VIPLayout extends AbstractFormLayout {
      * @return the type
      */
     public String getApplicationType() {
-        if (appCbItem._getValue() == null){
+        if (appCbItem._getValue() == null) {
             return null;
         } else {
             return appCbItem._getValue().toString();
@@ -171,20 +171,20 @@ public class VIPLayout extends AbstractFormLayout {
             @Override
             public void onSuccess(List<String> result) {
                 result = new ArrayList<>(result); // make a new list because the returned one does not support the add method
-                if(!result.contains("None")){
+                if (!result.contains("None")) {
                     result.add("None");
                 }
-                
+
                 Map<String, String> requirementsValues = new LinkedHashMap<>();
                 for (String requirement : result) {
                     requirementsValues.put(requirement, requirement);
-                }               
+                }
                 tagsCb.setValueMap(requirementsValues);
-                
+
             }
         };
         ApplicationImporterService.Util.getInstance().getApplicationImporterRequirements(callback);
-        
+
         tagsCb.setValue("None");
 
         return tagsCb;
@@ -193,7 +193,8 @@ public class VIPLayout extends AbstractFormLayout {
     public String getTag() {
         return tagsCbItem._getValue().toString();
     }
-    public String getFileAccessProtocol(){
+
+    public String getFileAccessProtocol() {
         return fileAccessProtocolItem._getValue().toString();
     }
 }

@@ -48,7 +48,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user/externalKeys")
-public class ApiKeyController extends ApiController{
+public class ApiKeyController extends ApiController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -80,31 +80,31 @@ public class ApiKeyController extends ApiController{
         logMethodInvocation(logger, "addOrUpdateApiKey");
         try {
             if (externalPlatformBusiness.listAll().stream()
-                .noneMatch(ep -> ep.getIdentifier()
-                          .equals(keyInfo.storageIdentifier))) {
+                    .noneMatch(ep -> ep.getIdentifier()
+                            .equals(keyInfo.storageIdentifier))) {
                 logger.error("Storage does not exist: {}", keyInfo.storageIdentifier);
                 throw new ApiException(
-                    "Storage does not exist: " + keyInfo.storageIdentifier);
+                        "Storage does not exist: " + keyInfo.storageIdentifier);
             }
 
             apiKeyBusiness.addOrUpdateApiKey(
-                keyInfo.storageIdentifier,
-                currentUser().getEmail(),
-                keyInfo.apiKey);
+                    keyInfo.storageIdentifier,
+                    currentUser().getEmail(),
+                    keyInfo.apiKey);
         } catch (BusinessException e) {
             throw new ApiException(e);
         }
     }
 
     @RequestMapping(value = "/{storageIdentifier}",
-                    method = RequestMethod.DELETE)
+            method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteApiKey(@PathVariable String storageIdentifier)
             throws ApiException {
         logMethodInvocation(logger, "deleteApiKey");
         try {
             apiKeyBusiness.deleteApiKey(
-                storageIdentifier, currentUser().getEmail());
+                    storageIdentifier, currentUser().getEmail());
         } catch (BusinessException e) {
             throw new ApiException(e);
         }

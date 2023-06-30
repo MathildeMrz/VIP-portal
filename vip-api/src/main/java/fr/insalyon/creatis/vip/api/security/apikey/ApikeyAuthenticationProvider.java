@@ -57,7 +57,7 @@ import java.util.Map;
 
 /**
  * Created by abonnet on 7/25/16.
- *
+ * <p>
  * Authenticate a user with its api key.
  * Automaticaly taken into account by spring security by implementing {@link AuthenticationProvider}
  */
@@ -89,7 +89,7 @@ public class ApikeyAuthenticationProvider implements
 
     @Override
     public Authentication authenticate(Authentication authentication)
-        throws AuthenticationException {
+            throws AuthenticationException {
 
         Assert.isInstanceOf(ApikeyAuthenticationToken.class, authentication,
                 "Only ApikeyAuthenticationToken is supported");
@@ -101,44 +101,44 @@ public class ApikeyAuthenticationProvider implements
         } catch (DAOException e) {
             logger.error("error when getting user by apikey. Doing as if there is an auth error", e);
             throw new BadCredentialsException(
-                messages.getMessage(
-                    "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    "Bad credentials"));
+                    messages.getMessage(
+                            "AbstractUserDetailsAuthenticationProvider.badCredentials",
+                            "Bad credentials"));
         }
         if (vipUser == null) {
             logger.info(
-                "Cant authenticate because apikey not found:" + apikey);
+                    "Cant authenticate because apikey not found:" + apikey);
             throw new BadCredentialsException(
-                messages.getMessage(
-                    "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    "Bad credentials"));
+                    messages.getMessage(
+                            "AbstractUserDetailsAuthenticationProvider.badCredentials",
+                            "Bad credentials"));
         }
         logger.debug("apikey OK for " + vipUser.getEmail());
         UserDetails springUser;
         try {
             Map<Group, CoreConstants.GROUP_ROLE> groups =
-                configurationBusiness.getUserGroups(vipUser.getEmail());
+                    configurationBusiness.getUserGroups(vipUser.getEmail());
             vipUser.setGroups(groups);
             springUser = new SpringApiPrincipal(vipUser);
         } catch (BusinessException e) {
             logger.error("error when getting user groups for {}. Doing as if there is an auth error",
                     vipUser.getEmail(), e);
             throw new BadCredentialsException(
-                messages.getMessage(
-                    "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    "Bad credentials"));
+                    messages.getMessage(
+                            "AbstractUserDetailsAuthenticationProvider.badCredentials",
+                            "Bad credentials"));
         }
         checkUserInfo(springUser);
         try {
             logger.info(
-                "successful logging for " + springUser.getUsername());
+                    "successful logging for " + springUser.getUsername());
             userDAO.resetNFailedAuthentications(springUser.getUsername());
         } catch (DAOException e) {
             logger.error("Error resetting failed auth attempts. Ignoring", e);
         }
-            return new ApikeyAuthenticationToken(
-                    springUser, apikey,
-                    vipUser.getLevel().name().toUpperCase());
+        return new ApikeyAuthenticationToken(
+                springUser, apikey,
+                vipUser.getLevel().name().toUpperCase());
     }
 
     public void setMessageSource(MessageSource messageSource) {

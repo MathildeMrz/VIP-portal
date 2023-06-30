@@ -4,16 +4,16 @@
  * This software is a web portal for pipeline execution on distributed systems.
  *
  * This software is governed by the CeCILL-B license under French law and
- * abiding by the rules of distribution of free software.  You can  use, 
+ * abiding by the rules of distribution of free software.  You can  use,
  * modify and/ or redistribute the software under the terms of the CeCILL-B
  * license as circulated by CEA, CNRS and INRIA at the following URL
- * "http://www.cecill.info". 
+ * "http://www.cecill.info".
  *
  * As a counterpart to the access to the source code and  rights to copy,
  * modify and redistribute granted by the license, users are provided only
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
- * liability. 
+ * liability.
  *
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
@@ -22,9 +22,9 @@
  * therefore means  that it is reserved for developers  and  experienced
  * professionals having in-depth computer knowledge. Users are therefore
  * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or 
- * data to be ensured and,  more generally, to use and operate it in the 
- * same conditions as regards security. 
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
  *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-B license and that you accept its terms.
@@ -68,7 +68,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class UsersLayout extends VLayout {
@@ -79,7 +78,7 @@ public class UsersLayout extends VLayout {
     private ListGridRecord rollOverRecord;
     private DetailViewer detailViewer;
     DataSource ds;
-    boolean state=true;
+    boolean state = true;
 
     public UsersLayout() {
 
@@ -89,7 +88,7 @@ public class UsersLayout extends VLayout {
         ds = new DataUsersLayout();
         configureGrid();
         modal = new ModalWindow(grid);
- 
+
         this.addMember(new UsersToolStrip());
         this.addMember(grid);
 
@@ -136,36 +135,36 @@ public class UsersLayout extends VLayout {
                     rollOverCanvas.addMember(FieldUtil.getImgButton(
                             CoreConstants.ICON_EDIT, "Edit User", new ClickHandler() {
 
-                        @Override
-                        public void onClick(ClickEvent event) {
-                            edit(rollOverRecord.getAttribute("username"),
-                                    rollOverRecord.getAttribute("email"),
-                                    rollOverRecord.getAttributeAsBoolean("confirmed"),
-                                    rollOverRecord.getAttribute("level"),
-                                    rollOverRecord.getAttribute("countryCode"),
-                                    rollOverRecord.getAttributeAsInt("maxRunningSimulations"),
-                                    rollOverRecord.getAttributeAsBoolean("accountLocked"));
-                        }
-                    }));
+                                @Override
+                                public void onClick(ClickEvent event) {
+                                    edit(rollOverRecord.getAttribute("username"),
+                                            rollOverRecord.getAttribute("email"),
+                                            rollOverRecord.getAttributeAsBoolean("confirmed"),
+                                            rollOverRecord.getAttribute("level"),
+                                            rollOverRecord.getAttribute("countryCode"),
+                                            rollOverRecord.getAttributeAsInt("maxRunningSimulations"),
+                                            rollOverRecord.getAttributeAsBoolean("accountLocked"));
+                                }
+                            }));
 
                     rollOverCanvas.addMember(FieldUtil.getImgButton(
                             CoreConstants.ICON_DELETE, "Delete User", new ClickHandler() {
 
-                        @Override
-                        public void onClick(ClickEvent event) {
-                            final String email = rollOverRecord.getAttribute("email");
-                            SC.ask("Do you really want to remove the user \""
-                                    + email + "\"?", new BooleanCallback() {
-
                                 @Override
-                                public void execute(Boolean value) {
-                                    if (value) {
-                                        remove(email);
-                                    }
+                                public void onClick(ClickEvent event) {
+                                    final String email = rollOverRecord.getAttribute("email");
+                                    SC.ask("Do you really want to remove the user \""
+                                            + email + "\"?", new BooleanCallback() {
+
+                                        @Override
+                                        public void execute(Boolean value) {
+                                            if (value) {
+                                                remove(email);
+                                            }
+                                        }
+                                    });
                                 }
-                            });
-                        }
-                    }));
+                            }));
                 }
                 return rollOverCanvas;
             }
@@ -213,14 +212,14 @@ public class UsersLayout extends VLayout {
         ListGridField lockedField = new ListGridField("accountLocked", "Locked");
         lockedField.setType(ListGridFieldType.BOOLEAN);
 
-        
+
         grid.setFields(confirmedField,
                 lockedField,
                 FieldUtil.getIconGridField("countryCodeIcon"),
                 new ListGridField("username", "Name"),
                 FieldUtil.getDateField("lastLogin", "Last Login"),
                 new ListGridField("email", "Email")
-                );
+        );
         grid.setSortField("firstName");
         grid.setSortDirection(SortDirection.ASCENDING);
 
@@ -302,7 +301,6 @@ public class UsersLayout extends VLayout {
     }
 
     /**
-     *
      * @param name
      * @param email
      * @param confirmed
@@ -310,15 +308,15 @@ public class UsersLayout extends VLayout {
      * @param countryCode
      */
     private void edit(String userName, String email, boolean confirmed,
-            String level, String countryCode, int maxRunningSimulations, boolean locked) {
+                      String level, String countryCode, int maxRunningSimulations, boolean locked) {
 
         ManageUsersTab usersTab = (ManageUsersTab) Layout.getInstance().
                 getTab(CoreConstants.TAB_MANAGE_USERS);
         usersTab.setUser(userName, email, confirmed, level, countryCode, maxRunningSimulations, locked);
     }
-    
-    
-     public void setFilter() {
+
+
+    public void setFilter() {
 
         if (state == false) {
             grid.setShowFilterEditor(false);

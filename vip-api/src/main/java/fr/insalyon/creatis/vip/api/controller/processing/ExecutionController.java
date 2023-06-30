@@ -113,14 +113,14 @@ public class ExecutionController extends ApiController {
 
         return executionBusiness.getExecution(executionId, false);
     }
-    
+
     @RequestMapping("/{executionId}/summary")
     public Execution getExecutionSummary(@PathVariable String executionId)
             throws ApiException {
         logMethodInvocation(logger, "getExecutionSummary", executionId);
         return executionBusiness.getExecution(executionId, true);
     }
-    
+
 
     @RequestMapping(value = "/{executionId}", method = RequestMethod.PUT)
     public Execution updateExecution(
@@ -138,7 +138,7 @@ public class ExecutionController extends ApiController {
             throws ApiException {
         logMethodInvocation(logger, "initExecution", execution);
         pipelineBusiness.checkIfUserCanAccessPipeline(
-            execution.getPipelineIdentifier());
+                execution.getPipelineIdentifier());
         String execId = executionBusiness.initExecution(execution);
         return executionBusiness.getExecution(execId, false);
     }
@@ -158,7 +158,7 @@ public class ExecutionController extends ApiController {
         return executionBusiness.getStdOut(executionId);
     }
 
-    @RequestMapping(value= "/{executionId}/stderr", produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/{executionId}/stderr", produces = "text/plain;charset=UTF-8")
     public String getStderr(@PathVariable String executionId) throws ApiException {
         logMethodInvocation(logger, "getStderr", executionId);
         executionBusiness.checkIfUserCanAccessExecution(executionId);

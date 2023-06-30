@@ -71,7 +71,7 @@ public class SpringConfigServer implements Server {
             ConfigurableEnvironment env) throws IOException, ConfigurationException {
         File configFile = vipConfigFolder.getFile().toPath().resolve(Server.CONF_FILE).toFile();
 
-        if( ! configFile.exists()) {
+        if (!configFile.exists()) {
             throw new FileNotFoundException(configFile.toString());
         }
 
@@ -84,8 +84,8 @@ public class SpringConfigServer implements Server {
     }
 
     private void createFolderIfNeeded(File folder) {
-        if ( ! folder.exists() &&
-                ! folder.mkdir()) {
+        if (!folder.exists() &&
+                !folder.mkdir()) {
             logger.error("Cannot create VIP config folder : {}", folder);
             throw new BeanInitializationException("Cannot create VIP config folder");
         }
@@ -355,13 +355,13 @@ public class SpringConfigServer implements Server {
     @Override
     public String getSamlTrustedCertificate(String issuer) {
         logger.info("Getting trusted certificate for issuer {}", issuer);
-        return env.getRequiredProperty(CoreConstants.SAML_TRUSTED_CERTIFICATE+"."+issuer);
+        return env.getRequiredProperty(CoreConstants.SAML_TRUSTED_CERTIFICATE + "." + issuer);
     }
 
     @Override
     public String getSAMLDefaultGroup(String issuer) {
-        logger.info("Getting default group for issuer "+issuer);
-        return env.getRequiredProperty(CoreConstants.SAML_DEFAULT_GROUP +"."+issuer);
+        logger.info("Getting default group for issuer " + issuer);
+        return env.getRequiredProperty(CoreConstants.SAML_DEFAULT_GROUP + "." + issuer);
     }
 
     @Override
@@ -383,15 +383,15 @@ public class SpringConfigServer implements Server {
     public HashMap<String, Integer> getReservedClasses() {
         HashMap<String, Integer> reservedClasses = new HashMap<>();
         Stream.of(
-                env.getRequiredProperty(
-                        CoreConstants.APPLET_GATELAB_CLASSES,
-                        String[].class))
-                .forEach(className -> reservedClasses.put(className,0));
+                        env.getRequiredProperty(
+                                CoreConstants.APPLET_GATELAB_CLASSES,
+                                String[].class))
+                .forEach(className -> reservedClasses.put(className, 0));
         Stream.of(
-                env.getRequiredProperty(
-                        CoreConstants.APPLET_GATELABTEST_CLASSES,
-                        String[].class))
-                .forEach(className -> reservedClasses.put(className,0));
+                        env.getRequiredProperty(
+                                CoreConstants.APPLET_GATELABTEST_CLASSES,
+                                String[].class))
+                .forEach(className -> reservedClasses.put(className, 0));
         return reservedClasses;
     }
 

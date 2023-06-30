@@ -6,7 +6,8 @@ public class ResetPasswordDTO {
     private String activationCode;
     private String newPassword;
 
-    public ResetPasswordDTO() { }
+    public ResetPasswordDTO() {
+    }
 
     public String getEmail() {
         return email;

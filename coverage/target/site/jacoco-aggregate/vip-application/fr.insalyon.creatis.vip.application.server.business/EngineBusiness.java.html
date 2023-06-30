@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EngineBusiness.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.server.business</a> &gt; <span class="el_source">EngineBusiness.java</span></div><h1>EngineBusiness.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EngineBusiness.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.server.business</a> &gt; <span class="el_source">EngineBusiness.java</span></div><h1>EngineBusiness.java</h1><pre class="source lang-java linenums">/*
  * Copyright and authors: see LICENSE.txt in base repository.
  *
  * This software is a web portal for pipeline execution on distributed systems.
@@ -41,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Service
@@ -50,40 +49,40 @@ public class EngineBusiness {
 
     private EngineDAO engineDAO;
 
-<span class="fc" id="L53">    public EngineBusiness(EngineDAO engineDAO) {</span>
-<span class="fc" id="L54">        this.engineDAO = engineDAO;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L52">    public EngineBusiness(EngineDAO engineDAO) {</span>
+<span class="fc" id="L53">        this.engineDAO = engineDAO;</span>
+<span class="fc" id="L54">    }</span>
 
     public void add(Engine engine) throws BusinessException {
         try {
-<span class="fc" id="L59">            engineDAO.add(engine);</span>
-<span class="fc" id="L60">        } catch (DAOException ex) {</span>
-<span class="fc" id="L61">            throw new BusinessException(ex);</span>
-<span class="fc" id="L62">        }</span>
-<span class="fc" id="L63">    }</span>
+<span class="fc" id="L58">            engineDAO.add(engine);</span>
+<span class="fc" id="L59">        } catch (DAOException ex) {</span>
+<span class="fc" id="L60">            throw new BusinessException(ex);</span>
+<span class="fc" id="L61">        }</span>
+<span class="fc" id="L62">    }</span>
 
     public void update(Engine engine) throws BusinessException {
         try {
-<span class="fc" id="L67">            engineDAO.update(engine);</span>
-<span class="fc" id="L68">        } catch (DAOException ex) {</span>
-<span class="fc" id="L69">            throw new BusinessException(ex);</span>
-<span class="fc" id="L70">        }</span>
-<span class="fc" id="L71">    }</span>
+<span class="fc" id="L66">            engineDAO.update(engine);</span>
+<span class="fc" id="L67">        } catch (DAOException ex) {</span>
+<span class="fc" id="L68">            throw new BusinessException(ex);</span>
+<span class="fc" id="L69">        }</span>
+<span class="fc" id="L70">    }</span>
 
     public void remove(String name) throws BusinessException, DAOException {
         try {
-<span class="fc" id="L75">            engineDAO.remove(name);</span>
-<span class="fc" id="L76">        } catch (DAOException ex) {</span>
-<span class="fc" id="L77">            throw new BusinessException(ex);</span>
-<span class="fc" id="L78">        }</span>
-<span class="fc" id="L79">    }</span>
+<span class="fc" id="L74">            engineDAO.remove(name);</span>
+<span class="fc" id="L75">        } catch (DAOException ex) {</span>
+<span class="fc" id="L76">            throw new BusinessException(ex);</span>
+<span class="fc" id="L77">        }</span>
+<span class="fc" id="L78">    }</span>
 
 
     public List&lt;Engine&gt; get() throws BusinessException {
         try {
-<span class="fc" id="L84">            return engineDAO.get();</span>
-<span class="nc" id="L85">        } catch (DAOException ex) {</span>
-<span class="nc" id="L86">            throw new BusinessException(ex);</span>
+<span class="fc" id="L83">            return engineDAO.get();</span>
+<span class="nc" id="L84">        } catch (DAOException ex) {</span>
+<span class="nc" id="L85">            throw new BusinessException(ex);</span>
         }
     }
 }

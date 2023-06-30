@@ -70,11 +70,10 @@ import static fr.insalyon.creatis.vip.api.CarminProperties.KEYCLOAK_ACTIVATED;
 
 /**
  * Keycloaksecurity configuration.
- *
+ * <p>
  * It secures by api key all rest requests (except platform and authenticate)
- *
+ * <p>
  * Modified by khalilkes to implement keycloak adapter
- *
  */
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class})
 @KeycloakConfiguration
@@ -143,7 +142,7 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             super.configure(http);
         }
         http.antMatcher("/rest/**")
-            .authorizeRequests()
+                .authorizeRequests()
                 .antMatchers("/rest/platform").permitAll()
                 .antMatchers("/rest/authenticate").permitAll()
                 .antMatchers("/rest/session").permitAll()
@@ -156,15 +155,15 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                 .antMatchers("/rest/statistics/**").hasAnyRole("ADVANCED", "ADMINISTRATOR")
                 .antMatchers("/rest/**").authenticated()
                 .anyRequest().permitAll()
-            .and()
-            .addFilterBefore(apikeyAuthenticationFilter(), BasicAuthenticationFilter.class)
-            .exceptionHandling().authenticationEntryPoint(vipAuthenticationEntryPoint)// also done in parent but needed here when keycloak is not active. It can be done twice without harm.
-            // session must be activated otherwise OIDC auth info will be lost when accessing /loginEgi
-            //.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .cors().and()
-            .headers().frameOptions().sameOrigin().and()
-            .csrf().disable();
+                .and()
+                .addFilterBefore(apikeyAuthenticationFilter(), BasicAuthenticationFilter.class)
+                .exceptionHandling().authenticationEntryPoint(vipAuthenticationEntryPoint)// also done in parent but needed here when keycloak is not active. It can be done twice without harm.
+                // session must be activated otherwise OIDC auth info will be lost when accessing /loginEgi
+                //.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .cors().and()
+                .headers().frameOptions().sameOrigin().and()
+                .csrf().disable();
     }
 
     @Bean
@@ -194,7 +193,7 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         }
 
         private User getApikeyUser(Authentication authentication) {
-            if ( ! (authentication.getPrincipal() instanceof SpringApiPrincipal)) {
+            if (!(authentication.getPrincipal() instanceof SpringApiPrincipal)) {
                 return null;
             }
             SpringApiPrincipal springCompatibleUser =
@@ -203,7 +202,7 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         }
 
         private User getKeycloakUser(Authentication authentication) {
-            if ( ! (authentication.getPrincipal() instanceof SpringKeycloakPrincipal)) {
+            if (!(authentication.getPrincipal() instanceof SpringKeycloakPrincipal)) {
                 return null;
             }
             SpringKeycloakPrincipal springKeycloakPrincipal =

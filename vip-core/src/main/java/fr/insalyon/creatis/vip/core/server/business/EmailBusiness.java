@@ -20,7 +20,7 @@ public class EmailBusiness {
     }
 
     public void sendEmail(String subject, String content, String[] recipients,
-                                 boolean direct, String username) throws BusinessException {
+                          boolean direct, String username) throws BusinessException {
 
         try {
             smaClient.sendEmail(subject, content, recipients, direct, username);

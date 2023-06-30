@@ -4,16 +4,16 @@
  * This software is a web portal for pipeline execution on distributed systems.
  *
  * This software is governed by the CeCILL-B license under French law and
- * abiding by the rules of distribution of free software.  You can  use, 
+ * abiding by the rules of distribution of free software.  You can  use,
  * modify and/ or redistribute the software under the terms of the CeCILL-B
  * license as circulated by CEA, CNRS and INRIA at the following URL
- * "http://www.cecill.info". 
+ * "http://www.cecill.info".
  *
  * As a counterpart to the access to the source code and  rights to copy,
  * modify and redistribute granted by the license, users are provided only
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
- * liability. 
+ * liability.
  *
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
@@ -22,9 +22,9 @@
  * therefore means  that it is reserved for developers  and  experienced
  * professionals having in-depth computer knowledge. Users are therefore
  * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or 
- * data to be ensured and,  more generally, to use and operate it in the 
- * same conditions as regards security. 
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
  *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-B license and that you accept its terms.
@@ -59,7 +59,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
 public class GroupsLayout extends VLayout {
@@ -74,7 +73,7 @@ public class GroupsLayout extends VLayout {
         this.setWidth100();
         this.setHeight100();
         this.setOverflow(Overflow.AUTO);
-        
+
         configureGrid();
         this.addMember(new GroupsToolStrip());
         this.addMember(grid);
@@ -100,23 +99,23 @@ public class GroupsLayout extends VLayout {
                     rollOverCanvas.addMember(FieldUtil.getImgButton(
                             CoreConstants.ICON_EDIT, "Edit", new ClickHandler() {
 
-                        @Override
-                        public void onClick(ClickEvent event) {
-                            edit(rollOverRecord.getAttribute("name"),
-                                    rollOverRecord.getAttributeAsBoolean("isPublic"),
-                                    rollOverRecord.getAttributeAsBoolean("isGridFile"),
-                                    rollOverRecord.getAttributeAsBoolean("isGridJobs"));
-                        }
-                    }));
+                                @Override
+                                public void onClick(ClickEvent event) {
+                                    edit(rollOverRecord.getAttribute("name"),
+                                            rollOverRecord.getAttributeAsBoolean("isPublic"),
+                                            rollOverRecord.getAttributeAsBoolean("isGridFile"),
+                                            rollOverRecord.getAttributeAsBoolean("isGridJobs"));
+                                }
+                            }));
 
                     rollOverCanvas.addMember(FieldUtil.getImgButton(
                             CoreConstants.ICON_DELETE, "Delete", new ClickHandler() {
 
-                        @Override
-                        public void onClick(ClickEvent event) {
-                            remove(rollOverRecord.getAttribute("name"));
-                        }
-                    }));
+                                @Override
+                                public void onClick(ClickEvent event) {
+                                    remove(rollOverRecord.getAttribute("name"));
+                                }
+                            }));
                 }
                 return rollOverCanvas;
             }
@@ -131,14 +130,14 @@ public class GroupsLayout extends VLayout {
 
         ListGridField isPublicField = new ListGridField("isPublic", "Public");
         isPublicField.setType(ListGridFieldType.BOOLEAN);
-        
+
         ListGridField isGridFileField = new ListGridField("isGridFile", "GridFile");
         isGridFileField.setType(ListGridFieldType.BOOLEAN);
-        
+
         ListGridField isGridJobsField = new ListGridField("isGridJobs", "GridJobs");
         isGridJobsField.setType(ListGridFieldType.BOOLEAN);
-        
-        grid.setFields(isPublicField,isGridFileField,isGridJobsField, new ListGridField("name", "Group Name"));
+
+        grid.setFields(isPublicField, isGridFileField, isGridJobsField, new ListGridField("name", "Group Name"));
         grid.setSortField("name");
         grid.setSortDirection(SortDirection.ASCENDING);
         grid.addCellDoubleClickHandler(new CellDoubleClickHandler() {
@@ -219,16 +218,16 @@ public class GroupsLayout extends VLayout {
     /**
      * Edits a group.
      *
-     * @param name Group name
+     * @param name     Group name
      * @param isPublic Whether the group if public or not
      */
-    private void edit(String name, boolean isPublic,boolean isgridfile,boolean isgridjobs) {
+    private void edit(String name, boolean isPublic, boolean isgridfile, boolean isgridjobs) {
 
         if (name.equals(CoreConstants.GROUP_SUPPORT)) {
             SC.warn("You cannot edit " + name + " group.");
             return;
         }
         ((ManageGroupsTab) Layout.getInstance().getTab(
-                CoreConstants.TAB_MANAGE_GROUPS)).setGroup(name, isPublic,isgridfile,isgridjobs);
+                CoreConstants.TAB_MANAGE_GROUPS)).setGroup(name, isPublic, isgridfile, isgridjobs);
     }
 }

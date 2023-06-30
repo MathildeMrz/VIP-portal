@@ -78,8 +78,8 @@ public class PipelineControllerIT extends BaseVIPSpringIT {
     @Test
     public void shouldReturnErrorOnBusinessException() throws Exception {
         when(classBusiness.getUserClasses(
-                 eq(baseUser1.getEmail()), anyBoolean()))
-            .thenThrow(new BusinessException("test exception"));
+                eq(baseUser1.getEmail()), anyBoolean()))
+                .thenThrow(new BusinessException("test exception"));
         mockMvc.perform(get("/rest/pipelines").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -90,8 +90,8 @@ public class PipelineControllerIT extends BaseVIPSpringIT {
     @Test
     public void shouldReturnErrorOnUnexpectedException() throws Exception {
         when(classBusiness.getUserClasses(
-                 eq(baseUser1.getEmail()), anyBoolean()))
-            .thenThrow(new RuntimeException("test exception"));
+                eq(baseUser1.getEmail()), anyBoolean()))
+                .thenThrow(new RuntimeException("test exception"));
         mockMvc.perform(get("/rest/pipelines").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
@@ -149,7 +149,7 @@ public class PipelineControllerIT extends BaseVIPSpringIT {
                 app2, version42);
         String pipelineId = configureAnApplication(this, baseUser1, app2, version42, 0, 1);
         mockMvc.perform(get("/rest/pipelines/" + pipelineId)
-                .with(baseUser1()))
+                        .with(baseUser1()))
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$", jsonCorrespondsToPipeline(getFullPipeline(app2, version42, "desc test", 0, 1))));
@@ -161,7 +161,7 @@ public class PipelineControllerIT extends BaseVIPSpringIT {
                 app2, version42);
         String pipelineId = configureAnApplication(this, baseUser1, app2, version42, 0, 1);
         mockMvc.perform(get("/rest/pipelines").param("pipelineId", pipelineId)
-                .with(baseUser1()))
+                        .with(baseUser1()))
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$", jsonCorrespondsToPipeline(getFullPipeline(app2, version42, "desc test", 0, 1))));

@@ -65,7 +65,6 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class CoreModule extends Module {
@@ -74,7 +73,7 @@ public class CoreModule extends Module {
     private static GeneralTileGrid generalTileGrid;
     private static SystemTileGrid systemTileGrid;
     private static HomeTab homeTab;
-    private static Map<String,Runnable> homePageActions;
+    private static Map<String, Runnable> homePageActions;
     public static List<String> accountTypes;
 
     public CoreModule() {
@@ -104,8 +103,8 @@ public class CoreModule extends Module {
 
         if (!user.hasGroups() || !user.hasAcceptTermsOfUse()) {
             final AccountTab accountTab =
-                (AccountTab) Layout.getInstance().addTab(
-                    CoreConstants.TAB_ACCOUNT, AccountTab::new);
+                    (AccountTab) Layout.getInstance().addTab(
+                            CoreConstants.TAB_ACCOUNT, AccountTab::new);
             if (!user.hasAcceptTermsOfUse()) {
                 showDialog("Please accept our Terms of Use", accountTab);
             }
@@ -117,27 +116,27 @@ public class CoreModule extends Module {
         }
 
         //call to terms of use
-         if (user.hasAcceptTermsOfUse()) {
-        final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-            @Override
-            public void onFailure(Throwable caught) {
+        if (user.hasAcceptTermsOfUse()) {
+            final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+                @Override
+                public void onFailure(Throwable caught) {
 
-                Layout.getInstance().setWarningMessage("Cannot get last update of Terms of Use" + caught.getMessage(), 10);
-
-            }
-
-            @Override
-            public void onSuccess(Boolean result) {
-                if (result) {
-                    final AccountTab accountTab =
-                        (AccountTab) Layout.getInstance().addTab(
-                            CoreConstants.TAB_ACCOUNT, AccountTab::new);
-                    showDialog("Our Terms of Use have changed. Please accept them again.", accountTab);
+                    Layout.getInstance().setWarningMessage("Cannot get last update of Terms of Use" + caught.getMessage(), 10);
 
                 }
-            }
-        };
-        ConfigurationService.Util.getInstance().compare(callback);
+
+                @Override
+                public void onSuccess(Boolean result) {
+                    if (result) {
+                        final AccountTab accountTab =
+                                (AccountTab) Layout.getInstance().addTab(
+                                        CoreConstants.TAB_ACCOUNT, AccountTab::new);
+                        showDialog("Our Terms of Use have changed. Please accept them again.", accountTab);
+
+                    }
+                }
+            };
+            ConfigurationService.Util.getInstance().compare(callback);
         }
 
     }
@@ -152,7 +151,7 @@ public class CoreModule extends Module {
             @Override
             public void onClick(ClickEvent event) {
                 Layout.getInstance().addTab(
-                    CoreConstants.TAB_CONTACT, ContactTab::new);
+                        CoreConstants.TAB_CONTACT, ContactTab::new);
             }
         });
 

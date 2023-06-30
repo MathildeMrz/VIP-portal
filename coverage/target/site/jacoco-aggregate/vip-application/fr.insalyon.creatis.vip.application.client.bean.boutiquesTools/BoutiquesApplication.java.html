@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BoutiquesApplication.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.bean.boutiquesTools</a> &gt; <span class="el_source">BoutiquesApplication.java</span></div><h1>BoutiquesApplication.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.bean.boutiquesTools;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BoutiquesApplication.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.bean.boutiquesTools</a> &gt; <span class="el_source">BoutiquesApplication.java</span></div><h1>BoutiquesApplication.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.bean.boutiquesTools;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -36,73 +36,74 @@ public class BoutiquesApplication implements IsSerializable {
 
     private BoutiquesApplicationExtensions boutiquesExtensions;
 
-<span class="nc" id="L39">    public BoutiquesApplication(){}</span>
+<span class="nc" id="L39">    public BoutiquesApplication() {</span>
+<span class="nc" id="L40">    }</span>
 
     /**
-     * @param name String
+     * @param name        String
      * @param description String
-     * @param version String
+     * @param version     String
      */
-<span class="nc" id="L46">    public BoutiquesApplication(String name, String description, String version){</span>
-<span class="nc" id="L47">        this.name = name;</span>
-<span class="nc" id="L48">        this.description = description;</span>
-<span class="nc" id="L49">        this.version = version;</span>
-<span class="nc" id="L50">    }</span>
+<span class="nc" id="L47">    public BoutiquesApplication(String name, String description, String version) {</span>
+<span class="nc" id="L48">        this.name = name;</span>
+<span class="nc" id="L49">        this.description = description;</span>
+<span class="nc" id="L50">        this.version = version;</span>
+<span class="nc" id="L51">    }</span>
 
     public void setBoutiquesExtensions(BoutiquesApplicationExtensions boutiquesExtensions) {
-<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (this.boutiquesExtensions != null) {</span>
-<span class="nc" id="L54">            throw new IllegalStateException(&quot;A boutiques application can only be extended once&quot;);</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (this.boutiquesExtensions != null) {</span>
+<span class="nc" id="L55">            throw new IllegalStateException(&quot;A boutiques application can only be extended once&quot;);</span>
         }
-<span class="nc" id="L56">        this.boutiquesExtensions = boutiquesExtensions;</span>
-<span class="nc" id="L57">    }</span>
+<span class="nc" id="L57">        this.boutiquesExtensions = boutiquesExtensions;</span>
+<span class="nc" id="L58">    }</span>
 
     public BoutiquesApplicationExtensions getBoutiquesExtensions() {
-<span class="nc" id="L60">        return boutiquesExtensions;</span>
+<span class="nc" id="L61">        return boutiquesExtensions;</span>
     }
 
     /**
      * @return String of format 'applicationName applicationVersion'
      */
-    public String getFullName(){
-<span class="nc" id="L67">        return this.name + &quot; &quot; + this.version;</span>
+    public String getFullName() {
+<span class="nc" id="L68">        return this.name + &quot; &quot; + this.version;</span>
     }
 
     /**
      * @return Application description as String
      */
-    public String getDescription(){
-<span class="nc" id="L74">        return this.description;</span>
+    public String getDescription() {
+<span class="nc" id="L75">        return this.description;</span>
     }
 
     /**
      * @return Array of BoutiquesInputs representing application inputs
      */
     public Set&lt;BoutiquesInput&gt; getInputs() {
-<span class="nc" id="L81">        return this.inputs;</span>
+<span class="nc" id="L82">        return this.inputs;</span>
     }
 
     public Optional&lt;BoutiquesInput&gt; getInput(String inputId) {
-<span class="nc" id="L85">        return this.inputs.stream().filter(input -&gt; input.getId().equals(inputId)).findAny();</span>
+<span class="nc" id="L86">        return this.inputs.stream().filter(input -&gt; input.getId().equals(inputId)).findAny();</span>
     }
 
     /**
      * @return Array of BoutiquesGroups representing application input groups
      */
     public Set&lt;BoutiquesGroup&gt; getGroups() {
-<span class="nc" id="L92">        return groups;</span>
+<span class="nc" id="L93">        return groups;</span>
     }
 
     /**
      * Generic method for getters of input attribute maps.
      *
      * @param inputGetter Function: getter implemented in BoutiquesInput to return an input attribute.
-     * @param &lt;T&gt; Type of the input attribute
-     * @return  Map from String input IDs to the attribute of those inputs
+     * @param &lt;T&gt;         Type of the input attribute
+     * @return Map from String input IDs to the attribute of those inputs
      */
-    private &lt;T&gt; Map&lt;String, T&gt; getMap(Function&lt;BoutiquesInput, T&gt; inputGetter){
-<span class="nc" id="L103">        return this.inputs.stream()</span>
-<span class="nc bnc" id="L104" title="All 2 branches missed.">                .filter(input -&gt; inputGetter.apply(input) != null)</span>
-<span class="nc" id="L105">                .collect(Collectors.toMap(BoutiquesInput::getId, inputGetter));</span>
+    private &lt;T&gt; Map&lt;String, T&gt; getMap(Function&lt;BoutiquesInput, T&gt; inputGetter) {
+<span class="nc" id="L104">        return this.inputs.stream()</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                .filter(input -&gt; inputGetter.apply(input) != null)</span>
+<span class="nc" id="L106">                .collect(Collectors.toMap(BoutiquesInput::getId, inputGetter));</span>
     }
 
     /**
@@ -110,7 +111,7 @@ public class BoutiquesApplication implements IsSerializable {
      * and values are arrays of Strings representing IDs of inputs disabled when disabling input is non empty
      */
     public Map&lt;String, Set&lt;String&gt;&gt; getDisablesInputsMap() {
-<span class="nc" id="L113">        return this.getMap(BoutiquesInput::getDisablesInputsId);</span>
+<span class="nc" id="L114">        return this.getMap(BoutiquesInput::getDisablesInputsId);</span>
     }
 
     /**
@@ -119,7 +120,7 @@ public class BoutiquesApplication implements IsSerializable {
      * enabled
      */
     public Map&lt;String, Set&lt;String&gt;&gt; getRequiresInputsMap() {
-<span class="nc" id="L122">        return this.getMap(BoutiquesInput::getRequiresInputsId);</span>
+<span class="nc" id="L123">        return this.getMap(BoutiquesInput::getRequiresInputsId);</span>
     }
 
     /**
@@ -128,7 +129,7 @@ public class BoutiquesApplication implements IsSerializable {
      * corresponding value of disabling input is selected
      */
     public Map&lt;String, Map&lt;String, Set&lt;String&gt;&gt;&gt; getValueDisablesInputsMap() {
-<span class="nc" id="L131">        return this.getMap(BoutiquesInput::getValueDisablesInputsId);</span>
+<span class="nc" id="L132">        return this.getMap(BoutiquesInput::getValueDisablesInputsId);</span>
     }
 
     /**
@@ -137,96 +138,95 @@ public class BoutiquesApplication implements IsSerializable {
      * when corresponding value of dependant input is selected
      */
     public Map&lt;String, Map&lt;String, Set&lt;String&gt;&gt;&gt; getValueRequiresInputsMap() {
-<span class="nc" id="L140">        return this.getMap(BoutiquesInput::getValueRequiresInputsId);</span>
+<span class="nc" id="L141">        return this.getMap(BoutiquesInput::getValueRequiresInputsId);</span>
     }
 
     public String getName() {
-<span class="nc" id="L144">        return name;</span>
+<span class="nc" id="L145">        return name;</span>
     }
 
     public String getAuthor() {
-<span class="nc" id="L148">        return author;</span>
+<span class="nc" id="L149">        return author;</span>
     }
 
     public String getToolVersion() {
-<span class="nc" id="L152">        return version;</span>
+<span class="nc" id="L153">        return version;</span>
     }
 
     public String getCommandLine() {
-<span class="nc" id="L156">        return commandLine;</span>
+<span class="nc" id="L157">        return commandLine;</span>
     }
 
     public String getContainerType() {
-<span class="nc" id="L160">        return containerType;</span>
+<span class="nc" id="L161">        return containerType;</span>
     }
 
     public String getContainerImage() {
-<span class="nc" id="L164">        return containerImage;</span>
+<span class="nc" id="L165">        return containerImage;</span>
     }
 
     public String getContainerIndex() {
-<span class="nc" id="L168">        return containerIndex;</span>
+<span class="nc" id="L169">        return containerIndex;</span>
     }
 
     public String getSchemaVersion() {
-<span class="nc" id="L172">        return schemaVersion;</span>
+<span class="nc" id="L173">        return schemaVersion;</span>
     }
 
     public String getChallengerEmail() {
-<span class="nc" id="L176">        return challengerEmail;</span>
+<span class="nc" id="L177">        return challengerEmail;</span>
     }
 
     public String getChallengerTeam() {
-<span class="nc" id="L180">        return challengerTeam;</span>
+<span class="nc" id="L181">        return challengerTeam;</span>
     }
 
     public Set&lt;BoutiquesOutputFile&gt; getOutputFiles() {
-<span class="nc" id="L184">        return outputFiles;</span>
+<span class="nc" id="L185">        return outputFiles;</span>
     }
 
     public String getJsonFile() {
-<span class="nc" id="L188">        return jsonFile;</span>
+<span class="nc" id="L189">        return jsonFile;</span>
     }
 
     public void setJsonFile(String jsonFile) {
-<span class="nc" id="L192">        this.jsonFile = jsonFile;</span>
-<span class="nc" id="L193">    }</span>
+<span class="nc" id="L193">        this.jsonFile = jsonFile;</span>
+<span class="nc" id="L194">    }</span>
 
     public String getApplicationLFN() {
-<span class="nc" id="L196">        return applicationLFN;</span>
+<span class="nc" id="L197">        return applicationLFN;</span>
     }
 
     public String getWrapperLFN() {
-<span class="nc" id="L200">        return this.applicationLFN + &quot;/bin/&quot; + getName() + &quot;.sh&quot;;</span>
+<span class="nc" id="L201">        return this.applicationLFN + &quot;/bin/&quot; + getName() + &quot;.sh&quot;;</span>
     }
 
     public String getWrapperName() {
-<span class="nc" id="L204">        return getName() + &quot;.sh&quot;;</span>
+<span class="nc" id="L205">        return getName() + &quot;.sh&quot;;</span>
     }
 
     public String getGASWLFN() {
-<span class="nc" id="L208">        return this.applicationLFN + &quot;/gasw/&quot; + getName() + &quot;.xml&quot;;</span>
+<span class="nc" id="L209">        return this.applicationLFN + &quot;/gasw/&quot; + getName() + &quot;.xml&quot;;</span>
     }
 
     public String getGwendiaLFN() {
-<span class="nc" id="L212">        return this.applicationLFN + &quot;/workflow/&quot; + getName() + &quot;.gwendia&quot;;</span>
+<span class="nc" id="L213">        return this.applicationLFN + &quot;/workflow/&quot; + getName() + &quot;.gwendia&quot;;</span>
     }
 
     public Map&lt;String, String&gt; getTags() {
-<span class="nc" id="L216">        return tags;</span>
+<span class="nc" id="L217">        return tags;</span>
     }
 
     public String getJsonLFN() {
-<span class="nc" id="L220">        return this.applicationLFN + &quot;/json/&quot; + getName() + &quot;.json&quot;;</span>
+<span class="nc" id="L221">        return this.applicationLFN + &quot;/json/&quot; + getName() + &quot;.json&quot;;</span>
     }
 
 
-
-    public void addInput(BoutiquesInput input){
+    public void addInput(BoutiquesInput input) {
 <span class="nc" id="L226">        this.inputs.add(input);</span>
 <span class="nc" id="L227">    }</span>
 
-    public void addGroup(BoutiquesGroup group){
+    public void addGroup(BoutiquesGroup group) {
 <span class="nc" id="L230">        this.groups.add(group);</span>
 <span class="nc" id="L231">    }</span>
 

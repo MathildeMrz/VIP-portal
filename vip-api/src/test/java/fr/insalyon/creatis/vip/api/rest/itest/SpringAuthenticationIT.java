@@ -53,12 +53,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Created by abonnet on 7/22/16.
- *
+ * <p>
  * These tests check the authentication with the spring test tools.
  * It requests a wrong url that should be secured and expects a 404 when OK
- *
+ * <p>
  * Use common vip spring test configuration ({@link BaseVIPSpringIT}
- *
  */
 @Disabled
 public class SpringAuthenticationIT extends BaseVIPSpringIT {
@@ -67,7 +66,7 @@ public class SpringAuthenticationIT extends BaseVIPSpringIT {
     public void authenticationOK() throws Exception {
         prepareUser1Configuration();
         mockMvc.perform(get("/rest/wrongUrl")
-                .with(ApikeyRequestPostProcessor.apikey("testapikey", "apikeyvalue")))
+                        .with(ApikeyRequestPostProcessor.apikey("testapikey", "apikeyvalue")))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -77,7 +76,7 @@ public class SpringAuthenticationIT extends BaseVIPSpringIT {
         when(getUserDAO().getUserByApikey("apikeyvalue"))
                 .thenThrow(new RuntimeException("hey hey"));
         mockMvc.perform(get("/rest/wrongUrl")
-                .with(ApikeyRequestPostProcessor.apikey("testapikey", "apikeyvalue")))
+                        .with(ApikeyRequestPostProcessor.apikey("testapikey", "apikeyvalue")))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -89,7 +88,7 @@ public class SpringAuthenticationIT extends BaseVIPSpringIT {
     public void authenticationWithBasicShouldBeKo() throws Exception {
         prepareUser1Configuration();
         mockMvc.perform(get("/rest/wrongUrl")
-                .with(httpBasic(baseUser1.getEmail(), baseUser1Password)))
+                        .with(httpBasic(baseUser1.getEmail(), baseUser1Password)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -101,7 +100,7 @@ public class SpringAuthenticationIT extends BaseVIPSpringIT {
     public void authenticationWithWrongApikey() throws Exception {
         prepareUser1Configuration();
         mockMvc.perform(get("/rest/wrongUrl")
-                .with(ApikeyRequestPostProcessor.apikey("testapikey", "WRONG")))
+                        .with(ApikeyRequestPostProcessor.apikey("testapikey", "WRONG")))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))

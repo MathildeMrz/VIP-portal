@@ -107,7 +107,7 @@ public class BoutiquesBusiness {
     private String getJsonLfn(String applicationName, String applicationVersion)
             throws BusinessException {
         AppVersion appVersion = applicationBusiness.getVersion(
-            applicationName, applicationVersion);
+                applicationName, applicationVersion);
         if (appVersion.getJsonLfn() == null) {
             logger.error("No json lfn for this application : {} / {}", applicationName, applicationVersion);
             throw new BusinessException("There is no json lfn for this application version.");
@@ -134,7 +134,7 @@ public class BoutiquesBusiness {
             throws BusinessException {
 
         applicationBusiness.updateDoiForVersion(
-            doi, applicationName, applicationVersion);
+                doi, applicationName, applicationVersion);
     }
 
     private String getDoiFromPublishOutput(List<String> publishOutput) throws BusinessException {
@@ -178,7 +178,7 @@ public class BoutiquesBusiness {
             logger.info("Executing command : " + command);
             process = builder.start();
             BufferedReader r = new BufferedReader(
-                new InputStreamReader(process.getInputStream()));
+                    new InputStreamReader(process.getInputStream()));
             String s;
             while ((s = r.readLine()) != null) {
                 cout.add(s);

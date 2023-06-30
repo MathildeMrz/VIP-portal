@@ -38,7 +38,6 @@ import fr.insalyon.creatis.vip.core.client.view.application.ApplicationParser;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class ApplicationHomeParser extends ApplicationParser {
@@ -58,7 +57,7 @@ public class ApplicationHomeParser extends ApplicationParser {
 
         if (applicationName.equals(ApplicationConstants.APP_MONITOR)) {
             Layout.getInstance().addTab(
-                ApplicationConstants.TAB_MONITOR, SimulationsTab::new);
+                    ApplicationConstants.TAB_MONITOR, SimulationsTab::new);
             return true;
         }
         if (applicationName.equals(ApplicationConstants.APP_PUBLIC_APPLICATION)) {

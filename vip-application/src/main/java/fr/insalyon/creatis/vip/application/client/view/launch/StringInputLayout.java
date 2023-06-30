@@ -17,8 +17,9 @@ import fr.insalyon.creatis.vip.datamanager.client.view.selection.PathSelectionWi
  * @author Guillaume Vanel
  * @version %I%, %G%
  */
-public class StringInputLayout extends InputLayout{
+public class StringInputLayout extends InputLayout {
     private final String allowedCharacters;
+
     /**
      * Initialise graphical labels and main input field
      *
@@ -33,7 +34,7 @@ public class StringInputLayout extends InputLayout{
         this.allowedCharacters = allowedChar;
         // Remove add value button if needed
         TextItem mainField = (TextItem) this.masterForm.getField(MAIN_FIELD_NAME);
-        if (!hasAddValueButton){
+        if (!hasAddValueButton) {
             mainField.setIcons();
         }
         this.allowCharacters(mainField);
@@ -49,13 +50,13 @@ public class StringInputLayout extends InputLayout{
         inputField.setValue(this.getDefaultValue());
         LaunchFormLayout.assertCondition(this.input instanceof BoutiquesStringInput,
                 "Invalid state: StringInputLayout with non BoutiquesStringInput input.");
-        if(this.isFile()){
+        if (this.isFile()) {
             // Add browse icon
             PickerIcon browsePicker = new PickerIcon(PickerIcon.SEARCH,
                     event -> new PathSelectionWindow(inputField, this::onValueChanged).show());
             browsePicker.setPrompt("Browse on the Grid");
             inputField.setIcons(browsePicker);
-            if(this.allowedCharacters != null) {
+            if (this.allowedCharacters != null) {
                 this.allowCharacters(inputField);
             }
         }
@@ -66,7 +67,7 @@ public class StringInputLayout extends InputLayout{
     /**
      * @return boolean: true if this input represents a file input, false if it represent an arbitrary string input.
      */
-    public boolean isFile(){
+    public boolean isFile() {
         return this.input.getType() == BoutiquesInput.InputType.FILE;
     }
 
@@ -75,11 +76,11 @@ public class StringInputLayout extends InputLayout{
      *
      * @param inputField TextItem
      */
-    private void allowCharacters(TextItem inputField){
-            inputField.setKeyPressFilter(this.allowedCharacters);
-            inputField.setValidators(
-                    ValidatorUtil.getStringValidator("^" + this.allowedCharacters + "+$"),
-                    new RequiredIfValidator((formItem, value) -> !this.isOptional()));
-            inputField.setShowErrorIcon(false);
+    private void allowCharacters(TextItem inputField) {
+        inputField.setKeyPressFilter(this.allowedCharacters);
+        inputField.setValidators(
+                ValidatorUtil.getStringValidator("^" + this.allowedCharacters + "+$"),
+                new RequiredIfValidator((formItem, value) -> !this.isOptional()));
+        inputField.setShowErrorIcon(false);
     }
 }

@@ -56,7 +56,7 @@ import static fr.insalyon.creatis.vip.api.CarminProperties.*;
  */
 @RestController
 @RequestMapping("/platform")
-public class PlatformController extends ApiController{
+public class PlatformController extends ApiController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

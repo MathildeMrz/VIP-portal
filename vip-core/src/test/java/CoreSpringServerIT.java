@@ -18,10 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CoreSpringServerIT extends BaseSpringIT {
 
-    private User admin;
-    private User user1;
-    private User user2;
-    private User user3;
 
     /* ********************************************************************************************************************************************** */
     /* ************************************************************* create user *********************************************************** */
@@ -126,24 +122,10 @@ public class CoreSpringServerIT extends BaseSpringIT {
 
     //FIXME : do not return error
     @Test
-    public void testUpdateInexistingGroup() throws BusinessException
-    {
+    public void testUpdateInexistingGroup() throws BusinessException {
         // SELECT + inexisting foreign key / part of primary key groupName => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be selected
         assertNull(configurationBusiness.getGroup("inexisting_group"));
-    }
-
-    /* ********************************************************************************************************************************************** */
-    /* ****************************************************************** update user *************************************************************** */
-    /* ********************************************************************************************************************************************** */
-
-    @Test
-    public void testUpdateUser() throws BusinessException {
-        User user = configurationBusiness.getUser(emailUser1);
-        user.setFolder("folder_updated");
-        configurationBusiness.updateUser(user);
-        User userUpdated = configurationBusiness.getUser(emailUser1);
-        Assertions.assertEquals("folder_updated", userUpdated.getFolder(), "Incorrect user folder");
     }
 
 
@@ -258,7 +240,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
     public void testGetOrCreateExistingUser() throws BusinessException, DAOException {
         User user = configurationBusiness.getOrCreateUser(emailUser2, "test institution", "group1");
 
-        Assertions.assertEquals("test firstName suffix2",user.getFirstName(), "incorrect user firstname");
+        Assertions.assertEquals("test firstName suffix2", user.getFirstName(), "incorrect user firstname");
         Assertions.assertEquals("test lastName suffix2", user.getLastName(), "incorrect user firstname");
 
     }
@@ -272,8 +254,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testGetOrCreateIncorrectEmailUser() throws BusinessException
-    {
+    public void testGetOrCreateIncorrectEmailUser() throws BusinessException {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.getOrCreateUser("inexisting_user", "institution", "group1")
@@ -308,6 +289,45 @@ public class CoreSpringServerIT extends BaseSpringIT {
         assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting_user"));
     }
 
+    /* ********************************************************************************************************************************************** */
+    /* *************************************************************** get user admin groups ************************************************************* */
+    /* ********************************************************************************************************************************************** */
+
+    /*@Test
+    public void testGetUserAdminGroups() throws BusinessException {
+
+        //Map<Group, CoreConstants.GROUP_ROLE> userGroups = configurationBusiness.getUserGroups(emailUser3);
+        //System.out.println("TTTTTTTTTTTTTTTTTt : "+userGroups.get(0));
+
+    }*/
+
+    /* ********************************************************************************************************************************************** */
+    /* *************************************************************** validate session ************************************************************* */
+    /* ********************************************************************************************************************************************** */
+
+
+    @Test
+    public void testValidateInexistingSession() throws BusinessException {
+        // SELECT + inexisting primary key session => no exception
+        // We decided not to add an exception because if this occurs, it will not create problem, just no row will be selected
+        assertFalse(configurationBusiness.validateSession(emailUser3, "inexisting session"));
+    }
+
+    @Test
+    public void testValidateNullSession() throws BusinessException {
+        assertFalse(configurationBusiness.validateSession(emailUser3, null));
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* *************************************************************** get user with groups ************************************************************* */
+    /* ********************************************************************************************************************************************** */
+
+    /*@Test
+    public void testGetUserWithGroups() throws BusinessException
+    {
+        User user = configurationBusiness.getUserWithGroups(emailUser3);
+        System.out.println("NNNNNNNNN "+user.getEmail());
+    }*/
 
     /* ********************************************************************************************************************************************** */
     /* *********************************************************** generate new user api key ******************************************************** */
@@ -397,16 +417,164 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testGetUserPropertiesGroup() throws BusinessException
-    {
+    public void testGetUserPropertiesGroup() throws BusinessException {
         assertTrue(configurationBusiness.getUserPropertiesGroups(emailUser1).get(0)); // isPublic : group is public, it is accessible to every user
         assertTrue(configurationBusiness.getUserPropertiesGroups(emailUser1).get(1)); // isGridFile : group allows to files sharing
         assertTrue(configurationBusiness.getUserPropertiesGroups(emailUser1).get(2)); // isGridJobs : group allows job offers sharing
 
-        System.out.println("emailUser4 = "+emailUser4);
+        System.out.println("emailUser4 = " + emailUser4);
         assertFalse(configurationBusiness.getUserPropertiesGroups(emailUser4).get(0));
         assertTrue(configurationBusiness.getUserPropertiesGroups(emailUser4).get(1));
         assertFalse(configurationBusiness.getUserPropertiesGroups(emailUser4).get(2));
     }
+
+    /* ********************************************************************************************************************************************** */
+    /* *********************************************************** signin user ******************************************************* */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testSigninUser() throws BusinessException {
+        assertNotNull(configurationBusiness.signin(emailUser3, "testPassword"));
+    }
+
+    @Test
+    public void testCatchSigninUserWrongPassword() throws BusinessException {
+
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        configurationBusiness.signin(emailUser3, "test wrong password")
+        );
+
+        // Exception added before the beginning of the internship
+        assertTrue(StringUtils.contains(exception.getMessage(), "Authentication failed (email or password incorrect, or user is locked)"));
+
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* *********************************************************** send code ******************************************************* */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testCatchSendActivationCode() throws BusinessException {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        configurationBusiness.sendActivationCode("inexistingUser@test.fr")
+        );
+
+        // getUser is called and had an exception before the beginning of the intership
+        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexistingUser@test.fr"));
+    }
+
+    @Test
+    public void testCatchSendResetCode() throws BusinessException {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        configurationBusiness.sendResetCode("inexistingUser@test.fr")
+        );
+
+        // getUser is called and had an exception before the beginning of the intership
+        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexistingUser@test.fr"));
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* *********************************************************** update user ******************************************************* */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testUpdateUser() throws BusinessException {
+        User user = configurationBusiness.getUser(emailUser1);
+        user.setFolder("folder_updated");
+        configurationBusiness.updateUser(user);
+        User userUpdated = configurationBusiness.getUser(emailUser1);
+        Assertions.assertEquals("folder_updated", userUpdated.getFolder(), "Incorrect user folder");
+    }
+
+    @Test
+    public void testUpdateUserEmail() throws BusinessException {
+        configurationBusiness.updateUserEmail(emailUser1, "newEmail@test.fr");
+
+        // verify users number
+        assertEquals(5, configurationBusiness.getUsers().size(), "incorrect users number");// Created users + admin
+
+        // verify modified user infos
+        Assertions.assertEquals("newEmail@test.fr", configurationBusiness.getUser("newEmail@test.fr").getEmail(), "incorrect email update user");
+        Assertions.assertEquals("test firstName suffix1", configurationBusiness.getUser("newEmail@test.fr").getFirstName(), "incorrect first name update user");
+    }
+
+    @Test
+    public void testUpdatePassword() throws BusinessException {
+        configurationBusiness.updateUserPassword(emailUser1, "testPassword", "testPassword updated");
+
+        // because getPassword() returns empty, try to signin
+        configurationBusiness.signin(emailUser1, "testPassword updated");
+
+        Assertions.assertEquals("", configurationBusiness.getUser(emailUser1).getPassword(), "incorrect password update user");
+    }
+
+    @Test
+    public void testCatchUpdateWrongCurrentPassword() throws BusinessException {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        configurationBusiness.updateUserPassword(emailUser1, "test password", "testPassword updated")
+        );
+
+        // Exception added before the beginning of the internship
+        assertTrue(StringUtils.contains(exception.getMessage(), "The current password mismatch"));
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* *********************************************************** reset next email user ******************************************************* */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testResetNextEmail() throws BusinessException {
+        configurationBusiness.resetNextEmail(emailUser1);
+
+
+        // verify next email is null
+        Assertions.assertEquals(null, configurationBusiness.getUser(emailUser1).getNextEmail(), "incorrect next email update user");
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* *********************************************************** get user names ******************************************************* */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testGetUserNames() throws BusinessException {
+        List<String> userNames = configurationBusiness.getUserNames(emailUser1, true);
+        System.out.println("AAAAAAAA : " + userNames);
+        Assertions.assertTrue(userNames.containsAll(Arrays.asList("test firstName suffix1 test lastName suffix1")), "Incorrect user names");
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* *********************************************************** send reset code ******************************************************* */
+    /* ********************************************************************************************************************************************** */
+
+
+    /*//TODO : tester
+    @Test
+    public void testSendResetCode() throws BusinessException
+    {
+        configurationBusiness.sendResetCode(emailUser1);
+    }*/
+
+    /* ********************************************************************************************************************************************** */
+    /* *********************************************************** reset password ******************************************************* */
+    /* ********************************************************************************************************************************************** */
+
+
+    @Test
+    public void testCatchSendResetWrongCode() throws BusinessException {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        configurationBusiness.resetPassword(emailUser1, "test code", "test new password")
+        );
+
+        // Exception added before the beginning of the internship
+        assertTrue(StringUtils.contains(exception.getMessage(), "Wrong reset code"));
+
+
+    }
+
 
 }

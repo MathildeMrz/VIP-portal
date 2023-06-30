@@ -32,7 +32,6 @@
 package fr.insalyon.creatis.vip.publication.client.view;
 
 /**
- *
  * @author Sorina Pop
  */
 public class PublicationConstants {

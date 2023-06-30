@@ -47,7 +47,6 @@ import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
 import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class PasswordLayout extends AbstractFormLayout {
@@ -64,9 +63,10 @@ public class PasswordLayout extends AbstractFormLayout {
 
         configure();
 
-        if (CoreModule.user.getPassword() == null){
+        if (CoreModule.user.getPassword() == null) {
             this.addMember(WidgetUtil.getLabel("<font color=\"#666666\"><b>Note</b>: "
-                    + "You do not have a password yet, if you wish you can create one by clicking on the button above.</font>", 30));}
+                    + "You do not have a password yet, if you wish you can create one by clicking on the button above.</font>", 30));
+        }
     }
 
     private void configure() {
@@ -109,12 +109,12 @@ public class PasswordLayout extends AbstractFormLayout {
                                 }
                             };
                             WidgetUtil.setLoadingIButton(saveButton, "Saving...");
-                    service.updateUserPassword(
-                            currentPasswordField.getValueAsString(),
-                            newPasswordField.getValueAsString(), callback);
-                }
-            }
-        });
+                            service.updateUserPassword(
+                                    currentPasswordField.getValueAsString(),
+                                    newPasswordField.getValueAsString(), callback);
+                        }
+                    }
+                });
 
         saveButton.setWidth(200);
 

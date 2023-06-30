@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GroupData.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.dao.mysql</a> &gt; <span class="el_source">GroupData.java</span></div><h1>GroupData.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GroupData.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.dao.mysql</a> &gt; <span class="el_source">GroupData.java</span></div><h1>GroupData.java</h1><pre class="source lang-java linenums">/*
  * Copyright and authors: see LICENSE.txt in base repository.
  *
  * This software is a web portal for pipeline execution on distributed systems.
@@ -49,53 +49,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Repository
 @Transactional
-<span class="fc" id="L57">public class GroupData extends JdbcDaoSupport implements GroupDAO {</span>
+<span class="fc" id="L56">public class GroupData extends JdbcDaoSupport implements GroupDAO {</span>
 
-<span class="fc" id="L59">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+<span class="fc" id="L58">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
 
     @Autowired
     public void useDataSource(DataSource dataSource) {
-<span class="fc" id="L63">        setDataSource(dataSource);</span>
-<span class="fc" id="L64">    }</span>
+<span class="fc" id="L62">        setDataSource(dataSource);</span>
+<span class="fc" id="L63">    }</span>
 
     @Override
     public void add(Group group) throws DAOException {
 
         try {
-<span class="fc" id="L70">            System.out.println(&quot;Trying to add &quot;+group.getName());</span>
-<span class="fc" id="L71">            PreparedStatement ps = getConnection().prepareStatement(</span>
+<span class="fc" id="L69">            System.out.println(&quot;Trying to add &quot; + group.getName());</span>
+<span class="fc" id="L70">            PreparedStatement ps = getConnection().prepareStatement(</span>
                     &quot;INSERT INTO VIPGroups(groupname, public, gridfile, gridjobs) VALUES(?, ?, ?, ?)&quot;);
-<span class="fc" id="L73">            ps.setString(1, group.getName());</span>
-<span class="fc" id="L74">            ps.setBoolean(2, group.isPublicGroup());</span>
-<span class="fc" id="L75">            ps.setBoolean(3, group.isGridFile());</span>
-<span class="fc" id="L76">            ps.setBoolean(4, group.isGridJobs());</span>
-<span class="fc" id="L77">            ps.execute();</span>
-<span class="fc" id="L78">            ps.close();</span>
+<span class="fc" id="L72">            ps.setString(1, group.getName());</span>
+<span class="fc" id="L73">            ps.setBoolean(2, group.isPublicGroup());</span>
+<span class="fc" id="L74">            ps.setBoolean(3, group.isGridFile());</span>
+<span class="fc" id="L75">            ps.setBoolean(4, group.isGridJobs());</span>
+<span class="fc" id="L76">            ps.execute();</span>
+<span class="fc" id="L77">            ps.close();</span>
 
-<span class="fc" id="L80">        } catch (SQLException ex) {</span>
-<span class="pc bpc" id="L81" title="1 of 2 branches missed.">            if (ex.getMessage().contains(&quot;Unique index or primary key&quot;)) {</span>
-<span class="fc" id="L82">                logger.error(&quot;There is already a group registered with the name {}&quot;, group.getName());</span>
-<span class="fc" id="L83">                throw new DAOException(String.format(&quot;There is already a group registered with the name : %s&quot;, group.getName()));</span>
+<span class="fc" id="L79">        } catch (SQLException ex) {</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">            if (ex.getMessage().contains(&quot;Unique index or primary key&quot;)) {</span>
+<span class="fc" id="L81">                logger.error(&quot;There is already a group registered with the name {}&quot;, group.getName());</span>
+<span class="fc" id="L82">                throw new DAOException(String.format(&quot;There is already a group registered with the name : %s&quot;, group.getName()));</span>
             } else {
-<span class="nc" id="L85">                logger.error(&quot;Error adding group {}&quot;, group.getName(), ex);</span>
-<span class="nc" id="L86">                throw new DAOException(ex);</span>
+<span class="nc" id="L84">                logger.error(&quot;Error adding group {}&quot;, group.getName(), ex);</span>
+<span class="nc" id="L85">                throw new DAOException(ex);</span>
             }
-<span class="fc" id="L88">        }</span>
-<span class="fc" id="L89">    }</span>
+<span class="fc" id="L87">        }</span>
+<span class="fc" id="L88">    }</span>
 
     @Override
     public void remove(String groupName) throws DAOException {
         try {
-<span class="fc" id="L94">            PreparedStatement ps = getConnection().prepareStatement(&quot;DELETE &quot;</span>
+<span class="fc" id="L93">            PreparedStatement ps = getConnection().prepareStatement(&quot;DELETE &quot;</span>
                     + &quot;FROM VIPGroups WHERE groupname=?&quot;);
 
-<span class="fc" id="L97">            ps.setString(1, groupName);</span>
-<span class="fc" id="L98">            ps.execute();</span>
+<span class="fc" id="L96">            ps.setString(1, groupName);</span>
+<span class="fc" id="L97">            ps.execute();</span>
 
             //////////ADDED//////////
             /*int rs = ps.executeUpdate();
@@ -106,86 +105,85 @@ import java.util.List;
             }*/
             //////////ADDED//////////
 
-<span class="fc" id="L109">            ps.close();</span>
+<span class="fc" id="L108">            ps.close();</span>
 
-<span class="nc" id="L111">        } catch (SQLException ex) {</span>
-<span class="nc" id="L112">            logger.error(&quot;Error removing group {}&quot;, groupName, ex);</span>
-<span class="nc" id="L113">            throw new DAOException(ex);</span>
-<span class="fc" id="L114">        }</span>
-<span class="fc" id="L115">    }</span>
+<span class="nc" id="L110">        } catch (SQLException ex) {</span>
+<span class="nc" id="L111">            logger.error(&quot;Error removing group {}&quot;, groupName, ex);</span>
+<span class="nc" id="L112">            throw new DAOException(ex);</span>
+<span class="fc" id="L113">        }</span>
+<span class="fc" id="L114">    }</span>
 
     @Override
     public void update(String name, Group group) throws DAOException {
         try {
-<span class="fc" id="L120">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
+<span class="fc" id="L119">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
                     + &quot;VIPGroups &quot;
                     + &quot;SET groupname=?, public=?, gridfile=?, gridjobs=? &quot;
                     + &quot;WHERE groupname=?&quot;);
 
-<span class="fc" id="L125">            ps.setString(1, group.getName());</span>
-<span class="fc" id="L126">            ps.setBoolean(2, group.isPublicGroup());</span>
-<span class="fc" id="L127">            ps.setBoolean(3, group.isGridFile());</span>
-<span class="fc" id="L128">            ps.setBoolean(4, group.isGridJobs());</span>
-<span class="fc" id="L129">            ps.setString(5, name);</span>
+<span class="fc" id="L124">            ps.setString(1, group.getName());</span>
+<span class="fc" id="L125">            ps.setBoolean(2, group.isPublicGroup());</span>
+<span class="fc" id="L126">            ps.setBoolean(3, group.isGridFile());</span>
+<span class="fc" id="L127">            ps.setBoolean(4, group.isGridJobs());</span>
+<span class="fc" id="L128">            ps.setString(5, name);</span>
             //ps.executeUpdate();
 
             //////////ADDED//////////
-<span class="fc" id="L133">            int rs = ps.executeUpdate();</span>
-<span class="pc bpc" id="L134" title="1 of 2 branches missed.">            if (rs == 0) {</span>
-<span class="nc" id="L135">                logger.error(&quot;There is no group registered with the name {}&quot;, name);</span>
-<span class="nc" id="L136">                throw new DAOException(&quot;There is no group registered with the name : &quot; + name);</span>
+<span class="fc" id="L132">            int rs = ps.executeUpdate();</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">            if (rs == 0) {</span>
+<span class="nc" id="L134">                logger.error(&quot;There is no group registered with the name {}&quot;, name);</span>
+<span class="nc" id="L135">                throw new DAOException(&quot;There is no group registered with the name : &quot; + name);</span>
             }
             //////////ADDED//////////
 
-<span class="fc" id="L140">            ps.close();</span>
+<span class="fc" id="L139">            ps.close();</span>
 
-<span class="nc" id="L142">        } catch (SQLException ex) {</span>
-<span class="nc" id="L143">            logger.error(&quot;Error updating group {}&quot;, group.getName(), ex);</span>
-<span class="nc" id="L144">            throw new DAOException(ex);</span>
-<span class="fc" id="L145">        }</span>
-<span class="fc" id="L146">    }</span>
+<span class="nc" id="L141">        } catch (SQLException ex) {</span>
+<span class="nc" id="L142">            logger.error(&quot;Error updating group {}&quot;, group.getName(), ex);</span>
+<span class="nc" id="L143">            throw new DAOException(ex);</span>
+<span class="fc" id="L144">        }</span>
+<span class="fc" id="L145">    }</span>
 
     @Override
     public List&lt;Group&gt; getGroups() throws DAOException {
         try {
-<span class="fc" id="L151">            List&lt;Group&gt; groups = new ArrayList&lt;Group&gt;();</span>
-<span class="fc" id="L152">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
+<span class="fc" id="L150">            List&lt;Group&gt; groups = new ArrayList&lt;Group&gt;();</span>
+<span class="fc" id="L151">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
                     + &quot;groupname, public, gridfile, gridjobs FROM &quot;
                     + &quot;VIPGroups ORDER BY LOWER(groupname)&quot;);
 
-<span class="fc" id="L156">            ResultSet rs = ps.executeQuery();</span>
-<span class="fc bfc" id="L157" title="All 2 branches covered.">            while (rs.next()) {</span>
-<span class="fc" id="L158">                groups.add(new Group(rs.getString(&quot;groupname&quot;),</span>
-<span class="fc" id="L159">                        rs.getBoolean(&quot;public&quot;),rs.getBoolean(&quot;gridfile&quot;),rs.getBoolean(&quot;gridjobs&quot;)));</span>
+<span class="fc" id="L155">            ResultSet rs = ps.executeQuery();</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L157">                groups.add(new Group(rs.getString(&quot;groupname&quot;),</span>
+<span class="fc" id="L158">                        rs.getBoolean(&quot;public&quot;), rs.getBoolean(&quot;gridfile&quot;), rs.getBoolean(&quot;gridjobs&quot;)));</span>
             }
-<span class="fc" id="L161">            ps.close();</span>
-<span class="fc" id="L162">            return groups;</span>
+<span class="fc" id="L160">            ps.close();</span>
+<span class="fc" id="L161">            return groups;</span>
 
-<span class="nc" id="L164">        } catch (SQLException ex) {</span>
-<span class="nc" id="L165">            logger.error(&quot;Error getting all groups&quot;, ex);</span>
-<span class="nc" id="L166">            throw new DAOException(ex);</span>
+<span class="nc" id="L163">        } catch (SQLException ex) {</span>
+<span class="nc" id="L164">            logger.error(&quot;Error getting all groups&quot;, ex);</span>
+<span class="nc" id="L165">            throw new DAOException(ex);</span>
         }
     }
 
     @Override
     public boolean isGroup(String groupName) throws DAOException {
-        try
-        {
-<span class="fc" id="L174">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT * &quot;</span>
+        try {
+<span class="fc" id="L172">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT * &quot;</span>
                     + &quot;FROM VIPGroups &quot;
                     + &quot;WHERE groupname=? &quot;);
 
-<span class="fc" id="L178">            ps.setString(1, groupName);</span>
-<span class="fc" id="L179">            ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L176">            ps.setString(1, groupName);</span>
+<span class="fc" id="L177">            ResultSet rs = ps.executeQuery();</span>
 
-<span class="pc bpc" id="L181" title="1 of 2 branches missed.">            if (rs.next()) {</span>
-<span class="fc" id="L182">                return true;</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">            if (rs.next()) {</span>
+<span class="fc" id="L180">                return true;</span>
             }
 
-<span class="nc" id="L185">            return false;</span>
+<span class="nc" id="L183">            return false;</span>
 
-<span class="nc" id="L187">        } catch (Exception e) {</span>
-<span class="nc" id="L188">            throw new RuntimeException(e);</span>
+<span class="nc" id="L185">        } catch (Exception e) {</span>
+<span class="nc" id="L186">            throw new RuntimeException(e);</span>
         }
     }
 }

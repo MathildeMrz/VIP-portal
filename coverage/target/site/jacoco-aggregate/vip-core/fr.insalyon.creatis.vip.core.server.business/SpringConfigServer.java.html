@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SpringConfigServer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.business</a> &gt; <span class="el_source">SpringConfigServer.java</span></div><h1>SpringConfigServer.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.core.server.business;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SpringConfigServer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.business</a> &gt; <span class="el_source">SpringConfigServer.java</span></div><h1>SpringConfigServer.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.core.server.business;
 
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import org.apache.commons.configuration.ConfigurationException;
@@ -71,7 +71,7 @@ public class SpringConfigServer implements Server {
 <span class="nc" id="L71">            ConfigurableEnvironment env) throws IOException, ConfigurationException {</span>
 <span class="nc" id="L72">        File configFile = vipConfigFolder.getFile().toPath().resolve(Server.CONF_FILE).toFile();</span>
 
-<span class="nc bnc" id="L74" title="All 2 branches missed.">        if( ! configFile.exists()) {</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (!configFile.exists()) {</span>
 <span class="nc" id="L75">            throw new FileNotFoundException(configFile.toString());</span>
         }
 
@@ -84,8 +84,8 @@ public class SpringConfigServer implements Server {
 <span class="nc" id="L84">    }</span>
 
     private void createFolderIfNeeded(File folder) {
-<span class="nc bnc" id="L87" title="All 2 branches missed.">        if ( ! folder.exists() &amp;&amp;</span>
-<span class="nc bnc" id="L88" title="All 2 branches missed.">                ! folder.mkdir()) {</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (!folder.exists() &amp;&amp;</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                !folder.mkdir()) {</span>
 <span class="nc" id="L89">            logger.error(&quot;Cannot create VIP config folder : {}&quot;, folder);</span>
 <span class="nc" id="L90">            throw new BeanInitializationException(&quot;Cannot create VIP config folder&quot;);</span>
         }
@@ -355,13 +355,13 @@ public class SpringConfigServer implements Server {
     @Override
     public String getSamlTrustedCertificate(String issuer) {
 <span class="nc" id="L357">        logger.info(&quot;Getting trusted certificate for issuer {}&quot;, issuer);</span>
-<span class="nc" id="L358">        return env.getRequiredProperty(CoreConstants.SAML_TRUSTED_CERTIFICATE+&quot;.&quot;+issuer);</span>
+<span class="nc" id="L358">        return env.getRequiredProperty(CoreConstants.SAML_TRUSTED_CERTIFICATE + &quot;.&quot; + issuer);</span>
     }
 
     @Override
     public String getSAMLDefaultGroup(String issuer) {
-<span class="nc" id="L363">        logger.info(&quot;Getting default group for issuer &quot;+issuer);</span>
-<span class="nc" id="L364">        return env.getRequiredProperty(CoreConstants.SAML_DEFAULT_GROUP +&quot;.&quot;+issuer);</span>
+<span class="nc" id="L363">        logger.info(&quot;Getting default group for issuer &quot; + issuer);</span>
+<span class="nc" id="L364">        return env.getRequiredProperty(CoreConstants.SAML_DEFAULT_GROUP + &quot;.&quot; + issuer);</span>
     }
 
     @Override
@@ -383,15 +383,15 @@ public class SpringConfigServer implements Server {
     public HashMap&lt;String, Integer&gt; getReservedClasses() {
 <span class="nc" id="L384">        HashMap&lt;String, Integer&gt; reservedClasses = new HashMap&lt;&gt;();</span>
 <span class="nc" id="L385">        Stream.of(</span>
-<span class="nc" id="L386">                env.getRequiredProperty(</span>
-                        CoreConstants.APPLET_GATELAB_CLASSES,
-                        String[].class))
-<span class="nc" id="L389">                .forEach(className -&gt; reservedClasses.put(className,0));</span>
+<span class="nc" id="L386">                        env.getRequiredProperty(</span>
+                                CoreConstants.APPLET_GATELAB_CLASSES,
+                                String[].class))
+<span class="nc" id="L389">                .forEach(className -&gt; reservedClasses.put(className, 0));</span>
 <span class="nc" id="L390">        Stream.of(</span>
-<span class="nc" id="L391">                env.getRequiredProperty(</span>
-                        CoreConstants.APPLET_GATELABTEST_CLASSES,
-                        String[].class))
-<span class="nc" id="L394">                .forEach(className -&gt; reservedClasses.put(className,0));</span>
+<span class="nc" id="L391">                        env.getRequiredProperty(</span>
+                                CoreConstants.APPLET_GATELABTEST_CLASSES,
+                                String[].class))
+<span class="nc" id="L394">                .forEach(className -&gt; reservedClasses.put(className, 0));</span>
 <span class="nc" id="L395">        return reservedClasses;</span>
     }
 

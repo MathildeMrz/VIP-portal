@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class InOutContextMenu extends Menu {
@@ -103,11 +102,11 @@ public class InOutContextMenu extends Menu {
 
         if (!node.getType().equals("Simulation")) {
             if (node.getName().startsWith(DataManagerConstants.ROOT + "/")) {
-                 ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
+                ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
 
-                 BrowserContextMenu.addVizualisers(menuItems, node.getName());
-                 menuItems.add(downloadFileItem);
-                 menuItems.add(jumpToItem);
+                BrowserContextMenu.addVizualisers(menuItems, node.getName());
+                menuItems.add(downloadFileItem);
+                menuItems.add(jumpToItem);
             } else {
                 this.setItems(downloadFilesItem);
             }

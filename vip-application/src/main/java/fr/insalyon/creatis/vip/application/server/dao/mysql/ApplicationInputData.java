@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Repository
@@ -70,7 +69,7 @@ public class ApplicationInputData extends JdbcDaoSupport implements ApplicationI
         try {
             PreparedStatement ps = getConnection().prepareStatement(
                     "INSERT INTO VIPAppInputs(email, application, name, inputs) "
-                    + "VALUES (?, ?, ?, ?)");
+                            + "VALUES (?, ?, ?, ?)");
 
             ps.setString(1, email);
             ps.setString(2, SimulationInput.getApplication());
@@ -94,7 +93,7 @@ public class ApplicationInputData extends JdbcDaoSupport implements ApplicationI
 
     @Override
     public void removeSimulationInput(String email, String inputName,
-            String application) throws DAOException {
+                                      String application) throws DAOException {
 
         try {
             PreparedStatement ps = getConnection().prepareStatement("DELETE "
@@ -119,7 +118,7 @@ public class ApplicationInputData extends JdbcDaoSupport implements ApplicationI
         try {
             PreparedStatement ps = getConnection().prepareStatement(
                     "UPDATE VIPAppInputs SET inputs=? "
-                    + "WHERE email=? AND application=? AND name=?");
+                            + "WHERE email=? AND application=? AND name=?");
 
             ps.setString(1, SimulationInput.getInputs());
             ps.setString(2, email);
@@ -168,7 +167,7 @@ public class ApplicationInputData extends JdbcDaoSupport implements ApplicationI
 
     @Override
     public List<SimulationInput> getWorkflowInputByUserAndAppName(String user,
-            String appName) throws DAOException {
+                                                                  String appName) throws DAOException {
 
         try {
             List<SimulationInput> inputs = new ArrayList<SimulationInput>();
@@ -199,7 +198,7 @@ public class ApplicationInputData extends JdbcDaoSupport implements ApplicationI
 
     @Override
     public SimulationInput getInputByNameUserApp(String email, String name,
-            String appName) throws DAOException {
+                                                 String appName) throws DAOException {
 
         try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT "
@@ -245,7 +244,7 @@ public class ApplicationInputData extends JdbcDaoSupport implements ApplicationI
         try {
             PreparedStatement ps = getConnection().prepareStatement(
                     "INSERT INTO VIPAppExamples(application, name, inputs) "
-                    + "VALUES (?, ?, ?)");
+                            + "VALUES (?, ?, ?)");
 
             ps.setString(1, simulationInput.getApplication());
             ps.setString(2, simulationInput.getName());
@@ -296,7 +295,7 @@ public class ApplicationInputData extends JdbcDaoSupport implements ApplicationI
             throw new DAOException(ex);
         }
     }
-    
+
     @Override
     public void removeSimulationInputExample(String inputName, String application)
             throws DAOException {

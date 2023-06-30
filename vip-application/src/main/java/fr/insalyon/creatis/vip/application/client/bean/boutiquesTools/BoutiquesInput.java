@@ -28,14 +28,17 @@ public abstract class BoutiquesInput implements IsSerializable {
 
     private boolean list;
     private String commandLineFlag;
+
     public enum InputType {
         STRING("String"), FILE("File"), NUMBER("Number"), FLAG("Flag");
 
         private final String camelName;
+
         InputType(String camelName) {
             this.camelName = camelName;
         }
-        public String getCamelName(){
+
+        public String getCamelName() {
             return this.camelName;
         }
     }
@@ -61,7 +64,7 @@ public abstract class BoutiquesInput implements IsSerializable {
     public BoutiquesInput(String id, String name, String description, InputType type, boolean isOptional,
                           Set<String> disablesInputsId, Set<String> requiresInputsId,
                           Set<String> possibleValues, Map<String, Set<String>> valueDisablesInputsId,
-                          Map<String, Set<String>> valueRequiresInputsId){
+                          Map<String, Set<String>> valueRequiresInputsId) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -91,7 +94,7 @@ public abstract class BoutiquesInput implements IsSerializable {
     /**
      * @return Input description as String, or null if there is no description
      */
-    public String getDescription(){
+    public String getDescription() {
         return this.description;
     }
 
@@ -119,37 +122,37 @@ public abstract class BoutiquesInput implements IsSerializable {
     /**
      * @return InputType representing the type of this
      */
-    public InputType getType(){
+    public InputType getType() {
         return this.type;
     }
 
     /**
      * @return String representing the type of this
      */
-    public String getTypeString(){
+    public String getTypeString() {
         return this.type.getCamelName();
     }
 
     /**
      * @return Map of String values of this to array of String IDs of inputs disabled by corresponding values.
-     *         Return value can be null if this has no 'value-disables' dependency
+     * Return value can be null if this has no 'value-disables' dependency
      */
-    public Map<String, Set<String>> getValueDisablesInputsId(){
+    public Map<String, Set<String>> getValueDisablesInputsId() {
         return this.valueDisablesInputsId;
     }
 
     /**
      * @return Map of String values of this to array of String IDs of inputs required by corresponding values
-     *         Return value can be null if this has no 'value-requires' dependency
+     * Return value can be null if this has no 'value-requires' dependency
      */
-    public Map<String, Set<String>> getValueRequiresInputsId(){
+    public Map<String, Set<String>> getValueRequiresInputsId() {
         return this.valueRequiresInputsId;
     }
 
     /**
      * @return Array of Strings representing possible value choices for this input, or null if any value can be entered
      */
-    public Set<String> getPossibleValues(){
+    public Set<String> getPossibleValues() {
         return possibleValues;
     }
 

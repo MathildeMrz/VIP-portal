@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Spring configuration class for tests.
- *
+ * <p>
  * Overrides the Server default implementation by
  * a mocked one, so this does not need a vip.conf file presence.
  */

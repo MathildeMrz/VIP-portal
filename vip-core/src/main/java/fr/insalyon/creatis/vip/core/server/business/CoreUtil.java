@@ -34,7 +34,6 @@ package fr.insalyon.creatis.vip.core.server.business;
 import java.text.Normalizer;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class CoreUtil {
@@ -48,7 +47,7 @@ public class CoreUtil {
 
     public static String getCleanString(
             String s, boolean removeAccents, boolean onlyKeepAscii) {
-        if ( removeAccents) {
+        if (removeAccents) {
             // Normalizer.normalize with NFKD form decompose accentuated
             // letters into separate "accent mark + base letter" characters
             s = Normalizer.normalize(s, Normalizer.Form.NFKD);

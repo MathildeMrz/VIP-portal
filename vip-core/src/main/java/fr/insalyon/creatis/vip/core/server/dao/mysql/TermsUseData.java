@@ -48,7 +48,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 /**
- *
  * @author Nouha Boujelben
  */
 @Repository
@@ -83,12 +82,12 @@ public class TermsUseData extends JdbcDaoSupport implements TermsUseDAO {
     @Override
     public Timestamp getLastUpdateTermsOfUse() throws DAOException {
         try {
-            Timestamp date=null;
+            Timestamp date = null;
             PreparedStatement ps = getConnection().prepareStatement("Select date From VIPTermsOfuse ORDER BY idTermsOfuse DESC " +
-              "LIMIT 1");
+                    "LIMIT 1");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-            date=rs.getTimestamp("date");
+                date = rs.getTimestamp("date");
             }
             ps.close();
 
@@ -100,7 +99,6 @@ public class TermsUseData extends JdbcDaoSupport implements TermsUseDAO {
         }
 
     }
-
 
 
 }

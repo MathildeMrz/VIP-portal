@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>WorkflowExecutionBusiness.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.server.business</a> &gt; <span class="el_source">WorkflowExecutionBusiness.java</span></div><h1>WorkflowExecutionBusiness.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>WorkflowExecutionBusiness.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.server.business</a> &gt; <span class="el_source">WorkflowExecutionBusiness.java</span></div><h1>WorkflowExecutionBusiness.java</h1><pre class="source lang-java linenums">/*
  * Copyright and authors: see LICENSE.txt in base repository.
  *
  * This software is a web portal for pipeline execution on distributed systems.
@@ -53,7 +53,7 @@ import java.util.List;
 /**
  * Wrapper on WebServiceEngine to configure it and to create a Workflow object
  * after a launch.
- *
+ * &lt;p&gt;
  * WorkflowExecutionBusiness and WebServiceEngine both have spring prototype
  * scope, so each WorkflowExecutionBusiness use creates a new intance with a
  * dedicated WebServiceEngine instance that it will wrap.
@@ -88,9 +88,9 @@ public class WorkflowExecutionBusiness {
 <span class="nc" id="L88">    public WorkflowExecutionBusiness(String engineEndpoint) throws BusinessException {</span>
 
         //HACK for testing while still having simulations launched with VIP 1.16.1; to be removed before getting in production or replaced with a proper constant
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        if(engineEndpoint == null){</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (engineEndpoint == null) {</span>
 <span class="nc" id="L92">            logger.info(&quot;WorkflowExecutionBusiness, endpoint is null, setting it to http://data-manager.grid.creatis.insa-lyon.fr/cgi-bin/m2Server-gasw3.1/moteur_server&quot;);</span>
-<span class="nc" id="L93">            engineEndpoint=&quot;http://data-manager.grid.creatis.insa-lyon.fr/cgi-bin/m2Server-gasw3.1/moteur_server&quot;;</span>
+<span class="nc" id="L93">            engineEndpoint = &quot;http://data-manager.grid.creatis.insa-lyon.fr/cgi-bin/m2Server-gasw3.1/moteur_server&quot;;</span>
         }
 <span class="nc" id="L95">        this.engineEndpoint = engineEndpoint;</span>
 <span class="nc" id="L96">    }</span>
@@ -108,8 +108,8 @@ public class WorkflowExecutionBusiness {
 <span class="nc" id="L108">    }</span>
 
     public Workflow launch(String applicationName, String applicationVersion,
-            String applicationClass, User user, String simulationName,
-            String workflowPath, List&lt;ParameterSweep&gt; parameters) throws BusinessException {
+                           String applicationClass, User user, String simulationName,
+                           String workflowPath, List&lt;ParameterSweep&gt; parameters) throws BusinessException {
 
         try {
 <span class="nc" id="L115">            engine.setWorkflow(new File(workflowPath));</span>

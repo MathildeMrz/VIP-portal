@@ -42,7 +42,6 @@ import org.springframework.stereotype.Service;
 import java.io.StringWriter;
 
 /**
- *
  * @author Tristan Glatard
  */
 @Service
@@ -84,7 +83,7 @@ public class VelocityUtils {
         return stringWriter.toString();
     }
 
-    public String createDocument( String tag, BoutiquesApplication bt, Boolean isRunOnGrid, String vmTemplate) {
+    public String createDocument(String tag, BoutiquesApplication bt, Boolean isRunOnGrid, String vmTemplate) {
         VelocityContext context = new VelocityContext();
         context.put("tag", tag);
         context.put("tool", bt);

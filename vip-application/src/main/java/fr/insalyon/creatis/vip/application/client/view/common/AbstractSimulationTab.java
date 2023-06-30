@@ -45,7 +45,6 @@ import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public abstract class AbstractSimulationTab extends Tab {

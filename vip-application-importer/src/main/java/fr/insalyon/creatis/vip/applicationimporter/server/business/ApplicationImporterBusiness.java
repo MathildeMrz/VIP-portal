@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- *
  * @author Tristan Glatard
  */
 @Service
@@ -116,7 +115,7 @@ public class ApplicationImporterBusiness {
             String gwendiaTemplate = "vm/gwendia-standalone.vm";
             if (Constants.APP_IMPORTER_DOT_INPUTS_TYPE.equals(type)) {
                 gwendiaTemplate = "vm/gwendia-dot-inputs.vm";
-            } else if ( ! Constants.APP_IMPORTER_STANDALONE_TYPE.equals(type)) {
+            } else if (!Constants.APP_IMPORTER_STANDALONE_TYPE.equals(type)) {
                 logger.error("Cannot import pipeline : unknown importer type : {}", type);
                 throw new BusinessException("Cannot import pipeline : unknown importer type");
             }
@@ -125,8 +124,8 @@ public class ApplicationImporterBusiness {
             checkEditionRights(bt.getName(), bt.getToolVersion(), overwriteApplicationVersion, user);
             // set the correct LFN
             bt.setApplicationLFN(
-                lfcPathsBusiness.parseBaseDir(
-                    user, bt.getApplicationLFN()).concat("/").concat(bt.getToolVersion().replaceAll("\\s+","")));
+                    lfcPathsBusiness.parseBaseDir(
+                            user, bt.getApplicationLFN()).concat("/").concat(bt.getToolVersion().replaceAll("\\s+", "")));
 
             // Generate strings
             String gwendiaString = velocityUtils.createDocument(bt, fileAccessProtocol, gwendiaTemplate);
@@ -141,11 +140,11 @@ public class ApplicationImporterBusiness {
             System.out.print(gwendiaFileName + "\n");
             writeString(gwendiaString, gwendiaFileName);
             uploadFile(gwendiaFileName, bt.getGwendiaLFN());
-            
+
             // Write application json descriptor
             String jsonFileName = server.getApplicationImporterFileRepository() + bt.getJsonLFN();
-            writeString(bt.getJsonFile(), jsonFileName);         
-  
+            writeString(bt.getJsonFile(), jsonFileName);
+
             String wrapperArchiveName;
             // Write files for each GASW and script file
             writeString(gaswString, gaswFileName);
@@ -169,7 +168,7 @@ public class ApplicationImporterBusiness {
             uploadFile(wrapperArchiveName, bt.getWrapperLFN() + ".tar.gz");
             //Upload the JSON file at the end, so that it is not deleted before adding it as dependency to wrapperArchiveName
             uploadFile(jsonFileName, bt.getJsonLFN());
-        
+
             // Register application
             registerApplicationVersion(bt.getName(), bt.getToolVersion(), user.getEmail(), bt.getGwendiaLFN(), bt.getJsonLFN());
 
@@ -251,7 +250,7 @@ public class ApplicationImporterBusiness {
             for (AppVersion v : versions) {
                 if (v.getVersion().equals(vipVersion)) {
                     logger.error("{} tried to overwrite version {} of application {} without setting the overwrite flag.",
-                            user.getEmail(), vipVersion,vipApplicationName);
+                            user.getEmail(), vipVersion, vipApplicationName);
                     throw new BusinessException("Application version already exists.");
                 }
             }

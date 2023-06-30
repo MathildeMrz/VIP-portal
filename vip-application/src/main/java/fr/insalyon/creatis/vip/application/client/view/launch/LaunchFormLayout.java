@@ -43,9 +43,9 @@ public class LaunchFormLayout extends AbstractFormLayout {
     private final Map<String, GroupValidator> groups = new HashMap<>();
     // Buttons
     private final HLayout buttonsLayout;
-    private  IButton launchButton = null;
-    private  IButton saveInputsButton = null;
-    private  IButton saveAsExampleButton = null;
+    private IButton launchButton = null;
+    private IButton saveInputsButton = null;
+    private IButton saveAsExampleButton = null;
     // customization
     private boolean disableErrorsAndWarnings = false;
     // Label warning user about unsupported dependencies (due to one of the inputs having multiple values)
@@ -66,39 +66,39 @@ public class LaunchFormLayout extends AbstractFormLayout {
      * @param message    String message of thrown exception when expression is false
      * @throws IllegalStateException if expression is false
      */
-    public static void assertCondition (boolean expression, String message) throws IllegalStateException{
-        if(!expression){
+    public static void assertCondition(boolean expression, String message) throws IllegalStateException {
+        if (!expression) {
             throw new IllegalStateException(message);
         }
     }
 
     /**
-     * @param text  String
-     * @return      String with content from text enclosed by HTML bold tag
+     * @param text String
+     * @return String with content from text enclosed by HTML bold tag
      */
     public static String bold(String text) {
         return "<b>" + text + "</b>";
     }
 
     /**
-     * @param  memberNames List of Strings containing a group's member names
-     * @return             String message describing the group as mutually exclusive
+     * @param memberNames List of Strings containing a group's member names
+     * @return String message describing the group as mutually exclusive
      */
     public static String mutuallyExclusiveMessage(List<String> memberNames) {
         return groupMessage(memberNames, names -> "At most one of " + names + " can be non-empty.");
     }
 
     /**
-     * @param  memberNames List of Strings containing a group's member names
-     * @return             String message describing the group as all-or-none
+     * @param memberNames List of Strings containing a group's member names
+     * @return String message describing the group as all-or-none
      */
     public static String allOrNoneMessage(List<String> memberNames) {
         return groupMessage(memberNames, names -> "Either all or none of " + names + " must be empty.");
     }
 
     /**
-     * @param  memberNames List of Strings containing a group's member names
-     * @return             String message describing the group as one-is-required
+     * @param memberNames List of Strings containing a group's member names
+     * @return String message describing the group as one-is-required
      */
     public static String oneIsRequiredMessage(List<String> memberNames) {
         return groupMessage(memberNames, names -> "At least one of " + names + " must be non-empty.");
@@ -107,19 +107,19 @@ public class LaunchFormLayout extends AbstractFormLayout {
     /**
      * Generate a String description of a group from its members and a message formatter function
      *
-     * @param memberNames       List of Strings containing names of group member inputs
-     * @param messageFormatter  Function returning a group description as String from a String argument that lists
-     *                          the group members
-     * @return                  String description of the group
+     * @param memberNames      List of Strings containing names of group member inputs
+     * @param messageFormatter Function returning a group description as String from a String argument that lists
+     *                         the group members
+     * @return String description of the group
      */
-    private static String groupMessage(List<String> memberNames, Function<String, String> messageFormatter){
+    private static String groupMessage(List<String> memberNames, Function<String, String> messageFormatter) {
         return messageFormatter.apply(bold(memberNames.toString()));
     }
 
     /**
      * Initialize all visual elements
      *
-     * @param applicationDescriptor     BoutiquesApplication generated from application .json descriptor file
+     * @param applicationDescriptor BoutiquesApplication generated from application .json descriptor file
      */
     public LaunchFormLayout(final BoutiquesApplication applicationDescriptor, boolean showSeparators) {
         super("600", "*");
@@ -151,7 +151,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
         this.addMember(this.errorLabel);
         this.addMember(this.warningLabel);
         // Groups
-        for(BoutiquesGroup group : applicationDescriptor.getGroups()){
+        for (BoutiquesGroup group : applicationDescriptor.getGroups()) {
             this.groups.put(group.getId(), new GroupValidator(group, this));
         }
         this.validateGroups();
@@ -207,15 +207,15 @@ public class LaunchFormLayout extends AbstractFormLayout {
     /**
      * Add given launch, save inputs and save as example buttons to this
      *
-     * @param launchButton          IButton
-     * @param saveInputsButton      IButton
-     * @param saveAsExampleButton   IButton, or null
+     * @param launchButton        IButton
+     * @param saveInputsButton    IButton
+     * @param saveAsExampleButton IButton, or null
      */
     public void setButtons(IButton launchButton, IButton saveInputsButton, IButton saveAsExampleButton) {
         this.launchButton = launchButton;
         this.saveInputsButton = saveInputsButton;
         HLayout layout;
-        if(saveAsExampleButton == null){
+        if (saveAsExampleButton == null) {
             layout = getButtonLayout(20, launchButton, saveInputsButton);
         } else {
             this.saveAsExampleButton = saveAsExampleButton;
@@ -228,8 +228,8 @@ public class LaunchFormLayout extends AbstractFormLayout {
     /**
      * Add given buttons to this
      *
-     *  @param margin   int margin before added buttons
-     * @param buttons   IButton... to add to this
+     * @param margin  int margin before added buttons
+     * @param buttons IButton... to add to this
      */
     public void setButtons(int margin, IButton... buttons) {
         this.setButtonsLayout(getButtonLayout(margin, buttons));
@@ -299,7 +299,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
         try {
             this.createArtificialStringInput("Execution name", EXECUTION_NAME_ID, false, null,
                     false, "[" + ApplicationConstants.EXEC_NAME_VALID_CHARS + "]");
-            if(applicationDescriptor.getBoutiquesExtensions().getAddResultsDirectoryInput()) {
+            if (applicationDescriptor.getBoutiquesExtensions().getAddResultsDirectoryInput()) {
                 this.createArtificialStringInput("Results directory", RESULTS_DIRECTORY_PARAM_NAME, true,
                         DataManagerConstants.ROOT + "/" + DataManagerConstants.USERS_HOME,
                         true, "[" + ApplicationConstants.INPUT_VALID_CHARS + "]");
@@ -310,7 +310,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
         }
         // Application descriptor inputs
         Set<BoutiquesInput> mandatoryInputs = applicationDescriptor.getInputs().stream()
-                .filter(i -> ! i.isOptional()).collect(Collectors.toSet());
+                .filter(i -> !i.isOptional()).collect(Collectors.toSet());
         Set<BoutiquesInput> optionalInputs = applicationDescriptor.getInputs().stream()
                 .filter(i -> i.isOptional()).collect(Collectors.toSet());
 
@@ -333,7 +333,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
 
     private void configureInput(BoutiquesApplication applicationDescriptor, BoutiquesInput input) {
         InputLayout inputLayout;
-        if(input.getPossibleValues() != null){
+        if (input.getPossibleValues() != null) {
             Map<String, String> labels =
                     applicationDescriptor.getBoutiquesExtensions().getValueChoicesLabelsForInput(input.getId());
             inputLayout = new ValueChoiceInputLayout(input, this, labels);
@@ -383,7 +383,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
             throws InvalidBoutiquesDescriptorException {
         BoutiquesInput.InputType type = isFile ? BoutiquesInput.InputType.FILE : BoutiquesInput.InputType.STRING;
         BoutiquesStringInput input = new BoutiquesStringInput(id, name, null, type, false,
-                null, null, null, null,null,
+                null, null, null, null, null,
                 defaultValue);
         InputLayout inputLayout = new StringInputLayout(input, this, hasAddValueButton, allowedChar);
         this.inputsMap.put(id, inputLayout);
@@ -394,7 +394,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
     /**
      * Add inter-inputs dependencies.
      * Preconditions: this.inputsMap has already been populated with correct InputLayouts (using this.configureInputs)
-     *                this.groups has already been populated with correct GroupValidators (by constructor)
+     * this.groups has already been populated with correct GroupValidators (by constructor)
      *
      * @param applicationDescriptor BoutiquesDescriptor generated from application .json descriptor file
      */
@@ -411,8 +411,9 @@ public class LaunchFormLayout extends AbstractFormLayout {
 
     /**
      * Make input with ID masterID disable all optional inputs with IDs in disabledIds when it is not empty
-     *  @param masterId      String representing disabling input ID
-     * @param disabledIds    Set of String IDs of dependent inputs
+     *
+     * @param masterId    String representing disabling input ID
+     * @param disabledIds Set of String IDs of dependent inputs
      */
     private void addDisablesInputs(String masterId, Set<String> disabledIds) {
         assertCondition(this.inputsMap.containsKey(masterId),
@@ -423,7 +424,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
                     "Invalid disabled input ID: " + disabledInputId);
             InputLayout disabledInput = this.inputsMap.get(disabledInputId);
             // Add dependency only if disabledInput can indeed be disabled, which means it is optional
-            if(disabledInput.isOptional()) {
+            if (disabledInput.isOptional()) {
                 masterInput.addDisables(disabledInput);
             }
         }
@@ -432,14 +433,15 @@ public class LaunchFormLayout extends AbstractFormLayout {
     /**
      * Make input with ID masterID require all inputs and groups with IDs in requiredIds. This means it will be disabled
      * if one of them is left empty
-     *  @param masterId     String representing dependent input ID
-     * @param requiredIds   Set of String IDs of required inputs or groups of inputs
+     *
+     * @param masterId    String representing dependent input ID
+     * @param requiredIds Set of String IDs of required inputs or groups of inputs
      */
     private void addRequiresInputs(String masterId, Set<String> requiredIds) {
         assertCondition(this.inputsMap.containsKey(masterId), "Invalid master input ID: " + masterId);
         InputLayout masterInput = this.inputsMap.get(masterId);
         // Ignore dependency if master input is not optional (thus cannot be disabled)
-        if(!masterInput.isOptional()) {
+        if (!masterInput.isOptional()) {
             return;
         }
         for (String requiredInputId : requiredIds) {
@@ -460,8 +462,9 @@ public class LaunchFormLayout extends AbstractFormLayout {
     /**
      * Make input with ID masterId values disable certain inputs. valueDisablesIds maps values to IDs of inputs disabled
      * when these values are selected.
-     *  @param masterId          String representing disabling input ID.
-     * @param valueDisablesIds   Map from String input values to Sets of String IDs of inputs disabled by those values
+     *
+     * @param masterId         String representing disabling input ID.
+     * @param valueDisablesIds Map from String input values to Sets of String IDs of inputs disabled by those values
      */
     private void addValueDisables(String masterId, Map<String, Set<String>> valueDisablesIds) {
         LaunchFormLayout.assertCondition(this.inputsMap.containsKey(masterId),
@@ -476,7 +479,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
                         "Invalid disabled input ID: " + disabledInputId);
                 InputLayout disabledInput = this.inputsMap.get(disabledInputId);
                 // Only optional inputs can be disabled
-                if(disabledInput.isOptional()) {
+                if (disabledInput.isOptional()) {
                     disabledInputSet.add(disabledInput);
                 }
             }
@@ -487,9 +490,10 @@ public class LaunchFormLayout extends AbstractFormLayout {
     /**
      * Make input with ID masterId values require certain inputs. valueRequiresIds maps values to IDs of inputs that
      * cannot be empty when these values are selected.
-     *  @param masterId          String representing dependent input ID.
-     * @param valueRequiresIds   Map from input values as Strings to Set of String IDs of inputs required by those
-     *                          values
+     *
+     * @param masterId         String representing dependent input ID.
+     * @param valueRequiresIds Map from input values as Strings to Set of String IDs of inputs required by those
+     *                         values
      */
     private void addValueRequires(String masterId, Map<String, Set<String>> valueRequiresIds) {
         LaunchFormLayout.assertCondition(this.inputsMap.containsKey(masterId),
@@ -518,11 +522,11 @@ public class LaunchFormLayout extends AbstractFormLayout {
      * Add dependencies involving masterInput to unsupported dependencies, usually because the input has
      * multiple values. A warning message will be displayed to inform user
      *
-     * @param masterInput   InputLayout representing problematic input
+     * @param masterInput InputLayout representing problematic input
      * @see #removeUnsupportedDependencies(String)
      * @see #updateWarningMessage()
      */
-    public void addUnsupportedDependencies(InputLayout masterInput){
+    public void addUnsupportedDependencies(InputLayout masterInput) {
         final String masterName = bold(masterInput.getInputName());
         Set<String> newUnsupportedDependencies; // Warning messages to display
         // Requires-inputs
@@ -541,7 +545,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
         // Value-requires
         newUnsupportedDependencies.addAll(this.formatDependencies(masterInput.getDisabledByValue(),
                 (inputName, values) -> inputName + " values " + values + " disable " + masterName));
-        if(masterInput instanceof ValueChoiceInputLayout){
+        if (masterInput instanceof ValueChoiceInputLayout) {
             ValueChoiceInputLayout masterChoiceInput = (ValueChoiceInputLayout) masterInput;
             // Value-disables
             newUnsupportedDependencies.addAll(this.formatDependencies(masterChoiceInput.getValueDisables(),
@@ -551,7 +555,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
                     (inputName, values) -> masterName + " values " + values + " require " + inputName));
         }
         // Update warning message
-        if(newUnsupportedDependencies.size() > 0){
+        if (newUnsupportedDependencies.size() > 0) {
             this.unsupportedDependencies.put(masterInput.getInputId(), newUnsupportedDependencies);
         }
         this.updateWarningMessage();
@@ -564,7 +568,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
      * @param inputSet  Set of InputLayout involved in dependencies to describe
      * @param formatter Function taking a String containing an input name as argument and returning a String
      *                  representing the dependency its involved in
-     * @return          Set of Strings containing dependency messages
+     * @return Set of Strings containing dependency messages
      * @see #addUnsupportedDependencies(InputLayout)
      */
     private Set<String> formatDependencies(Set<InputLayout> inputSet,
@@ -580,11 +584,11 @@ public class LaunchFormLayout extends AbstractFormLayout {
      * dependencies. A formatter BiFunction generates one dependency message given involved input's name and
      * involved Set of values.
      *
-     * @param valueChoices  Map containing InputLayouts as keys and Sets of Strings as values. These respectively
-     *                      represent inputs and input values involved together in a dependency
-     * @param formatter     BiFunction taking two Strings as arguments and returning a dependency message as String.
-     *                      Arguments are respectively involved input's name and the list of involved input values
-     * @return              Set of Strings containing dependency messages
+     * @param valueChoices Map containing InputLayouts as keys and Sets of Strings as values. These respectively
+     *                     represent inputs and input values involved together in a dependency
+     * @param formatter    BiFunction taking two Strings as arguments and returning a dependency message as String.
+     *                     Arguments are respectively involved input's name and the list of involved input values
+     * @return Set of Strings containing dependency messages
      * @see #addUnsupportedDependencies(InputLayout)
      */
     private Set<String> formatDependencies(Map<InputLayout, Set<String>> valueChoices,
@@ -598,11 +602,11 @@ public class LaunchFormLayout extends AbstractFormLayout {
      * Remove dependencies involving input with ID masterId from unsupported dependencies, then update corresponding
      * warning message
      *
-     * @param masterId  String containing involved input's ID
+     * @param masterId String containing involved input's ID
      * @see #addUnsupportedDependencies(InputLayout)
      * @see #updateWarningMessage()
      */
-    public void removeUnsupportedDependencies(String masterId){
+    public void removeUnsupportedDependencies(String masterId) {
         this.unsupportedDependencies.remove(masterId);
         this.updateWarningMessage();
     }
@@ -611,23 +615,23 @@ public class LaunchFormLayout extends AbstractFormLayout {
      * Add dependencies involving unsupportedGroup to unsupported dependencies, usually because the group input has
      * members with multiple values. A warning message will be displayed to inform user
      *
-     * @param unsupportedGroup  GroupValidator representing problematic group
+     * @param unsupportedGroup GroupValidator representing problematic group
      * @see #addUnsupportedDependencies(InputLayout)
      * @see #updateWarningMessage()
      */
     public void addUnsupportedGroup(GroupValidator unsupportedGroup) {
         HashSet<String> newUnsupportedDependencies = new HashSet<>();
         List<String> memberNames = unsupportedGroup.getMemberNames();
-        if(unsupportedGroup.isMutuallyExclusive()){
+        if (unsupportedGroup.isMutuallyExclusive()) {
             newUnsupportedDependencies.add(mutuallyExclusiveMessage(memberNames));
         }
-        if(unsupportedGroup.isAllOrNone()){
+        if (unsupportedGroup.isAllOrNone()) {
             newUnsupportedDependencies.add(allOrNoneMessage(memberNames));
         }
-        if(unsupportedGroup.isOneIsRequired()){
+        if (unsupportedGroup.isOneIsRequired()) {
             newUnsupportedDependencies.add(oneIsRequiredMessage(memberNames));
         }
-        if(newUnsupportedDependencies.size() > 0){
+        if (newUnsupportedDependencies.size() > 0) {
             this.unsupportedDependencies.put(unsupportedGroup.getGroupId(), newUnsupportedDependencies);
             newUnsupportedDependencies.forEach(message -> this.groupErrorMessage(message, false));
         }
@@ -638,8 +642,8 @@ public class LaunchFormLayout extends AbstractFormLayout {
      * Remove dependencies involving group with ID nowSupportedGroup from unsupported dependencies, then update
      * corresponding warning message
      *
-     * @param nowSupportedGroup  GroupValidator representing the group
-     * @see #addUnsupportedGroup(GroupValidator) 
+     * @param nowSupportedGroup GroupValidator representing the group
+     * @see #addUnsupportedGroup(GroupValidator)
      * @see #removeUnsupportedDependencies(String)
      * @see #updateWarningMessage()
      */
@@ -651,12 +655,12 @@ public class LaunchFormLayout extends AbstractFormLayout {
     /**
      * Update this.warningLabel to show current user warnings. Hide it if there is no warning to show
      */
-    public void updateWarningMessage(){
+    public void updateWarningMessage() {
         if (this.disableErrorsAndWarnings) return;
 
         Set<String> warningDependencies = new TreeSet<>();
         this.unsupportedDependencies.forEach((keyId, warnings) -> warningDependencies.addAll(warnings));
-        if(warningDependencies.size() == 0){
+        if (warningDependencies.size() == 0) {
             this.warningLabel.hide();
         } else {
             String message = warningDependencies.stream()
@@ -694,18 +698,18 @@ public class LaunchFormLayout extends AbstractFormLayout {
         this.invalidInputIds.remove(input.getInputId());
         this.updateErrorMessages();
     }
-    
+
     /**
      * Add or remove a group from unsatisfied group error messages, then update visible error messages
      *
-     * @param message   String containing the group error message to add or remove
-     * @param addError  boolean: true if the error message should be added, false if it should be removed
+     * @param message  String containing the group error message to add or remove
+     * @param addError boolean: true if the error message should be added, false if it should be removed
      * @see #addValidationErrorOnInput(InputLayout)
      * @see #removeValidationErrorOnInput(InputLayout)
      * @see #updateErrorMessages()
      */
     public void groupErrorMessage(String message, boolean addError) {
-        if(addError) {
+        if (addError) {
             this.errorMessages.add(message);
         } else {
             this.errorMessages.remove(message);
@@ -716,23 +720,23 @@ public class LaunchFormLayout extends AbstractFormLayout {
     /**
      * Update displayed user error messages to match field invalidInputNames and errorMessages. If there is no error
      * to display, also enable launch simulation, save inputs and save as example buttons, else disable them
-     * 
+     *
      * @see #addValidationErrorOnInput(InputLayout)
      * @see #removeValidationErrorOnInput(InputLayout)
-     * @see #groupErrorMessage(String, boolean) 
+     * @see #groupErrorMessage(String, boolean)
      */
     public void updateErrorMessages() {
         if (this.disableErrorsAndWarnings) return;
 
-        if ((this.invalidInputIds.size() + this.errorMessages.size()) == 0){
+        if ((this.invalidInputIds.size() + this.errorMessages.size()) == 0) {
             // No errors: enable buttons and hide error messages label
-            if((this.launchButton != null) && (this.saveInputsButton != null)) {
+            if ((this.launchButton != null) && (this.saveInputsButton != null)) {
                 this.launchButton.enable();
                 this.launchButton.setPrompt("");
                 this.saveInputsButton.enable();
                 this.saveInputsButton.setPrompt("");
             }
-            if(this.saveAsExampleButton != null) {
+            if (this.saveAsExampleButton != null) {
                 this.saveAsExampleButton.enable();
                 this.saveAsExampleButton.setPrompt("Save the inputs as a featured example that will "
                         + "be available for all users.");
@@ -740,20 +744,20 @@ public class LaunchFormLayout extends AbstractFormLayout {
             this.errorLabel.hide();
         } else {
             // Errors: disable buttons and show error messages
-            if((this.launchButton != null) && (this.saveInputsButton != null)) {
+            if ((this.launchButton != null) && (this.saveInputsButton != null)) {
                 this.launchButton.disable();
                 this.launchButton.setPrompt("Cannot launch. Some inputs are not valid (see below).");
                 this.saveInputsButton.disable();
                 this.saveInputsButton.setPrompt("Cannot save Inputs. Some inputs are not valid (see below).");
             }
-            if(this.saveAsExampleButton != null) {
+            if (this.saveAsExampleButton != null) {
                 this.saveAsExampleButton.disable();
                 this.saveAsExampleButton.setPrompt("Cannot save Inputs. Some inputs are not valid (see below).");
             }
             this.errorLabel.show();
             // Error messages
             StringBuilder errorContent = new StringBuilder("<font color=\"red\"><ul>");
-            if(this.invalidInputIds.size() > 0) {
+            if (this.invalidInputIds.size() > 0) {
                 Set<String> invalidInputNames = this.invalidInputIds.stream()
                         .map(id -> this.inputsMap.get(id).getInputName())
                         .collect(Collectors.toSet());
@@ -785,7 +789,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
     public Map<String, String> getParametersMap() {
         Map<String, String> parameterMap = new HashMap<>();
         this.getInputValueMap().forEach((inputId, valueSet) -> {
-            if(!inputId.equals(EXECUTION_NAME_ID)) {
+            if (!inputId.equals(EXECUTION_NAME_ID)) {
                 String inputValue;
                 if (valueSet instanceof ValueList) {
                     inputValue = String.join(ApplicationConstants.SEPARATOR_LIST, valueSet.getValuesAsStrings());
@@ -810,7 +814,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
         // Check if some inputs have non default values that will be overwritten with different values,
         // in order to alert the user
         Set<String> overwrittenInputs = new TreeSet<>();
-        for(String inputId : valueMap.keySet()) {
+        for (String inputId : valueMap.keySet()) {
             InputLayout input = this.inputsMap.get(inputId);
             boolean overwriteInput = false;
             ValueSet currentValueList = input.getValueList();
@@ -822,15 +826,15 @@ public class LaunchFormLayout extends AbstractFormLayout {
                     // Overwrite only if current value is different from default value.
                     Object uniqueValue = currentValueList.getValueNo(0);
                     Object defaultValue = input.getDefaultValue();
-                    if( ! ((uniqueValue == null) && (defaultValue == null)) ){
-                        if((uniqueValue == null) || (defaultValue == null)){
+                    if (!((uniqueValue == null) && (defaultValue == null))) {
+                        if ((uniqueValue == null) || (defaultValue == null)) {
                             // Current value or default value is null while the other is not
                             overwriteInput = true;
                         } else {
                             // String comparison in case defaultValue is not the same type as uniqueValue.
                             // For instance if descriptor has default value "1" for an input of type "Number", we want
                             // the Float value 1 to be considered equal to default.
-                            if(!defaultValue.toString().equals(uniqueValue.toString())){
+                            if (!defaultValue.toString().equals(uniqueValue.toString())) {
                                 overwriteInput = true;
                             }
                         }
@@ -842,17 +846,17 @@ public class LaunchFormLayout extends AbstractFormLayout {
             }
         }
         // If some values are to be overwritten, ask user to confirm
-        if (overwrittenInputs.size() == 0 || ! askConfirmation) {
+        if (overwrittenInputs.size() == 0 || !askConfirmation) {
             this.overwriteValues(valueMap);
         } else {
-            Set<String> overwrittenNames =  overwrittenInputs.stream()
+            Set<String> overwrittenNames = overwrittenInputs.stream()
                     .map(id -> this.inputsMap.get(id).getInputName())
                     .collect(Collectors.toSet());
             SC.confirm("The following fields already have a value.<br />"
                             + "Do you want to replace them?<br />"
                             + "Fields: " + overwrittenNames,
                     confirmed -> {
-                        if(confirmed){
+                        if (confirmed) {
                             this.overwriteValues(valueMap);
                         }
                     });
@@ -862,7 +866,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
     /**
      * Overwrite current in put values with provided ones
      *
-     * @param valueMap  Map of String representing input IDs to ValueSet representing corresponding values to write
+     * @param valueMap Map of String representing input IDs to ValueSet representing corresponding values to write
      */
     private void overwriteValues(Map<String, ValueSet> valueMap) {
         valueMap.forEach((inputId, values) -> this.inputsMap.get(inputId).overwriteValues(values));
@@ -874,7 +878,7 @@ public class LaunchFormLayout extends AbstractFormLayout {
      * @param simulationName Execution name to load
      * @param valuesMap      Map of String input IDs to String representation of corresponding input values
      */
-    public void loadInputs( String simulationName, Map<String, String> valuesMap, boolean askConfirmation) {
+    public void loadInputs(String simulationName, Map<String, String> valuesMap, boolean askConfirmation) {
         Map<String, ValueSet> valueSetMap = new HashMap<>();
         valueSetMap.put(EXECUTION_NAME_ID, ValueSet.valueSetFactory(simulationName));
         valuesMap.forEach((inputId, valueString) -> valueSetMap.put(inputId, ValueSet.valueSetFactory(valueString)));

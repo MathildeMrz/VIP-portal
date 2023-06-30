@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class ApplicationTileGrid extends ApplicationsTileGrid {
@@ -58,14 +57,14 @@ public class ApplicationTileGrid extends ApplicationsTileGrid {
 
     @Override
     public void parse(
-        final String applicationName, final String applicationVersion) {
+            final String applicationName, final String applicationVersion) {
 
         String appName = applicationVersion == null ? applicationName : applicationName + " " + applicationVersion;
         if (applicationNames.contains(appName)) {
             Layout.getInstance().addTab(
-                ApplicationConstants.getLaunchTabID(applicationName),
-                () -> new LaunchTab(
-                    applicationName, applicationVersion, tileName));
+                    ApplicationConstants.getLaunchTabID(applicationName),
+                    () -> new LaunchTab(
+                            applicationName, applicationVersion, tileName));
         }
     }
 

@@ -24,7 +24,8 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // testing framework must recreate a MessageBusiness after each test method
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+// testing framework must recreate a MessageBusiness after each test method
 public class ClassIT extends BaseSpringIT {
     @Autowired
     public ClassBusiness classBusiness;
@@ -32,10 +33,10 @@ public class ClassIT extends BaseSpringIT {
     @Autowired
     public EngineBusiness engineBusiness;
 
-    static public Map < AppClass, List < Application >> applicationsPerClass = new HashMap < > ();
+    static public Map<AppClass, List<Application>> applicationsPerClass = new HashMap<>();
 
-    private List < String > applicationGroups = new ArrayList < > ();
-    private List < String > engines = new ArrayList < > ();
+    private List<String> applicationGroups = new ArrayList<>();
+    private List<String> engines = new ArrayList<>();
 
     @BeforeEach
     public void setUp() throws BusinessException, DAOException, GRIDAClientException {
@@ -64,8 +65,7 @@ public class ClassIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCreateClass()
-    {
+    public void testCreateClass() {
         // With all parameters
         AppClass appClass = new AppClass("class1", engines, applicationGroups);
 
@@ -81,8 +81,7 @@ public class ClassIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testAddClass() throws BusinessException
-    {
+    public void testAddClass() throws BusinessException {
         AppClass appClass = new AppClass("class2", engines, applicationGroups);
         classBusiness.addClass(appClass);
 
@@ -157,19 +156,19 @@ public class ClassIT extends BaseSpringIT {
 
     @Test
     public void testUpdateClass() throws BusinessException {
-        List < String > applicationGroups = new ArrayList < > ();
+        List<String> applicationGroups = new ArrayList<>();
         applicationGroups.add("group1");
 
         Engine engine = new Engine("test engine 2", "test endpoint", "enabled");
-        List < String > engines = new ArrayList < > ();
+        List<String> engines = new ArrayList<>();
         engines.add("test engine 2");
         engineBusiness.add(engine);
 
         AppClass appClass = new AppClass("class1", engines, applicationGroups);
         classBusiness.updateClass(appClass);
 
-        Assertions.assertEquals(classBusiness.getClasses().size() , 1, "Incorrect number of classes");
-        Assertions.assertEquals(classBusiness.getClasses().get(0).getEngines().get(0) , "test engine 2", "Incorrect number of classes");
+        Assertions.assertEquals(classBusiness.getClasses().size(), 1, "Incorrect number of classes");
+        Assertions.assertEquals(classBusiness.getClasses().get(0).getEngines().get(0), "test engine 2", "Incorrect number of classes");
     }
 
     // TODO : correct empty array

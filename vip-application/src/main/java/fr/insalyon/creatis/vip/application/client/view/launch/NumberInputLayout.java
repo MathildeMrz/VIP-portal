@@ -27,10 +27,12 @@ public class NumberInputLayout extends InputLayout {
     // Validators for client-side validation logic
     private CustomValidator numberValidator; // For checking we have a valid number
     private CustomValidator rangeValidator; // For checking this number is between allowed minimum and maximum
+
     public enum FormLayout {
         LIST, RANGE;
         public static List<String> names = camelNames(values());
     }
+
     public enum RangeItem {
         START, STEP, STOP;
         public static List<String> names = camelNames(values());
@@ -40,7 +42,7 @@ public class NumberInputLayout extends InputLayout {
      * Return given enum value's name with only first letter in uppercase (used for displaying values)
      *
      * @param enumValue Enum value
-     * @return          Formatted name as String
+     * @return Formatted name as String
      */
     public static String camelName(Enum<?> enumValue) {
         String enumName = enumValue.name();
@@ -50,8 +52,8 @@ public class NumberInputLayout extends InputLayout {
     /**
      * Take an array of enum values and return an array of their names with only first letter in uppercase
      *
-     * @param enumValues    Array of Enum values
-     * @return              Array of Strings representing enumValues formatted names
+     * @param enumValues Array of Enum values
+     * @return Array of Strings representing enumValues formatted names
      */
     public static List<String> camelNames(Enum<?>[] enumValues) {
         return Arrays.stream(enumValues).map(NumberInputLayout::camelName).collect(Collectors.toList());
@@ -59,12 +61,12 @@ public class NumberInputLayout extends InputLayout {
 
     /**
      * @param value Object representing a field value
-     * @return      Float representing the same value, or null if value is not the representation of a Float
+     * @return Float representing the same value, or null if value is not the representation of a Float
      */
-    public static Float valueAsFloat(Object value) throws NumberFormatException{
-        try{
+    public static Float valueAsFloat(Object value) throws NumberFormatException {
+        try {
             return Float.parseFloat(String.valueOf(value));
-        } catch (NumberFormatException exception){
+        } catch (NumberFormatException exception) {
             return null;
         }
     }
@@ -73,8 +75,8 @@ public class NumberInputLayout extends InputLayout {
      * Initialise graphical labels and main input form, which contains one value field and a SelectItem to display
      * instead a range layout (three value fields: start, step and end)
      *
-     * @param parsedInput   BoutiquesInputNumber to be represented
-     * @param parentLayout  LaunchFormLayout containing this
+     * @param parsedInput  BoutiquesInputNumber to be represented
+     * @param parentLayout LaunchFormLayout containing this
      */
     public NumberInputLayout(final BoutiquesNumberInput parsedInput, LaunchFormLayout parentLayout) {
         super(parsedInput, parentLayout);
@@ -167,6 +169,7 @@ public class NumberInputLayout extends InputLayout {
 
     /**
      * Create an additional input field for current layout
+     *
      * @see InputLayout#createAdditionalForm()
      */
     @Override
@@ -183,12 +186,12 @@ public class NumberInputLayout extends InputLayout {
 
     /**
      * @return boolean: true if all additional fields in this have valid values, else otherwise. When range layout
-     *         is selected, additional fields are hidden and ignored, thus considered valid (true is returned)
+     * is selected, additional fields are hidden and ignored, thus considered valid (true is returned)
      * @see InputLayout#validateAdditionalForms()
      */
     @Override
     protected boolean validateAdditionalForms() {
-        if(this.isRange()){
+        if (this.isRange()) {
             return true;
         }
         return super.validateAdditionalForms();
@@ -255,8 +258,9 @@ public class NumberInputLayout extends InputLayout {
     /**
      * Create main input field. This master form contains a SelectItem to select List or Range
      * layout, as well as fields for both layouts. Should be called only once by constructor
-     *
+     * <p>
      * Note that validators for client-side validation logic are initialized here.
+     *
      * @see #configureValidators()
      */
     @Override
@@ -323,7 +327,7 @@ public class NumberInputLayout extends InputLayout {
             @Override
             protected boolean condition(Object value) {
                 Float floatValue = valueAsFloat((value));
-                if(floatValue != null){
+                if (floatValue != null) {
                     // Check that step is strictly positive
                     if (floatValue <= 0) {
                         this.setErrorMessage("Must be strictly positive.");
@@ -385,15 +389,16 @@ public class NumberInputLayout extends InputLayout {
         this.onValueChanged();
     }
 
-    private FormItem getRangeItem(RangeItem type){
+    private FormItem getRangeItem(RangeItem type) {
         return this.masterForm.getField(camelName(type));
     }
+
     /**
      * Perform given action on each Range field (Start value, Step value and End value)
      *
      * @param action Consumer<FormItem> to apply to Range fields
      */
-    private void rangeItemAction(Consumer<FormItem> action){
+    private void rangeItemAction(Consumer<FormItem> action) {
         RangeItem.names.stream()
                 .map(this.masterForm::getField)
                 .forEach(action);
@@ -403,9 +408,9 @@ public class NumberInputLayout extends InputLayout {
      * @return FormLayout representing currently selected
      * @throws IllegalStateException if selected value does not correspond to an existing FormLayout
      */
-    public FormLayout getSelectedFormLayout() throws IllegalStateException{
+    public FormLayout getSelectedFormLayout() throws IllegalStateException {
         String selectedValue = ((String) this.typeSelector.getValue());
-        if(FormLayout.names.contains(selectedValue)){
+        if (FormLayout.names.contains(selectedValue)) {
             return FormLayout.valueOf(selectedValue.toUpperCase());
         } else {
             throw new IllegalStateException("Unknown selected layout type. Only allowed values are "

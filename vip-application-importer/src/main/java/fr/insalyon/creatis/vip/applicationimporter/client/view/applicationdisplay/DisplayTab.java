@@ -105,7 +105,7 @@ public class DisplayTab extends Tab {
         createApplicationButton = WidgetUtil.getIButton("Create application", Constants.ICON_LAUNCH, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if (vipLayout.getApplicationType() == null){
+                if (vipLayout.getApplicationType() == null) {
                     Layout.getInstance().setWarningMessage("Select type of Application is empty, please choose one.");
                 } else {
                     boutiquesTool.setApplicationLFN(vipLayout.getApplicationLocation() + "/" + boutiquesTool.getName());
@@ -118,7 +118,7 @@ public class DisplayTab extends Tab {
     }
 
     public static BoutiquesApplication parseJSON(String jsonDescriptor)
-        throws ApplicationImporterException {
+            throws ApplicationImporterException {
 
         BoutiquesApplication boutiquesApplication = null;
         try {
@@ -133,6 +133,7 @@ public class DisplayTab extends Tab {
     /**
      * Populates the class with instance variables containing values in the JSON
      * object, and refreshes the display.
+     *
      * @param boutiquesTool BoutiquesApplication
      */
     public void setBoutiqueTool(BoutiquesApplication boutiquesTool) {
@@ -144,7 +145,7 @@ public class DisplayTab extends Tab {
     }
 
     private static void verifyBoutiquesTool(BoutiquesApplication boutiquesTool)
-        throws ApplicationImporterException {
+            throws ApplicationImporterException {
 
         if (boutiquesTool.getName() == null) {
             throw new ApplicationImporterException("Boutiques file must have a name property");
@@ -162,7 +163,6 @@ public class DisplayTab extends Tab {
 
     /**
      * Creates a standalone application
-     *
      */
     private void createApplication() {
         final AsyncCallback<Void> callback = new AsyncCallback<Void>() {
@@ -181,12 +181,12 @@ public class DisplayTab extends Tab {
         };
         modal.show("Creating application...", true);
         ApplicationImporterService.Util.getInstance().createApplication(
-            boutiquesTool,
-            vipLayout.getApplicationType(),
-            vipLayout.getTag(),
-            vipLayout.getIsRunOnGrid(),
-            vipLayout.getOverwrite(),
-            vipLayout.getFileAccessProtocol(),
-            callback);
+                boutiquesTool,
+                vipLayout.getApplicationType(),
+                vipLayout.getTag(),
+                vipLayout.getIsRunOnGrid(),
+                vipLayout.getOverwrite(),
+                vipLayout.getFileAccessProtocol(),
+                callback);
     }
 }

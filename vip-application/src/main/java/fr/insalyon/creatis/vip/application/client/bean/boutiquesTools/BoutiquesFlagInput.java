@@ -16,16 +16,16 @@ public class BoutiquesFlagInput extends BoutiquesInput {
     }
 
     /**
-     * @param id String
-     * @param name String
-     * @param description String
-     * @param isOptional boolean
+     * @param id               String
+     * @param name             String
+     * @param description      String
+     * @param isOptional       boolean
      * @param disablesInputsId List of String IDs of inputs disabled when this is non-empty
      * @param requiresInputsId List of String IDs of inputs requiring this to be non-empty
-     * @param defaultValue boolean
+     * @param defaultValue     boolean
      */
     public BoutiquesFlagInput(String id, String name, String description, boolean isOptional,
-                              Set<String> disablesInputsId, Set<String> requiresInputsId, boolean defaultValue){
+                              Set<String> disablesInputsId, Set<String> requiresInputsId, boolean defaultValue) {
         super(id, name, description, InputType.FLAG, isOptional, disablesInputsId, requiresInputsId, null,
                 null, null);
         this.defaultValue = defaultValue;

@@ -57,7 +57,6 @@ import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
 import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
 
 /**
- *
  * @author Rafael Ferreira da Silva, glatard
  */
 public class SignInTab extends Tab {
@@ -87,7 +86,6 @@ public class SignInTab extends Tab {
 
         this.setID(CoreConstants.TAB_SIGNIN);
         this.setTitle("Sign In");
-
 
 
         VLayout loginVLayout = new VLayout(15);
@@ -269,28 +267,28 @@ public class SignInTab extends Tab {
         }
     }
 
-    private void testLayoutInfo(){
-        infoWelcomeVipLayout = WidgetUtil.getLabel("<font size=\"6\"><b>Welcome on VIP, the Virtual Imaging Platform!</b></font>",20);
+    private void testLayoutInfo() {
+        infoWelcomeVipLayout = WidgetUtil.getLabel("<font size=\"6\"><b>Welcome on VIP, the Virtual Imaging Platform!</b></font>", 20);
         infoWelcomeVipLayout.setWidth(900);
         infoWelcomeVipLayout.setStyleName("title");
         infoWelcomeVipLayout.setCanSelectText(true);
-        infoSpace = WidgetUtil.getLabel(" ",20);
-        infoVipLayout= WidgetUtil.getLabel("<font size=\"3\"><b>VIP is a web portal for medical imaging applications. " +
+        infoSpace = WidgetUtil.getLabel(" ", 20);
+        infoVipLayout = WidgetUtil.getLabel("<font size=\"3\"><b>VIP is a web portal for medical imaging applications. " +
                 "It allows you to access scientific applications as a service (directly through your web browser with no installation required), " +
                 "as well as distributed computing resources in a transparent manner.</b></font>", 20);
         infoVipLog = WidgetUtil.getLabel("<font size=\"3\"><b>Please log in using the form below or the link " +
-                "to the EGI Checkin federated authentication service, or create a new account if you don't have one.</b></font>",20);
+                "to the EGI Checkin federated authentication service, or create a new account if you don't have one.</b></font>", 20);
         infoContactlayout = WidgetUtil.getLabel("<font size=\"3\"><b>Documentation of the Virtual " +
                 "Imaging Platform and its embedded applications is available here:  <a href=\"https://vip.creatis.insa-lyon.fr/documentation/\">" +
-                "VIP Documentation</a></b></font>",20);
+                "VIP Documentation</a></b></font>", 20);
         infoPrivacyPolicy = WidgetUtil.getLabel("<font size=\"3\"><b>The Virtual Imaging Platform Privacy Policy: " +
-                " <a href=\"https://vip.creatis.insa-lyon.fr/documentation/privacypolicy.html\">VIP Privacy Policy</a>",20);
+                " <a href=\"https://vip.creatis.insa-lyon.fr/documentation/privacypolicy.html\">VIP Privacy Policy</a>", 20);
 
         LinkItem infoAppLayout = new LinkItem();
         infoAppLayout.setLinkTitle("<font size=\"3\"><b>The list of Applications related to the Virtual Imaging Platform </b></font>");
         infoAppLayout.setShowTitle(false);
         infoAppLayout.addClickHandler((com.smartgwt.client.widgets.form.fields.events.ClickHandler) event -> {
-            CoreModule.getHomePageActions().get(CoreConstants.HOME_ACTION_SHOW_APPLICATIONS).run();            
+            CoreModule.getHomePageActions().get(CoreConstants.HOME_ACTION_SHOW_APPLICATIONS).run();
         });
 
         LinkItem infoPubliLayout = new LinkItem();
@@ -305,15 +303,15 @@ public class SignInTab extends Tab {
 
         newFormAppLayout = FieldUtil.getForm(infoAppLayout);
         infoCodeSource = WidgetUtil.getLabel("<font size=\"3\"><b>The Virtual Imaging Platform source code: " +
-                " <a href=\"https://github.com/virtual-imaging-platform\">VIP Github</a>",20);
+                " <a href=\"https://github.com/virtual-imaging-platform\">VIP Github</a>", 20);
         infoContactus = WidgetUtil.getLabel("<font size=\"3\"><b>This portal is exclusively dedicated to non-commercial academic use, " +
                 "as indicated in the <a href=\"https://vip.creatis.insa-lyon.fr/documentation/terms.html\">terms of use.</a> " +
                 "For commercial use, please contact us at <a href=\"mailto:vip-support@creatis.insa-lyon.fr\">" +
-                "vip-support@creatis.insa-lyon.fr</a>.</b></font>",20);
+                "vip-support@creatis.insa-lyon.fr</a>.</b></font>", 20);
         infoMail = WidgetUtil.getLabel("<font size=\"3\"><b>Contact: <a href=\"mailto:vip-support@creatis.insa-lyon.fr\">" +
-                "vip-support@creatis.insa-lyon.fr</a></b></font>",20);
+                "vip-support@creatis.insa-lyon.fr</a></b></font>", 20);
         infoVipNews = WidgetUtil.getLabel("<font size=\"3\"><b>VIP News: <a href=\"https://www.creatis.insa-lyon.fr/vip/news.html\">" +
-                "https://www.creatis.insa-lyon.fr/vip/news.html</a>",20);
+                "https://www.creatis.insa-lyon.fr/vip/news.html</a>", 20);
 
         infoMail.setCanSelectText(true);
         infoContactus.setCanSelectText(true);

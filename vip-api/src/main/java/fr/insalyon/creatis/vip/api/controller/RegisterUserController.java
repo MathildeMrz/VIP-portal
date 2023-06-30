@@ -29,7 +29,6 @@ public class RegisterUserController extends ApiController {
     private final ApiUserBusiness apiUserBusiness;
 
     /**
-     *
      * @param apiUserBusiness
      */
     @Autowired
@@ -38,7 +37,6 @@ public class RegisterUserController extends ApiController {
     }
 
     /**
-     *
      * @param signUpUser
      * @return ResponseEntity<String>
      * @throws ApiException
@@ -47,7 +45,7 @@ public class RegisterUserController extends ApiController {
     public ResponseEntity<?> signup(
             @RequestBody @Valid SignUpUserDTO signUpUser)
             throws ApiException {
-        logMethodInvocation(logger,"signup", signUpUser.getEmail());
+        logMethodInvocation(logger, "signup", signUpUser.getEmail());
         User user = new User(signUpUser.getFirstName(),
                 signUpUser.getLastName(),
                 signUpUser.getEmail(),
@@ -55,7 +53,7 @@ public class RegisterUserController extends ApiController {
                 signUpUser.getPassword(),
                 signUpUser.getLevel(),
                 signUpUser.getCountryCode()
-                );
+        );
         user.setRegistration(new Date());
         user.setLastLogin(new Date());
         this.apiUserBusiness.signup(user, signUpUser.getComments(), signUpUser.getApplications());

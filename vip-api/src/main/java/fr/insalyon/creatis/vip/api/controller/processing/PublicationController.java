@@ -22,7 +22,7 @@ public class PublicationController extends ApiController {
     private final PublicationBusiness publicationBusiness;
 
     @Autowired
-    protected PublicationController (PublicationBusiness publicationBusiness) {
+    protected PublicationController(PublicationBusiness publicationBusiness) {
         this.publicationBusiness = publicationBusiness;
     }
 

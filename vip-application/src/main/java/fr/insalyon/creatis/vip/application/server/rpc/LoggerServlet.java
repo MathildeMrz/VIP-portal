@@ -53,23 +53,23 @@ import java.util.logging.LogRecord;
 
 /**
  * Minimalist Servlet allowing to write logs (from the client side) in vip.log file on server side.
- * 
+ * <p>
  * Please see servlet configuration in Application.gwt.xml file from VIP-Application module, and in web.xml from VIP-portal module WEB-INF folder.
  * To use it, create a Logger object in a client side class : "private final Logger logger = LoggerFactory.getLogger(getClass());"
  * Then use it in methods. For instance : "logger.info("log_name : " + valueMapResult);
- * 
+ *
  * @author pgirard
  */
-public class LoggerServlet extends AbstractRemoteServiceServlet implements RemoteLoggingService  {
-    
+public class LoggerServlet extends AbstractRemoteServiceServlet implements RemoteLoggingService {
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-     public String logOnServer(LogRecord record) {
+    public String logOnServer(LogRecord record) {
 
-         final String message = record.getMessage();
-         logger.info(message);
-         return null;
+        final String message = record.getMessage();
+        logger.info(message);
+        return null;
     }
-        
+
 }

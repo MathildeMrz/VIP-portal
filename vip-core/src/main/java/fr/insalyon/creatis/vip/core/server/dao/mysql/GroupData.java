@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Repository
@@ -67,7 +66,7 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
     public void add(Group group) throws DAOException {
 
         try {
-            System.out.println("Trying to add "+group.getName());
+            System.out.println("Trying to add " + group.getName());
             PreparedStatement ps = getConnection().prepareStatement(
                     "INSERT INTO VIPGroups(groupname, public, gridfile, gridjobs) VALUES(?, ?, ?, ?)");
             ps.setString(1, group.getName());
@@ -156,7 +155,7 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 groups.add(new Group(rs.getString("groupname"),
-                        rs.getBoolean("public"),rs.getBoolean("gridfile"),rs.getBoolean("gridjobs")));
+                        rs.getBoolean("public"), rs.getBoolean("gridfile"), rs.getBoolean("gridjobs")));
             }
             ps.close();
             return groups;
@@ -169,8 +168,7 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
 
     @Override
     public boolean isGroup(String groupName) throws DAOException {
-        try
-        {
+        try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT * "
                     + "FROM VIPGroups "
                     + "WHERE groupname=? ");

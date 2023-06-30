@@ -45,7 +45,6 @@ import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 
 
 /**
- *
  * @author Rafael Ferreira da Silva, Nouha Boujelben, Sorina Pop
  */
 public class PublicationParser extends ApplicationParser {
@@ -84,7 +83,6 @@ public class PublicationParser extends ApplicationParser {
         }
         return false;
     }
-
 
 
     private void showDialog(String message) {

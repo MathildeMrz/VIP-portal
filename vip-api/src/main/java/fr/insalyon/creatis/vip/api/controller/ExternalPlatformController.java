@@ -63,8 +63,8 @@ public class ExternalPlatformController extends ApiController {
 
     @GetMapping
     public List<ExternalPlatform> listExternalPlatforms() throws ApiException {
-        logMethodInvocation(logger,"listExternalPlatforms");
-        try{
+        logMethodInvocation(logger, "listExternalPlatforms");
+        try {
             return externalPlatformBusiness.listAll();
         } catch (BusinessException e) {
             throw new ApiException(e);

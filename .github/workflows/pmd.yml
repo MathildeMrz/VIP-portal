@@ -4,29 +4,29 @@
 # documentation.
 env:
   PRE_BUILD_COMMAND: git config --global --add safe.directory /github/workspace
-  
+
 name: code_quality_pmd
 
-on: 
+on:
   push:
     branches: [ "develop" ]
-   
+
   pull_request:
     branches: [ "develop" ]
-     
+
   schedule:
     - cron: '40 1 * * 0'
 
 permissions:
   contents: read
-  
+
 jobs:
 
   ##########################################################################################################################################################################################
   ################################################################################# Quality code analysis ##################################################################################
   ##########################################################################################################################################################################################
 
-   pmd-code-scan: 
+  pmd-code-scan:
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    
+
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
@@ -48,18 +48,18 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: pmd-report.sarif
-                
-  ##########################################################################################################################################################################################
-  ############################################################################# Store quality code Sarif analysis ##########################################################################
-  ##########################################################################################################################################################################################
-          
- #     - name: Commit results
- #       run: |             
- #             git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
- #             git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
- #             git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
- #             git add results
- #             git commit -m "Push results folder"
+
+          ##########################################################################################################################################################################################
+          ############################################################################# Store quality code Sarif analysis ##########################################################################
+          ##########################################################################################################################################################################################
+
+  #     - name: Commit results
+  #       run: |
+  #             git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
+  #             git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
+  #             git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
+  #             git add results
+  #             git commit -m "Push results folder"
 #
 #      - name: Push results
 #        uses: ad-m/github-push-action@master

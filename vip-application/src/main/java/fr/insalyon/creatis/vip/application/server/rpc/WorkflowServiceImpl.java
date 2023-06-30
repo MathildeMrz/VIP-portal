@@ -61,7 +61,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements WorkflowService {
@@ -126,7 +125,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param applicationName
      * @param applicationVersion
      * @return
@@ -145,7 +143,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param applicationName
      * @param applicationVersion
      * @return
@@ -156,7 +153,7 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
             throws ApplicationException {
         try {
             return boutiquesBusiness.getApplicationDescriptorString(getSessionUser(), applicationName,
-                                                                    applicationVersion);
+                    applicationVersion);
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
@@ -165,17 +162,17 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     /**
      * Launches a simulation.
      *
-     * @param parametersMap Simulation parameters map
-     * @param applicationName Application name
+     * @param parametersMap      Simulation parameters map
+     * @param applicationName    Application name
      * @param applicationVersion Application version
-     * @param applicationClass Application class
-     * @param simulationName Simulation name
+     * @param applicationClass   Application class
+     * @param simulationName     Simulation name
      * @throws ApplicationException
      */
     @Override
     public void launchSimulation(Map<String, String> parametersMap,
-            String applicationName, String applicationVersion,
-            String applicationClass, String simulationName) throws ApplicationException {
+                                 String applicationName, String applicationVersion,
+                                 String applicationClass, String simulationName) throws ApplicationException {
 
         try {
             trace(logger, "Launching simulation '" + simulationName + "' (" + applicationName + ").");
@@ -186,14 +183,14 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
                 groups.add(group.getName());
             }
 
-            for (Map.Entry<String,String> p : parametersMap.entrySet()) {
+            for (Map.Entry<String, String> p : parametersMap.entrySet()) {
                 logger.info("received param {} : {}", p.getKey(), p.getValue());
             }
 
             String simulationID = workflowBusiness.launch(
-                user, groups,
-                parametersMap, applicationName, applicationVersion,
-                applicationClass, simulationName);
+                    user, groups,
+                    parametersMap, applicationName, applicationVersion,
+                    applicationClass, simulationName);
 
             trace(logger, "Simulation '" + simulationName + "' launched with ID '" + simulationID + "'.");
 
@@ -203,7 +200,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param name
      * @param appName
      * @return
@@ -211,17 +207,16 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
      */
     @Override
     public SimulationInput getInputByNameUserApp(String name, String appName)
-        throws ApplicationException {
+            throws ApplicationException {
         try {
             return inputBusiness.getInputByUserAndName(
-                getSessionUser().getEmail(), name, appName);
+                    getSessionUser().getEmail(), name, appName);
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @param simulationInput
      * @throws ApplicationException
      */
@@ -229,14 +224,13 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
             throws ApplicationException {
         try {
             inputBusiness.addSimulationInput(
-                getSessionUser().getEmail(), simulationInput);
+                    getSessionUser().getEmail(), simulationInput);
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @param simulationInput
      * @throws ApplicationException
      */
@@ -244,14 +238,13 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
             throws ApplicationException {
         try {
             inputBusiness.updateSimulationInput(
-                getSessionUser().getEmail(), simulationInput);
+                    getSessionUser().getEmail(), simulationInput);
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @param fileName
      * @return
      */
@@ -266,7 +259,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param inputName
      * @param applicationName
      * @throws ApplicationException
@@ -275,77 +267,72 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
             throws ApplicationException {
         try {
             inputBusiness.removeSimulationInput(
-                getSessionUser().getEmail(), inputName, applicationName);
+                    getSessionUser().getEmail(), inputName, applicationName);
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @param inputName
      * @param applicationName
      * @throws ApplicationException
      */
     public void removeSimulationInputExample(
-        String inputName, String applicationName)
-        throws ApplicationException {
+            String inputName, String applicationName)
+            throws ApplicationException {
         try {
             inputBusiness.removeSimulationInputExample(
-                inputName, applicationName);
+                    inputName, applicationName);
         } catch (BusinessException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @return @throws ApplicationException
      */
     public List<SimulationInput> getSimulationInputByUser()
-        throws ApplicationException {
+            throws ApplicationException {
         try {
             return inputBusiness.getSimulationInputByUser(
-                getSessionUser().getEmail());
+                    getSessionUser().getEmail());
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @param simulationInput
      * @throws ApplicationException
      */
     public void saveInputsAsExamples(SimulationInput simulationInput)
-        throws ApplicationException {
+            throws ApplicationException {
         try {
             inputBusiness.saveSimulationInputAsExample(
-                simulationInput);
+                    simulationInput);
         } catch (BusinessException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @param applicationName
      * @return
      * @throws ApplicationException
      */
     @Override
     public List<SimulationInput> getSimulationInputExamples(
-        String applicationName) throws ApplicationException {
+            String applicationName) throws ApplicationException {
         try {
             return inputBusiness.getSimulationInputExamples(
-                applicationName);
+                    applicationName);
         } catch (BusinessException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @param simulationIDs
      * @throws ApplicationException
      */
@@ -377,7 +364,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param simulationIDs
      * @throws ApplicationException
      */
@@ -412,7 +398,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param simulationIDs
      * @throws ApplicationException
      */
@@ -443,7 +428,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param simulationID
      * @throws ApplicationException
      */
@@ -460,7 +444,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param simulationID
      * @throws ApplicationException
      */
@@ -476,7 +459,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param simulationID
      * @throws ApplicationException
      */
@@ -494,7 +476,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param simulationID
      * @return
      * @throws ApplicationException
@@ -504,14 +485,13 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
         try {
             trace(logger, "Relaunching simulation '" + simulationID + "'.");
             return workflowBusiness.relaunch(
-                simulationID, getSessionUser().getFolder());
+                    simulationID, getSessionUser().getFolder());
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @param userName
      * @param application
      * @param status
@@ -522,7 +502,7 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
      */
     @Override
     public List<Simulation> getSimulations(String userName, String application,
-            String status, String appClass, Date startDate, Date endDate) throws ApplicationException {
+                                           String status, String appClass, Date startDate, Date endDate) throws ApplicationException {
         try {
             User user = getSessionUser();
             if (user.isSystemAdministrator()) {
@@ -537,7 +517,7 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
 
                 } else {
                     List<String> users = configurationBusiness
-                        .getUserNames(user.getEmail(), true);
+                            .getUserNames(user.getEmail(), true);
 
                     return workflowBusiness.getSimulations(users,
                             application, status, appClass, startDate, endDate);
@@ -549,7 +529,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param simulationID
      * @return
      * @throws ApplicationException
@@ -568,7 +547,7 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
         try {
             FileReader fr = new FileReader(
                     server.getWorkflowsPath() + "/"
-                    + baseDir + "/" + fileName);
+                            + baseDir + "/" + fileName);
 
             BufferedReader br = new BufferedReader(fr);
 
@@ -617,7 +596,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param path
      * @throws ApplicationException
      */
@@ -632,7 +610,7 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     public List<SimulationInput> getWorkflowsInputByUserAndAppName(
-        String user, String appName) {
+            String user, String appName) {
         try {
             return applicationInputDAO.getWorkflowInputByUserAndAppName(user, appName);
         } catch (DAOException ex) {
@@ -642,7 +620,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param simulationList
      * @param type
      * @return
@@ -661,7 +638,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param simulationID
      * @return
      * @throws ApplicationException
@@ -670,14 +646,13 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     public List<InOutData> getOutputData(String simulationID) throws ApplicationException {
         try {
             return workflowBusiness.getOutputData(
-                simulationID, getSessionUser().getFolder());
+                    simulationID, getSessionUser().getFolder());
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @param simulationID
      * @return
      * @throws ApplicationException
@@ -686,14 +661,13 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     public List<InOutData> getInputData(String simulationID) throws ApplicationException {
         try {
             return workflowBusiness.getInputData(
-                simulationID, getSessionUser().getFolder());
+                    simulationID, getSessionUser().getFolder());
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
     }
 
     /**
-     *
      * @param simulationID
      * @return
      * @throws ApplicationException
@@ -709,7 +683,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param inputs
      * @throws ApplicationException
      */
@@ -723,7 +696,6 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
     }
 
     /**
-     *
      * @param currentUser
      * @param newUser
      * @throws ApplicationException
@@ -767,7 +739,7 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
 
     @Override
     public void markWorkflowCompleted(String simulationID) throws ApplicationException {
-         try {
+        try {
             trace(logger, "Marking simulation '" + simulationID + "' completed.");
             workflowBusiness.markCompleted(simulationID);
 
@@ -778,9 +750,9 @@ public class WorkflowServiceImpl extends AbstractRemoteServiceServlet implements
 
     @Override
     public void changeSimulationUser(String simulationId, String user) throws ApplicationException {
-         try {
-            trace(logger, "Changing user of simulation '" + simulationId + "' to "+user+".");
-            workflowBusiness.changeSimulationUser(simulationId,user);
+        try {
+            trace(logger, "Changing user of simulation '" + simulationId + "' to " + user + ".");
+            workflowBusiness.changeSimulationUser(simulationId, user);
 
         } catch (CoreException | BusinessException ex) {
             throw new ApplicationException(ex);

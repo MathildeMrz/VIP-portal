@@ -55,7 +55,7 @@ import java.util.Map;
 
 /**
  * Parse a m2 input file.
- *
+ * <p>
  * This stores data in fields and this is not threadsafe. So it cannot be used
  * as a spring singleton and this needs prototype scope.
  *
@@ -104,7 +104,7 @@ public class InputM2Parser extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName,
-            Attributes attributes) throws SAXException {
+                             Attributes attributes) throws SAXException {
 
         if (localName.equals("source")) {
 
@@ -173,7 +173,7 @@ public class InputM2Parser extends DefaultHandler {
                         }
                         try {
                             v = lfcPathsBusiness.parseRealDir(
-                                v, currentUserFolder);
+                                    v, currentUserFolder);
                         } catch (DataManagerException ex) {
                             // do nothing
                         }

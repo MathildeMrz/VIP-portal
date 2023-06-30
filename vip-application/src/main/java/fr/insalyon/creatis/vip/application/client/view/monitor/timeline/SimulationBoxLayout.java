@@ -61,7 +61,6 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class SimulationBoxLayout extends HLayout {
@@ -81,8 +80,8 @@ public class SimulationBoxLayout extends HLayout {
     protected HandlerRegistration handler;
 
     public SimulationBoxLayout(String id, String name, String applicationName,
-            String applicationVersion, String applicationClass, String user,
-            SimulationStatus status, Date launchedDate) {
+                               String applicationVersion, String applicationClass, String user,
+                               SimulationStatus status, Date launchedDate) {
 
         this.simulationID = id;
         this.simulationName = name;
@@ -131,9 +130,9 @@ public class SimulationBoxLayout extends HLayout {
             @Override
             public void onClick(ClickEvent event) {
                 Layout.getInstance().addTab(
-                    AbstractSimulationTab.tabIdFrom(simulationID),
-                    () -> new SimulationTab(
-                        simulationID, simulationName, simulationStatus));
+                        AbstractSimulationTab.tabIdFrom(simulationID),
+                        () -> new SimulationTab(
+                                simulationID, simulationName, simulationStatus));
             }
         });
         this.addMember(mainLayout);
@@ -144,11 +143,11 @@ public class SimulationBoxLayout extends HLayout {
         buttonsLayout.addMember(actionButton);
         buttonsLayout.addMember(WidgetUtil.getIconLabel(ApplicationConstants.ICON_MONITOR_RELAUNCH,
                 "Relaunch simulation", 16, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                relaunchSimulation();
-            }
-        }));
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        relaunchSimulation();
+                    }
+                }));
         this.addMember(buttonsLayout);
     }
 

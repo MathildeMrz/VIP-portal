@@ -50,7 +50,7 @@ import java.io.IOException;
 
 /**
  * Created by abonnet on 10/6/16.
- *
+ * <p>
  * Servlet filter that creates the api key token and calls the authentication.
  */
 public class ApikeyAuthenticationFilter extends OncePerRequestFilter {
@@ -87,7 +87,7 @@ public class ApikeyAuthenticationFilter extends OncePerRequestFilter {
         String apikey = request.getHeader(apikeyHeader);
 
         if (apikey == null) {
-            logger.debug("no apikey header " + apikeyHeader +" found.");
+            logger.debug("no apikey header " + apikeyHeader + " found.");
             filterChain.doFilter(request, response);
             return;
         }
@@ -103,14 +103,12 @@ public class ApikeyAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authResult);
 
-        }
-        catch (AuthenticationException failed) {
+        } catch (AuthenticationException failed) {
             SecurityContextHolder.clearContext();
 
             logger.debug("Authentication request failed", failed);
             this.authenticationEntryPoint.commence(request, response, failed);
-        }
-        catch (Exception failed) {
+        } catch (Exception failed) {
             SecurityContextHolder.clearContext();
 
             logger.error("Unexpected error while authenticating ", failed);

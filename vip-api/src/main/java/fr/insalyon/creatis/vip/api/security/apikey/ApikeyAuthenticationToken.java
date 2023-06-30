@@ -39,7 +39,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Created by abonnet on 10/6/16.
- *
+ * <p>
  * Used to store the apikey
  * Does not contain user info, because we dont know it at first
  */

@@ -42,7 +42,7 @@ public class VipKeycloakAuthenticationProvider extends KeycloakAuthenticationPro
         String email = session.getToken().getEmail();
 
         User vipUser;
-        try{
+        try {
             vipUser = configurationBusiness.getUserWithGroups(email);
         } catch (BusinessException e) {
             logger.error("Error when getting user from keycloak token. Doing as if there is an auth error", e);

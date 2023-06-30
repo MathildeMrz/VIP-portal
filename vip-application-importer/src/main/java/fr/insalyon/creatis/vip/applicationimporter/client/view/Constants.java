@@ -32,7 +32,6 @@
 package fr.insalyon.creatis.vip.applicationimporter.client.view;
 
 /**
- *
  * @author Nouha boujelben
  */
 public class Constants {

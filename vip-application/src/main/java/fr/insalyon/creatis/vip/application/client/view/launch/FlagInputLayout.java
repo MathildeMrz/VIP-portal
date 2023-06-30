@@ -13,8 +13,9 @@ import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesF
  * @author Guillaume Vanel
  * @version %I%, %G%
  */
-public class FlagInputLayout extends InputLayout{
+public class FlagInputLayout extends InputLayout {
     private String nameText;
+
     /**
      * Initialises graphical labels and checkbox
      *
@@ -31,13 +32,13 @@ public class FlagInputLayout extends InputLayout{
         this.nameText = nameLabel.getContents();
         this.createMasterForm();
         // Description
-        if (descriptionLabel != null){
+        if (descriptionLabel != null) {
             VLayout descriptionLayout = new VLayout();
             descriptionLayout.setLayoutLeftMargin(20);
             descriptionLayout.addMember(descriptionLabel);
             this.addMember(descriptionLayout);
         }
-        this.addMember(new LayoutSpacer(10,5));
+        this.addMember(new LayoutSpacer(10, 5));
     }
 
     /**
@@ -59,13 +60,13 @@ public class FlagInputLayout extends InputLayout{
      * @see InputLayout#isMasterEmpty()
      */
     @Override
-    public boolean isMasterEmpty(){
+    public boolean isMasterEmpty() {
         Object masterValue = ValueList.formValue(this.masterForm);
-        if(masterValue instanceof String){
+        if (masterValue instanceof String) {
             masterValue = Boolean.parseBoolean((String) masterValue);
         }
         LaunchFormLayout.assertCondition(masterValue instanceof Boolean,
                 "Invalid state: flag input value should be a boolean.");
-        return  !((boolean) masterValue);
+        return !((boolean) masterValue);
     }
 }

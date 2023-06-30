@@ -150,7 +150,7 @@ public class StatsController extends ApiController {
     }
 
     private void assertService(String service) throws ApiException {
-        if ( ! "vip".equals(service)) {
+        if (!"vip".equals(service)) {
             logger.error("Looking for stats with wrong service : {}", service);
             throw new ApiException(ApiError.WRONG_STAT_SERVICE, service);
         }

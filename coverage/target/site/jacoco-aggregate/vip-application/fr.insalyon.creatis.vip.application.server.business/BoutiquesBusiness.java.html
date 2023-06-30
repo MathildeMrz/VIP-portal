@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BoutiquesBusiness.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.server.business</a> &gt; <span class="el_source">BoutiquesBusiness.java</span></div><h1>BoutiquesBusiness.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BoutiquesBusiness.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.server.business</a> &gt; <span class="el_source">BoutiquesBusiness.java</span></div><h1>BoutiquesBusiness.java</h1><pre class="source lang-java linenums">/*
  * Copyright and authors: see LICENSE.txt in base repository.
  *
  * This software is a web portal for pipeline execution on distributed systems.
@@ -107,7 +107,7 @@ public class BoutiquesBusiness {
     private String getJsonLfn(String applicationName, String applicationVersion)
             throws BusinessException {
 <span class="nc" id="L109">        AppVersion appVersion = applicationBusiness.getVersion(</span>
-            applicationName, applicationVersion);
+                applicationName, applicationVersion);
 <span class="nc bnc" id="L111" title="All 2 branches missed.">        if (appVersion.getJsonLfn() == null) {</span>
 <span class="nc" id="L112">            logger.error(&quot;No json lfn for this application : {} / {}&quot;, applicationName, applicationVersion);</span>
 <span class="nc" id="L113">            throw new BusinessException(&quot;There is no json lfn for this application version.&quot;);</span>
@@ -134,7 +134,7 @@ public class BoutiquesBusiness {
             throws BusinessException {
 
 <span class="nc" id="L136">        applicationBusiness.updateDoiForVersion(</span>
-            doi, applicationName, applicationVersion);
+                doi, applicationName, applicationVersion);
 <span class="nc" id="L138">    }</span>
 
     private String getDoiFromPublishOutput(List&lt;String&gt; publishOutput) throws BusinessException {
@@ -178,7 +178,7 @@ public class BoutiquesBusiness {
 <span class="nc" id="L178">            logger.info(&quot;Executing command : &quot; + command);</span>
 <span class="nc" id="L179">            process = builder.start();</span>
 <span class="nc" id="L180">            BufferedReader r = new BufferedReader(</span>
-<span class="nc" id="L181">                new InputStreamReader(process.getInputStream()));</span>
+<span class="nc" id="L181">                    new InputStreamReader(process.getInputStream()));</span>
             String s;
 <span class="nc bnc" id="L183" title="All 2 branches missed.">            while ((s = r.readLine()) != null) {</span>
 <span class="nc" id="L184">                cout.add(s);</span>

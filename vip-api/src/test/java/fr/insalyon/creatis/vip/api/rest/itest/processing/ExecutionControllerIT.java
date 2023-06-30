@@ -83,7 +83,7 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(workflowBusiness.getSimulation(simulation2.getID(), true))
                 .thenReturn(simulation2);
         mockMvc.perform(
-                get("/rest/executions").with(baseUser1()))
+                        get("/rest/executions").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -99,7 +99,7 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(workflowBusiness.getSimulations(baseUser1.getFullName(), null, null, null, null, null))
                 .thenReturn(Arrays.asList(simulation1, simulation2));
         mockMvc.perform(
-                get("/rest/executions/count").with(baseUser1()))
+                        get("/rest/executions/count").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(RestTestUtils.TEXT_CONTENT_TYPE_UTF8))
@@ -113,13 +113,13 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(workflowBusiness.getSimulation(simulation1.getID(), true))
                 .thenReturn(simulation1);
         when(workflowBusiness.getInputData(
-                 eq(simulation1.getID()), eq(baseUser1.getFolder())))
-            .thenReturn(simulation1InData);
+                eq(simulation1.getID()), eq(baseUser1.getFolder())))
+                .thenReturn(simulation1InData);
         when(workflowBusiness.getOutputData(
-                 eq(simulation1.getID()), eq(baseUser1.getFolder())))
-            .thenReturn(simulation1OutData);
+                eq(simulation1.getID()), eq(baseUser1.getFolder())))
+                .thenReturn(simulation1OutData);
         mockMvc.perform(
-                get("/rest/executions/" + simulation1.getID()).with(baseUser1()))
+                        get("/rest/executions/" + simulation1.getID()).with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -135,13 +135,13 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(workflowBusiness.getSimulation(simulation2.getID(), true))
                 .thenReturn(simulation2);
         when(workflowBusiness.getInputData(
-                 eq(simulation2.getID()), eq(baseUser1.getFolder())))
-            .thenReturn(simulation2InData);
+                eq(simulation2.getID()), eq(baseUser1.getFolder())))
+                .thenReturn(simulation2InData);
         when(workflowBusiness.getOutputData(
-                 eq(simulation2.getID()), eq(baseUser1.getFolder())))
-            .thenReturn(simulation2OutData);
+                eq(simulation2.getID()), eq(baseUser1.getFolder())))
+                .thenReturn(simulation2OutData);
         mockMvc.perform(
-                get("/rest/executions/" + simulation2.getID()).with(baseUser1()))
+                        get("/rest/executions/" + simulation2.getID()).with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -154,13 +154,13 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
     public void shouldGetErrorWhenGettingUnknownExecution() throws Exception {
         when(workflowBusiness.getSimulation(anyString()))
                 .thenThrow(new BusinessException("no test execution"));
-            mockMvc.perform(
-                    get("/rest/executions/WrongExecId").with(baseUser1()))
-                    .andDo(print())
-                    .andExpect(status().isBadRequest())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                    .andExpect(jsonPath("$.errorCode").value(ApiError.GENERIC_API_ERROR.getCode()));
-        }
+        mockMvc.perform(
+                        get("/rest/executions/WrongExecId").with(baseUser1()))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.errorCode").value(ApiError.GENERIC_API_ERROR.getCode()));
+    }
 
     @Test
     public void shouldUpdateExecution1() throws Exception {
@@ -174,16 +174,16 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(workflowBusiness.getSimulation(simulation1.getID()))
                 .thenReturn(simulation1).thenThrow(new RuntimeException());
         when(workflowBusiness.getInputData(
-                 eq(simulation1.getID()), eq(baseUser1.getFolder())))
-            .thenReturn(simulation1InData);
+                eq(simulation1.getID()), eq(baseUser1.getFolder())))
+                .thenReturn(simulation1InData);
         when(workflowBusiness.getOutputData(
-                 eq(simulation1.getID()), eq(baseUser1.getFolder())))
-            .thenReturn(simulation1OutData);
+                eq(simulation1.getID()), eq(baseUser1.getFolder())))
+                .thenReturn(simulation1OutData);
         mockMvc.perform(
-                put("/rest/executions/" + simulation1.getID())
-                        .contentType("application/json")
-                        .content(getResourceAsString("jsonObjects/execution1-name-updated.json"))
-                        .with(baseUser1()))
+                        put("/rest/executions/" + simulation1.getID())
+                                .contentType("application/json")
+                                .content(getResourceAsString("jsonObjects/execution1-name-updated.json"))
+                                .with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -203,26 +203,26 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         configureAnApplication(this, baseUser1, app1, version42, 0, 1);
         // configure lauch
         when(workflowBusiness.launch(
-                 eq(baseUser1), anyList(), anyMap(), eq(app1.getName()),
-                 eq(version42.getVersion()), eq(class1.getName()),
-                 eq(execution1.getName())))
+                eq(baseUser1), anyList(), anyMap(), eq(app1.getName()),
+                eq(version42.getVersion()), eq(class1.getName()),
+                eq(execution1.getName())))
                 .thenReturn(execution1.getIdentifier());
         // configure returne execution
         when(workflowBusiness.getSimulation(execution1.getIdentifier(), true))
                 .thenReturn(simulation1);
         when(workflowBusiness.getInputData(
-                 eq(simulation1.getID()), eq(baseUser1.getFolder())))
-            .thenReturn(simulation1InData);
+                eq(simulation1.getID()), eq(baseUser1.getFolder())))
+                .thenReturn(simulation1InData);
         when(workflowBusiness.getOutputData(
-                 eq(simulation1.getID()), eq(baseUser1.getFolder())))
-            .thenReturn(simulation1OutData);
+                eq(simulation1.getID()), eq(baseUser1.getFolder())))
+                .thenReturn(simulation1OutData);
         // misc config
         when(configurationBusiness.getUserGroups(eq(baseUser1.getEmail())))
                 .thenReturn(new HashMap<>());
         mockMvc.perform(
-                post("/rest/executions").contentType("application/json")
-                        .content(getResourceAsString("jsonObjects/execution1.json"))
-                        .with(baseUser1()))
+                        post("/rest/executions").contentType("application/json")
+                                .content(getResourceAsString("jsonObjects/execution1.json"))
+                                .with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -232,9 +232,9 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         ArgumentCaptor<Map> inputCaptor =
                 ArgumentCaptor.forClass(Map.class);
         verify(workflowBusiness).launch(
-            eq(baseUser1), anyList(), inputCaptor.capture(), eq(app1.getName()),
-            eq(version42.getVersion()), eq(class1.getName()),
-            eq(execution1.getName()));
+                eq(baseUser1), anyList(), inputCaptor.capture(), eq(app1.getName()),
+                eq(version42.getVersion()), eq(class1.getName()),
+                eq(execution1.getName()));
         assertEquals(inputCaptor.getValue().size(), 2);
         MatcherAssert.<Map<?, ?>>assertThat(inputCaptor.getValue(), allOf(
                 hasEntry("param 1", "test text"),
@@ -244,15 +244,15 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
     @Test
     public void testNotInitExecutionMissingField() throws Exception {
         mockMvc.perform(
-            post("/rest/executions").contentType("application/json")
-                    .content("{}")
-                    .with(baseUser1())
-        ).andDo(print())
-        .andExpect(status().isBadRequest())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(jsonPath("$.errorCode")
-                .value(ApiError.INPUT_FIELD_NOT_VALID.getCode())
-        );
+                        post("/rest/executions").contentType("application/json")
+                                .content("{}")
+                                .with(baseUser1())
+                ).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.errorCode")
+                        .value(ApiError.INPUT_FIELD_NOT_VALID.getCode())
+                );
     }
 
     @Test
@@ -260,8 +260,8 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(workflowBusiness.getSimulation(simulation2.getID()))
                 .thenReturn(simulation2);
         when(workflowBusiness.getOutputData(
-                 eq(simulation2.getID()), eq(baseUser1.getFolder())))
-            .thenReturn(simulation2OutData);
+                eq(simulation2.getID()), eq(baseUser1.getFolder())))
+                .thenReturn(simulation2OutData);
         String resultPath = simulation2OutData.get(0).getPath();
         when(lfcBusiness.exists(eq(baseUser1), eq(resultPath)))
                 .thenReturn(true);
@@ -271,7 +271,7 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
                 .thenThrow(new RuntimeException());
 
         mockMvc.perform(
-                get("/rest/executions/" + simulation2.getID() + "/results").with(baseUser1()))
+                        get("/rest/executions/" + simulation2.getID() + "/results").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -288,7 +288,7 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(simulationBusiness.readFile(simulation2.getID(), "", "workflow", ".out"))
                 .thenReturn(testOutput);
         mockMvc.perform(
-                get("/rest/executions/" + simulation2.getID() + "/stdout").with(baseUser1()))
+                        get("/rest/executions/" + simulation2.getID() + "/stdout").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(RestTestUtils.TEXT_CONTENT_TYPE_UTF8))
@@ -303,7 +303,7 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(simulationBusiness.readFile(simulation2.getID(), "", "workflow", ".err"))
                 .thenReturn(testOutput);
         mockMvc.perform(
-                get("/rest/executions/" + simulation2.getID() + "/stderr").with(baseUser1()))
+                        get("/rest/executions/" + simulation2.getID() + "/stderr").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(RestTestUtils.TEXT_CONTENT_TYPE_UTF8))
@@ -313,8 +313,8 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
     @Test
     public void testPlayExecutionIsNotImplemented() throws Exception {
         mockMvc.perform(
-                put("/rest/executions/" + simulation1.getID() + "/play")
-                        .with(baseUser1()))
+                        put("/rest/executions/" + simulation1.getID() + "/play")
+                                .with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -326,7 +326,7 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(workflowBusiness.getSimulation(simulation2.getID()))
                 .thenReturn(simulation2);
         mockMvc.perform(
-                put("/rest/executions/" + simulation2.getID() + "/kill").with(baseUser1()))
+                        put("/rest/executions/" + simulation2.getID() + "/kill").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(content().string(""));
@@ -339,10 +339,10 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(workflowBusiness.getSimulation(simulation2.getID()))
                 .thenReturn(simulation2);
         mockMvc.perform(
-                put("/rest/executions/" + simulation2.getID() + "/delete")
-                        .contentType("application/json")
-                        .content("{\"deleteFiles\":true}")
-                        .with(baseUser1()))
+                        put("/rest/executions/" + simulation2.getID() + "/delete")
+                                .contentType("application/json")
+                                .content("{\"deleteFiles\":true}")
+                                .with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(content().string(""));
@@ -355,10 +355,10 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(workflowBusiness.getSimulation(simulation2.getID()))
                 .thenReturn(simulation2);
         mockMvc.perform(
-                put("/rest/executions/" + simulation2.getID() + "/delete")
-                        .contentType("application/json")
-                        .content("{\"deleteFiles\":false}")
-                        .with(baseUser1()))
+                        put("/rest/executions/" + simulation2.getID() + "/delete")
+                                .contentType("application/json")
+                                .content("{\"deleteFiles\":false}")
+                                .with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(content().string(""));
@@ -369,7 +369,7 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
     @Test
     public void shouldReturn400() throws Exception {
         mockMvc.perform(
-                put("/rest/executions/whynotthisid").with(baseUser1()))
+                        put("/rest/executions/whynotthisid").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -381,7 +381,7 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
         when(workflowBusiness.getSimulations(baseUser1.getFullName(), null, null, null, null, null))
                 .thenThrow(new RuntimeException("test exception"));
         mockMvc.perform(
-                get("/rest/executions").with(baseUser1()))
+                        get("/rest/executions").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))

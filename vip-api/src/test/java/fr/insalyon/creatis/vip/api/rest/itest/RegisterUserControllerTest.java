@@ -16,9 +16,9 @@ class RegisterUserControllerTest extends BaseVIPSpringIT {
     @Test
     public void registerEndpointOK() throws Exception {
         mockMvc.perform(post("/rest/register")
-                .content(asJsonString(UserTestUtils.restUser1))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(UserTestUtils.restUser1))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
     }
 

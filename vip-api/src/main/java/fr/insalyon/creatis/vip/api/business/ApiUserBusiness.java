@@ -31,7 +31,6 @@ public class ApiUserBusiness {
     }
 
     /**
-     *
      * @param user
      * @param comments
      * @param applicationNames
@@ -50,7 +49,6 @@ public class ApiUserBusiness {
             throw new ApiException("Signing up Error", e);
         }
     }
-
 
 
     public void sendResetCode(String email) throws ApiException {

@@ -53,7 +53,6 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 
 /**
- *
  * @author Rafael Ferreira da Silva, Tristan Glatard
  */
 @Repository
@@ -80,11 +79,11 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
         try {
             PreparedStatement ps = getConnection().prepareStatement(
                     "INSERT INTO VIPUsers("
-                    + "email, pass, first_name, last_name, institution, "
-                    + "code, confirmed, folder, registration, last_login, level, "
-                    + "country_code, max_simulations, termsUse,lastUpdatePublications,"
-                    + "failed_authentications, account_locked) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            + "email, pass, first_name, last_name, institution, "
+                            + "code, confirmed, folder, registration, last_login, level, "
+                            + "country_code, max_simulations, termsUse,lastUpdatePublications,"
+                            + "failed_authentications, account_locked) "
+                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             ps.setString(1, user.getEmail());
             ps.setString(2, user.getPassword());
@@ -110,7 +109,7 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
         } catch (SQLException ex) {
             if (ex.getMessage().contains("Unique index or primary key")) {
                 logger.error("There is an existing account associated with the email: {} or with this {first name,last name} ({})", user.getEmail(), ex.getMessage());
-                throw new DAOException("There is an existing account associated with this email : "+user.getEmail()+" or with this first name,last name : "+user.getFirstName()+","+user.getLastName(), ex);
+                throw new DAOException("There is an existing account associated with this email : " + user.getEmail() + " or with this first name,last name : " + user.getFirstName() + "," + user.getLastName(), ex);
             } else {
                 logger.error("Error adding user {}", user.getEmail(), ex);
                 throw new DAOException(ex);
@@ -119,7 +118,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @return
      * @throws DAOException
@@ -142,7 +140,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
 
 
     /**
-     *
      * @param email
      * @throws DAOException
      */
@@ -176,7 +173,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param user
      * @throws DAOException
      */
@@ -221,7 +217,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
 
 
     /**
-     *
      * @return @throws DAOException
      */
     @Override
@@ -239,8 +234,7 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
             ResultSet rs = ps.executeQuery();
             List<User> users = new ArrayList<User>();
 
-            while (rs.next())
-            {
+            while (rs.next()) {
                 users.add(new User(
                         rs.getString("first_name"), rs.getString("last_name"),
                         rs.getString("email"), rs.getString("next_email"),
@@ -356,7 +350,7 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
         return -1l;
     }
 
-    private Optional<Map.Entry<String,List<Object>>> buildSearchQuery(
+    private Optional<Map.Entry<String, List<Object>>> buildSearchQuery(
             UserSearchCriteria searchCriteria) {
 
         StringBuilder query = new StringBuilder();
@@ -394,7 +388,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @param code
      * @return
@@ -437,7 +430,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @return
      * @throws DAOException
@@ -447,8 +439,7 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     // Throws an exception if the email we have to find is not present in the database
     @Override
     public User getUser(String email) throws DAOException {
-        try
-        {
+        try {
             PreparedStatement ps = getConnection().prepareStatement("SELECT "
                     + "email, next_email, pass, first_name, last_name, institution, "
                     + "code, confirmed, folder, session, registration, "
@@ -491,7 +482,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @param password
      * @return
@@ -524,7 +514,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @param currentPassword
      * @param newPassword
@@ -532,7 +521,7 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
      */
     @Override
     public void updatePassword(String email, String currentPassword,
-            String newPassword) throws DAOException {
+                               String newPassword) throws DAOException {
 
         if (authenticate(email, currentPassword)) {
             try {
@@ -546,7 +535,7 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
                 ps.close();
 
             } catch (SQLException ex) {
-                logger.error("Error updating password for {}", email,ex);
+                logger.error("Error updating password for {}", email, ex);
                 throw new DAOException(ex);
             }
         } else {
@@ -596,7 +585,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @param session
      * @throws DAOException
@@ -621,7 +609,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @param session
      * @return
@@ -652,7 +639,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @param lastLogin
      * @throws DAOException
@@ -696,7 +682,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param session
      * @return
      * @throws DAOException
@@ -747,7 +732,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @return @throws DAOException
      */
     @Override
@@ -793,7 +777,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @param level
      * @param countryCode
@@ -803,7 +786,7 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
      */
     @Override
     public void update(String email, UserLevel level, CountryCode countryCode,
-            int maxRunningSimulations, boolean locked) throws DAOException {
+                       int maxRunningSimulations, boolean locked) throws DAOException {
 
         try {
             PreparedStatement ps = getConnection().prepareStatement("UPDATE "
@@ -825,7 +808,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @param code
      * @throws DAOException
@@ -849,7 +831,6 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
     }
 
     /**
-     *
      * @param email
      * @param newPassword
      * @throws DAOException
@@ -985,7 +966,7 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
 
     @Override
     public void unlock(String email) throws DAOException {
-         try {
+        try {
             PreparedStatement ps = getConnection().prepareStatement("UPDATE "
                     + "VIPUsers SET "
                     + "account_locked=0, failed_authentications=0 "
@@ -997,14 +978,14 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
             ps.close();
 
         } catch (SQLException ex) {
-             logger.error("Error unlocking {}", email, ex);
-             throw new DAOException(ex);
+            logger.error("Error unlocking {}", email, ex);
+            throw new DAOException(ex);
         }
     }
 
     @Override
     public void resetNFailedAuthentications(String email) throws DAOException {
-         try {
+        try {
             PreparedStatement ps = getConnection().prepareStatement("UPDATE "
                     + "VIPUsers SET "
                     + "failed_authentications=0 "
@@ -1016,14 +997,14 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
             ps.close();
 
         } catch (SQLException ex) {
-             logger.error("Error resetting failed auth number for {}", email, ex);
+            logger.error("Error resetting failed auth number for {}", email, ex);
             throw new DAOException(ex);
         }
     }
 
     @Override
     public void incNFailedAuthentications(String email) throws DAOException {
-         try {
+        try {
             PreparedStatement ps = getConnection().prepareStatement("UPDATE "
                     + "VIPUsers SET "
                     + "failed_authentications = failed_authentications + 1 "
@@ -1035,7 +1016,7 @@ public class UserData extends JdbcDaoSupport implements UserDAO {
             ps.close();
 
         } catch (SQLException ex) {
-             logger.error("Error increasing failed auth number for {}", email, ex);
+            logger.error("Error increasing failed auth number for {}", email, ex);
             throw new DAOException(ex);
         }
     }

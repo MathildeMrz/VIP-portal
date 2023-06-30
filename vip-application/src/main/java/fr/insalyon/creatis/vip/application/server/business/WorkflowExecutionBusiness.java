@@ -53,7 +53,7 @@ import java.util.List;
 /**
  * Wrapper on WebServiceEngine to configure it and to create a Workflow object
  * after a launch.
- *
+ * <p>
  * WorkflowExecutionBusiness and WebServiceEngine both have spring prototype
  * scope, so each WorkflowExecutionBusiness use creates a new intance with a
  * dedicated WebServiceEngine instance that it will wrap.
@@ -88,9 +88,9 @@ public class WorkflowExecutionBusiness {
     public WorkflowExecutionBusiness(String engineEndpoint) throws BusinessException {
 
         //HACK for testing while still having simulations launched with VIP 1.16.1; to be removed before getting in production or replaced with a proper constant
-        if(engineEndpoint == null){
+        if (engineEndpoint == null) {
             logger.info("WorkflowExecutionBusiness, endpoint is null, setting it to http://data-manager.grid.creatis.insa-lyon.fr/cgi-bin/m2Server-gasw3.1/moteur_server");
-            engineEndpoint="http://data-manager.grid.creatis.insa-lyon.fr/cgi-bin/m2Server-gasw3.1/moteur_server";
+            engineEndpoint = "http://data-manager.grid.creatis.insa-lyon.fr/cgi-bin/m2Server-gasw3.1/moteur_server";
         }
         this.engineEndpoint = engineEndpoint;
     }
@@ -108,8 +108,8 @@ public class WorkflowExecutionBusiness {
     }
 
     public Workflow launch(String applicationName, String applicationVersion,
-            String applicationClass, User user, String simulationName,
-            String workflowPath, List<ParameterSweep> parameters) throws BusinessException {
+                           String applicationClass, User user, String simulationName,
+                           String workflowPath, List<ParameterSweep> parameters) throws BusinessException {
 
         try {
             engine.setWorkflow(new File(workflowPath));

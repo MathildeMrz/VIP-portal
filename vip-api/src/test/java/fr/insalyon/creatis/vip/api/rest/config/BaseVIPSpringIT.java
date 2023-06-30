@@ -71,16 +71,16 @@ import static fr.insalyon.creatis.vip.api.data.CarminAPITestConstants.*;
 
 /**
  * Created by abonnet on 7/28/16.
- *
+ * <p>
  * Base test config that allow spring integration testing for vip API
- *
+ * <p>
  * The spring test tools allow to simulate the http layer but everything else
  * is the same as production configuration
- *
+ * <p>
  * To authenticate, tests should either
  * * login via with httpbasic(user, password)
  * * use {@link WithMockUser} annotation
- *
+ * <p>
  * The interaction with VIP outside vip-api are mocked (see {@link SpringTestConfig} )
  * TODO : after spring is now everywhere, this does not work anymore, work needed here
  */
@@ -148,13 +148,13 @@ abstract public class BaseVIPSpringIT {
             env.putAll(newenv);
             Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
             theCaseInsensitiveEnvironmentField.setAccessible(true);
-            Map<String, String> cienv = (Map<String, String>)     theCaseInsensitiveEnvironmentField.get(null);
+            Map<String, String> cienv = (Map<String, String>) theCaseInsensitiveEnvironmentField.get(null);
             cienv.putAll(newenv);
         } catch (NoSuchFieldException e) {
             Class[] classes = Collections.class.getDeclaredClasses();
             Map<String, String> env = System.getenv();
-            for(Class cl : classes) {
-                if("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
+            for (Class cl : classes) {
+                if ("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
                     Field field = cl.getDeclaredField("m");
                     field.setAccessible(true);
                     Object obj = field.get(env);
@@ -184,7 +184,7 @@ abstract public class BaseVIPSpringIT {
     }
 
     protected Resource getResourceFromClasspath(String pathFromClasspath) {
-        return resourceLoader.getResource("classpath:"+pathFromClasspath);
+        return resourceLoader.getResource("classpath:" + pathFromClasspath);
     }
 
     public WebApplicationContext getWac() {
@@ -231,7 +231,9 @@ abstract public class BaseVIPSpringIT {
         return lfcBusiness;
     }
 
-    public LFCPermissionBusiness lfcPermissionBusiness() {return lfcPermissionBusiness;}
+    public LFCPermissionBusiness lfcPermissionBusiness() {
+        return lfcPermissionBusiness;
+    }
 
     protected void configureDataFS() throws BusinessException {
         DataConfigurator.configureFS(this);

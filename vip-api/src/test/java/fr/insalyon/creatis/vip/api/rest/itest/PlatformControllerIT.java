@@ -55,7 +55,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Created by abonnet on 7/20/16.
- *
+ * <p>
  * Test method on platform path
  */
 @Disabled
@@ -97,19 +97,19 @@ public class PlatformControllerIT extends BaseVIPSpringIT {
                 .andExpect(jsonPath("$.APIErrorCodesAndMessages[*]",
                         hasSize(ApiError.values().length + ApplicationError.values().length)))
                 .andExpect(jsonPath("$.APIErrorCodesAndMessages[*]",
-                    hasItems(
-                        jsonCorrespondsToErrorCodeAndMessage(ApiError.GENERIC_API_ERROR),
-                        jsonCorrespondsToErrorCodeAndMessage(ApiError.NOT_ALLOWED_TO_USE_APPLICATION),
-                        jsonCorrespondsToErrorCodeAndMessage(ApplicationError.USER_MAX_EXECS),
-                        jsonCorrespondsToErrorCodeAndMessage(8002, "The error message for 'bad credentials' cannot be known in advance"))));
+                        hasItems(
+                                jsonCorrespondsToErrorCodeAndMessage(ApiError.GENERIC_API_ERROR),
+                                jsonCorrespondsToErrorCodeAndMessage(ApiError.NOT_ALLOWED_TO_USE_APPLICATION),
+                                jsonCorrespondsToErrorCodeAndMessage(ApplicationError.USER_MAX_EXECS),
+                                jsonCorrespondsToErrorCodeAndMessage(8002, "The error message for 'bad credentials' cannot be known in advance"))));
 
     }
 
-    private <T> Matcher<Collection<String>> isArray(T[] values, Function<T,String> mapper) {
+    private <T> Matcher<Collection<String>> isArray(T[] values, Function<T, String> mapper) {
         // magic java 8 to convert enum array to string array
         String[] enumAsStringArray = Arrays.stream(values).map(mapper).toArray(String[]::new);
         return allOf(
                 Matchers.<String>hasSize(values.length),
-                Matchers.containsInAnyOrder(enumAsStringArray) );
+                Matchers.containsInAnyOrder(enumAsStringArray));
     }
 }

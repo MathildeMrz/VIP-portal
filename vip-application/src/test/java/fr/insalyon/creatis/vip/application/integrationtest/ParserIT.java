@@ -198,9 +198,6 @@ public class ParserIT extends BaseSpringIT {
     }*/
 
 
-
-
-
     @Test
     public void testCatchInexistingUserLaunch() throws BusinessException {
 
