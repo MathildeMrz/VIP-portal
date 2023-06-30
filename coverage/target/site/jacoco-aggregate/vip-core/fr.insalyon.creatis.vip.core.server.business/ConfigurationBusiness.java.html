@@ -724,7 +724,7 @@ public class ConfigurationBusiness {
     public Map&lt;Group, CoreConstants.GROUP_ROLE&gt; getUserGroups(String email)
             throws BusinessException {
         try {
-<span class="nc" id="L727">            return usersGroupsDAO.getUserGroups(email);</span>
+<span class="fc" id="L727">            return usersGroupsDAO.getUserGroups(email);</span>
 
 <span class="nc" id="L729">        } catch (DAOException ex) {</span>
 <span class="nc" id="L730">            throw new BusinessException(ex);</span>

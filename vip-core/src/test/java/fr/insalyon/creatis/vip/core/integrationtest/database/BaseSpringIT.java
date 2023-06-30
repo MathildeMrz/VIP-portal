@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -82,6 +83,9 @@ public abstract class BaseSpringIT {
     protected User user1;
     protected User user2;
     protected User user3;
+    protected User user4;
+    protected Group group1;
+    protected List<String> applicationClasses;
 
     protected User inexistingUser = new User("test firstName suffix0",
             "test lastName suffix0", "unexisting_user@test.fr", "institution",
@@ -129,5 +133,6 @@ public abstract class BaseSpringIT {
     protected Date getNextSecondDate() {
         return new Date(new Date().getTime() + (1000));
     }
+
 
 }

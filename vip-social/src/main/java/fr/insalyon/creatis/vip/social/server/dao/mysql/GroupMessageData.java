@@ -53,7 +53,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Repository
@@ -77,22 +76,22 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     public long add(String sender, String groupName, String title, String message) throws DAOException {
 
         try {
-                PreparedStatement ps = getConnection().prepareStatement("INSERT INTO "
-                        + "VIPSocialGroupMessage(sender, groupname, title, message, posted) "
-                        + "VALUES(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, sender);
-                ps.setString(2, groupName);
-                ps.setString(3, title);
-                ps.setString(4, message);
-                ps.setTimestamp(5, new Timestamp(new Date().getTime()));
-                ps.execute();
+            PreparedStatement ps = getConnection().prepareStatement("INSERT INTO "
+                    + "VIPSocialGroupMessage(sender, groupname, title, message, posted) "
+                    + "VALUES(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, sender);
+            ps.setString(2, groupName);
+            ps.setString(3, title);
+            ps.setString(4, message);
+            ps.setTimestamp(5, new Timestamp(new Date().getTime()));
+            ps.execute();
 
-                ResultSet rs = ps.getGeneratedKeys();
-                rs.next();
-                long result = rs.getLong(1);
-                ps.close();
+            ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
+            long result = rs.getLong(1);
+            ps.close();
 
-                return result;
+            return result;
 
         } catch (SQLException ex) {
             logger.error("Error adding a group message {} by {}", title, sender, ex);
@@ -103,14 +102,14 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     public void remove(long id) throws DAOException {
 
         try {
-                PreparedStatement ps = getConnection().prepareStatement("DELETE FROM "
-                        + "VIPSocialGroupMessage WHERE id = ?");
-                ps.setLong(1, id);
+            PreparedStatement ps = getConnection().prepareStatement("DELETE FROM "
+                    + "VIPSocialGroupMessage WHERE id = ?");
+            ps.setLong(1, id);
 
-                ps.executeUpdate();
-                ps.close();
+            ps.executeUpdate();
+            ps.close();
 
-        }  catch (SQLException ex) {
+        } catch (SQLException ex) {
             logger.error("Error removing group message {}", id, ex);
             throw new DAOException(ex);
         }
@@ -119,27 +118,27 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     public List<GroupMessage> getMessageByGroup(String groupName, int limit, Date startDate) throws DAOException {
 
         try {
-                PreparedStatement ps = getConnection().prepareStatement("SELECT "
-                        + "id, sender, groupname, title, message, posted "
-                        + "FROM VIPSocialGroupMessage "
-                        + "WHERE posted < ? AND groupname = ? "
-                        + "ORDER BY posted DESC LIMIT 0," + limit);
-                ps.setTimestamp(1, new Timestamp(startDate.getTime()));
-                ps.setString(2, groupName);
+            PreparedStatement ps = getConnection().prepareStatement("SELECT "
+                    + "id, sender, groupname, title, message, posted "
+                    + "FROM VIPSocialGroupMessage "
+                    + "WHERE posted < ? AND groupname = ? "
+                    + "ORDER BY posted DESC LIMIT 0," + limit);
+            ps.setTimestamp(1, new Timestamp(startDate.getTime()));
+            ps.setString(2, groupName);
 
-                ResultSet rs = ps.executeQuery();
-                List<GroupMessage> messages = new ArrayList<GroupMessage>();
-                SimpleDateFormat f = new SimpleDateFormat("MMMM d, yyyy HH:mm");
+            ResultSet rs = ps.executeQuery();
+            List<GroupMessage> messages = new ArrayList<GroupMessage>();
+            SimpleDateFormat f = new SimpleDateFormat("MMMM d, yyyy HH:mm");
 
-                while (rs.next()) {
-                    User from = userDAO.getUser(rs.getString("sender"));
-                    Date posted = new Date(rs.getTimestamp("posted").getTime());
-                    messages.add(new GroupMessage(rs.getLong("id"), from, groupName, rs.getString("title"),
-                            rs.getString("message"), f.format(posted), posted));
-                }
-                ps.close();
+            while (rs.next()) {
+                User from = userDAO.getUser(rs.getString("sender"));
+                Date posted = new Date(rs.getTimestamp("posted").getTime());
+                messages.add(new GroupMessage(rs.getLong("id"), from, groupName, rs.getString("title"),
+                        rs.getString("message"), f.format(posted), posted));
+            }
+            ps.close();
 
-                return messages;
+            return messages;
 
 
         } catch (SQLException ex) {

@@ -45,30 +45,29 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
 
 /**
- *
  * @author abonnet
  */
 @Component
 @Transactional
 public class PublicationDataInitializer extends JdbcDaoSupport {
 
-<span class="fc" id="L55">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+<span class="fc" id="L54">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
 
     private TableInitializer tableInitializer;
 
     @Autowired
     public PublicationDataInitializer(
-<span class="fc" id="L61">            DataSource dataSource, TableInitializer tableInitializer) {</span>
-<span class="fc" id="L62">        setDataSource(dataSource);</span>
-<span class="fc" id="L63">        this.tableInitializer = tableInitializer;</span>
-<span class="fc" id="L64">    }</span>
+<span class="fc" id="L60">            DataSource dataSource, TableInitializer tableInitializer) {</span>
+<span class="fc" id="L61">        setDataSource(dataSource);</span>
+<span class="fc" id="L62">        this.tableInitializer = tableInitializer;</span>
+<span class="fc" id="L63">    }</span>
 
     @EventListener(ContextRefreshedEvent.class)
     @Order(30) // Publications tables references vip-core and vip-application tables and must be created after
     public void onStartup() {
-<span class="fc" id="L69">        logger.info(&quot;Configuring VIP Publication database.&quot;);</span>
+<span class="fc" id="L68">        logger.info(&quot;Configuring VIP Publication database.&quot;);</span>
 
-<span class="fc" id="L71">        tableInitializer.createTable(</span>
+<span class="fc" id="L70">        tableInitializer.createTable(</span>
                 &quot;VIPPublication&quot;,
                 &quot;id INT(11) NOT NULL AUTO_INCREMENT, &quot;
                         + &quot;title text, &quot;
@@ -85,7 +84,7 @@ public class PublicationDataInitializer extends JdbcDaoSupport {
                         + &quot;FOREIGN KEY (vipApplication) REFERENCES VIPApplications(name) &quot;
                         + &quot;ON DELETE SET NULL ON UPDATE CASCADE&quot;);
 
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L87">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

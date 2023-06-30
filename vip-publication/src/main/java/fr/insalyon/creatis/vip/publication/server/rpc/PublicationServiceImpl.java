@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva,Nouha boujelben
  */
 public class PublicationServiceImpl extends AbstractRemoteServiceServlet implements PublicationService {

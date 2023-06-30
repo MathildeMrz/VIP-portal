@@ -50,7 +50,6 @@ import fr.insalyon.creatis.vip.social.client.view.SocialTab;
 import java.util.Set;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class SocialModule extends Module {
@@ -68,7 +67,7 @@ public class SocialModule extends Module {
 
             public void onClick(ClickEvent event) {
                 Layout.getInstance().addTab(
-                    SocialConstants.TAB_SOCIAL, SocialTab::new);
+                        SocialConstants.TAB_SOCIAL, SocialTab::new);
             }
         });
 

@@ -96,94 +96,85 @@ import java.util.List;
 <span class="fc" id="L96">            ps.setString(1, groupName);</span>
 <span class="fc" id="L97">            ps.execute();</span>
 
-            //////////ADDED//////////
-            /*int rs = ps.executeUpdate();
+<span class="fc" id="L99">            ps.close();</span>
 
-            if (rs == 0) {
-                logger.error(&quot;There is no group registered with the name {}&quot;, groupName);
-                throw new DAOException(&quot;There is no group registered with the name : &quot; + groupName);
-            }*/
-            //////////ADDED//////////
-
-<span class="fc" id="L108">            ps.close();</span>
-
-<span class="nc" id="L110">        } catch (SQLException ex) {</span>
-<span class="nc" id="L111">            logger.error(&quot;Error removing group {}&quot;, groupName, ex);</span>
-<span class="nc" id="L112">            throw new DAOException(ex);</span>
-<span class="fc" id="L113">        }</span>
-<span class="fc" id="L114">    }</span>
+<span class="nc" id="L101">        } catch (SQLException ex) {</span>
+<span class="nc" id="L102">            logger.error(&quot;Error removing group {}&quot;, groupName, ex);</span>
+<span class="nc" id="L103">            throw new DAOException(ex);</span>
+<span class="fc" id="L104">        }</span>
+<span class="fc" id="L105">    }</span>
 
     @Override
     public void update(String name, Group group) throws DAOException {
         try {
-<span class="fc" id="L119">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
+<span class="fc" id="L110">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
                     + &quot;VIPGroups &quot;
                     + &quot;SET groupname=?, public=?, gridfile=?, gridjobs=? &quot;
                     + &quot;WHERE groupname=?&quot;);
 
-<span class="fc" id="L124">            ps.setString(1, group.getName());</span>
-<span class="fc" id="L125">            ps.setBoolean(2, group.isPublicGroup());</span>
-<span class="fc" id="L126">            ps.setBoolean(3, group.isGridFile());</span>
-<span class="fc" id="L127">            ps.setBoolean(4, group.isGridJobs());</span>
-<span class="fc" id="L128">            ps.setString(5, name);</span>
+<span class="fc" id="L115">            ps.setString(1, group.getName());</span>
+<span class="fc" id="L116">            ps.setBoolean(2, group.isPublicGroup());</span>
+<span class="fc" id="L117">            ps.setBoolean(3, group.isGridFile());</span>
+<span class="fc" id="L118">            ps.setBoolean(4, group.isGridJobs());</span>
+<span class="fc" id="L119">            ps.setString(5, name);</span>
             //ps.executeUpdate();
 
             //////////ADDED//////////
-<span class="fc" id="L132">            int rs = ps.executeUpdate();</span>
-<span class="pc bpc" id="L133" title="1 of 2 branches missed.">            if (rs == 0) {</span>
-<span class="nc" id="L134">                logger.error(&quot;There is no group registered with the name {}&quot;, name);</span>
-<span class="nc" id="L135">                throw new DAOException(&quot;There is no group registered with the name : &quot; + name);</span>
+<span class="fc" id="L123">            int rs = ps.executeUpdate();</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">            if (rs == 0) {</span>
+<span class="nc" id="L125">                logger.error(&quot;There is no group registered with the name {}&quot;, name);</span>
+<span class="nc" id="L126">                throw new DAOException(&quot;There is no group registered with the name : &quot; + name);</span>
             }
             //////////ADDED//////////
 
-<span class="fc" id="L139">            ps.close();</span>
+<span class="fc" id="L130">            ps.close();</span>
 
-<span class="nc" id="L141">        } catch (SQLException ex) {</span>
-<span class="nc" id="L142">            logger.error(&quot;Error updating group {}&quot;, group.getName(), ex);</span>
-<span class="nc" id="L143">            throw new DAOException(ex);</span>
-<span class="fc" id="L144">        }</span>
-<span class="fc" id="L145">    }</span>
+<span class="nc" id="L132">        } catch (SQLException ex) {</span>
+<span class="nc" id="L133">            logger.error(&quot;Error updating group {}&quot;, group.getName(), ex);</span>
+<span class="nc" id="L134">            throw new DAOException(ex);</span>
+<span class="fc" id="L135">        }</span>
+<span class="fc" id="L136">    }</span>
 
     @Override
     public List&lt;Group&gt; getGroups() throws DAOException {
         try {
-<span class="fc" id="L150">            List&lt;Group&gt; groups = new ArrayList&lt;Group&gt;();</span>
-<span class="fc" id="L151">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
+<span class="fc" id="L141">            List&lt;Group&gt; groups = new ArrayList&lt;Group&gt;();</span>
+<span class="fc" id="L142">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
                     + &quot;groupname, public, gridfile, gridjobs FROM &quot;
                     + &quot;VIPGroups ORDER BY LOWER(groupname)&quot;);
 
-<span class="fc" id="L155">            ResultSet rs = ps.executeQuery();</span>
-<span class="fc bfc" id="L156" title="All 2 branches covered.">            while (rs.next()) {</span>
-<span class="fc" id="L157">                groups.add(new Group(rs.getString(&quot;groupname&quot;),</span>
-<span class="fc" id="L158">                        rs.getBoolean(&quot;public&quot;), rs.getBoolean(&quot;gridfile&quot;), rs.getBoolean(&quot;gridjobs&quot;)));</span>
+<span class="fc" id="L146">            ResultSet rs = ps.executeQuery();</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L148">                groups.add(new Group(rs.getString(&quot;groupname&quot;),</span>
+<span class="fc" id="L149">                        rs.getBoolean(&quot;public&quot;), rs.getBoolean(&quot;gridfile&quot;), rs.getBoolean(&quot;gridjobs&quot;)));</span>
             }
-<span class="fc" id="L160">            ps.close();</span>
-<span class="fc" id="L161">            return groups;</span>
+<span class="fc" id="L151">            ps.close();</span>
+<span class="fc" id="L152">            return groups;</span>
 
-<span class="nc" id="L163">        } catch (SQLException ex) {</span>
-<span class="nc" id="L164">            logger.error(&quot;Error getting all groups&quot;, ex);</span>
-<span class="nc" id="L165">            throw new DAOException(ex);</span>
+<span class="nc" id="L154">        } catch (SQLException ex) {</span>
+<span class="nc" id="L155">            logger.error(&quot;Error getting all groups&quot;, ex);</span>
+<span class="nc" id="L156">            throw new DAOException(ex);</span>
         }
     }
 
     @Override
     public boolean isGroup(String groupName) throws DAOException {
         try {
-<span class="fc" id="L172">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT * &quot;</span>
+<span class="fc" id="L163">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT * &quot;</span>
                     + &quot;FROM VIPGroups &quot;
                     + &quot;WHERE groupname=? &quot;);
 
-<span class="fc" id="L176">            ps.setString(1, groupName);</span>
-<span class="fc" id="L177">            ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L167">            ps.setString(1, groupName);</span>
+<span class="fc" id="L168">            ResultSet rs = ps.executeQuery();</span>
 
-<span class="pc bpc" id="L179" title="1 of 2 branches missed.">            if (rs.next()) {</span>
-<span class="fc" id="L180">                return true;</span>
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">            if (rs.next()) {</span>
+<span class="fc" id="L171">                return true;</span>
             }
 
-<span class="nc" id="L183">            return false;</span>
+<span class="nc" id="L174">            return false;</span>
 
-<span class="nc" id="L185">        } catch (Exception e) {</span>
-<span class="nc" id="L186">            throw new RuntimeException(e);</span>
+<span class="nc" id="L176">        } catch (Exception e) {</span>
+<span class="nc" id="L177">            throw new RuntimeException(e);</span>
         }
     }
 }

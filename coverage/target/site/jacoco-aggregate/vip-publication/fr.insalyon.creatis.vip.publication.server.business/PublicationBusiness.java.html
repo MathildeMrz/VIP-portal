@@ -43,68 +43,67 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva,Nouha boujelben
  */
 @Service
 @Transactional
 public class PublicationBusiness {
 
-<span class="fc" id="L53">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+<span class="fc" id="L52">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
 
     private PublicationDAO publicationDAO;
 
-<span class="fc" id="L57">    public PublicationBusiness(PublicationDAO publicationDAO) {</span>
-<span class="fc" id="L58">        this.publicationDAO = publicationDAO;</span>
-<span class="fc" id="L59">    }</span>
+<span class="fc" id="L56">    public PublicationBusiness(PublicationDAO publicationDAO) {</span>
+<span class="fc" id="L57">        this.publicationDAO = publicationDAO;</span>
+<span class="fc" id="L58">    }</span>
 
 
     /**
-     *
      * @return @throws BusinessException
      */
     public List&lt;Publication&gt; getPublications()
             throws BusinessException {
-<span class="fc" id="L68">        logger.debug(&quot;*******************PublicationBusiness getPublications*******************&quot;);</span>
+<span class="fc" id="L66">        logger.debug(&quot;*******************PublicationBusiness getPublications*******************&quot;);</span>
         try {
-<span class="fc" id="L70">            return publicationDAO.getList();</span>
-<span class="nc" id="L71">        } catch (DAOException ex) {</span>
-<span class="nc" id="L72">            throw new BusinessException(ex);</span>
+<span class="fc" id="L68">            return publicationDAO.getList();</span>
+<span class="nc" id="L69">        } catch (DAOException ex) {</span>
+<span class="nc" id="L70">            throw new BusinessException(ex);</span>
         }
     }
 
     public void removePublication(Long id)
             throws BusinessException {
         try {
-<span class="fc" id="L79">            publicationDAO.remove(id);</span>
-<span class="nc" id="L80">        } catch (DAOException ex) {</span>
-<span class="nc" id="L81">            throw new BusinessException(ex);</span>
-<span class="fc" id="L82">        }</span>
-<span class="fc" id="L83">    }</span>
+<span class="fc" id="L77">            publicationDAO.remove(id);</span>
+<span class="nc" id="L78">        } catch (DAOException ex) {</span>
+<span class="nc" id="L79">            throw new BusinessException(ex);</span>
+<span class="fc" id="L80">        }</span>
+<span class="fc" id="L81">    }</span>
 
     public void addPublication(Publication pub)
             throws BusinessException {
         try {
-<span class="fc" id="L88">            publicationDAO.add(pub);</span>
-<span class="fc" id="L89">        } catch (DAOException ex) {</span>
-<span class="fc" id="L90">            throw new BusinessException(ex);</span>
-<span class="fc" id="L91">        }</span>
-<span class="fc" id="L92">    }</span>
+<span class="fc" id="L86">            publicationDAO.add(pub);</span>
+<span class="fc" id="L87">        } catch (DAOException ex) {</span>
+<span class="fc" id="L88">            throw new BusinessException(ex);</span>
+<span class="fc" id="L89">        }</span>
+<span class="fc" id="L90">    }</span>
 
     public void updatePublication(Publication pub)
             throws BusinessException {
         try {
-<span class="fc" id="L97">            publicationDAO.update(pub);</span>
-<span class="fc" id="L98">        } catch (DAOException ex) {</span>
-<span class="fc" id="L99">            throw new BusinessException(ex);</span>
-<span class="fc" id="L100">        }</span>
-<span class="fc" id="L101">    }</span>
+<span class="fc" id="L95">            publicationDAO.update(pub);</span>
+<span class="fc" id="L96">        } catch (DAOException ex) {</span>
+<span class="fc" id="L97">            throw new BusinessException(ex);</span>
+<span class="fc" id="L98">        }</span>
+<span class="fc" id="L99">    }</span>
+
     public Publication getPublication(Long id)
             throws BusinessException {
         try {
-<span class="fc" id="L105">            return publicationDAO.getPublication(id);</span>
-<span class="nc" id="L106">        } catch (DAOException ex) {</span>
-<span class="nc" id="L107">            throw new BusinessException(ex);</span>
+<span class="fc" id="L104">            return publicationDAO.getPublication(id);</span>
+<span class="nc" id="L105">        } catch (DAOException ex) {</span>
+<span class="nc" id="L106">            throw new BusinessException(ex);</span>
         }
     }
 

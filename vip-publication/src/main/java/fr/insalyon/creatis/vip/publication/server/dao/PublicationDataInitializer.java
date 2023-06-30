@@ -45,7 +45,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
 
 /**
- *
  * @author abonnet
  */
 @Component

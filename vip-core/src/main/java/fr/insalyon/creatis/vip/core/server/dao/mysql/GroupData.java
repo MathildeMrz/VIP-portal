@@ -96,15 +96,6 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
             ps.setString(1, groupName);
             ps.execute();
 
-            //////////ADDED//////////
-            /*int rs = ps.executeUpdate();
-
-            if (rs == 0) {
-                logger.error("There is no group registered with the name {}", groupName);
-                throw new DAOException("There is no group registered with the name : " + groupName);
-            }*/
-            //////////ADDED//////////
-
             ps.close();
 
         } catch (SQLException ex) {

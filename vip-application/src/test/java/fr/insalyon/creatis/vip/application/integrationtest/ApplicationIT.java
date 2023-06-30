@@ -23,8 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationIT extends BaseSpringIT {
     @Autowired
@@ -33,7 +32,7 @@ public class ApplicationIT extends BaseSpringIT {
     private ClassBusiness classBusiness;
     @Autowired
     private EngineBusiness engineBusiness;
-    private List<String> applicationClasses;
+
     static public Map<AppClass, List<Application>> applicationsPerClass = new HashMap<>();
 
     @BeforeEach
@@ -86,7 +85,7 @@ public class ApplicationIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* update application *********************************************************** */
+    /* ************************************************************** update application ************************************************************ */
     /* ********************************************************************************************************************************************** */
 
     @Test
@@ -102,7 +101,6 @@ public class ApplicationIT extends BaseSpringIT {
     public void testCatchUpdateInexistingApplication() throws BusinessException {
         Application updatedApplication = new Application("Inexisting Application", applicationClasses, "test2@test.fr", "test1", "citation1");
 
-
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         applicationBusiness.update(updatedApplication)
@@ -115,18 +113,28 @@ public class ApplicationIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* remove application *********************************************************** */
+    /* ************************************************************** remove application ************************************************************ */
     /* ********************************************************************************************************************************************** */
 
     @Test
     public void testRemoveApplication() throws BusinessException {
         applicationBusiness.remove("Application1");
-        Assertions.assertEquals(0, applicationBusiness.getApplications().size(), "Incorrect number of applications");
 
+        Assertions.assertEquals(0, applicationBusiness.getApplications().size(), "Incorrect number of applications");
+    }
+
+    @Test
+    public void testCatchRemoveInexistingApplication() throws BusinessException
+    {
+        // DELETE + inexisting primary key publicationId => no exception
+        // We decided not to add an exception because if this occurs, it will not create problem, just no row will be deleted
+        applicationBusiness.remove("Inexisting application");
+
+        Assertions.assertEquals(1, applicationBusiness.getApplications().size(), "Incorrect number of applications");
     }
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* get citation *********************************************************** */
+    /* ***************************************************************** get citation *************************************************************** */
     /* ********************************************************************************************************************************************** */
 
 
@@ -135,9 +143,13 @@ public class ApplicationIT extends BaseSpringIT {
         Assertions.assertEquals("citation1", applicationBusiness.getCitation("Application1"), "Incorrect citation");
     }
 
+    /*@Test
+    public void testCatchGetCitationInexistingApplication() throws BusinessException {
+        assertNull(applicationBusiness.getCitation("Inexisting application"));
+    }*/
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* add version *********************************************************** */
+    /* ****************************************************************** add version *************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test

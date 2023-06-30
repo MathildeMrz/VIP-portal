@@ -79,16 +79,6 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
             ps.setTimestamp(4, new Timestamp(new Date().getTime()));
             ps.execute();
 
-            //////////ADDED//////////
-            //int nbRows = ps.executeUpdate();
-
-            //Not useful because getUser() was called before and already threw the exception
-            /*if (nbRows == 0) {
-                logger.error("There is no user registered with the e-mail {}", sender);
-                throw new DAOException("There is no user registered with the e-mail : " + sender);
-            }*/
-            //////////ADDED//////////
-
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
             long id = rs.getLong(1);
@@ -113,16 +103,6 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
             ps.setBoolean(3, false);
             ps.execute();
 
-            //////////ADDED//////////(isBeforeFirst returns false if there is no result)
-            /*int nbRows = ps.executeUpdate();
-
-            //Check is not useful because getUser() was called before and already threw the exception, and the message was automatically created so the id exists
-            if (nbRows == 0) {
-                logger.error("There is/are no individual message registered with the given id {}", messageId);
-                throw new DAOException("There is/are no individual message registered with the given id : " + messageId);
-            }
-            //////////ADDED//////////*/
-
             ps.close();
 
         } catch (SQLException ex) {
@@ -134,37 +114,32 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
     public List<Message> getMessagesByUser(String email, int limit, Date startDate) throws DAOException {
         try {
             //if (userDAO.isUser(email)) {
-                PreparedStatement ps = getConnection().prepareStatement("SELECT "
-                        + "id, sender, title, message, posted, user_read "
-                        + "FROM VIPSocialMessage AS sc, VIPSocialMessageSenderReceiver AS ss "
-                        + "WHERE sc.id = ss.message_id AND receiver = ? "
-                        + "AND posted < ? "
-                        + "ORDER BY posted DESC LIMIT 0," + limit);
-                ps.setString(1, email);
-                ps.setTimestamp(2, new Timestamp(startDate.getTime()));
+            PreparedStatement ps = getConnection().prepareStatement("SELECT "
+                    + "id, sender, title, message, posted, user_read "
+                    + "FROM VIPSocialMessage AS sc, VIPSocialMessageSenderReceiver AS ss "
+                    + "WHERE sc.id = ss.message_id AND receiver = ? "
+                    + "AND posted < ? "
+                    + "ORDER BY posted DESC LIMIT 0," + limit);
+            ps.setString(1, email);
+            ps.setTimestamp(2, new Timestamp(startDate.getTime()));
 
-                ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
 
-                //Impossible because throws exception when no message was received
-                ///////////////////////ADDED (isBeforeFirst returns false if there is no result)
-                //if (rs.isBeforeFirst())
-                ///////////////////////ADDED
-                //{
-                    List<Message> messages = new ArrayList<Message>();
-                    SimpleDateFormat f = new SimpleDateFormat("MMMM d, yyyy HH:mm");
 
-                    while (rs.next())
-                    {
-                        User from = userDAO.getUser(rs.getString("sender"));
-                        User to = userDAO.getUser(email);
-                        Date posted = new Date(rs.getTimestamp("posted").getTime());
-                        messages.add(new Message(rs.getLong("id"), from, to, rs.getString("title"),
-                                rs.getString("message"), f.format(posted), posted,
-                                rs.getBoolean("user_read")));
-                    }
-                    ps.close();
+            List<Message> messages = new ArrayList<Message>();
+            SimpleDateFormat f = new SimpleDateFormat("MMMM d, yyyy HH:mm");
 
-                    return messages;
+            while (rs.next()) {
+                User from = userDAO.getUser(rs.getString("sender"));
+                User to = userDAO.getUser(email);
+                Date posted = new Date(rs.getTimestamp("posted").getTime());
+                messages.add(new Message(rs.getLong("id"), from, to, rs.getString("title"),
+                        rs.getString("message"), f.format(posted), posted,
+                        rs.getBoolean("user_read")));
+            }
+            ps.close();
+
+            return messages;
                 /*} else {
                     logger.error("There is no user registered with the e-mail {}", email);
                     throw new DAOException("There is no user registered with the e-mail : " + email);
@@ -189,31 +164,31 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
 
             ResultSet rs = ps.executeQuery();
 
-                List<Message> messages = new ArrayList<Message>();
-                SimpleDateFormat f = new SimpleDateFormat("MMMM d, yyyy HH:mm");
+            List<Message> messages = new ArrayList<Message>();
+            SimpleDateFormat f = new SimpleDateFormat("MMMM d, yyyy HH:mm");
 
-                while (rs.next()) {
-                    User sender = userDAO.getUser(email);
+            while (rs.next()) {
+                User sender = userDAO.getUser(email);
 
-                    PreparedStatement ps2 = getConnection().prepareStatement("SELECT "
-                            + "receiver FROM VIPSocialMessageSenderReceiver "
-                            + "WHERE message_id = ?");
-                    ps2.setLong(1, rs.getLong("id"));
+                PreparedStatement ps2 = getConnection().prepareStatement("SELECT "
+                        + "receiver FROM VIPSocialMessageSenderReceiver "
+                        + "WHERE message_id = ?");
+                ps2.setLong(1, rs.getLong("id"));
 
-                    ResultSet rs2 = ps2.executeQuery();
-                    List<User> receivers = new ArrayList<User>();
+                ResultSet rs2 = ps2.executeQuery();
+                List<User> receivers = new ArrayList<User>();
 
-                    while (rs2.next()) {
-                        receivers.add(userDAO.getUser(rs2.getString("receiver")));
-                    }
-                    Date posted = new Date(rs.getTimestamp("posted").getTime());
-                    messages.add(new Message(rs.getLong("id"), sender,
-                            receivers.toArray(new User[]{}), rs.getString("title"),
-                            rs.getString("message"), f.format(posted), posted,
-                            true));
+                while (rs2.next()) {
+                    receivers.add(userDAO.getUser(rs2.getString("receiver")));
                 }
-                ps.close();
-                return messages;
+                Date posted = new Date(rs.getTimestamp("posted").getTime());
+                messages.add(new Message(rs.getLong("id"), sender,
+                        receivers.toArray(new User[]{}), rs.getString("title"),
+                        rs.getString("message"), f.format(posted), posted,
+                        true));
+            }
+            ps.close();
+            return messages;
 
         } catch (SQLException ex) {
             logger.error("Error getting messages by {}", email, ex);
@@ -283,16 +258,15 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
     public int verifyMessages(String email) throws DAOException {
 
         try {
-            if(userDAO.isUser(email))
-            {
+            if (userDAO.isUser(email)) {
                 PreparedStatement ps = getConnection().prepareStatement("SELECT "
-                    + "COUNT(id) AS num "
-                    + "FROM VIPSocialMessage AS sc, VIPSocialMessageSenderReceiver AS ss "
-                    + "WHERE sc.id = ss.message_id AND receiver = ? AND user_read = ?");
-            ps.setString(1, email);
-            ps.setBoolean(2, false);
+                        + "COUNT(id) AS num "
+                        + "FROM VIPSocialMessage AS sc, VIPSocialMessageSenderReceiver AS ss "
+                        + "WHERE sc.id = ss.message_id AND receiver = ? AND user_read = ?");
+                ps.setString(1, email);
+                ps.setBoolean(2, false);
 
-            ResultSet rs = ps.executeQuery();
+                ResultSet rs = ps.executeQuery();
 
                 int result = rs.next() ? rs.getInt("num") : 0;
                 ps.close();

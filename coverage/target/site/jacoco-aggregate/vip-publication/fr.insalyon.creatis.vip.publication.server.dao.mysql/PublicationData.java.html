@@ -133,68 +133,59 @@ import java.util.List;
 <span class="fc" id="L133">            ps.setLong(1, id);</span>
 <span class="fc" id="L134">            ps.execute();</span>
 
-            //////////ADDED//////////
-            /*int nbRows = ps.executeUpdate();
-
-            if (nbRows == 0) {
-                logger.error(&quot;There is no publication registered with the id {}&quot;, id);
-                throw new DAOException(String.format(&quot;There is no publication registered with the id : %d&quot;, id));
-            }
-            //////////ADDED//////////*/
-
-<span class="fc" id="L145">            ps.close();</span>
-<span class="nc" id="L146">        } catch (SQLException ex) {</span>
-<span class="nc" id="L147">            logger.error(&quot;Error removing publication {}&quot;, id, ex);</span>
-<span class="nc" id="L148">            throw new DAOException(ex);</span>
-<span class="fc" id="L149">        }</span>
-<span class="fc" id="L150">    }</span>
+<span class="fc" id="L136">            ps.close();</span>
+<span class="nc" id="L137">        } catch (SQLException ex) {</span>
+<span class="nc" id="L138">            logger.error(&quot;Error removing publication {}&quot;, id, ex);</span>
+<span class="nc" id="L139">            throw new DAOException(ex);</span>
+<span class="fc" id="L140">        }</span>
+<span class="fc" id="L141">    }</span>
 
     @Override
     public List&lt;Publication&gt; getList() throws DAOException {
-<span class="fc" id="L154">        logger.debug(&quot;PuBlicationData getList&quot;);</span>
+<span class="fc" id="L145">        logger.debug(&quot;PuBlicationData getList&quot;);</span>
         try {
-<span class="fc" id="L156">            String level = null;</span>
+<span class="fc" id="L147">            String level = null;</span>
             PreparedStatement ps;
 
-<span class="fc" id="L159">            ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
+<span class="fc" id="L150">            ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
                     + &quot;id,title,date,doi,authors,type,typeName,VIPAuthor,VipApplication FROM &quot;
                     + &quot;VIPPublication&quot;);
 
-<span class="fc" id="L163">            ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L154">            ResultSet rs = ps.executeQuery();</span>
 
-<span class="fc" id="L165">            List&lt;Publication&gt; publications = new ArrayList&lt;Publication&gt;();</span>
+<span class="fc" id="L156">            List&lt;Publication&gt; publications = new ArrayList&lt;Publication&gt;();</span>
 
-<span class="fc bfc" id="L167" title="All 2 branches covered.">            while (rs.next()) {</span>
-<span class="fc" id="L168">                publications.add(new Publication(rs.getLong(&quot;id&quot;), rs.getString(&quot;title&quot;), rs.getString(&quot;date&quot;), rs.getString(&quot;doi&quot;), rs.getString(&quot;authors&quot;), rs.getString(&quot;type&quot;), rs.getString(&quot;typeName&quot;), rs.getString(&quot;VIPAuthor&quot;), rs.getString(&quot;VIPApplication&quot;)));</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L159">                publications.add(new Publication(rs.getLong(&quot;id&quot;), rs.getString(&quot;title&quot;), rs.getString(&quot;date&quot;), rs.getString(&quot;doi&quot;), rs.getString(&quot;authors&quot;), rs.getString(&quot;type&quot;), rs.getString(&quot;typeName&quot;), rs.getString(&quot;VIPAuthor&quot;), rs.getString(&quot;VIPApplication&quot;)));</span>
             }
 
-<span class="fc" id="L171">            rs.close();</span>
-<span class="fc" id="L172">            return publications;</span>
+<span class="fc" id="L162">            rs.close();</span>
+<span class="fc" id="L163">            return publications;</span>
 
-<span class="nc" id="L174">        } catch (SQLException ex) {</span>
-<span class="nc" id="L175">            logger.error(&quot;Error getting all publications&quot;, ex);</span>
-<span class="nc" id="L176">            throw new DAOException(ex);</span>
+<span class="nc" id="L165">        } catch (SQLException ex) {</span>
+<span class="nc" id="L166">            logger.error(&quot;Error getting all publications&quot;, ex);</span>
+<span class="nc" id="L167">            throw new DAOException(ex);</span>
         }
     }
 
     @Override
     public Publication getPublication(Long id) throws DAOException {
         try {
-<span class="fc" id="L183">                String level = null;</span>
-                PreparedStatement ps;
+<span class="fc" id="L174">            String level = null;</span>
+            PreparedStatement ps;
 
-<span class="fc" id="L186">                ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
-                        + &quot;id,title,date,doi,authors,type,typeName,VIPAuthor,VIPApplication FROM &quot; // VIPApplication was missing in the SQL request
-                        + &quot;VIPPublication where id=?&quot;);
+<span class="fc" id="L177">            ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
+                    + &quot;id,title,date,doi,authors,type,typeName,VIPAuthor,VIPApplication FROM &quot; // VIPApplication was missing in the SQL request
+                    + &quot;VIPPublication where id=?&quot;);
 
-<span class="fc" id="L190">                ps.setLong(1, id);</span>
-<span class="fc" id="L191">                ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L181">            ps.setLong(1, id);</span>
+<span class="fc" id="L182">            ResultSet rs = ps.executeQuery();</span>
 
-<span class="fc" id="L193">                Publication p = null;</span>
-<span class="fc bfc" id="L194" title="All 2 branches covered.">                if (rs.next()) {</span>
-<span class="fc" id="L195">                    p = new Publication(rs.getLong(&quot;id&quot;), rs.getString(&quot;title&quot;), rs.getString(&quot;date&quot;), rs.getString(&quot;doi&quot;), rs.getString(&quot;authors&quot;), rs.getString(&quot;type&quot;), rs.getString(&quot;typeName&quot;), rs.getString(&quot;VIPAuthor&quot;), rs.getString(&quot;VIPApplication&quot;));</span>
-                }
-                //////////ADDED//////////
+<span class="fc" id="L184">            Publication p = null;</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">            if (rs.next()) {</span>
+<span class="fc" id="L186">                p = new Publication(rs.getLong(&quot;id&quot;), rs.getString(&quot;title&quot;), rs.getString(&quot;date&quot;), rs.getString(&quot;doi&quot;), rs.getString(&quot;authors&quot;), rs.getString(&quot;type&quot;), rs.getString(&quot;typeName&quot;), rs.getString(&quot;VIPAuthor&quot;), rs.getString(&quot;VIPApplication&quot;));</span>
+            }
+            //////////ADDED//////////
                 /*else
                 {
                     logger.error(&quot;There is no publication registered with the id {}&quot;, id);
@@ -202,12 +193,12 @@ import java.util.List;
                 }
                 //////////ADDED//////////*/
 
-<span class="fc" id="L205">                rs.close();</span>
-<span class="fc" id="L206">                return p;</span>
+<span class="fc" id="L196">            rs.close();</span>
+<span class="fc" id="L197">            return p;</span>
 
-<span class="nc" id="L208">        } catch (SQLException ex) {</span>
-<span class="nc" id="L209">            logger.error(&quot;Error getting publication {}&quot;, id, ex);</span>
-<span class="nc" id="L210">            throw new DAOException(ex);</span>
+<span class="nc" id="L199">        } catch (SQLException ex) {</span>
+<span class="nc" id="L200">            logger.error(&quot;Error getting publication {}&quot;, id, ex);</span>
+<span class="nc" id="L201">            throw new DAOException(ex);</span>
         }
     }
 }

@@ -36,7 +36,6 @@ import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import fr.insalyon.creatis.vip.social.client.SocialConstants;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class SocialParser extends ApplicationParser {
@@ -52,7 +51,7 @@ public class SocialParser extends ApplicationParser {
 
         if (applicationName.equals(SocialConstants.APP_SOCIAL)) {
             Layout.getInstance().addTab(
-                SocialConstants.TAB_SOCIAL, SocialTab::new);
+                    SocialConstants.TAB_SOCIAL, SocialTab::new);
             return true;
         }
         return false;

@@ -32,7 +32,6 @@
 package fr.insalyon.creatis.vip.social.client;
 
 /**
- *
  * @author Rafael Silva
  */
 public class SocialConstants {

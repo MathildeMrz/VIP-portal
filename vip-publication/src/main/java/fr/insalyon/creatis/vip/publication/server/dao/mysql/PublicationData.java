@@ -133,15 +133,6 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
             ps.setLong(1, id);
             ps.execute();
 
-            //////////ADDED//////////
-            /*int nbRows = ps.executeUpdate();
-
-            if (nbRows == 0) {
-                logger.error("There is no publication registered with the id {}", id);
-                throw new DAOException(String.format("There is no publication registered with the id : %d", id));
-            }
-            //////////ADDED//////////*/
-
             ps.close();
         } catch (SQLException ex) {
             logger.error("Error removing publication {}", id, ex);
@@ -180,21 +171,21 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
     @Override
     public Publication getPublication(Long id) throws DAOException {
         try {
-                String level = null;
-                PreparedStatement ps;
+            String level = null;
+            PreparedStatement ps;
 
-                ps = getConnection().prepareStatement("SELECT "
-                        + "id,title,date,doi,authors,type,typeName,VIPAuthor,VIPApplication FROM " // VIPApplication was missing in the SQL request
-                        + "VIPPublication where id=?");
+            ps = getConnection().prepareStatement("SELECT "
+                    + "id,title,date,doi,authors,type,typeName,VIPAuthor,VIPApplication FROM " // VIPApplication was missing in the SQL request
+                    + "VIPPublication where id=?");
 
-                ps.setLong(1, id);
-                ResultSet rs = ps.executeQuery();
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
 
-                Publication p = null;
-                if (rs.next()) {
-                    p = new Publication(rs.getLong("id"), rs.getString("title"), rs.getString("date"), rs.getString("doi"), rs.getString("authors"), rs.getString("type"), rs.getString("typeName"), rs.getString("VIPAuthor"), rs.getString("VIPApplication"));
-                }
-                //////////ADDED//////////
+            Publication p = null;
+            if (rs.next()) {
+                p = new Publication(rs.getLong("id"), rs.getString("title"), rs.getString("date"), rs.getString("doi"), rs.getString("authors"), rs.getString("type"), rs.getString("typeName"), rs.getString("VIPAuthor"), rs.getString("VIPApplication"));
+            }
+            //////////ADDED//////////
                 /*else
                 {
                     logger.error("There is no publication registered with the id {}", id);
@@ -202,8 +193,8 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
                 }
                 //////////ADDED//////////*/
 
-                rs.close();
-                return p;
+            rs.close();
+            return p;
 
         } catch (SQLException ex) {
             logger.error("Error getting publication {}", id, ex);

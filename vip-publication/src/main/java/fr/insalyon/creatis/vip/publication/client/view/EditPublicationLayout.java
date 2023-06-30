@@ -53,7 +53,6 @@ import fr.insalyon.creatis.vip.publication.client.rpc.PublicationService;
 import java.util.*;
 
 /**
- *
  * @author Nouha Boujelben
  */
 public class EditPublicationLayout extends AbstractFormLayout {
@@ -131,7 +130,7 @@ public class EditPublicationLayout extends AbstractFormLayout {
                     if (titleField.getValueAsString() != null
                             && publicationTypeName.getValueAsString() != null
                             && authorsField.getValueAsString() != null
-                            && ! vipApplication.getValueAsString().equals(DEFAULT_PUBLICATION_APPLICATION_LABEL)) {
+                            && !vipApplication.getValueAsString().equals(DEFAULT_PUBLICATION_APPLICATION_LABEL)) {
                         save(new Publication(idPub,
                                 titleField.getValueAsString(),
                                 publicationDate.getValueAsString().substring(0, 4),

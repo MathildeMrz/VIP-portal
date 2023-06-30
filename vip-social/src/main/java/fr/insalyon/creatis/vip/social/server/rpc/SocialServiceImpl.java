@@ -50,7 +50,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
 public class SocialServiceImpl extends AbstractRemoteServiceServlet implements SocialService {
@@ -70,7 +69,7 @@ public class SocialServiceImpl extends AbstractRemoteServiceServlet implements S
     public List<Message> getMessagesByUser(Date startDate) throws SocialException {
         try {
             return messageBusiness.getMessagesByUser(
-                getSessionUser().getEmail(), startDate);
+                    getSessionUser().getEmail(), startDate);
         } catch (BusinessException | CoreException ex) {
             throw new SocialException(ex);
         }
@@ -142,10 +141,10 @@ public class SocialServiceImpl extends AbstractRemoteServiceServlet implements S
             throws SocialException {
 
         try {
-            System.out.println("getSessionUser().getEmail() : "+getSessionUser().getEmail());
+            System.out.println("getSessionUser().getEmail() : " + getSessionUser().getEmail());
             trace(logger, "Sending message '" + subject + "' to '" + Arrays.asList(recipients) + "'.");
             messageBusiness.sendMessage(
-                getSessionUser(), recipients, subject, message);
+                    getSessionUser(), recipients, subject, message);
         } catch (BusinessException | CoreException ex) {
             throw new SocialException(ex);
         }
@@ -171,11 +170,11 @@ public class SocialServiceImpl extends AbstractRemoteServiceServlet implements S
             String subject, String message, List<String> workflowID,
             List<String> simulationNames) throws SocialException {
 
-        try{
+        try {
             trace(logger, "Sending message '" + subject + "' to 'vip-support'.");
             messageBusiness.sendMessageToVipSupport(
-                getSessionUser(),
-                subject, message, workflowID, simulationNames);
+                    getSessionUser(),
+                    subject, message, workflowID, simulationNames);
         } catch (BusinessException | CoreException ex) {
             throw new SocialException(ex);
         }
@@ -187,11 +186,11 @@ public class SocialServiceImpl extends AbstractRemoteServiceServlet implements S
         try {
             trace(logger, "Sending message '" + subject + "' to group '" + groupName + "'.");
             messageBusiness.sendGroupMessage(
-                getSessionUser(),
-                groupName,
-                configurationBusiness.getUsersFromGroup(groupName),
-                subject,
-                message);
+                    getSessionUser(),
+                    groupName,
+                    configurationBusiness.getUsersFromGroup(groupName),
+                    subject,
+                    message);
         } catch (BusinessException | CoreException ex) {
             throw new SocialException(ex);
         }
@@ -200,7 +199,7 @@ public class SocialServiceImpl extends AbstractRemoteServiceServlet implements S
     public int verifyMessages() throws SocialException {
         try {
             return messageBusiness.verifyMessages(
-                getSessionUser().getEmail());
+                    getSessionUser().getEmail());
         } catch (BusinessException | CoreException ex) {
             throw new SocialException(ex);
         }

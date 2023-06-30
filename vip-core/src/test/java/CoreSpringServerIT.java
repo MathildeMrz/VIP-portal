@@ -1,6 +1,7 @@
 import fr.insalyon.creatis.grida.client.GRIDAClientException;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
@@ -12,20 +13,20 @@ import org.junit.jupiter.api.Test;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CoreSpringServerIT extends BaseSpringIT {
+public class CoreSpringServerIT extends BaseSpringIT
+{
 
-
-    /* ********************************************************************************************************************************************** */
-    /* ************************************************************* create user *********************************************************** */
-    /* ********************************************************************************************************************************************** */
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException, DAOException {
+    public void setUp() throws BusinessException, GRIDAClientException, DAOException
+    {
         super.setUp();
+
         // Create test group
         Group group1 = new Group("group1", true, true, true);
         configurationBusiness.addGroup(group1);
@@ -42,20 +43,27 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testInitialization() throws BusinessException {
-        System.out.println("FIRST TEST");
+    public void testInitialization() throws BusinessException
+    {
         assertEquals(3, configurationBusiness.getGroups().size(), "incorrect groups number");// Support + group1
         assertEquals(5, configurationBusiness.getUsers().size(), "incorrect users number");// Created users + admin
     }
 
+
+    /* ********************************************************************************************************************************************** */
+    /* ****************************************************************** create user *************************************************************** */
+    /* ********************************************************************************************************************************************** */
+
     @Test
-    public void testCreateUser() throws BusinessException, GRIDAClientException {
+    public void testCreateUser() throws BusinessException, GRIDAClientException
+    {
         createUser("test5@test.fr", "suffix5");
         assertRowsNbInTable("VIPUsers", 6);
     }
 
     @Test
-    public void testCatchExistingEmailCreateUser() {
+    public void testCatchExistingEmailCreateUser()
+    {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         createUser(emailUser4, "suffix0")
@@ -66,18 +74,20 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* create group *********************************************************** */
+    /* ***************************************************************** create group *************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCreateGroup() throws DAOException, BusinessException {
+    public void testCreateGroup() throws DAOException, BusinessException
+    {
         Group group = new Group("group3", true, true, true);
         configurationBusiness.addGroup(group);
         assertNotNull(configurationBusiness.getGroup("group3"));
     }
 
     @Test
-    public void testCatchCreateGroupAlreadyExisting() {
+    public void testCatchCreateGroupAlreadyExisting()
+    {
         Group group = new Group("group1", true, true, true);
 
         Exception exception = assertThrows(
@@ -93,14 +103,16 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCatchGetGroup() throws BusinessException {
+    public void testCatchGetGroup() throws BusinessException
+    {
         Group group = configurationBusiness.getGroup(nameGroup1);
         Assertions.assertEquals(nameGroup1, group.getName(), "Incorrect group name");
         Assertions.assertEquals(true, group.isPublicGroup(), "Incorrect group privacy");
     }
 
     @Test
-    public void testCatchGetInexistingGroup() throws BusinessException {
+    public void testCatchGetInexistingGroup() throws BusinessException
+    {
         assertNull(configurationBusiness.getGroup("group3"));
     }
 
@@ -110,7 +122,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testUpdateGroup() throws BusinessException {
+    public void testUpdateGroup() throws BusinessException
+    {
         Group group = configurationBusiness.getGroup(nameGroup1);
         group.setPublicGroup(false);
         group.setName("group_name_updated");
@@ -122,7 +135,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
 
     //FIXME : do not return error
     @Test
-    public void testUpdateInexistingGroup() throws BusinessException {
+    public void testUpdateInexistingGroup() throws BusinessException
+    {
         // SELECT + inexisting foreign key / part of primary key groupName => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be selected
         assertNull(configurationBusiness.getGroup("inexisting_group"));
@@ -130,11 +144,12 @@ public class CoreSpringServerIT extends BaseSpringIT {
 
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* add user to group *********************************************************** */
+    /* ************************************************************** add user to group ************************************************************* */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testAddUserToGroup() throws BusinessException {
+    public void testAddUserToGroup() throws BusinessException
+    {
         configurationBusiness.addUserToGroup(emailUser4, nameGroup1);
 
         List<String> emails = configurationBusiness.getUsersFromGroup(nameGroup1)
@@ -149,7 +164,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
 
 
     @Test
-    public void testCatchInexistingUserAddUserToGroup() {
+    public void testCatchInexistingUserAddUserToGroup()
+    {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.addUserToGroup("inexisting user", nameGroup1)
@@ -159,7 +175,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchInexistingGroupAddUserToGroup() throws BusinessException {
+    public void testCatchInexistingGroupAddUserToGroup()
+    {
 
         Exception exception = assertThrows
                 (BusinessException.class, () ->
@@ -176,13 +193,15 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCatchRemoveUser() throws BusinessException {
+    public void testCatchRemoveUser() throws BusinessException
+    {
         configurationBusiness.removeUser(emailUser1, false);
         assertRowsNbInTable("VIPUsers", 4);
     }
 
     @Test
-    public void testCatchRemoveInexistingUser() {
+    public void testCatchRemoveInexistingUser()
+    {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.removeUser("inexisting user", false)
@@ -198,13 +217,15 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testRemoveGroup() throws BusinessException {
+    public void testRemoveGroup() throws BusinessException
+    {
         configurationBusiness.removeGroup(emailUser1, nameGroup1);
         Assertions.assertEquals(2, configurationBusiness.getGroups().size(), "incorrect groups number");
     }
 
     @Test
-    public void testCatchRemoveInexistingGroup() throws BusinessException {
+    public void testCatchRemoveInexistingGroup() throws BusinessException
+    {
         // DELETE + inexisting foreign key / part of primary key groupName => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be deleted
         configurationBusiness.removeGroup(emailUser1, "inexisting group");
@@ -218,7 +239,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testRemoveUserFromGroup() throws BusinessException {
+    public void testRemoveUserFromGroup() throws BusinessException
+    {
         configurationBusiness.removeUserFromGroup(emailUser1, nameGroup1);
 
         List<String> emails = configurationBusiness.getUsersFromGroup(nameGroup1)
@@ -237,7 +259,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testGetOrCreateExistingUser() throws BusinessException, DAOException {
+    public void testGetOrCreateExistingUser() throws BusinessException, DAOException
+    {
         User user = configurationBusiness.getOrCreateUser(emailUser2, "test institution", "group1");
 
         Assertions.assertEquals("test firstName suffix2", user.getFirstName(), "incorrect user firstname");
@@ -246,7 +269,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testGetOrCreateInexistingUser() throws BusinessException, DAOException {
+    public void testGetOrCreateInexistingUser() throws BusinessException, DAOException
+    {
         configurationBusiness.getOrCreateUser("inexistingUser@test.fr", "institution", "group1");
 
         // verify entry numbers in VIPUsers table
@@ -254,7 +278,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testGetOrCreateIncorrectEmailUser() throws BusinessException {
+    public void testGetOrCreateIncorrectEmailUser()
+    {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.getOrCreateUser("inexisting_user", "institution", "group1")
@@ -270,7 +295,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testGetLastUpdateTermOfUse() throws BusinessException {
+    public void testGetLastUpdateTermOfUse() throws BusinessException
+    {
         Timestamp timestamp = configurationBusiness.getLastUpdateTermsOfUse();
         assertEquals("2023", timestamp.toString().substring(0, 4), "Incorrect new user api key value");
     }
@@ -280,7 +306,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCatchGetApiKeyInexistingUser() throws BusinessException {
+    public void testCatchGetApiKeyInexistingUser()
+    {
 
         Exception exception = assertThrows(
                 BusinessException.class, () ->
@@ -290,16 +317,16 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* *************************************************************** get user admin groups ************************************************************* */
+    /* ************************************************************* get user admin groups ********************************************************** */
     /* ********************************************************************************************************************************************** */
 
-    /*@Test
-    public void testGetUserAdminGroups() throws BusinessException {
+    @Test
+    public void testGetUserAdminGroups() throws BusinessException
+    {
+        Map<Group, CoreConstants.GROUP_ROLE> userGroups = configurationBusiness.getUserGroups(emailUser3);
+        assertFalse(userGroups.isEmpty());
 
-        //Map<Group, CoreConstants.GROUP_ROLE> userGroups = configurationBusiness.getUserGroups(emailUser3);
-        //System.out.println("TTTTTTTTTTTTTTTTTt : "+userGroups.get(0));
-
-    }*/
+    }
 
     /* ********************************************************************************************************************************************** */
     /* *************************************************************** validate session ************************************************************* */
@@ -307,19 +334,21 @@ public class CoreSpringServerIT extends BaseSpringIT {
 
 
     @Test
-    public void testValidateInexistingSession() throws BusinessException {
+    public void testValidateInexistingSession() throws BusinessException
+    {
         // SELECT + inexisting primary key session => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be selected
         assertFalse(configurationBusiness.validateSession(emailUser3, "inexisting session"));
     }
 
     @Test
-    public void testValidateNullSession() throws BusinessException {
+    public void testValidateNullSession() throws BusinessException
+    {
         assertFalse(configurationBusiness.validateSession(emailUser3, null));
     }
 
     /* ********************************************************************************************************************************************** */
-    /* *************************************************************** get user with groups ************************************************************* */
+    /* ************************************************************* get user with groups *********************************************************** */
     /* ********************************************************************************************************************************************** */
 
     /*@Test
@@ -334,13 +363,15 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testGenerateNewApiKeyUser() throws BusinessException {
+    public void testGenerateNewApiKeyUser() throws BusinessException
+    {
         String newApiKey = configurationBusiness.generateNewUserApikey(emailUser3);
-        assertEquals(newApiKey, configurationBusiness.getUserApikey(emailUser3), "Incorrect new user api key value");
+        assertEquals(configurationBusiness.getUserApikey(emailUser3), newApiKey, "Incorrect new user api key value");
     }
 
     @Test
-    public void testCatchGenerateNewApiKeyInexistingUser() {
+    public void testCatchGenerateNewApiKeyInexistingUser()
+    {
 
         Exception exception = assertThrows(
                 BusinessException.class, () ->
@@ -354,14 +385,14 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCatchDeleteApiKeyInexistingUser() throws BusinessException {
-
+    public void testCatchDeleteApiKeyInexistingUser() throws BusinessException
+    {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.deleteUserApikey("inexisting_user")
         );
-        //assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting_user"));
 
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting_user"));
     }
 
 
@@ -370,7 +401,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testGetPublicGroups() throws BusinessException {
+    public void testGetPublicGroups() throws BusinessException
+    {
         List<String> groupsNames = configurationBusiness.getPublicGroups()
                 .stream()
                 .map(Group::getName)
@@ -393,7 +425,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchGetInexistingUserData() throws BusinessException {
+    public void testCatchGetInexistingUserData()
+    {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.getUserData("inexisting_user")
@@ -405,7 +438,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchInexistingUserRemoveGroup() throws BusinessException {
+    public void testCatchInexistingUserRemoveGroup() throws BusinessException
+    {
         // DELETE + inexisting foreign key user email => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be deleted
         configurationBusiness.removeGroup("inexisting user", nameGroup1);
@@ -417,7 +451,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testGetUserPropertiesGroup() throws BusinessException {
+    public void testGetUserPropertiesGroup() throws BusinessException
+    {
         assertTrue(configurationBusiness.getUserPropertiesGroups(emailUser1).get(0)); // isPublic : group is public, it is accessible to every user
         assertTrue(configurationBusiness.getUserPropertiesGroups(emailUser1).get(1)); // isGridFile : group allows to files sharing
         assertTrue(configurationBusiness.getUserPropertiesGroups(emailUser1).get(2)); // isGridJobs : group allows job offers sharing
@@ -429,7 +464,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* *********************************************************** signin user ******************************************************* */
+    /* ****************************************************************** signin user *************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
@@ -438,7 +473,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchSigninUserWrongPassword() throws BusinessException {
+    public void testCatchSigninUserWrongPassword() throws BusinessException
+    {
 
         Exception exception = assertThrows(
                 BusinessException.class, () ->
@@ -451,11 +487,12 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* *********************************************************** send code ******************************************************* */
+    /* ******************************************************************** send code *************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCatchSendActivationCode() throws BusinessException {
+    public void testCatchSendActivationCode() throws BusinessException
+    {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.sendActivationCode("inexistingUser@test.fr")
@@ -466,7 +503,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchSendResetCode() throws BusinessException {
+    public void testCatchSendResetCode() throws BusinessException
+    {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.sendResetCode("inexistingUser@test.fr")
@@ -477,11 +515,12 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* *********************************************************** update user ******************************************************* */
+    /* ****************************************************************** update user *************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testUpdateUser() throws BusinessException {
+    public void testUpdateUser() throws BusinessException
+    {
         User user = configurationBusiness.getUser(emailUser1);
         user.setFolder("folder_updated");
         configurationBusiness.updateUser(user);
@@ -490,7 +529,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testUpdateUserEmail() throws BusinessException {
+    public void testUpdateUserEmail() throws BusinessException
+    {
         configurationBusiness.updateUserEmail(emailUser1, "newEmail@test.fr");
 
         // verify users number
@@ -502,17 +542,40 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testUpdatePassword() throws BusinessException {
+    public void testCatchUpdateInexistantUserEmail() throws BusinessException
+    {
+        configurationBusiness.updateUserEmail("inexistant email", "newEmail@test.fr");
+
+        // verify users number
+        assertEquals(5, configurationBusiness.getUsers().size(), "incorrect users number");// Created users + admin
+
+        // verify modified user infos
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        Assertions.assertNull(configurationBusiness.getUser("newEmail@test.fr"))
+        );
+
+        // getUser is called and had an exception before the beginning of the intership
+        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : newEmail@test.fr"));
+
+
+
+    }
+
+    @Test
+    public void testUpdatePassword() throws BusinessException
+    {
         configurationBusiness.updateUserPassword(emailUser1, "testPassword", "testPassword updated");
 
         // because getPassword() returns empty, try to signin
         configurationBusiness.signin(emailUser1, "testPassword updated");
-
+        
         Assertions.assertEquals("", configurationBusiness.getUser(emailUser1).getPassword(), "incorrect password update user");
     }
 
     @Test
-    public void testCatchUpdateWrongCurrentPassword() throws BusinessException {
+    public void testCatchUpdateWrongCurrentPassword() throws BusinessException
+    {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.updateUserPassword(emailUser1, "test password", "testPassword updated")
@@ -523,11 +586,12 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* *********************************************************** reset next email user ******************************************************* */
+    /* ************************************************************** reset next email user ********************************************************* */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testResetNextEmail() throws BusinessException {
+    public void testResetNextEmail() throws BusinessException
+    {
         configurationBusiness.resetNextEmail(emailUser1);
 
 
@@ -536,35 +600,23 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* *********************************************************** get user names ******************************************************* */
+    /* ***************************************************************** get user names ************************************************************* */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testGetUserNames() throws BusinessException {
+    public void testGetUserNames() throws BusinessException
+    {
         List<String> userNames = configurationBusiness.getUserNames(emailUser1, true);
         System.out.println("AAAAAAAA : " + userNames);
         Assertions.assertTrue(userNames.containsAll(Arrays.asList("test firstName suffix1 test lastName suffix1")), "Incorrect user names");
     }
 
     /* ********************************************************************************************************************************************** */
-    /* *********************************************************** send reset code ******************************************************* */
+    /* ***************************************************************** reset password ************************************************************* */
     /* ********************************************************************************************************************************************** */
-
-
-    /*//TODO : tester
-    @Test
-    public void testSendResetCode() throws BusinessException
-    {
-        configurationBusiness.sendResetCode(emailUser1);
-    }*/
-
-    /* ********************************************************************************************************************************************** */
-    /* *********************************************************** reset password ******************************************************* */
-    /* ********************************************************************************************************************************************** */
-
 
     @Test
-    public void testCatchSendResetWrongCode() throws BusinessException {
+    public void testCatchSendResetPasswordWrongCode() throws BusinessException {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.resetPassword(emailUser1, "test code", "test new password")
