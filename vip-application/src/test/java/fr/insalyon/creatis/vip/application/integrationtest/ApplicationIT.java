@@ -38,13 +38,16 @@ public class ApplicationIT extends BaseSpringIT {
     @BeforeEach
     public void setUp() throws BusinessException, GRIDAClientException, DAOException {
         super.setUp();
+
+        // group test and user test creation
         Group group1 = new Group("group1", true, true, true);
         configurationBusiness.addGroup(group1);
-        List<String> applicationGroups = new ArrayList<>();
-        applicationGroups.add("group1");
+        List<String> groups = new ArrayList<>();
+        groups.add("group1");
         createUserInGroup("test1@test.fr", "suffix1", "group1");
         createUserInGroup("test2@test.fr", "suffix2", "group1");
 
+        // engine test creation
         String engineName = "test engine";
         String engineEndpoint = "test endpoint";
         String engineStatus = "enabled";
@@ -53,7 +56,7 @@ public class ApplicationIT extends BaseSpringIT {
         engines.add("test engine");
         engineBusiness.add(engine);
 
-        AppClass appClass = new AppClass("class1", engines, applicationGroups);
+        AppClass appClass = new AppClass("class1", engines, groups);
         classBusiness.addClass(appClass);
         applicationClasses = new ArrayList<>();
         applicationClasses.add("class1");
@@ -78,9 +81,8 @@ public class ApplicationIT extends BaseSpringIT {
         Assertions.assertNull(application.getApplicationGroups(), "getApplication should not fill applicationGroups");
         Assertions.assertEquals(0, applicationBusiness.getVersions("Application1").size(), "Incorrect versions number");
 
-        // verify that there is no applicaion in the first class
-        List<String[]> strEmpty = new ArrayList<>();
-        Assertions.assertEquals(strEmpty, applicationBusiness.getApplications("class1"), "Incorrect number of application");
+        // verify that there is no application in the first class
+        Assertions.assertEquals(0, applicationBusiness.getApplications("class1").size(), "Incorrect number of application");
 
     }
 
@@ -159,5 +161,36 @@ public class ApplicationIT extends BaseSpringIT {
         Assertions.assertEquals(1, applicationBusiness.getVersions("Application1").size(), "Incorrect versions number");
     }
 
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************** update version ************************************************************ */
+    /* ********************************************************************************************************************************************** */
+
+     /* @Test
+    public void testUpdateVersionApplication() throws BusinessException {
+        AppVersion appVersion = new AppVersion("Application1", "version 2.0", "lfn", "jsonLfn", true, true);
+        applicationBusiness.updateVersion(appVersion);
+        Assertions.assertEquals("version 2.0", applicationBusiness.getVersions("Application1").get(0).getVersion(), "Incorrect version updated");
+
+    }*/
+
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************** get applications ************************************************************ */
+    /* ********************************************************************************************************************************************** */
+
+
+    /*@Test
+    public void testGetApplications() throws BusinessException {
+        List<String[]> applications = applicationBusiness.getApplications("class1");
+        Assertions.assertEquals(1, applications.size(), "Incorrect applications number");
+    }*/
+
+
+    @Test
+    public void testCatchGetApplicationsInexistingClass() throws BusinessException {
+        List<String[]> applications = applicationBusiness.getApplications("inexisting class");
+        Assertions.assertEquals(0, applications.size(), "Incorrect applications number");
+
+    }
 
 }

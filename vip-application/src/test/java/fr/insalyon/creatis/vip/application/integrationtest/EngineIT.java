@@ -3,6 +3,7 @@ package fr.insalyon.creatis.vip.application.integrationtest;
 import fr.insalyon.creatis.grida.client.GRIDAClientException;
 import fr.insalyon.creatis.vip.application.client.bean.Engine;
 import fr.insalyon.creatis.vip.application.server.business.EngineBusiness;
+import fr.insalyon.creatis.vip.application.server.dao.EngineDAO;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
@@ -10,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -32,7 +34,7 @@ public class EngineIT extends BaseSpringIT {
     @Test
     public void testInitialization() throws BusinessException {
         Assertions.assertEquals(1, engineBusiness.get().size());
-        Assertions.assertEquals("test engine", engineBusiness.get().get(0).getName());
+        Assertions.assertEquals("test engine",  engineBusiness.get().get(0).getName());
         Assertions.assertEquals("test endpoint", engineBusiness.get().get(0).getEndpoint());
         Assertions.assertEquals("enabled", engineBusiness.get().get(0).getStatus());
     }
@@ -128,4 +130,15 @@ public class EngineIT extends BaseSpringIT {
         );
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no engine registered with the name : inexisting engine"));
     }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************* get engine *********************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testGetEngine() throws BusinessException {
+        Assertions.assertEquals("test engine",  engineBusiness.get().get(0).getName());
+    }
+
+
 }

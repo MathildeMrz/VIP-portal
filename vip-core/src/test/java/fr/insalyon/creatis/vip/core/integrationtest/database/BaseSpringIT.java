@@ -83,6 +83,7 @@ public abstract class BaseSpringIT {
     protected User user2;
     protected User user3;
     protected User user4;
+    protected User admin;
     protected Group group1;
     protected List<String> applicationClasses;
 

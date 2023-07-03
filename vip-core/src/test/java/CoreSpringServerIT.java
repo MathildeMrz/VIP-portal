@@ -1,14 +1,19 @@
 import fr.insalyon.creatis.grida.client.GRIDAClientException;
+import fr.insalyon.creatis.sma.client.SMAClient;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.business.EmailBusiness;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -17,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 public class CoreSpringServerIT extends BaseSpringIT
 {
@@ -458,7 +464,6 @@ public class CoreSpringServerIT extends BaseSpringIT
         assertTrue(configurationBusiness.getUserPropertiesGroups(emailUser1).get(1)); // isGridFile : group allows to files sharing
         assertTrue(configurationBusiness.getUserPropertiesGroups(emailUser1).get(2)); // isGridJobs : group allows job offers sharing
 
-        System.out.println("emailUser4 = " + emailUser4);
         assertFalse(configurationBusiness.getUserPropertiesGroups(emailUser4).get(0));
         assertTrue(configurationBusiness.getUserPropertiesGroups(emailUser4).get(1));
         assertFalse(configurationBusiness.getUserPropertiesGroups(emailUser4).get(2));
@@ -545,7 +550,7 @@ public class CoreSpringServerIT extends BaseSpringIT
     @Test
     public void testCatchUpdateInexistantUserEmail() throws BusinessException
     {
-        configurationBusiness.updateUserEmail("inexistant email", "newEmail@test.fr");
+        configurationBusiness.updateUserEmail("inexisting email", "newEmail@test.fr");
 
         // verify users number
         assertEquals(5, configurationBusiness.getUsers().size(), "incorrect users number");// Created users + admin
@@ -558,9 +563,6 @@ public class CoreSpringServerIT extends BaseSpringIT
 
         // getUser is called and had an exception before the beginning of the intership
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : newEmail@test.fr"));
-
-
-
     }
 
     @Test
@@ -608,7 +610,6 @@ public class CoreSpringServerIT extends BaseSpringIT
     public void testGetUserNames() throws BusinessException
     {
         List<String> userNames = configurationBusiness.getUserNames(emailUser1, true);
-        System.out.println("AAAAAAAA : " + userNames);
         Assertions.assertTrue(userNames.containsAll(Arrays.asList("test firstName suffix1 test lastName suffix1")), "Incorrect user names");
     }
 
@@ -625,9 +626,21 @@ public class CoreSpringServerIT extends BaseSpringIT
 
         // Exception added before the beginning of the internship
         assertTrue(StringUtils.contains(exception.getMessage(), "Wrong reset code"));
+    }
 
+    @Autowired
+    SMAClient smaClient;
+
+    @Test
+    public void test() throws BusinessException
+    {
+
+        configurationBusiness.sendContactMail(user1, "category", "subject", "comment");
+        
 
     }
+
+
 
     /* ********************************************************************************************************************************************** */
     /* ***************************************************************** create group *************************************************************** */
