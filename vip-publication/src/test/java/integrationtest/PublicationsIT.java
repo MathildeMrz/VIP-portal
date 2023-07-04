@@ -39,7 +39,7 @@ public class PublicationsIT extends BaseSpringIT
     @Test
     public void testInitialisation() throws BusinessException
     {
-        // verify publications nb
+        // verify number publications
         Assertions.assertEquals(1, publicationBusiness.getPublications().size(), "Incorrect number of publications");
 
         // verify publications authors
@@ -74,8 +74,6 @@ public class PublicationsIT extends BaseSpringIT
         publicationBusiness.addPublication(publication4);
 
         Assertions.assertEquals(5, publicationBusiness.getPublications().size(), "Incorrect publications number");
-
-
     }
 
     @Test
@@ -83,7 +81,7 @@ public class PublicationsIT extends BaseSpringIT
     {
         Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", adminEmail, null);
 
-        //No exception because the id is not taken into account for the object creation
+        // No exception because the id is not taken into account for the object creation
         publicationBusiness.addPublication(publication);
     }
 
@@ -134,7 +132,7 @@ public class PublicationsIT extends BaseSpringIT
 
         publicationBusiness.updatePublication(publication);
 
-        // verify publication updated information
+        // verify updated properties of publication
         Assertions.assertEquals("author2, author3", publicationBusiness.getPublication(idPublicationCreated).getAuthors(), "Incorrect publication authors");
         Assertions.assertEquals(idPublicationCreated, publicationBusiness.getPublication(idPublicationCreated).getId(), "Incorrect publication id");
         Assertions.assertEquals("22/06/2023", publicationBusiness.getPublication(idPublicationCreated).getDate(), "Incorrect publication DOI");
@@ -153,13 +151,14 @@ public class PublicationsIT extends BaseSpringIT
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be updated
         publicationBusiness.updatePublication(publication);
 
+        // Check that not publication with the new id was created
         Assertions.assertEquals(1, publicationBusiness.getPublications().size(), "Incorrect number of publications");
-
     }
 
     @Test
     public void testCatchUpdatePublicationNonExistentVipAuthor() throws BusinessException
     {
+        // update vipAuthor from admin@test.fr to nonExistentVipAuthor@test.fr
         Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author2, author3", "type", "typeName", "nonExistentVipAuthor@test.fr", null);
 
         Exception exception = assertThrows(
@@ -169,6 +168,7 @@ public class PublicationsIT extends BaseSpringIT
 
         // UPDATE + nonExistent foreign key vipAuthor => violation
         assertTrue(StringUtils.contains(exception.getMessage(), "JdbcSQLException: Referential integrity constraint violation"));
+        // Verify the update didn't take place
         assertEquals(adminEmail, publicationBusiness.getPublication(idPublicationCreated).getVipAuthor(), "Incorrect vipAuthor publication updated");
     }
 
@@ -208,7 +208,6 @@ public class PublicationsIT extends BaseSpringIT
     public void testRemovePublication() throws BusinessException
     {
         publicationBusiness.removePublication(idPublicationCreated);
-
         Assertions.assertEquals(0, publicationBusiness.getPublications().size(), "Incorrect number of publications");
     }
 
@@ -219,6 +218,7 @@ public class PublicationsIT extends BaseSpringIT
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be deleted
         publicationBusiness.removePublication(100L);
 
+        // Verify there is still 1 publication
         Assertions.assertEquals(1, publicationBusiness.getPublications().size(), "Incorrect number of publications");
     }
 

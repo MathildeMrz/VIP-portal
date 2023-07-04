@@ -124,14 +124,14 @@ import java.util.*;
      */
     public boolean isUser(String email) throws DAOException {
         try {
-<span class="fc" id="L127">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT *&quot;</span>
+<span class="nc" id="L127">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT *&quot;</span>
                     + &quot;FROM VIPUsers &quot;
                     + &quot;WHERE email=?&quot;);
 
-<span class="fc" id="L131">            ps.setString(1, email);</span>
-<span class="fc" id="L132">            ResultSet rs = ps.executeQuery();</span>
+<span class="nc" id="L131">            ps.setString(1, email);</span>
+<span class="nc" id="L132">            ResultSet rs = ps.executeQuery();</span>
 
-<span class="fc" id="L134">            return rs.next();</span>
+<span class="nc" id="L134">            return rs.next();</span>
 
 <span class="nc" id="L136">        } catch (SQLException e) {</span>
 <span class="nc" id="L137">            throw new RuntimeException(e);</span>
