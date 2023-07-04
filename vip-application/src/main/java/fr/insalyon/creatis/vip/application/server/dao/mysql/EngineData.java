@@ -94,7 +94,6 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
     @Override
     public void update(Engine engine) throws DAOException {
         try {
-            if (isEngine(engine.getName())) {
                 PreparedStatement ps = getConnection().prepareStatement(
                         "UPDATE VIPEngines SET endpoint = ?, "
                                 + "status = ? "
@@ -106,10 +105,6 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
                 ps.executeUpdate();
 
                 ps.close();
-            } else {
-                logger.error("There is no engine registered with the name {}", engine.getName());
-                throw new DAOException("There is no engine registered with the name : " + engine.getName());
-            }
 
         } catch (SQLException ex) {
             logger.error("Error updating engine {} to {}", engine.getName(), engine.getEndpoint(), ex);

@@ -1,5 +1,5 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,EngineData,140,188,5,7,29,49,4,10,1,7
+coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,EngineData,140,169,5,5,29,45,4,9,1,7
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,ApplicationInputData,557,12,12,0,131,4,15,2,9,2
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,ApplicationDataInitializer,0,73,0,0,0,16,0,2,0,2
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,ClassData,219,431,11,25,39,111,9,21,0,11
@@ -10,18 +10,18 @@ coverage/vip-application,fr.insalyon.creatis.vip.application.server.business.sim
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business.simulation.parser,InputM2Parser,254,0,26,0,71,0,19,0,6,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business.simulation.parser,GwendiaParser,112,0,14,0,26,0,11,0,4,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,AppVersion,6,51,0,0,3,17,2,8,2,8
-coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Simulation,46,37,0,0,15,14,12,3,12,3
+coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Simulation,40,43,0,0,13,16,10,5,10,5
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,ExpeSummaryTriple,24,0,0,0,10,0,5,0,5,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Application,27,57,0,0,10,18,5,9,5,9
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,ApplicationStatus,24,0,0,0,11,0,7,0,7,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Descriptor,26,0,0,0,12,0,6,0,6,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,InOutData,28,0,0,0,12,0,6,0,6,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,ExpeSummaryEntity,18,0,0,0,8,0,4,0,4,0
-coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Engine,0,28,0,0,0,12,0,6,0,6
+coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Engine,3,25,0,0,2,10,1,5,1,5
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Activity,36,0,0,0,14,0,7,0,7,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,AppClass,0,30,0,0,0,12,0,6,0,6
-coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Job,36,0,0,0,16,0,8,0,8,0
-coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Task,111,0,0,0,46,0,22,0,22,0
+coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Job,18,18,0,0,9,7,5,3,5,3
+coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Task,99,12,0,0,41,5,21,1,21,1
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Source,78,0,0,0,28,0,14,0,14,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,SimulationInput,24,0,0,0,10,0,5,0,5,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean,Node,54,0,0,0,20,0,10,0,10,0
@@ -36,7 +36,7 @@ coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean.boutiqu
 coverage/vip-application,fr.insalyon.creatis.vip.application.client.bean.boutiquesTools,BoutiquesInput.InputType,59,0,0,0,6,0,3,0,3,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,WorkflowBusiness,1640,59,117,0,389,20,93,1,33,1
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,WorkflowExecutionBusiness,167,0,2,0,41,0,8,0,7,0
-coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,EngineBusiness,6,46,0,0,2,19,0,5,0,5
+coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,EngineBusiness,12,40,0,0,4,17,0,5,0,5
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,SimulationBusiness,619,14,52,0,142,5,49,1,19,1
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,ApplicationBusiness,379,88,14,0,94,31,25,12,18,12
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,ClassBusiness,43,80,2,2,11,26,2,9,1,8
@@ -60,7 +60,7 @@ coverage/vip-application-importer,fr.insalyon.creatis.vip.applicationimporter.se
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.dao,DAOException,0,13,0,0,0,6,0,3,0,3
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,Account,37,0,0,0,16,0,7,0,7,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,TermsOfUse,23,9,0,0,11,4,5,2,5,2
-coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,User,107,285,13,13,28,82,20,44,12,39
+coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,User,84,308,13,13,24,86,19,45,11,40
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,Group,11,35,0,0,6,14,3,7,3,7
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,UsageStats,26,0,0,0,12,0,6,0,6,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business.proxy,ProxyClient.MyTrustManager,335,0,26,0,80,0,19,0,6,0
@@ -77,7 +77,7 @@ coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,BusinessException
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,SpringConfigServer.ReloadablePropertySource,21,0,0,0,5,0,2,0,2,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,VipSessionBusiness,338,14,24,0,81,5,23,1,11,1
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,StatsBusiness.UserSearchCriteria,35,0,0,0,13,0,9,0,9,0
-coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,ConfigurationBusiness,981,1134,61,55,252,277,54,64,13,47
+coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,ConfigurationBusiness,994,1121,61,55,255,274,55,63,14,46
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,EmailBusiness,35,11,0,0,6,4,1,1,1,1
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,SamlTokenValidator,215,0,18,0,55,0,17,0,8,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,SpringConfigServer,608,0,12,0,133,0,63,0,57,0

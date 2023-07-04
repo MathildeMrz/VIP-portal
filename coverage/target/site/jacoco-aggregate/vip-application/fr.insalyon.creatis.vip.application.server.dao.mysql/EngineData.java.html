@@ -94,124 +94,119 @@ import java.util.List;
     @Override
     public void update(Engine engine) throws DAOException {
         try {
-<span class="fc bfc" id="L97" title="All 2 branches covered.">            if (isEngine(engine.getName())) {</span>
-<span class="fc" id="L98">                PreparedStatement ps = getConnection().prepareStatement(</span>
+<span class="fc" id="L97">                PreparedStatement ps = getConnection().prepareStatement(</span>
                         &quot;UPDATE VIPEngines SET endpoint = ?, &quot;
                                 + &quot;status = ? &quot;
                                 + &quot;WHERE name = ?&quot;);
 
-<span class="fc" id="L103">                ps.setString(1, engine.getEndpoint());</span>
-<span class="fc" id="L104">                ps.setString(2, engine.getStatus());</span>
-<span class="fc" id="L105">                ps.setString(3, engine.getName());</span>
-<span class="fc" id="L106">                ps.executeUpdate();</span>
+<span class="fc" id="L102">                ps.setString(1, engine.getEndpoint());</span>
+<span class="fc" id="L103">                ps.setString(2, engine.getStatus());</span>
+<span class="fc" id="L104">                ps.setString(3, engine.getName());</span>
+<span class="fc" id="L105">                ps.executeUpdate();</span>
 
-<span class="fc" id="L108">                ps.close();</span>
-<span class="fc" id="L109">            } else {</span>
-<span class="fc" id="L110">                logger.error(&quot;There is no engine registered with the name {}&quot;, engine.getName());</span>
-<span class="fc" id="L111">                throw new DAOException(&quot;There is no engine registered with the name : &quot; + engine.getName());</span>
-            }
+<span class="fc" id="L107">                ps.close();</span>
 
-<span class="nc" id="L114">        } catch (SQLException ex) {</span>
-<span class="nc" id="L115">            logger.error(&quot;Error updating engine {} to {}&quot;, engine.getName(), engine.getEndpoint(), ex);</span>
-<span class="nc" id="L116">            throw new DAOException(ex);</span>
-<span class="fc" id="L117">        }</span>
-<span class="fc" id="L118">    }</span>
+<span class="nc" id="L109">        } catch (SQLException ex) {</span>
+<span class="nc" id="L110">            logger.error(&quot;Error updating engine {} to {}&quot;, engine.getName(), engine.getEndpoint(), ex);</span>
+<span class="nc" id="L111">            throw new DAOException(ex);</span>
+<span class="fc" id="L112">        }</span>
+<span class="fc" id="L113">    }</span>
 
     @Override
     public void remove(String name) throws DAOException {
         try {
-<span class="fc bfc" id="L123" title="All 2 branches covered.">            if (isEngine(name)) {</span>
-<span class="fc" id="L124">                PreparedStatement ps = getConnection().prepareStatement(&quot;DELETE &quot;</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            if (isEngine(name)) {</span>
+<span class="fc" id="L119">                PreparedStatement ps = getConnection().prepareStatement(&quot;DELETE &quot;</span>
                         + &quot;FROM VIPEngines WHERE name=?&quot;);
 
-<span class="fc" id="L127">                ps.setString(1, name);</span>
-<span class="fc" id="L128">                ps.execute();</span>
+<span class="fc" id="L122">                ps.setString(1, name);</span>
+<span class="fc" id="L123">                ps.execute();</span>
 
-<span class="fc" id="L130">                ps.close();</span>
-<span class="fc" id="L131">            } else {</span>
-<span class="fc" id="L132">                logger.error(&quot;There is no engine registered with the name {}&quot;, name);</span>
-<span class="fc" id="L133">                throw new DAOException(&quot;There is no engine registered with the name : &quot; + name);</span>
+<span class="fc" id="L125">                ps.close();</span>
+<span class="fc" id="L126">            } else {</span>
+<span class="fc" id="L127">                logger.error(&quot;There is no engine registered with the name {}&quot;, name);</span>
+<span class="fc" id="L128">                throw new DAOException(&quot;There is no engine registered with the name : &quot; + name);</span>
             }
 
 
-<span class="nc" id="L137">        } catch (SQLException ex) {</span>
-<span class="nc" id="L138">            logger.error(&quot;Error removing engine {}&quot;, name, ex);</span>
-<span class="nc" id="L139">            throw new DAOException(ex);</span>
-<span class="fc" id="L140">        }</span>
+<span class="nc" id="L132">        } catch (SQLException ex) {</span>
+<span class="nc" id="L133">            logger.error(&quot;Error removing engine {}&quot;, name, ex);</span>
+<span class="nc" id="L134">            throw new DAOException(ex);</span>
+<span class="fc" id="L135">        }</span>
 
-<span class="fc" id="L142">    }</span>
+<span class="fc" id="L137">    }</span>
 
     @Override
     public List&lt;Engine&gt; get() throws DAOException {
 
         try {
-<span class="fc" id="L148">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
+<span class="fc" id="L143">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
                     + &quot;name, endpoint, status FROM VIPEngines &quot;
                     + &quot;ORDER BY name&quot;);
 
-<span class="fc" id="L152">            ResultSet rs = ps.executeQuery();</span>
-<span class="fc" id="L153">            List&lt;Engine&gt; list = new ArrayList&lt;Engine&gt;();</span>
+<span class="fc" id="L147">            ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L148">            List&lt;Engine&gt; list = new ArrayList&lt;Engine&gt;();</span>
 
-<span class="fc bfc" id="L155" title="All 2 branches covered.">            while (rs.next()) {</span>
-<span class="fc" id="L156">                list.add(new Engine(rs.getString(&quot;name&quot;), rs.getString(&quot;endpoint&quot;), rs.getString(&quot;status&quot;)));</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L151">                list.add(new Engine(rs.getString(&quot;name&quot;), rs.getString(&quot;endpoint&quot;), rs.getString(&quot;status&quot;)));</span>
             }
-<span class="fc" id="L158">            return list;</span>
+<span class="fc" id="L153">            return list;</span>
 
-<span class="nc" id="L160">        } catch (SQLException ex) {</span>
-<span class="nc" id="L161">            logger.error(&quot;Error getting all engines&quot;, ex);</span>
-<span class="nc" id="L162">            throw new DAOException(ex);</span>
+<span class="nc" id="L155">        } catch (SQLException ex) {</span>
+<span class="nc" id="L156">            logger.error(&quot;Error getting all engines&quot;, ex);</span>
+<span class="nc" id="L157">            throw new DAOException(ex);</span>
         }
     }
 
     @Override
     public List&lt;Engine&gt; getByClass(String className) throws DAOException {
 
-<span class="nc" id="L169">        String status = &quot;enabled&quot;;</span>
+<span class="nc" id="L164">        String status = &quot;enabled&quot;;</span>
         try {
-<span class="nc bnc" id="L171" title="All 2 branches missed.">            if (classDao.isClass(className)) {</span>
-<span class="nc" id="L172">                PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            if (classDao.isClass(className)) {</span>
+<span class="nc" id="L167">                PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
                         + &quot;e.name AS engineName, endpoint, status &quot;
                         + &quot;FROM VIPEngines e, VIPClassesEngines c &quot;
                         + &quot;WHERE e.name = c.engine AND &quot;
                         + &quot;e.status = ? AND &quot;
                         + &quot;c.class = ?&quot;);
-<span class="nc" id="L178">                ps.setString(1, status);</span>
-<span class="nc" id="L179">                ps.setString(2, className);</span>
+<span class="nc" id="L173">                ps.setString(1, status);</span>
+<span class="nc" id="L174">                ps.setString(2, className);</span>
 
-<span class="nc" id="L181">                ResultSet rs = ps.executeQuery();</span>
+<span class="nc" id="L176">                ResultSet rs = ps.executeQuery();</span>
 
-<span class="nc" id="L183">                List&lt;Engine&gt; list = new ArrayList&lt;Engine&gt;();</span>
-<span class="nc bnc" id="L184" title="All 2 branches missed.">                while (rs.next()) {</span>
-<span class="nc" id="L185">                    list.add(new Engine(rs.getString(&quot;engineName&quot;), rs.getString(&quot;endpoint&quot;), rs.getString(&quot;status&quot;)));</span>
+<span class="nc" id="L178">                List&lt;Engine&gt; list = new ArrayList&lt;Engine&gt;();</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">                while (rs.next()) {</span>
+<span class="nc" id="L180">                    list.add(new Engine(rs.getString(&quot;engineName&quot;), rs.getString(&quot;endpoint&quot;), rs.getString(&quot;status&quot;)));</span>
                 }
-<span class="nc" id="L187">                ps.close();</span>
-<span class="nc" id="L188">                return list;</span>
+<span class="nc" id="L182">                ps.close();</span>
+<span class="nc" id="L183">                return list;</span>
             } else {
-<span class="nc" id="L190">                logger.error(&quot;There is no class registered with the name {}&quot;, className);</span>
-<span class="nc" id="L191">                throw new DAOException(&quot;There is no class registered with the name : &quot; + className);</span>
+<span class="nc" id="L185">                logger.error(&quot;There is no class registered with the name {}&quot;, className);</span>
+<span class="nc" id="L186">                throw new DAOException(&quot;There is no class registered with the name : &quot; + className);</span>
             }
 
 
-<span class="nc" id="L195">        } catch (SQLException ex) {</span>
-<span class="nc" id="L196">            logger.error(&quot;Error getting engines by class {}&quot;, className, ex);</span>
-<span class="nc" id="L197">            throw new DAOException(ex);</span>
+<span class="nc" id="L190">        } catch (SQLException ex) {</span>
+<span class="nc" id="L191">            logger.error(&quot;Error getting engines by class {}&quot;, className, ex);</span>
+<span class="nc" id="L192">            throw new DAOException(ex);</span>
         }
     }
 
     @Override
     public boolean isEngine(String name) {
         try {
-<span class="fc" id="L204">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT *&quot;</span>
+<span class="fc" id="L199">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT *&quot;</span>
                     + &quot;FROM VIPEngines &quot;
                     + &quot;WHERE name=?&quot;);
 
-<span class="fc" id="L208">            ps.setString(1, name);</span>
-<span class="fc" id="L209">            ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L203">            ps.setString(1, name);</span>
+<span class="fc" id="L204">            ResultSet rs = ps.executeQuery();</span>
 
-<span class="fc" id="L211">            return rs.next();</span>
+<span class="fc" id="L206">            return rs.next();</span>
 
-<span class="nc" id="L213">        } catch (SQLException e) {</span>
-<span class="nc" id="L214">            throw new RuntimeException(e);</span>
+<span class="nc" id="L208">        } catch (SQLException e) {</span>
+<span class="nc" id="L209">            throw new RuntimeException(e);</span>
         }
     }
 }

@@ -2,6 +2,7 @@ import fr.insalyon.creatis.grida.client.GRIDAClientException;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.util.CountryCode;
 import fr.insalyon.creatis.vip.core.integrationtest.SpingTestConfig;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
@@ -24,10 +25,13 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static fr.insalyon.creatis.vip.core.client.view.user.UserLevel.Beginner;
 import static fr.insalyon.creatis.vip.core.client.view.user.UserLevel.Developer;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CoreSpringServerIT extends BaseSpringIT {
+public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT
+{
+    private User user5;
 
     @BeforeEach
     public void setUp() throws BusinessException, GRIDAClientException, DAOException {
@@ -46,41 +50,54 @@ public class CoreSpringServerIT extends BaseSpringIT {
         createUserInGroup(emailUser2, "suffix2", "group1");
         createUserInGroup(emailUser3, "suffix3", "group1");
         createUserInGroup(emailUser4, "suffix4", "group2");
-
         user1 = configurationBusiness.getUser(emailUser1);
         user2 = configurationBusiness.getUser(emailUser2);
         user3 = configurationBusiness.getUser(emailUser3);
         user4 = configurationBusiness.getUser(emailUser4);
 
+        // Create a very complete test users
+        user5 = new User("firstName", "lastName", "email5@test.fr", "nextEmail@test.fr","institution", "password", false, "code", "folder", "session", new Date(), new Date(), Beginner, CountryCode.fr, 1, new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), 0, false);
+        createUserInGroup("email5@test.fr","suffix5", "group2");
+
         Map<Group, CoreConstants.GROUP_ROLE> groups = new HashMap<>();
         groups.put(group1, CoreConstants.GROUP_ROLE.User);
+        // Affect groups to users
         user1.setGroups(groups);
         user2.setGroups(groups);
         user3.setGroups(groups);
 
         groups = new HashMap<>();
         groups.put(group2, CoreConstants.GROUP_ROLE.Admin);
+        // Affect groups to user
         user4.setGroups(groups);
-
-        user1.setIsgridfile(true);
-        user1.setIsgridjobs(true);
     }
 
     @Test
     public void testInitialization() throws BusinessException {
         assertEquals(3, configurationBusiness.getGroups().size(), "incorrect groups number");// Support + group1
-        assertEquals(5, configurationBusiness.getUsers().size(), "incorrect users number");// Created users + admin
+        assertEquals(6, configurationBusiness.getUsers().size(), "incorrect users number");// Created users + admin
+        assertEquals(1, user5.getMaxRunningSimulations(), "incorrect max running simulations");// Created users + admin
     }
 
-
     /* ********************************************************************************************************************************************** */
-    /* ****************************************************************** create user *************************************************************** */
+    /* ****************************************************************** create and add user *************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCreateUser() throws BusinessException, GRIDAClientException {
-        createUser("test5@test.fr", "suffix5");
-        assertRowsNbInTable("VIPUsers", 6);
+    public void testCreateUser() throws BusinessException, GRIDAClientException
+    {
+        // try all the constructors
+        User user6 = new User("firstName", "lastName", "email6@test.fr", "institution", "password", Developer, CountryCode.fr, "applications");
+        User user7 = new User("firstName", "lastName", "email7@test.fr","institution", Developer, CountryCode.fr);
+        User user8 = new User("firstName", "lastName", "email8@test.fr", "institution", "password",Developer,  CountryCode.fr);
+        User user9 = new User("firstName", "lastName", "email9@test.fr", "institution", "password",  CountryCode.fr, new Timestamp(System.currentTimeMillis()));
+        createUserInGroup("email6@test.fr","suffix6", "group2");
+        createUserInGroup("email7@test.fr","suffix7", "group2");
+        createUserInGroup("email8@test.fr","suffix8", "group2");
+        createUserInGroup("email9@test.fr","suffix9", "group2");
+
+        // Check users number
+        assertRowsNbInTable("VIPUsers", 10);
     }
 
     @Test
@@ -134,6 +151,16 @@ public class CoreSpringServerIT extends BaseSpringIT {
         assertNull(configurationBusiness.getGroup("group3"));
     }
 
+    /* ********************************************************************************************************************************************** */
+    /* ******************************************************************* get group **************************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testCatchGetGroups() throws BusinessException {
+        List<Group> groups = configurationBusiness.getGroups();
+        Assertions.assertEquals(3, groups.size(), "Incorrect groups number");// group1, group2 and support
+    }
+
 
     /* ********************************************************************************************************************************************** */
     /* **************************************************************** update group **************************************************************** */
@@ -156,7 +183,6 @@ public class CoreSpringServerIT extends BaseSpringIT {
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be selected
         assertNull(configurationBusiness.getGroup("nonExistent_group"));
     }
-
 
     /* ********************************************************************************************************************************************** */
     /* ************************************************************** add user to group ************************************************************* */
@@ -207,7 +233,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
     @Test
     public void testCatchRemoveUser() throws BusinessException {
         configurationBusiness.removeUser(emailUser1, false);
-        assertRowsNbInTable("VIPUsers", 4);
+        assertRowsNbInTable("VIPUsers", 5);
     }
 
     @Test
@@ -218,7 +244,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
 
         );
 
-        // getUser is called and had an exception before the beginning of the intership
+        // getUser is called and had an exception before the beginning of the internship
         assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : nonExistent user"));
     }
 
@@ -275,7 +301,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
         configurationBusiness.getOrCreateUser("nonExistentUser@test.fr", "institution", "group1");
 
         // verify entry numbers in VIPUsers table
-        assertRowsNbInTable("VIPUsers", 6);
+        assertRowsNbInTable("VIPUsers", 7);
     }
 
     @Test
@@ -342,16 +368,6 @@ public class CoreSpringServerIT extends BaseSpringIT {
         assertFalse(configurationBusiness.validateSession(emailUser3, null));
     }
 
-    /* ********************************************************************************************************************************************** */
-    /* ************************************************************* get user with groups *********************************************************** */
-    /* ********************************************************************************************************************************************** */
-
-    @Test
-    public void testGetUserWithGroups() throws BusinessException
-    {
-        User user = configurationBusiness.getUserWithGroups(emailUser3);
-        System.out.println("NNNNNNNNN "+user.getEmail());
-    }
 
     /* ********************************************************************************************************************************************** */
     /* *********************************************************** generate new user api key ******************************************************** */
@@ -483,7 +499,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
                         configurationBusiness.sendActivationCode("nonExistentUser@test.fr")
         );
 
-        // getUser is called and had an exception before the beginning of the intership
+        // getUser is called and had an exception before the beginning of the internship
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : nonExistentUser@test.fr"));
     }
 
@@ -494,7 +510,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
                         configurationBusiness.sendResetCode("nonExistentUser@test.fr")
         );
 
-        // getUser is called and had an exception before the beginning of the intership
+        // getUser is called and had an exception before the beginning of the internship
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : nonExistentUser@test.fr"));
     }
 
@@ -516,7 +532,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
         configurationBusiness.updateUserEmail(emailUser1, "newEmail@test.fr");
 
         // verify users number
-        assertEquals(5, configurationBusiness.getUsers().size(), "incorrect users number");// Created users + admin
+        assertEquals(6, configurationBusiness.getUsers().size(), "incorrect users number");// Created users + admin
 
         // verify modified user infos
         Assertions.assertEquals("newEmail@test.fr", configurationBusiness.getUser("newEmail@test.fr").getEmail(), "incorrect email update user");
@@ -528,7 +544,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
         configurationBusiness.updateUserEmail("nonExistent email", "newEmail@test.fr");
 
         // verify users number
-        assertEquals(5, configurationBusiness.getUsers().size(), "incorrect users number");// Created users + admin
+        assertEquals(6, configurationBusiness.getUsers().size(), "incorrect users number");// Created users + admin
 
         // verify modified user infos
         Exception exception = assertThrows(
@@ -536,7 +552,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
                         Assertions.assertNull(configurationBusiness.getUser("newEmail@test.fr"))
         );
 
-        // getUser is called and had an exception before the beginning of the intership
+        // getUser is called and had an exception before the beginning of the internship
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : newEmail@test.fr"));
     }
 
@@ -570,18 +586,27 @@ public class CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testIsGridFile() throws BusinessException {
-        assertTrue(user1.getIsgridfile(), " isGridFile method should be true");
-        user1.setIsgridfile(false);
-        assertFalse(user1.getIsgridfile(), " isGridFile method should be false");
+    public void testSetLastLogin() throws BusinessException {
+        Date now = new Date();
+        user1.setLastLogin(now);
+        Assertions.assertEquals(now, user1.getLastLogin(), "incorrect last login");
+
     }
 
+    @Test
+    public void testSetMaxRunningSimulations() throws BusinessException {
+
+        user1.setMaxRunningSimulations(5);
+        Assertions.assertEquals(5, user1.getMaxRunningSimulations(), "incorrect max running simulations");
+
+    }
 
     @Test
-    public void testIsGridJob() throws BusinessException {
-        assertTrue(user1.getIsgridjobs(), " isGridJobs method should be true");
-        user1.setIsgridjobs(false);
-        assertFalse(user1.getIsgridjobs(), " isGridJobs method should be false");
+    public void testSetCountryCode() throws BusinessException {
+
+        user1.setCountryCode(CountryCode.us);
+        Assertions.assertEquals(CountryCode.us, user1.getCountryCode(), "incorrect country code");
+
     }
 
     /* ********************************************************************************************************************************************** */
@@ -608,7 +633,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
 
     /* ********************************************************************************************************************************************** */
     /* ***************************************************************** reset password ************************************************************* */
-    /* ****************************Les PRI sélectionnés bénéficieront, au-delà des ressources directement mobilisées par les laboratoires participants, de crédits d'un montant total de :****************************************************************************************************************** */
+    /* ********************************************************************************************************************************************** */
 
     @Test
     public void testCatchSendResetPasswordWrongCode() throws BusinessException {
@@ -621,8 +646,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
         assertTrue(StringUtils.contains(exception.getMessage(), "Wrong reset code"));
     }
 
-    /* ************************************************************************************************************************ */
-    /* ***************************************************************** check roles *************************************************************** */
+    /* ********************************************************************************************************************************************** */
+    /* ****************************************************************** check roles *************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
@@ -647,8 +672,8 @@ public class CoreSpringServerIT extends BaseSpringIT {
         assertTrue(user4.hasAcceptTermsOfUse());
     }
 
-    /* ************************************************************************************************************************ */
-    /* ***************************************************************** send mail *************************************************************** */
+    /* ********************************************************************************************************************************************** */
+    /* ****************************************************************** send mail ***************************************************************** */
     /* ********************************************************************************************************************************************** */
 
 
@@ -688,7 +713,7 @@ public class CoreSpringServerIT extends BaseSpringIT {
         boolean direct = true;
         String username = "username";
 
-        // sendEmail must throw an exception when the arguments are the last ones
+        // sendEmail must throw an exception when the arguments are specific ones
         Mockito.doThrow(new BusinessException("Test exception")).when(emailBusiness).sendEmail(Mockito.eq(subject), Mockito.eq(content), Mockito.eq(recipients), Mockito.eq(direct), Mockito.eq(username));
 
         // Calling the method with the specific arguments
@@ -699,31 +724,4 @@ public class CoreSpringServerIT extends BaseSpringIT {
         // Check that the good exception was thrown
         assertEquals("Test exception", exception.getMessage());
     }
-
-    /* ************************************************************************************************************************ */
-    /* ***************************************************************** proxy attributes *************************************************************** */
-    /* ********************************************************************************************************************************************** */
-
-    /*@Test
-    public void test() throws BusinessException, IOException {
-        SpingTestConfig spingTestConfig = new SpingTestConfig();
-        ProxyClient proxyClient = spingTestConfig.testProxyClient();
-
-        // Check that no exception is thrown
-        assertDoesNotThrow(proxyClient::checkProxy);
-        String proxyFileName = server.getServerProxy();
-
-        System.out.println("TESTT : "+proxyFileName);
-        File proxyFile = new File(proxyFileName);
-        assertTrue(proxyFile.exists());
-        assertEquals("0600", getPermissions(proxyFile)); //  "0600" signifie que seul le propriétaire du fichier a le droit de lire et d'écrire dans le fichier, sans le droit de l'exécuter. Les autres utilisateurs (groupe et autres) n'ont aucune permission sur ce fichier.
-
-    }
-
-    private String getPermissions(File file) throws IOException {
-        PosixFileAttributes attrs = Files.readAttributes(file.toPath(), PosixFileAttributes.class);
-        Set<PosixFilePermission> permissions = attrs.permissions();
-        return PosixFilePermissions.toString(permissions);
-    }*/
-
 }

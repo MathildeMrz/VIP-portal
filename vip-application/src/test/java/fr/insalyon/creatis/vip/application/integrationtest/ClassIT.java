@@ -187,23 +187,4 @@ public class ClassIT extends BaseSpringIT {
         Assertions.assertEquals(classBusiness.getClasses().size(), 1, "Incorrect number of classes");
         Assertions.assertEquals(classBusiness.getClasses().get(0).getEngines().get(0), "test engine 2", "Incorrect number of classes");
     }
-
-
-
-
-
-
-
-    // TODO : correct empty array
-    @Test
-    public void testGetUserClassesName() throws BusinessException, GRIDAClientException {
-        createUser("test1@test.fr", "group1");
-    }
-
-    /*// TODO : correct empty array
-    @Test
-    public void testGetUserClasses() throws BusinessException {
-        configurationBusiness.getOrCreateUser("test1@test.fr", "institution", "group1");
-        System.out.println("IIIII " + classBusiness.getUserClasses("test1@test.fr", true));
-    }*/
 }

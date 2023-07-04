@@ -76,8 +76,8 @@ public class User implements IsSerializable {
 <span class="nc" id="L76">    public User() {</span>
 <span class="nc" id="L77">    }</span>
 
-<span class="nc" id="L79">    public User(String firstName, String lastName, String email, String institution, String password, UserLevel level, CountryCode countryCode, String applications) {</span>
-<span class="nc" id="L80">    }</span>
+<span class="fc" id="L79">    public User(String firstName, String lastName, String email, String institution, String password, UserLevel level, CountryCode countryCode, String applications) {</span>
+<span class="fc" id="L80">    }</span>
 
     public User(String firstName, String lastName, String email, String institution, UserLevel level, CountryCode countryCode) {
 
@@ -88,10 +88,10 @@ public class User implements IsSerializable {
 
     public User(String firstName, String lastName, String email, String institution, String password, UserLevel level, CountryCode countryCode) {
 
-<span class="nc" id="L91">        this(firstName, lastName, email, null, institution, password, false, &quot;&quot;, &quot;&quot;,</span>
+<span class="fc" id="L91">        this(firstName, lastName, email, null, institution, password, false, &quot;&quot;, &quot;&quot;,</span>
                 &quot;&quot;, null, null, level, countryCode, 1, null, null, 0, false);
 
-<span class="nc" id="L94">    }</span>
+<span class="fc" id="L94">    }</span>
 
     public User(String firstName, String lastName, String email, String institution,
                 String password, CountryCode countryCode, Timestamp lastUpdatePublications) {
@@ -212,8 +212,8 @@ public class User implements IsSerializable {
     }
 
     public void setLastLogin(Date lastLogin) {
-<span class="nc" id="L215">        this.lastLogin = lastLogin;</span>
-<span class="nc" id="L216">    }</span>
+<span class="fc" id="L215">        this.lastLogin = lastLogin;</span>
+<span class="fc" id="L216">    }</span>
 
     public UserLevel getLevel() {
 <span class="fc" id="L219">        return level;</span>
@@ -228,16 +228,16 @@ public class User implements IsSerializable {
     }
 
     public void setMaxRunningSimulations(int maxRunningSimulations) {
-<span class="nc" id="L231">        this.maxRunningSimulations = maxRunningSimulations;</span>
-<span class="nc" id="L232">    }</span>
+<span class="fc" id="L231">        this.maxRunningSimulations = maxRunningSimulations;</span>
+<span class="fc" id="L232">    }</span>
 
     public CountryCode getCountryCode() {
 <span class="fc" id="L235">        return countryCode;</span>
     }
 
     public void setCountryCode(CountryCode countryCode) {
-<span class="nc" id="L239">        this.countryCode = countryCode;</span>
-<span class="nc" id="L240">    }</span>
+<span class="fc" id="L239">        this.countryCode = countryCode;</span>
+<span class="fc" id="L240">    }</span>
 
     public Date getRegistration() {
 <span class="fc" id="L243">        return registration;</span>
@@ -262,20 +262,20 @@ public class User implements IsSerializable {
 <span class="fc" id="L262">    }</span>
 
     public Boolean getIsgridfile() {
-<span class="fc" id="L265">        return isGridFile;</span>
+<span class="nc" id="L265">        return isGridFile;</span>
     }
 
     public void setIsgridfile(Boolean isgridfile) {
-<span class="fc" id="L269">        this.isGridFile = isgridfile;</span>
-<span class="fc" id="L270">    }</span>
+<span class="nc" id="L269">        this.isGridFile = isgridfile;</span>
+<span class="nc" id="L270">    }</span>
 
     public Boolean getIsgridjobs() {
-<span class="fc" id="L273">        return isGridJob;</span>
+<span class="nc" id="L273">        return isGridJob;</span>
     }
 
     public void setIsgridjobs(Boolean isgridjobs) {
-<span class="fc" id="L277">        this.isGridJob = isgridjobs;</span>
-<span class="fc" id="L278">    }</span>
+<span class="nc" id="L277">        this.isGridJob = isgridjobs;</span>
+<span class="nc" id="L278">    }</span>
 
     public Timestamp getLastUpdatePublications() {
 <span class="fc" id="L281">        return lastUpdatePublications;</span>

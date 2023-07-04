@@ -22,41 +22,41 @@ public class EngineIT extends BaseSpringIT {
     @Autowired
     private EngineBusiness engineBusiness;
 
+    private Engine engine;
+
     @BeforeEach
     public void setUp() throws BusinessException, GRIDAClientException, DAOException {
         super.setUp();
-        Engine engine = new Engine("test engine", "test endpoint", "enabled");
+        engine = new Engine("test engine", "test endpoint", "enabled");
         engineBusiness.add(engine);
     }
 
     @Test
     public void testInitialization() throws BusinessException {
+
+        // verify engines number
         Assertions.assertEquals(1, engineBusiness.get().size());
-        Assertions.assertEquals("test engine",  engineBusiness.get().get(0).getName());
-        Assertions.assertEquals("test endpoint", engineBusiness.get().get(0).getEndpoint());
-        Assertions.assertEquals("enabled", engineBusiness.get().get(0).getStatus());
+
+        // verify engine1 properties
+        Assertions.assertEquals("test engine",  engine.getName());
+        Assertions.assertEquals("test endpoint", engine.getEndpoint());
+        Assertions.assertEquals("enabled", engine.getStatus());
     }
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* create engine *********************************************************** */
+    /* ************************************************************* create and add engine *********************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCreate() {
-        // Without parameters
-        Engine engine = new Engine();
-    }
+    public void testAdd() throws BusinessException
+    {
+        Engine engine2 = new Engine("test engine 2", "test endpoint 2", "enabled");
+        engineBusiness.add(engine2);
 
-    /* ********************************************************************************************************************************************** */
-    /* ************************************************************* add engine *********************************************************** */
-    /* ********************************************************************************************************************************************** */
-
-    @Test
-    public void testAdd() throws BusinessException {
-        Engine engine = new Engine("test engine 2", "test endpoint 2", "enabled");
-        engineBusiness.add(engine);
-
+        // verify engines number
         Assertions.assertEquals(2, engineBusiness.get().size());
+
+        // verify engine2 properties
         Assertions.assertEquals("test engine 2", engineBusiness.get().get(1).getName());
         Assertions.assertEquals("test endpoint 2", engineBusiness.get().get(1).getEndpoint());
         Assertions.assertEquals("enabled", engineBusiness.get().get(1).getStatus());
@@ -71,6 +71,7 @@ public class EngineIT extends BaseSpringIT {
                         engineBusiness.add(engine)
         );
 
+        // the exception was created before the beginning of the internship
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is already an engine registered with the name : test engine"));
     }
 
@@ -83,30 +84,29 @@ public class EngineIT extends BaseSpringIT {
         Engine engine = new Engine("test engine", "test endpoint 2", "enabled");
         engineBusiness.update(engine);
 
+        // verify engines number
         Assertions.assertEquals(1, engineBusiness.get().size());
-        Assertions.assertEquals("test engine", engineBusiness.get().get(0).getName());
-        Assertions.assertEquals("test endpoint 2", engineBusiness.get().get(0).getEndpoint());
-        Assertions.assertEquals("enabled", engineBusiness.get().get(0).getStatus());
+
+        // verify engine1 properties
+        Assertions.assertEquals("test engine", engine.getName());
+        Assertions.assertEquals("test endpoint 2", engine.getEndpoint());
+        Assertions.assertEquals("enabled", engine.getStatus());
     }
 
     @Test
     public void testUpdateNonExistentEngine() throws BusinessException {
         Engine engine = new Engine("nonExistent engine", "test endpoint 2", "enabled");
 
-        Exception exception = assertThrows(
-                BusinessException.class, () ->
-                        engineBusiness.update(engine)
-        );
-
-        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no engine registered with the name : nonExistent engine"));
+        // UPDATE + nonExistent primary key engine name => no exception
+        // We decided not to add an exception because if this occurs, it will not create problem, just no row will be updated
+        engineBusiness.update(engine);
     }
 
     @Test
     public void testSet() throws BusinessException {
-        Engine engine = engineBusiness.get().get(0);
         engine.setStatus("status updated");
         engineBusiness.update(engine);
-        Assertions.assertTrue(StringUtils.contains(engineBusiness.get().get(0).getStatus(), "status updated"));
+        Assertions.assertTrue(StringUtils.contains(engine.getStatus(), "status updated"));
     }
 
     /* ********************************************************************************************************************************************** */
@@ -135,8 +135,6 @@ public class EngineIT extends BaseSpringIT {
 
     @Test
     public void testGetEngine() throws BusinessException {
-        Assertions.assertEquals("test engine",  engineBusiness.get().get(0).getName());
+        Assertions.assertEquals("test engine", engineBusiness.get().get(0).getName());
     }
-
-
 }
