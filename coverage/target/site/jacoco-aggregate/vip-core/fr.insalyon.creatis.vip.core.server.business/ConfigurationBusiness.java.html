@@ -136,9 +136,9 @@ public class ConfigurationBusiness {
 
     public User getUserWithGroups(String email) throws BusinessException {
         try {
-<span class="nc" id="L139">            User user = userDAO.getUser(email);</span>
-<span class="nc" id="L140">            user.setGroups(usersGroupsDAO.getUserGroups(email));</span>
-<span class="nc" id="L141">            return user;</span>
+<span class="fc" id="L139">            User user = userDAO.getUser(email);</span>
+<span class="fc" id="L140">            user.setGroups(usersGroupsDAO.getUserGroups(email));</span>
+<span class="fc" id="L141">            return user;</span>
 <span class="nc" id="L142">        } catch (DAOException ex) {</span>
 <span class="nc" id="L143">            throw new BusinessException(ex);</span>
         }

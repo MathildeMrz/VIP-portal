@@ -249,8 +249,8 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
 <span class="fc" id="L249">            ResultSet rs = ps.executeQuery();</span>
 <span class="fc" id="L250">            List&lt;String[]&gt; applications = new ArrayList&lt;String[]&gt;();</span>
 
-<span class="pc bpc" id="L252" title="1 of 2 branches missed.">            while (rs.next()) {</span>
-<span class="nc" id="L253">                applications.add(new String[]{rs.getString(&quot;name&quot;), rs.getString(&quot;version&quot;)});</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L253">                applications.add(new String[]{rs.getString(&quot;name&quot;), rs.getString(&quot;version&quot;)});</span>
             }
 <span class="fc" id="L255">            ps.close();</span>
 <span class="fc" id="L256">            return applications;</span>
@@ -443,9 +443,9 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
 
 <span class="fc" id="L444">            return citation;</span>
 
-<span class="nc" id="L446">        } catch (SQLException ex) {</span>
-<span class="nc" id="L447">            logger.error(&quot;Error getting citation for application {}&quot;, name, ex);</span>
-<span class="nc" id="L448">            throw new DAOException(ex);</span>
+<span class="fc" id="L446">        } catch (SQLException ex) {</span>
+<span class="fc" id="L447">            logger.error(&quot;Error getting citation for application {}&quot;, name, ex);</span>
+<span class="fc" id="L448">            throw new DAOException(ex);</span>
         }
     }
 
@@ -547,26 +547,26 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
     @Override
     public void updateVersion(AppVersion version) throws DAOException {
         try {
-<span class="nc" id="L550">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
+<span class="fc" id="L550">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
                     + &quot;VIPAppVersions &quot;
                     + &quot;SET lfn=?, json_lfn=?, visible=?, useBoutiquesForm=? &quot;
                     + &quot;WHERE application=? AND version=?&quot;);
 
-<span class="nc" id="L555">            ps.setString(1, version.getLfn());</span>
-<span class="nc" id="L556">            ps.setString(2, version.getJsonLfn());</span>
-<span class="nc" id="L557">            ps.setBoolean(3, version.isVisible());</span>
-<span class="nc" id="L558">            ps.setBoolean(4, version.isBoutiquesForm());</span>
-<span class="nc" id="L559">            ps.setString(5, version.getApplicationName());</span>
-<span class="nc" id="L560">            ps.setString(6, version.getVersion());</span>
-<span class="nc" id="L561">            ps.executeUpdate();</span>
-<span class="nc" id="L562">            ps.close();</span>
+<span class="fc" id="L555">            ps.setString(1, version.getLfn());</span>
+<span class="fc" id="L556">            ps.setString(2, version.getJsonLfn());</span>
+<span class="fc" id="L557">            ps.setBoolean(3, version.isVisible());</span>
+<span class="fc" id="L558">            ps.setBoolean(4, version.isBoutiquesForm());</span>
+<span class="fc" id="L559">            ps.setString(5, version.getApplicationName());</span>
+<span class="fc" id="L560">            ps.setString(6, version.getVersion());</span>
+<span class="fc" id="L561">            ps.executeUpdate();</span>
+<span class="fc" id="L562">            ps.close();</span>
 
 <span class="nc" id="L564">        } catch (SQLException ex) {</span>
 <span class="nc" id="L565">            logger.error(&quot;Error adding version {} for {}&quot;,</span>
 <span class="nc" id="L566">                    version.getVersion(), version.getApplicationName(), ex);</span>
 <span class="nc" id="L567">            throw new DAOException(ex);</span>
-<span class="nc" id="L568">        }</span>
-<span class="nc" id="L569">    }</span>
+<span class="fc" id="L568">        }</span>
+<span class="fc" id="L569">    }</span>
 
     @Override
     public void updateDoiForVersion(

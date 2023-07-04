@@ -23,7 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationIT extends BaseSpringIT {
     @Autowired
@@ -36,11 +37,12 @@ public class ApplicationIT extends BaseSpringIT {
     static public Map<AppClass, List<Application>> applicationsPerClass = new HashMap<>();
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException, DAOException {
+    public void setUp() throws BusinessException, GRIDAClientException, DAOException
+    {
         super.setUp();
 
         // group test and user test creation
-        Group group1 = new Group("group1", true, true, true);
+        group1 = new Group("group1", true, true, true);
         configurationBusiness.addGroup(group1);
         List<String> groups = new ArrayList<>();
         groups.add("group1");
@@ -64,10 +66,14 @@ public class ApplicationIT extends BaseSpringIT {
         Application application = new Application("Application1", applicationClasses, "test1@test.fr", "test1", "citation1");
         applicationBusiness.add(application);
 
+        AppVersion appVersion = new AppVersion("Application1", "version 0.0", "lfn", "jsonLfn", true, true);
+        applicationBusiness.addVersion(appVersion);
+
     }
 
     @Test
-    public void testInitialization() throws BusinessException {
+    public void testInitialization() throws BusinessException
+    {
         // verify number of applications
         Assertions.assertEquals(1, applicationBusiness.getApplications().size(), "Incorrect number of applications");
 
@@ -79,10 +85,10 @@ public class ApplicationIT extends BaseSpringIT {
         Assertions.assertNull(application.getFullName(), "getApplication should not fill fullname");
         Assertions.assertEquals("class1", application.getApplicationClasses().get(0), "Incorrect class of application");
         Assertions.assertNull(application.getApplicationGroups(), "getApplication should not fill applicationGroups");
-        Assertions.assertEquals(0, applicationBusiness.getVersions("Application1").size(), "Incorrect versions number");
+        Assertions.assertEquals(1, applicationBusiness.getVersions("Application1").size(), "Incorrect versions number");
 
         // verify that there is no application in the first class
-        Assertions.assertEquals(0, applicationBusiness.getApplications("class1").size(), "Incorrect number of application");
+        Assertions.assertEquals(1, applicationBusiness.getApplications("class1").size(), "Incorrect number of application");
 
     }
 
@@ -91,7 +97,8 @@ public class ApplicationIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testUpdateApplication() throws BusinessException {
+    public void testUpdateApplication() throws BusinessException
+    {
         Application updatedApplication = new Application("Application1", applicationClasses, "test2@test.fr", "test1", "citation1");
         applicationBusiness.update(updatedApplication);
 
@@ -100,15 +107,16 @@ public class ApplicationIT extends BaseSpringIT {
 
     // TODO : corriger
     @Test
-    public void testCatchUpdateInexistingApplication() throws BusinessException {
-        Application updatedApplication = new Application("Inexisting Application", applicationClasses, "test2@test.fr", "test1", "citation1");
+    public void testCatchUpdateNonExistentApplication()
+    {
+        Application updatedApplication = new Application("NonExistent Application", applicationClasses, "test2@test.fr", "test1", "citation1");
 
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         applicationBusiness.update(updatedApplication)
         );
 
-        // UPDATE + inexisting foreign key name for VIPAPPLICATIONCLASSES => violation
+        // UPDATE + nonExistent foreign key name for VIPAPPLICATIONCLASSES => violation
         assertTrue(StringUtils.contains(exception.getMessage(), "JdbcSQLException: Referential integrity constraint violation"));
 
 
@@ -119,18 +127,19 @@ public class ApplicationIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testRemoveApplication() throws BusinessException {
+    public void testRemoveApplication() throws BusinessException
+    {
         applicationBusiness.remove("Application1");
 
         Assertions.assertEquals(0, applicationBusiness.getApplications().size(), "Incorrect number of applications");
     }
 
     @Test
-    public void testCatchRemoveInexistingApplication() throws BusinessException
+    public void testCatchRemoveNonExistentApplication() throws BusinessException
     {
-        // DELETE + inexisting primary key publicationId => no exception
+        // DELETE + nonExistent primary key publicationId => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be deleted
-        applicationBusiness.remove("Inexisting application");
+        applicationBusiness.remove("NonExistent application");
 
         Assertions.assertEquals(1, applicationBusiness.getApplications().size(), "Incorrect number of applications");
     }
@@ -141,37 +150,46 @@ public class ApplicationIT extends BaseSpringIT {
 
 
     @Test
-    public void testGetCitationApplication() throws BusinessException {
+    public void testGetCitationApplication() throws BusinessException
+    {
         Assertions.assertEquals("citation1", applicationBusiness.getCitation("Application1"), "Incorrect citation");
     }
 
-    /*@Test
-    public void testCatchGetCitationInexistingApplication() throws BusinessException {
-        assertNull(applicationBusiness.getCitation("Inexisting application"));
-    }*/
+    @Test
+    public void testCatchGetCitationNonExistentApplication()
+    {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        applicationBusiness.getCitation("NonExistent application")
+        );
+
+        assertTrue(StringUtils.contains(exception.getMessage(), "jdbc.JdbcSQLException: No data is available"));
+    }
 
     /* ********************************************************************************************************************************************** */
     /* ****************************************************************** add version *************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testAddVersionApplication() throws BusinessException {
+    public void testAddVersionApplication() throws BusinessException
+    {
         AppVersion appVersion = new AppVersion("Application1", "version 1.0", "lfn", "jsonLfn", true, true);
         applicationBusiness.addVersion(appVersion);
-        Assertions.assertEquals(1, applicationBusiness.getVersions("Application1").size(), "Incorrect versions number");
+        Assertions.assertEquals(2, applicationBusiness.getVersions("Application1").size(), "Incorrect versions number");
     }
 
     /* ********************************************************************************************************************************************** */
     /* ************************************************************** update version ************************************************************ */
     /* ********************************************************************************************************************************************** */
 
-     /* @Test
-    public void testUpdateVersionApplication() throws BusinessException {
-        AppVersion appVersion = new AppVersion("Application1", "version 2.0", "lfn", "jsonLfn", true, true);
-        applicationBusiness.updateVersion(appVersion);
-        Assertions.assertEquals("version 2.0", applicationBusiness.getVersions("Application1").get(0).getVersion(), "Incorrect version updated");
+     @Test
+    public void testUpdateVersionApplication() throws BusinessException
+     {
 
-    }*/
+         AppVersion appVersion = new AppVersion("Application1", "version 0.0", "lfn updated", "jsonLfn", true, true);
+         applicationBusiness.updateVersion(appVersion);
+         Assertions.assertEquals("lfn updated", applicationBusiness.getVersions("Application1").get(0).getLfn(), "Incorrect lfn updated");
+    }
 
 
     /* ********************************************************************************************************************************************** */
@@ -179,18 +197,17 @@ public class ApplicationIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
 
-    /*@Test
+    @Test
     public void testGetApplications() throws BusinessException {
         List<String[]> applications = applicationBusiness.getApplications("class1");
         Assertions.assertEquals(1, applications.size(), "Incorrect applications number");
-    }*/
+    }
 
 
     @Test
-    public void testCatchGetApplicationsInexistingClass() throws BusinessException {
-        List<String[]> applications = applicationBusiness.getApplications("inexisting class");
+    public void testCatchGetApplicationsNonExistentClass() throws BusinessException {
+        List<String[]> applications = applicationBusiness.getApplications("nonExistent class");
         Assertions.assertEquals(0, applications.size(), "Incorrect applications number");
-
     }
 
 }

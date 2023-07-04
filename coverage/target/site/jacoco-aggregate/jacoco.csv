@@ -3,7 +3,7 @@ coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,En
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,ApplicationInputData,557,12,12,0,131,4,15,2,9,2
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,ApplicationDataInitializer,0,73,0,0,0,16,0,2,0,2
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,ClassData,219,431,11,25,39,111,9,21,0,11
-coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,ApplicationData,774,514,31,21,175,138,27,21,8,14
+coverage/vip-application,fr.insalyon.creatis.vip.application.server.dao.mysql,ApplicationData,702,586,30,22,160,153,25,23,7,15
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business.simulation.parser,InputParser,170,0,22,0,44,0,16,0,5,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business.simulation.parser,ScuflParser,24,0,2,0,6,0,3,0,2,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business.simulation.parser,AbstractWorkflowParser,36,0,0,0,8,0,2,0,2,0
@@ -38,7 +38,7 @@ coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,Wor
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,WorkflowExecutionBusiness,167,0,2,0,41,0,8,0,7,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,EngineBusiness,6,46,0,0,2,19,0,5,0,5
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,SimulationBusiness,619,14,52,0,142,5,49,1,19,1
-coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,ApplicationBusiness,391,76,14,0,99,26,26,11,19,11
+coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,ApplicationBusiness,379,88,14,0,94,31,25,12,18,12
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,ClassBusiness,43,80,2,2,11,26,2,9,1,8
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,BoutiquesBusiness.CommandErrorException,12,0,0,0,4,0,2,0,2,0
 coverage/vip-application,fr.insalyon.creatis.vip.application.server.business,BoutiquesBusiness,289,17,14,0,71,6,17,1,10,1
@@ -60,7 +60,7 @@ coverage/vip-application-importer,fr.insalyon.creatis.vip.applicationimporter.se
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.dao,DAOException,0,13,0,0,0,6,0,3,0,3
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,Account,37,0,0,0,16,0,7,0,7,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,TermsOfUse,23,9,0,0,11,4,5,2,5,2
-coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,User,186,206,23,3,52,58,33,31,21,30
+coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,User,107,285,13,13,28,82,20,44,12,39
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,Group,11,35,0,0,6,14,3,7,3,7
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,UsageStats,26,0,0,0,12,0,6,0,6,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business.proxy,ProxyClient.MyTrustManager,335,0,26,0,80,0,19,0,6,0
@@ -77,7 +77,7 @@ coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,BusinessException
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,SpringConfigServer.ReloadablePropertySource,21,0,0,0,5,0,2,0,2,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,VipSessionBusiness,338,14,24,0,81,5,23,1,11,1
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,StatsBusiness.UserSearchCriteria,35,0,0,0,13,0,9,0,9,0
-coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,ConfigurationBusiness,994,1121,61,55,255,274,55,63,14,46
+coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,ConfigurationBusiness,981,1134,61,55,252,277,54,64,13,47
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,EmailBusiness,35,11,0,0,6,4,1,1,1,1
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,SamlTokenValidator,215,0,18,0,55,0,17,0,8,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,SpringConfigServer,608,0,12,0,133,0,63,0,57,0

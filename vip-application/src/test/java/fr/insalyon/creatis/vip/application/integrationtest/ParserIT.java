@@ -108,17 +108,17 @@ public class ParserIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchInexistingUserGetSimulations() throws BusinessException {
+    public void testCatchNonExistentUserGetSimulations() throws BusinessException {
 
         Calendar calendar = Calendar.getInstance();
         Date startDate = calendar.getTime();
 
         Exception exception = assertThrows(
                 BusinessException.class, () ->
-                        workflowBusiness.getSimulations(configurationBusiness.getUser("inexisting user"), startDate)
+                        workflowBusiness.getSimulations(configurationBusiness.getUser("nonExistent user"), startDate)
         );
 
-        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : nonExistent user"));
 
     }
 
@@ -199,7 +199,7 @@ public class ParserIT extends BaseSpringIT {
 
 
     @Test
-    public void testCatchInexistingUserLaunch() throws BusinessException {
+    public void testCatchNonExistentUserLaunch() throws BusinessException {
 
         Map<String, String> map = new HashMap<>();
 
@@ -218,7 +218,7 @@ public class ParserIT extends BaseSpringIT {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         workflowBusiness.launch(
-                                configurationBusiness.getUser("inexisting user"),
+                                configurationBusiness.getUser("nonExistent user"),
                                 list,
                                 map,
                                 "applicationName",
@@ -227,7 +227,7 @@ public class ParserIT extends BaseSpringIT {
                                 "simulationName")
         );
 
-        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : inexisting user"));
+        assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : nonExistent user"));
 
     }
 

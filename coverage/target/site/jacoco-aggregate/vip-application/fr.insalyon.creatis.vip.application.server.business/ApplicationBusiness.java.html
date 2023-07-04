@@ -245,11 +245,11 @@ public class ApplicationBusiness {
 
     public void updateVersion(AppVersion version) throws BusinessException {
         try {
-<span class="nc" id="L248">            applicationDAO.updateVersion(version);</span>
+<span class="fc" id="L248">            applicationDAO.updateVersion(version);</span>
 <span class="nc" id="L249">        } catch (DAOException ex) {</span>
 <span class="nc" id="L250">            throw new BusinessException(ex);</span>
-<span class="nc" id="L251">        }</span>
-<span class="nc" id="L252">    }</span>
+<span class="fc" id="L251">        }</span>
+<span class="fc" id="L252">    }</span>
 
     public void updateDoiForVersion(
             String doi, String applicationName, String version)
@@ -273,8 +273,8 @@ public class ApplicationBusiness {
     public String getCitation(String name) throws BusinessException {
         try {
 <span class="fc" id="L275">            return applicationDAO.getCitation(name);</span>
-<span class="nc" id="L276">        } catch (DAOException ex) {</span>
-<span class="nc" id="L277">            throw new BusinessException(ex);</span>
+<span class="fc" id="L276">        } catch (DAOException ex) {</span>
+<span class="fc" id="L277">            throw new BusinessException(ex);</span>
         }
     }
 

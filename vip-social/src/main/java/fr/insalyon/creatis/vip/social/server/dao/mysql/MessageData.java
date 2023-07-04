@@ -258,7 +258,6 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
     public int verifyMessages(String email) throws DAOException {
 
         try {
-            if (userDAO.isUser(email)) {
                 PreparedStatement ps = getConnection().prepareStatement("SELECT "
                         + "COUNT(id) AS num "
                         + "FROM VIPSocialMessage AS sc, VIPSocialMessageSenderReceiver AS ss "
@@ -271,10 +270,6 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
                 int result = rs.next() ? rs.getInt("num") : 0;
                 ps.close();
                 return result;
-            } else {
-                logger.error("There is no user registered with the e-mail {}", email);
-                throw new DAOException("There is no user registered with the e-mail : " + email);
-            }
 
         } catch (SQLException ex) {
             logger.error("Error verifying messages for {}", email, ex);

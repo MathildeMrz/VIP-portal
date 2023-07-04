@@ -112,14 +112,14 @@ public class ClassIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchGetInexistingClass() throws BusinessException {
+    public void testCatchGetNonExistentClass() throws BusinessException {
 
         Exception exception = assertThrows(
                 BusinessException.class, () ->
-                        classBusiness.getClass("inexisting class")
+                        classBusiness.getClass("nonExistent class")
         );
 
-        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no class registered with the name : inexisting class"));
+        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no class registered with the name : nonExistent class"));
     }
 
 
@@ -140,13 +140,13 @@ public class ClassIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchInexistingClassRemoveClass() throws BusinessException {
+    public void testCatchNonExistentClassRemoveClass() throws BusinessException {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
-                        classBusiness.removeClass("inexisting class")
+                        classBusiness.removeClass("nonExistent class")
         );
 
-        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no class registered with the name : inexisting class"));
+        Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no class registered with the name : nonExistent class"));
     }
 
     /* ********************************************************************************************************************************************** */

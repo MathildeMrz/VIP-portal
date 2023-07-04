@@ -11,8 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -90,16 +88,16 @@ public class PublicationsIT extends BaseSpringIT
     }
 
     @Test
-    public void testCatchAddPublicationInexistingVipAuthor()
+    public void testCatchAddPublicationNonExistentVipAuthor()
     {
-        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", "inexisting_vip_author@test.fr", null);
+        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author1, author2", "type", "typeName", "nonExistent_vip_author@test.fr", null);
 
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         publicationBusiness.addPublication(publication)
         );
 
-        // INSERT + inexisting foreign key vipAuthor => violation
+        // INSERT + nonExistent foreign key vipAuthor => violation
         assertTrue(StringUtils.contains(exception.getMessage(), "JdbcSQLException: Referential integrity constraint violation"));
     }
 
@@ -148,10 +146,10 @@ public class PublicationsIT extends BaseSpringIT
     }
 
     @Test
-    public void testCatchUpdateInexistingPublication() throws BusinessException
+    public void testCatchUpdateNonExistentPublication() throws BusinessException
     {
         Publication publication = new Publication(100L, "Publication title", "21/06/2023", "01010100", "author2, author3", "type", "typeName", adminEmail, null);
-        // UPDATE + inexisting primary key idPublication => no exception
+        // UPDATE + nonExistent primary key idPublication => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be updated
         publicationBusiness.updatePublication(publication);
 
@@ -160,16 +158,16 @@ public class PublicationsIT extends BaseSpringIT
     }
 
     @Test
-    public void testCatchUpdatePublicationInexistingVipAuthor() throws BusinessException
+    public void testCatchUpdatePublicationNonExistentVipAuthor() throws BusinessException
     {
-        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author2, author3", "type", "typeName", "inexistingVipAuthor@test.fr", null);
+        Publication publication = new Publication(idPublicationCreated, "Publication title", "21/06/2023", "01010100", "author2, author3", "type", "typeName", "nonExistentVipAuthor@test.fr", null);
 
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         publicationBusiness.updatePublication(publication)
         );
 
-        // UPDATE + inexisting foreign key vipAuthor => violation
+        // UPDATE + nonExistent foreign key vipAuthor => violation
         assertTrue(StringUtils.contains(exception.getMessage(), "JdbcSQLException: Referential integrity constraint violation"));
         assertEquals(adminEmail, publicationBusiness.getPublication(idPublicationCreated).getVipAuthor(), "Incorrect vipAuthor publication updated");
     }
@@ -195,9 +193,9 @@ public class PublicationsIT extends BaseSpringIT
     }
 
     @Test
-    public void testCatchGetInexistingPublication() throws BusinessException
+    public void testCatchGetNonExistentPublication() throws BusinessException
     {
-        // SELECT + inexisting primary key publicationId => no exception
+        // SELECT + nonExistent primary key publicationId => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be selected
         assertNull(publicationBusiness.getPublication(100L));
     }
@@ -217,7 +215,7 @@ public class PublicationsIT extends BaseSpringIT
     @Test
     public void testCatchRemoveInexistantPublication() throws BusinessException
     {
-        // DELETE + inexisting primary key publicationId => no exception
+        // DELETE + nonExistent primary key publicationId => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be deleted
         publicationBusiness.removePublication(100L);
 
