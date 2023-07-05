@@ -41,7 +41,9 @@ import fr.insalyon.creatis.vip.visualization.client.bean.VisualizationItem;
 import fr.insalyon.creatis.vip.visualization.client.rpc.VisualizationService;
 import fr.insalyon.creatis.vip.visualization.client.rpc.VisualizationServiceAsync;
 
-/** @author Tristan Glatard */
+/**
+ * @author Tristan Glatard
+ */
 public abstract class AbstractViewTab extends Tab {
 
     protected final String filename;
@@ -62,24 +64,24 @@ public abstract class AbstractViewTab extends Tab {
     private void loadLFN(String lfn) {
         VisualizationServiceAsync vs = VisualizationService.Util.getInstance();
         Layout.getInstance().setNoticeMessage(
-            "Downloading file "
-            + lfn.substring(lfn.lastIndexOf('/') + 1)
-            + " from storage element.  Please wait, this may take a while …", 0);
+                "Downloading file "
+                        + lfn.substring(lfn.lastIndexOf('/') + 1)
+                        + " from storage element.  Please wait, this may take a while …", 0);
 
         vs.getVisualizationItemFromLFN(
-            lfn,
-            new AsyncCallback<VisualizationItem>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    Layout.getInstance().setWarningMessage(
-                        "Cannot load file: " + caught.getMessage());
-                }
+                lfn,
+                new AsyncCallback<VisualizationItem>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Layout.getInstance().setWarningMessage(
+                                "Cannot load file: " + caught.getMessage());
+                    }
 
-                @Override
-                public void onSuccess(VisualizationItem result) {
-                    displayFile(result);
-                }
-            });
+                    @Override
+                    public void onSuccess(VisualizationItem result) {
+                        displayFile(result);
+                    }
+                });
     }
 
     protected String getFileUrl(String lfn) {

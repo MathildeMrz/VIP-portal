@@ -92,7 +92,6 @@ public class GateLabInputs {
     }
 
     /**
-     *
      * @param currentUserFolder
      * @return
      * @throws BusinessException
@@ -129,11 +128,11 @@ public class GateLabInputs {
             String phaseSpace = inputsMap.get("phaseSpace");
             Map<String, String> inputMap = new HashMap<String, String>();
             inputMap.put(
-                "inputlink",
+                    "inputlink",
                     lfcPathsBusiness.parseRealDir(input, currentUserFolder));
             //inputMap.put("outputlink", DataManagerUtil.parseRealDir(outputlink));
             inputMap.put(
-                "gate_version",
+                    "gate_version",
                     lfcPathsBusiness.parseRealDir(release, currentUserFolder));
             inputMap.put("particles", particles);
             inputMap.put("simulation", simtype);

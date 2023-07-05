@@ -77,14 +77,14 @@ public class LFCPermissionBusiness {
         path = Paths.get(path).normalize().toString();
 
         // verify the root ("/vip") is present and that it is not written on
-        if ( ! verifyRoot(user, path, LFCAccessType)) return false;
+        if (!verifyRoot(user, path, LFCAccessType)) return false;
 
         // Root is always filtered by user so always permitted
         if (path.equals(ROOT)) return true;
 
         // do not delete synchronized stuff
         if (LFCAccessType == LFCPermissionBusiness.LFCAccessType.DELETE
-            && isPathSynchronized(user, path)) {
+                && isPathSynchronized(user, path)) {
             return false;
         }
         // else it all depends of the first directory
@@ -102,7 +102,7 @@ public class LFCPermissionBusiness {
                     user.getEmail(), path);
             return false;
         }
-        String groupName = firstDir.substring(0,firstDir.length()-GROUP_APPEND.length());
+        String groupName = firstDir.substring(0, firstDir.length() - GROUP_APPEND.length());
         return isGroupAllowed(user, groupName, LFCAccessType, enableAdminArea);
     }
 
@@ -138,12 +138,12 @@ public class LFCPermissionBusiness {
     }
 
     private boolean verifyAdminArea(User user, String path, Boolean enableAdminArea) {
-        if ( ! user.isSystemAdministrator()) {
+        if (!user.isSystemAdministrator()) {
             logger.error("({}) Non admin trying to access an admin folder : {}",
                     user.getEmail(), path);
             return false;
         }
-        if ( ! enableAdminArea) {
+        if (!enableAdminArea) {
             logger.error("({}) LFC access not enabled to admins : {}",
                     user.getEmail(), path);
             return false;

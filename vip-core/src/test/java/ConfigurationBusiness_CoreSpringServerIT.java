@@ -7,20 +7,16 @@ import fr.insalyon.creatis.vip.core.integrationtest.SpingTestConfig;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.EmailBusiness;
-import fr.insalyon.creatis.vip.core.server.business.proxy.ProxyClient;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.xpath.Arg;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.PosixFileAttributes;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,8 +25,7 @@ import static fr.insalyon.creatis.vip.core.client.view.user.UserLevel.Beginner;
 import static fr.insalyon.creatis.vip.core.client.view.user.UserLevel.Developer;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT
-{
+public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
     private User user5;
 
     @BeforeEach
@@ -56,8 +51,8 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT
         user4 = configurationBusiness.getUser(emailUser4);
 
         // Create a very complete test users
-        user5 = new User("firstName", "lastName", "email5@test.fr", "nextEmail@test.fr","institution", "password", false, "code", "folder", "session", new Date(), new Date(), Beginner, CountryCode.fr, 1, new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), 0, false);
-        createUserInGroup("email5@test.fr","suffix5", "group2");
+        user5 = new User("firstName", "lastName", "email5@test.fr", "nextEmail@test.fr", "institution", "password", false, "code", "folder", "session", new Date(), new Date(), Beginner, CountryCode.fr, 1, new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), 0, false);
+        createUserInGroup("email5@test.fr", "suffix5", "group2");
 
         Map<Group, CoreConstants.GROUP_ROLE> groups = new HashMap<>();
         groups.put(group1, CoreConstants.GROUP_ROLE.User);
@@ -88,13 +83,13 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT
     {
         // try all the constructors
         User user6 = new User("firstName", "lastName", "email6@test.fr", "institution", "password", Developer, CountryCode.fr, "applications");
-        User user7 = new User("firstName", "lastName", "email7@test.fr","institution", Developer, CountryCode.fr);
-        User user8 = new User("firstName", "lastName", "email8@test.fr", "institution", "password",Developer,  CountryCode.fr);
-        User user9 = new User("firstName", "lastName", "email9@test.fr", "institution", "password",  CountryCode.fr, new Timestamp(System.currentTimeMillis()));
-        createUserInGroup("email6@test.fr","suffix6", "group2");
-        createUserInGroup("email7@test.fr","suffix7", "group2");
-        createUserInGroup("email8@test.fr","suffix8", "group2");
-        createUserInGroup("email9@test.fr","suffix9", "group2");
+        User user7 = new User("firstName", "lastName", "email7@test.fr", "institution", Developer, CountryCode.fr);
+        User user8 = new User("firstName", "lastName", "email8@test.fr", "institution", "password", Developer, CountryCode.fr);
+        User user9 = new User("firstName", "lastName", "email9@test.fr", "institution", "password", CountryCode.fr, new Timestamp(System.currentTimeMillis()));
+        createUserInGroup("email6@test.fr", "suffix6", "group2");
+        createUserInGroup("email7@test.fr", "suffix7", "group2");
+        createUserInGroup("email8@test.fr", "suffix8", "group2");
+        createUserInGroup("email9@test.fr", "suffix9", "group2");
 
         // Check users number
         assertRowsNbInTable("VIPUsers", 10);
@@ -489,11 +484,34 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT
     }
 
     /* ********************************************************************************************************************************************** */
-    /* ******************************************************************** send code *************************************************************** */
+    /* ******************************************************************** send email *************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCatchSendActivationCode() throws BusinessException {
+    public void testSendActivationCode() throws BusinessException
+    {
+        // Reset not to capture the calls to sendEmail in the Setup
+        Mockito.reset(emailBusiness);
+
+        // Capture email content
+        ArgumentCaptor<String> emailContent = ArgumentCaptor.forClass(String.class);
+        // Capture email recipient
+        ArgumentCaptor<String[]> emailRecipients = ArgumentCaptor.forClass(String[].class);
+
+        configurationBusiness.sendActivationCode(emailUser1);
+        Mockito.verify(emailBusiness).sendEmail(Mockito.anyString(), emailContent.capture(), emailRecipients.capture(), Mockito.eq(true), Mockito.anyString());
+
+        // Check email content
+        Assertions.assertTrue(emailContent.getValue().contains(user1.getFirstName()), "Incorrect user firstname");
+        Assertions.assertTrue(emailContent.getValue().contains(user1.getLastName()), "Incorrect user lastname");
+        // Check recipient
+        Assertions.assertEquals(1, emailRecipients.getValue().length, "Incorrect length of recipients");
+        Assertions.assertEquals(emailUser1, emailRecipients.getValue()[0], "Incorrect user recipient");
+    }
+
+    @Test
+    public void testCatchSendActivationCode() throws BusinessException
+    {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.sendActivationCode("nonExistentUser@test.fr")
@@ -501,6 +519,28 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT
 
         // getUser is called and had an exception before the beginning of the internship
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : nonExistentUser@test.fr"));
+    }
+
+    @Test
+    public void testSendResetCode() throws BusinessException
+    {
+        // Reset not to capture the calls to sendEmail in the Setup
+        Mockito.reset(emailBusiness);
+
+        // Capture email content
+        ArgumentCaptor<String> emailContent = ArgumentCaptor.forClass(String.class);
+        // Capture email recipient
+        ArgumentCaptor<String[]> emailRecipients = ArgumentCaptor.forClass(String[].class);
+
+        configurationBusiness.sendResetCode(emailUser1);
+        Mockito.verify(emailBusiness).sendEmail(Mockito.anyString(), emailContent.capture(), emailRecipients.capture(), Mockito.eq(true), Mockito.anyString());
+
+        // Check email content
+        Assertions.assertTrue(emailContent.getValue().contains(user1.getFirstName()), "Incorrect user firstname");
+        Assertions.assertTrue(emailContent.getValue().contains(user1.getLastName()), "Incorrect user lastname");
+        // Check recipient
+        Assertions.assertEquals(1, emailRecipients.getValue().length, "Incorrect length of recipients");
+        Assertions.assertEquals(emailUser1, emailRecipients.getValue()[0], "Incorrect user recipient");
     }
 
     @Test
@@ -513,6 +553,60 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT
         // getUser is called and had an exception before the beginning of the internship
         Assertions.assertTrue(StringUtils.contains(exception.getMessage(), "There is no user registered with the e-mail : nonExistentUser@test.fr"));
     }
+
+    @Test
+    public void testRequestNewEmail() throws BusinessException
+    {
+        // Reset not to capture the calls to sendEmail in the Setup
+        Mockito.reset(emailBusiness);
+
+        // Capture email content
+        ArgumentCaptor<String> emailContent = ArgumentCaptor.forClass(String.class);
+        // Capture email recipient
+        ArgumentCaptor<String[]> emailRecipients = ArgumentCaptor.forClass(String[].class);
+
+        configurationBusiness.requestNewEmail(user2, "newEmail@test.fr");
+        Mockito.verify(emailBusiness).sendEmail(Mockito.anyString(), emailContent.capture(), emailRecipients.capture(), Mockito.eq(true), Mockito.anyString());
+
+        // Check email content
+        Assertions.assertTrue(emailContent.getValue().contains(user2.getFirstName()), "Incorrect user firstname");
+        Assertions.assertTrue(emailContent.getValue().contains(user2.getLastName()), "Incorrect user lastname");
+        // Check recipient
+        Assertions.assertEquals(1, emailRecipients.getValue().length, "Incorrect length of recipients");
+        Assertions.assertEquals("newEmail@test.fr", emailRecipients.getValue()[0], "Incorrect user recipient");
+        // Check update db
+        Assertions.assertNotNull(configurationBusiness.getUser(emailUser2));
+        Assertions.assertEquals("newEmail@test.fr", configurationBusiness.getUser(emailUser2).getNextEmail(), "Incorrect user next email");
+
+    }
+
+
+    @Test
+    public void testSendContactEmail() throws BusinessException
+    {
+        // Reset not to capture the calls to sendEmail in the Setup
+        Mockito.reset(emailBusiness);
+
+        // Capture email content
+        ArgumentCaptor<String> emailContent = ArgumentCaptor.forClass(String.class);
+        // Capture email recipient
+        ArgumentCaptor<String[]> emailRecipients = ArgumentCaptor.forClass(String[].class);
+
+        configurationBusiness.sendContactMail(user1, "category", "subject", "comment");
+        Mockito.verify(emailBusiness).sendEmail(Mockito.anyString(), emailContent.capture(), emailRecipients.capture(), Mockito.eq(true), Mockito.anyString());
+
+        // Check email content
+        Assertions.assertTrue(emailContent.getValue().contains(user1.getFirstName()), "Incorrect user firstname");
+        Assertions.assertTrue(emailContent.getValue().contains(user1.getLastName()), "Incorrect user lastname");
+        // Check recipient
+        Assertions.assertEquals(1, emailRecipients.getValue().length, "Incorrect length of recipients");
+        Assertions.assertEquals(adminEmail, emailRecipients.getValue()[0], "Incorrect user recipient");
+
+    }
+
+
+
+
 
     /* ********************************************************************************************************************************************** */
     /* ****************************************************************** update user *************************************************************** */
@@ -672,56 +766,4 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT
         assertTrue(user4.hasAcceptTermsOfUse());
     }
 
-    /* ********************************************************************************************************************************************** */
-    /* ****************************************************************** send mail ***************************************************************** */
-    /* ********************************************************************************************************************************************** */
-
-
-    //@Autowired
-    //EmailBusiness emailBusiness;
-
-    @Test
-    public void testSendEmail() throws BusinessException {
-        SpingTestConfig spingTestConfig = new SpingTestConfig();
-        EmailBusiness emailBusiness = spingTestConfig.testEmailBusiness();
-
-        String subject = "Test subject";
-        String content = "Test message content";
-        String[] recipients = {emailUser1, emailUser2};
-        boolean direct = true;
-        String username = "username";
-
-        try {
-            // Calling the method with the specific arguments
-            emailBusiness.sendEmail(subject, content, recipients, direct, username);
-        } catch (Exception e) {
-            fail("Should not have thrown any exception");
-        }
-
-        // Verify the parameters are the good ones
-        Mockito.verify(emailBusiness).sendEmail(Mockito.eq(subject), Mockito.eq(content), Mockito.eq(recipients), Mockito.eq(direct), Mockito.eq(username));
-    }
-
-    @Test
-    public void testCatchExceptionSendEmail() throws BusinessException {
-        SpingTestConfig spingTestConfig = new SpingTestConfig();
-        EmailBusiness emailBusiness = spingTestConfig.testEmailBusiness();
-
-        String subject = "Test subject";
-        String content = "Test message content";
-        String[] recipients = {emailUser1, emailUser2};
-        boolean direct = true;
-        String username = "username";
-
-        // sendEmail must throw an exception when the arguments are specific ones
-        Mockito.doThrow(new BusinessException("Test exception")).when(emailBusiness).sendEmail(Mockito.eq(subject), Mockito.eq(content), Mockito.eq(recipients), Mockito.eq(direct), Mockito.eq(username));
-
-        // Calling the method with the specific arguments
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
-            emailBusiness.sendEmail(subject, content, recipients, direct, username);
-        });
-
-        // Check that the good exception was thrown
-        assertEquals("Test exception", exception.getMessage());
-    }
 }

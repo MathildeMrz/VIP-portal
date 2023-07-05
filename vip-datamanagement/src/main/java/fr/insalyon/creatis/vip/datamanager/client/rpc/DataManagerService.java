@@ -41,7 +41,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
 public interface DataManagerService extends RemoteService {

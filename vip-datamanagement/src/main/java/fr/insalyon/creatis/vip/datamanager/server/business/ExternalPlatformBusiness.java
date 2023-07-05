@@ -88,8 +88,8 @@ public class ExternalPlatformBusiness {
     public ParseResult parseParameter(
             String parameterName, String parameterValue, User user)
             throws BusinessException {
-        if ( ! parameterValue.matches("^\\w+:.*")) {
-             return new ParseResult(false, parameterValue);
+        if (!parameterValue.matches("^\\w+:.*")) {
+            return new ParseResult(false, parameterValue);
         }
         int indexOfColon = parameterValue.indexOf(':');
         String platformIdentifier = parameterValue.substring(0, indexOfColon);
@@ -109,8 +109,8 @@ public class ExternalPlatformBusiness {
         switch (externalPlatform.getType()) {
             case GIRDER:
                 String girderUri = girderStorageBusiness.generateUri(
-                    externalPlatform, parameterName,
-                    fileIdentifier, user);
+                        externalPlatform, parameterName,
+                        fileIdentifier, user);
                 return new ParseResult(true, girderUri);
             case SHANOIR:
                 String shanoirUri = shanoirStorageBusiness.generateUri(

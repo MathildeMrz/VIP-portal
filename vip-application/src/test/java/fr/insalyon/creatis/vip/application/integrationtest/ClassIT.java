@@ -29,11 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ClassIT extends BaseSpringIT {
     @Autowired
     public ClassBusiness classBusiness;
-
     @Autowired
     public EngineBusiness engineBusiness;
-
-    static public Map<AppClass, List<Application>> applicationsPerClass = new HashMap<>();
 
     private List<String> applicationGroups = new ArrayList<>();
     private List<String> engines = new ArrayList<>();
@@ -60,30 +57,17 @@ public class ClassIT extends BaseSpringIT {
         Assertions.assertEquals(classBusiness.getClassesName().get(0), "class1", "Incorrect name of class");
     }
 
+
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* create class *********************************************************** */
+    /* ******************************************************************* create and add class **************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCreateClass() {
+    public void testAddClass() throws BusinessException
+    {
         // With all parameters
-        AppClass appClass = new AppClass("class1", engines, applicationGroups);
-
-        // With string and list
-        AppClass appclass2 = new AppClass("class2", applicationGroups);
-
-        // Without parameters
-        AppClass appclass3 = new AppClass();
-    }
-
-    /* ********************************************************************************************************************************************** */
-    /* ************************************************************* add class *********************************************************** */
-    /* ********************************************************************************************************************************************** */
-
-    @Test
-    public void testAddClass() throws BusinessException {
-        AppClass appClass = new AppClass("class2", engines, applicationGroups);
-        classBusiness.addClass(appClass);
+        AppClass appClass1 = new AppClass("class2", engines, applicationGroups);
+        classBusiness.addClass(appClass1);
 
         Assertions.assertEquals(classBusiness.getClasses().size(), 2, "Incorrect number of classes");
         Assertions.assertEquals(classBusiness.getClassesName().get(1), "class2", "Incorrect name of class");
@@ -103,7 +87,7 @@ public class ClassIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* get class *********************************************************** */
+    /* ****************************************************************** get class ***************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
@@ -124,7 +108,7 @@ public class ClassIT extends BaseSpringIT {
 
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* remove class *********************************************************** */
+    /* **************************************************************** remove class **************************************************************** */
     /* ********************************************************************************************************************************************** */
     @Test
     public void testRemoveClass() throws BusinessException {
@@ -150,7 +134,7 @@ public class ClassIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* ************************************************************* update class *********************************************************** */
+    /* ****************************************************************** update class ************************************************************** */
     /* ********************************************************************************************************************************************** */
 
 

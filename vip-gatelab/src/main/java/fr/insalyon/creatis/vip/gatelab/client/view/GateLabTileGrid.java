@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class GateLabTileGrid extends ApplicationsTileGrid {
@@ -79,14 +78,14 @@ public class GateLabTileGrid extends ApplicationsTileGrid {
 
     @Override
     public void parse(
-        final String applicationName, final String applicationVersion) {
+            final String applicationName, final String applicationVersion) {
 
         String appName = applicationVersion == null ? applicationName : applicationName + " " + applicationVersion;
         if (applicationNames.contains(appName)) {
             Layout.getInstance().addTab(
-                ApplicationConstants.getLaunchTabID(applicationName),
-                () -> new GateLabLaunchTab(
-                    applicationName, applicationVersion, tileName));
+                    ApplicationConstants.getLaunchTabID(applicationName),
+                    () -> new GateLabLaunchTab(
+                            applicationName, applicationVersion, tileName));
         }
     }
 }

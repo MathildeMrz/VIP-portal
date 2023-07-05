@@ -32,7 +32,6 @@
 package fr.insalyon.creatis.vip.docs.client.view;
 
 /**
- *
  * @author Rafael Silva
  */
 public class DocsConstants {

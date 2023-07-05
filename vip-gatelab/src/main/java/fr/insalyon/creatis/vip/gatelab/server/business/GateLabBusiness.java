@@ -56,7 +56,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva, Ibrahim Kallel
  */
 @Service
@@ -79,6 +78,7 @@ public class GateLabBusiness {
         this.usersGroupsDAO = usersGroupsDAO;
         this.emailBusiness = emailBusiness;
     }
+
     /*
         GateLabInputs is prototyped scoped as a new instance is needed
         at each use because each instance is linked to the parsing of a
@@ -102,7 +102,7 @@ public class GateLabBusiness {
     }
 
     public List<String[]> getApplications()
-        throws BusinessException {
+            throws BusinessException {
         try {
             classDAO.add(new AppClass(
                     GateLabConstants.GATELAB_CLASS, new ArrayList<String>()));
@@ -112,7 +112,7 @@ public class GateLabBusiness {
             }
         }
         return applicationBusiness.getApplications(
-            GateLabConstants.GATELAB_CLASS);
+                GateLabConstants.GATELAB_CLASS);
     }
 
     public Map<String, String> getGatelabWorkflowInputs(
@@ -122,7 +122,7 @@ public class GateLabBusiness {
         try {
             GateLabInputs gateinputs = getGateLabInputs(workflowID);
             Map<String, String> inputMap =
-                gateinputs.getWorkflowInputs(currentUserFolder);
+                    gateinputs.getWorkflowInputs(currentUserFolder);
 
             long nb = getGateLabDAO(workflowID).getNumberParticles();
             inputMap.put("runnedparticles", "" + nb);
@@ -145,7 +145,6 @@ public class GateLabBusiness {
     }
 
     /**
-     *
      * @param workflowID
      * @throws GateLabException
      */
@@ -160,7 +159,6 @@ public class GateLabBusiness {
     }
 
     /**
-     *
      * @param email
      * @param message
      * @throws BusinessException

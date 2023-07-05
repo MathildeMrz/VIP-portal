@@ -4,16 +4,16 @@
  * This software is a web portal for pipeline execution on distributed systems.
  *
  * This software is governed by the CeCILL-B license under French law and
- * abiding by the rules of distribution of free software.  You can  use, 
+ * abiding by the rules of distribution of free software.  You can  use,
  * modify and/ or redistribute the software under the terms of the CeCILL-B
  * license as circulated by CEA, CNRS and INRIA at the following URL
- * "http://www.cecill.info". 
+ * "http://www.cecill.info".
  *
  * As a counterpart to the access to the source code and  rights to copy,
  * modify and redistribute granted by the license, users are provided only
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
- * liability. 
+ * liability.
  *
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
@@ -22,9 +22,9 @@
  * therefore means  that it is reserved for developers  and  experienced
  * professionals having in-depth computer knowledge. Users are therefore
  * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or 
- * data to be ensured and,  more generally, to use and operate it in the 
- * same conditions as regards security. 
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
  *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-B license and that you accept its terms.
@@ -52,7 +52,6 @@ import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
 import java.util.*;
 
 /**
- *
  * @author Sorina Camarasu, Rafael Ferreira da Silva
  */
 public class GateLabLaunchTab extends LaunchTab {
@@ -69,8 +68,8 @@ public class GateLabLaunchTab extends LaunchTab {
     public static final String NB_OF_PARTICLES_INPUT_ID = "NumberOfParticles";
     public static final String PHASE_SPACE_INPUT_ID = "phaseSpace";
 
-    public GateLabLaunchTab(String applicationName, String applicationVersion, 
-            String applicationClass) {
+    public GateLabLaunchTab(String applicationName, String applicationVersion,
+                            String applicationClass) {
         super(applicationName, applicationVersion, applicationClass);
     }
 
@@ -197,7 +196,8 @@ public class GateLabLaunchTab extends LaunchTab {
                 }
                 Collections.sort(releases);
                 updateGateReleaseInput(releaseInput, extensions, releases);
-                doNextStep.run();;
+                doNextStep.run();
+                ;
             }
         };
         service.listDir(releaseDir, true, callback);
@@ -254,17 +254,17 @@ public class GateLabLaunchTab extends LaunchTab {
             modal.hide();
             // we get something like "GateInput = " + fileName + ", ParallelizationType = " + type + ", NumberOfParticles = " + parts + ", phaseSpace = " + ps;
             String[] inputs = inputList.split(", ");
-            Map<String,String> valuesMap = new HashMap<>();
+            Map<String, String> valuesMap = new HashMap<>();
 
             // first is a special case, we need to edit the path
             String[] it = inputs[0].split(" = ");
             valuesMap.put(it[0], baseDir.concat("/").concat(it[1]));
 
-            for (int i=1 ; i<4 ; i++) {
+            for (int i = 1; i < 4; i++) {
                 String[] keyAndValue = inputs[i].split(" = ");
                 valuesMap.put(keyAndValue[0], keyAndValue[1]);
             }
-            valuesMap.put(CPU_ESTIMATION_INPUT_ID,"1");
+            valuesMap.put(CPU_ESTIMATION_INPUT_ID, "1");
 
             super.createButtons(); // override "load mac button" with "launch button"
             launchFormLayout.showInputs();
@@ -277,12 +277,12 @@ public class GateLabLaunchTab extends LaunchTab {
 
     public void customizeGateForm(String parallelizationType) {
         // hide and disable some inputs
-            launchFormLayout.hideInput(PHASE_SPACE_INPUT_ID);
-            launchFormLayout.makeInputUnmodifiable(GATE_INPUT_INPUT_ID);
-            launchFormLayout.makeInputUnmodifiable(NB_OF_PARTICLES_INPUT_ID);
-            if ("stat".equals(parallelizationType)) {
-                launchFormLayout.makeInputUnmodifiable(PARALLELIZATION_TYPE_INPUT_ID);
-            }
+        launchFormLayout.hideInput(PHASE_SPACE_INPUT_ID);
+        launchFormLayout.makeInputUnmodifiable(GATE_INPUT_INPUT_ID);
+        launchFormLayout.makeInputUnmodifiable(NB_OF_PARTICLES_INPUT_ID);
+        if ("stat".equals(parallelizationType)) {
+            launchFormLayout.makeInputUnmodifiable(PARALLELIZATION_TYPE_INPUT_ID);
+        }
     }
 
     // called from JS

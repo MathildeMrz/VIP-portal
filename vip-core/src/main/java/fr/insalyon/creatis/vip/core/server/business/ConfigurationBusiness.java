@@ -539,8 +539,7 @@ public class ConfigurationBusiness {
         try {
             String code = UUID.randomUUID().toString();
             userDAO.updateCode(user.getEmail(), code);
-            userDAO
-                    .updateNextEmail(user.getEmail(), newEmail);
+            userDAO.updateNextEmail(user.getEmail(), newEmail);
 
             String emailContent = "<html>"
                     + "<head></head>"

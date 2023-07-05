@@ -4,16 +4,16 @@
  * This software is a web portal for pipeline execution on distributed systems.
  *
  * This software is governed by the CeCILL-B license under French law and
- * abiding by the rules of distribution of free software.  You can  use, 
+ * abiding by the rules of distribution of free software.  You can  use,
  * modify and/ or redistribute the software under the terms of the CeCILL-B
  * license as circulated by CEA, CNRS and INRIA at the following URL
- * &quot;http://www.cecill.info&quot;. 
+ * &quot;http://www.cecill.info&quot;.
  *
  * As a counterpart to the access to the source code and  rights to copy,
  * modify and redistribute granted by the license, users are provided only
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
- * liability. 
+ * liability.
  *
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
@@ -22,9 +22,9 @@
  * therefore means  that it is reserved for developers  and  experienced
  * professionals having in-depth computer knowledge. Users are therefore
  * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or 
- * data to be ensured and,  more generally, to use and operate it in the 
- * same conditions as regards security. 
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
  *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-B license and that you accept its terms.
@@ -43,9 +43,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/** Each GateLabData is specific to a single database, and so to a single simulation.
+/**
+ * Each GateLabData is specific to a single database, and so to a single simulation.
  * So a new instance is needed at each call and this needs the prototype scope
- *
+ * &lt;p&gt;
  * The h2 connection is configured in AbstractJobData
  *
  * @author Ibrahim Kallel, Rafael Silva
@@ -54,17 +55,16 @@ import java.sql.SQLException;
 @Scope(&quot;prototype&quot;)
 public class GateLabData extends AbstractJobData implements GateLabDAO {
 
-<span class="nc" id="L57">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
-    
+<span class="nc" id="L58">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+
     public GateLabData(String dbPath) throws DAOException {
-        
-<span class="nc" id="L61">        super(dbPath);</span>
-<span class="nc" id="L62">    }</span>
+
+<span class="nc" id="L62">        super(dbPath);</span>
+<span class="nc" id="L63">    }</span>
 
     /**
-     * 
      * @return
-     * @throws DAOException 
+     * @throws DAOException
      */
     public long getNumberParticles() throws DAOException {
 
@@ -73,14 +73,14 @@ public class GateLabData extends AbstractJobData implements GateLabDAO {
 <span class="nc" id="L73">            ResultSet rs = ps.executeQuery();</span>
 <span class="nc" id="L74">            boolean hasNext = rs.next();</span>
 
-<span class="nc bnc" id="L76" title="All 2 branches missed.">            if ( ! hasNext) {</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            if (!hasNext) {</span>
                 // no row in somme table, no job is running yet
 <span class="nc" id="L78">                ps.close();</span>
 <span class="nc" id="L79">                return 0;</span>
             }
-            
+
 <span class="nc" id="L82">            long sum = rs.getLong(&quot;somme&quot;);</span>
-            
+
 <span class="nc" id="L84">            ps.close();</span>
 <span class="nc" id="L85">            return sum;</span>
 
@@ -99,21 +99,20 @@ public class GateLabData extends AbstractJobData implements GateLabDAO {
     }
 
     /**
-     * 
-     * @throws DAOException 
+     * @throws DAOException
      */
     public void StopWorkflowSimulation() throws DAOException {
-        
-        try {
-<span class="nc" id="L108">            PreparedStatement ps = connection.prepareStatement(&quot;UPDATE somme SET simulation = 'true' &quot;);</span>
-<span class="nc" id="L109">            ps.execute();</span>
-<span class="nc" id="L110">            ps.close();</span>
-            
-<span class="nc" id="L112">        } catch (SQLException ex) {</span>
-<span class="nc" id="L113">            logger.error(&quot;Error stopping a workflow&quot;, ex);</span>
-<span class="nc" id="L114">            throw new DAOException(ex);</span>
-<span class="nc" id="L115">        }</span>
 
-<span class="nc" id="L117">    }</span>
+        try {
+<span class="nc" id="L107">            PreparedStatement ps = connection.prepareStatement(&quot;UPDATE somme SET simulation = 'true' &quot;);</span>
+<span class="nc" id="L108">            ps.execute();</span>
+<span class="nc" id="L109">            ps.close();</span>
+
+<span class="nc" id="L111">        } catch (SQLException ex) {</span>
+<span class="nc" id="L112">            logger.error(&quot;Error stopping a workflow&quot;, ex);</span>
+<span class="nc" id="L113">            throw new DAOException(ex);</span>
+<span class="nc" id="L114">        }</span>
+
+<span class="nc" id="L116">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

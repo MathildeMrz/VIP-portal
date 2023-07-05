@@ -44,5 +44,5 @@ public interface ApiKeysDAO {
     List<UserApiKey> getByUser(String userEmail) throws DAOException;
 
     void deleteKeyFor(String userEmail, String storageIdentifier)
-        throws DAOException;
+            throws DAOException;
 }

@@ -34,7 +34,9 @@ package fr.insalyon.creatis.vip.visualization.client.view;
 import com.smartgwt.client.widgets.HTMLPane;
 import fr.insalyon.creatis.vip.visualization.client.bean.VisualizationItem;
 
-/** @author glatard */
+/**
+ * @author glatard
+ */
 public class BrainBrowserViewTab extends AbstractViewTab {
 
     private final HTMLPane htmlPane;
@@ -56,7 +58,7 @@ public class BrainBrowserViewTab extends AbstractViewTab {
         return fileName.endsWith(".obj") || fileName.endsWith(".asc");
     }
 
-    public static String fileTypeName(){
+    public static String fileTypeName() {
         return "surface";
     }
 

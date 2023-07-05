@@ -37,46 +37,47 @@ public class UserApiKey {
     private String userEmail;
     private String apiKey;
 
-<span class="nc" id="L40">    public UserApiKey() {}</span>
+<span class="nc" id="L40">    public UserApiKey() {</span>
+<span class="nc" id="L41">    }</span>
 
     public UserApiKey(
-<span class="nc" id="L43">        String storageIdentifier, String userEmail, String apiKey) {</span>
-<span class="nc" id="L44">        this.storageIdentifier = storageIdentifier;</span>
-<span class="nc" id="L45">        this.userEmail = userEmail;</span>
-<span class="nc" id="L46">        this.apiKey = apiKey;</span>
-<span class="nc" id="L47">    }</span>
+<span class="nc" id="L44">            String storageIdentifier, String userEmail, String apiKey) {</span>
+<span class="nc" id="L45">        this.storageIdentifier = storageIdentifier;</span>
+<span class="nc" id="L46">        this.userEmail = userEmail;</span>
+<span class="nc" id="L47">        this.apiKey = apiKey;</span>
+<span class="nc" id="L48">    }</span>
 
     public String getStorageIdentifier() {
-<span class="nc" id="L50">        return storageIdentifier;</span>
+<span class="nc" id="L51">        return storageIdentifier;</span>
     }
 
     public void setStorageIdentifier(String storageIdentifier) {
-<span class="nc" id="L54">        this.storageIdentifier = storageIdentifier;</span>
-<span class="nc" id="L55">    }</span>
+<span class="nc" id="L55">        this.storageIdentifier = storageIdentifier;</span>
+<span class="nc" id="L56">    }</span>
 
     public String getUserEmail() {
-<span class="nc" id="L58">        return userEmail;</span>
+<span class="nc" id="L59">        return userEmail;</span>
     }
 
     public void setUserEmail(String userEmail) {
-<span class="nc" id="L62">        this.userEmail = userEmail;</span>
-<span class="nc" id="L63">    }</span>
+<span class="nc" id="L63">        this.userEmail = userEmail;</span>
+<span class="nc" id="L64">    }</span>
 
     public String getApiKey() {
-<span class="nc" id="L66">        return apiKey;</span>
+<span class="nc" id="L67">        return apiKey;</span>
     }
 
     public void setApiKey(String apiKey) {
-<span class="nc" id="L70">        this.apiKey = apiKey;</span>
-<span class="nc" id="L71">    }</span>
+<span class="nc" id="L71">        this.apiKey = apiKey;</span>
+<span class="nc" id="L72">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L75">        return &quot;UserApiKey@&quot; + Integer.toHexString(hashCode())</span>
-            + &quot;[storageIdentifier=&quot; + storageIdentifier
-            + &quot;,userEmail=&quot; + userEmail
-            + &quot;,apiKey=&quot; + apiKey
-            + &quot;]&quot;;
+<span class="nc" id="L76">        return &quot;UserApiKey@&quot; + Integer.toHexString(hashCode())</span>
+                + &quot;[storageIdentifier=&quot; + storageIdentifier
+                + &quot;,userEmail=&quot; + userEmail
+                + &quot;,apiKey=&quot; + apiKey
+                + &quot;]&quot;;
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

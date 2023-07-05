@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
 public class DataManagerUtil {
@@ -47,9 +46,9 @@ public class DataManagerUtil {
         return lfcDir.substring(lfcDir.lastIndexOf("/") + 1);
     }
 
-     public static List<String> getPaths(List<String> groups){
+    public static List<String> getPaths(List<String> groups) {
         ArrayList<String> paths = new ArrayList<>();
-        for(String s : groups)
+        for (String s : groups)
             paths.add(s.replaceAll(" ", "_"));
         return paths;
     }

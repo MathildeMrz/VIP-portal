@@ -32,7 +32,6 @@
 package fr.insalyon.creatis.vip.gatelab.client;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class GateLabConstants {

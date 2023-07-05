@@ -54,7 +54,6 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- *
  * @author glatard, Nouha Boujelben
  */
 @Repository
@@ -126,7 +125,7 @@ public class SSHData extends JdbcDaoSupport implements SSHDAO {
         try {
             PreparedStatement ps = getConnection().prepareStatement(
                     "INSERT INTO VIPSSHAccounts(email,LFCDir,sshUser,sshHost,transferType,sshDir,sshPort,validated,auth_failed,checkFilesContent,numberSynchronizationFailed,deleteFilesFromSource) "
-                    + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+                            + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 
             ps.setString(1, ssh.getEmail());
             ps.setString(2, ssh.getLfcDir());

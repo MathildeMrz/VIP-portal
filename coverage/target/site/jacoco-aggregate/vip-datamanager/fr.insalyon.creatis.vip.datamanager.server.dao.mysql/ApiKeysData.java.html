@@ -61,10 +61,10 @@ import java.util.List;
 
     @Override
     public void addKey(UserApiKey apiKey)
-        throws DAOException {
+            throws DAOException {
 <span class="nc" id="L65">        try (PreparedStatement ps = getConnection().prepareStatement(</span>
-                 &quot;insert into VIPApiKeys(email, identifier, apiKey) &quot;
-                 + &quot;values(?, ?, ?)&quot;)) {
+                &quot;insert into VIPApiKeys(email, identifier, apiKey) &quot;
+                        + &quot;values(?, ?, ?)&quot;)) {
 <span class="nc" id="L68">            ps.setString(1, apiKey.getUserEmail());</span>
 <span class="nc" id="L69">            ps.setString(2, apiKey.getStorageIdentifier());</span>
 <span class="nc" id="L70">            ps.setString(3, apiKey.getApiKey());</span>
@@ -78,10 +78,10 @@ import java.util.List;
 
     @Override
     public void updateKey(UserApiKey apiKey)
-        throws DAOException {
+            throws DAOException {
 <span class="nc" id="L82">        try (PreparedStatement ps = getConnection().prepareStatement(</span>
-                 &quot;update VIPApiKeys set apiKey = ? &quot;
-                 + &quot;where email = ? and identifier = ?&quot;)) {
+                &quot;update VIPApiKeys set apiKey = ? &quot;
+                        + &quot;where email = ? and identifier = ?&quot;)) {
 <span class="nc" id="L85">            ps.setString(1, apiKey.getApiKey());</span>
 <span class="nc" id="L86">            ps.setString(2, apiKey.getUserEmail());</span>
 <span class="nc" id="L87">            ps.setString(3, apiKey.getStorageIdentifier());</span>
@@ -96,34 +96,34 @@ import java.util.List;
     @Override
     public List&lt;UserApiKey&gt; getByUser(String userEmail) throws DAOException {
 <span class="nc" id="L98">        try (PreparedStatement ps = getConnection().prepareStatement(</span>
-                 &quot;select * from VIPApiKeys &quot; +
-                 &quot;where email=?&quot;)) {
+                &quot;select * from VIPApiKeys &quot; +
+                        &quot;where email=?&quot;)) {
 <span class="nc" id="L101">            ps.setString(1, userEmail);</span>
 <span class="nc" id="L102">            ResultSet rs = ps.executeQuery();</span>
 
 <span class="nc" id="L104">            List&lt;UserApiKey&gt; apiKeys = new LinkedList&lt;&gt;();</span>
 <span class="nc bnc" id="L105" title="All 2 branches missed.">            while (rs.next()) {</span>
 <span class="nc" id="L106">                UserApiKey apiKey = new UserApiKey(</span>
-<span class="nc" id="L107">                    rs.getString(&quot;identifier&quot;),</span>
-<span class="nc" id="L108">                    rs.getString(&quot;email&quot;),</span>
-<span class="nc" id="L109">                    rs.getString(&quot;apiKey&quot;));</span>
+<span class="nc" id="L107">                        rs.getString(&quot;identifier&quot;),</span>
+<span class="nc" id="L108">                        rs.getString(&quot;email&quot;),</span>
+<span class="nc" id="L109">                        rs.getString(&quot;apiKey&quot;));</span>
 <span class="nc" id="L110">                apiKeys.add(apiKey);</span>
 <span class="nc" id="L111">            }</span>
 
 <span class="nc" id="L113">            return apiKeys;</span>
 <span class="nc" id="L114">        } catch (SQLException e) {</span>
 <span class="nc" id="L115">            logger.error(</span>
-                &quot;Error getting api keys for user: {}&quot;, userEmail, e);
+                    &quot;Error getting api keys for user: {}&quot;, userEmail, e);
 <span class="nc" id="L117">            throw new DAOException(e);</span>
         }
     }
 
     @Override
     public void deleteKeyFor(String userEmail, String storageIdentifier)
-        throws DAOException {
+            throws DAOException {
 <span class="nc" id="L124">        try (PreparedStatement ps = getConnection().prepareStatement(</span>
-                 &quot;delete from VIPApiKeys &quot;
-                 + &quot;where email = ? and identifier = ?&quot;)) {
+                &quot;delete from VIPApiKeys &quot;
+                        + &quot;where email = ? and identifier = ?&quot;)) {
 <span class="nc" id="L127">            ps.setString(1, userEmail);</span>
 <span class="nc" id="L128">            ps.setString(2, storageIdentifier);</span>
 
@@ -132,15 +132,15 @@ import java.util.List;
 <span class="nc" id="L132">                logger.error(&quot;Error deleting api key for user {} and storage {} : {} rows deleted&quot;,</span>
 <span class="nc" id="L133">                        userEmail, storageIdentifier, nbRows);</span>
 <span class="nc" id="L134">                throw new DAOException(</span>
-                    &quot;Number of deleted rows (&quot;
-                    + nbRows
-                    + &quot;) not equal to 1, for params: &quot;
-                    + &quot;userEmail=&quot; + userEmail
-                    + &quot;, storageIdentifier=&quot; + storageIdentifier);
+                        &quot;Number of deleted rows (&quot;
+                                + nbRows
+                                + &quot;) not equal to 1, for params: &quot;
+                                + &quot;userEmail=&quot; + userEmail
+                                + &quot;, storageIdentifier=&quot; + storageIdentifier);
             }
 <span class="nc" id="L141">        } catch (SQLException e) {</span>
 <span class="nc" id="L142">            logger.error(</span>
-                &quot;Error deleting api key for user {} and storage {}&quot;,
+                    &quot;Error deleting api key for user {} and storage {}&quot;,
                     userEmail, storageIdentifier, e);
 <span class="nc" id="L145">            throw new DAOException(e);</span>
 <span class="nc" id="L146">        }</span>

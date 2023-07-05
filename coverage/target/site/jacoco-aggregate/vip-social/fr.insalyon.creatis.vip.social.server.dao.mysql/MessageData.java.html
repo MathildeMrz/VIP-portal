@@ -258,18 +258,18 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
     public int verifyMessages(String email) throws DAOException {
 
         try {
-<span class="fc" id="L261">                PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
-                        + &quot;COUNT(id) AS num &quot;
-                        + &quot;FROM VIPSocialMessage AS sc, VIPSocialMessageSenderReceiver AS ss &quot;
-                        + &quot;WHERE sc.id = ss.message_id AND receiver = ? AND user_read = ?&quot;);
-<span class="fc" id="L265">                ps.setString(1, email);</span>
-<span class="fc" id="L266">                ps.setBoolean(2, false);</span>
+<span class="fc" id="L261">            PreparedStatement ps = getConnection().prepareStatement(&quot;SELECT &quot;</span>
+                    + &quot;COUNT(id) AS num &quot;
+                    + &quot;FROM VIPSocialMessage AS sc, VIPSocialMessageSenderReceiver AS ss &quot;
+                    + &quot;WHERE sc.id = ss.message_id AND receiver = ? AND user_read = ?&quot;);
+<span class="fc" id="L265">            ps.setString(1, email);</span>
+<span class="fc" id="L266">            ps.setBoolean(2, false);</span>
 
-<span class="fc" id="L268">                ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L268">            ResultSet rs = ps.executeQuery();</span>
 
-<span class="pc bpc" id="L270" title="1 of 2 branches missed.">                int result = rs.next() ? rs.getInt(&quot;num&quot;) : 0;</span>
-<span class="fc" id="L271">                ps.close();</span>
-<span class="fc" id="L272">                return result;</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">            int result = rs.next() ? rs.getInt(&quot;num&quot;) : 0;</span>
+<span class="fc" id="L271">            ps.close();</span>
+<span class="fc" id="L272">            return result;</span>
 
 <span class="nc" id="L274">        } catch (SQLException ex) {</span>
 <span class="nc" id="L275">            logger.error(&quot;Error verifying messages for {}&quot;, email, ex);</span>

@@ -88,8 +88,8 @@ public class ExternalPlatformBusiness {
     public ParseResult parseParameter(
             String parameterName, String parameterValue, User user)
             throws BusinessException {
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        if ( ! parameterValue.matches(&quot;^\\w+:.*&quot;)) {</span>
-<span class="nc" id="L92">             return new ParseResult(false, parameterValue);</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (!parameterValue.matches(&quot;^\\w+:.*&quot;)) {</span>
+<span class="nc" id="L92">            return new ParseResult(false, parameterValue);</span>
         }
 <span class="nc" id="L94">        int indexOfColon = parameterValue.indexOf(':');</span>
 <span class="nc" id="L95">        String platformIdentifier = parameterValue.substring(0, indexOfColon);</span>
@@ -109,8 +109,8 @@ public class ExternalPlatformBusiness {
 <span class="nc bnc" id="L109" title="All 3 branches missed.">        switch (externalPlatform.getType()) {</span>
             case GIRDER:
 <span class="nc" id="L111">                String girderUri = girderStorageBusiness.generateUri(</span>
-                    externalPlatform, parameterName,
-                    fileIdentifier, user);
+                        externalPlatform, parameterName,
+                        fileIdentifier, user);
 <span class="nc" id="L114">                return new ParseResult(true, girderUri);</span>
             case SHANOIR:
 <span class="nc" id="L116">                String shanoirUri = shanoirStorageBusiness.generateUri(</span>

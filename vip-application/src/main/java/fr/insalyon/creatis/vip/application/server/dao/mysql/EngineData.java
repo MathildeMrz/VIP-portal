@@ -94,17 +94,17 @@ public class EngineData extends JdbcDaoSupport implements EngineDAO {
     @Override
     public void update(Engine engine) throws DAOException {
         try {
-                PreparedStatement ps = getConnection().prepareStatement(
-                        "UPDATE VIPEngines SET endpoint = ?, "
-                                + "status = ? "
-                                + "WHERE name = ?");
+            PreparedStatement ps = getConnection().prepareStatement(
+                    "UPDATE VIPEngines SET endpoint = ?, "
+                            + "status = ? "
+                            + "WHERE name = ?");
 
-                ps.setString(1, engine.getEndpoint());
-                ps.setString(2, engine.getStatus());
-                ps.setString(3, engine.getName());
-                ps.executeUpdate();
+            ps.setString(1, engine.getEndpoint());
+            ps.setString(2, engine.getStatus());
+            ps.setString(3, engine.getName());
+            ps.executeUpdate();
 
-                ps.close();
+            ps.close();
 
         } catch (SQLException ex) {
             logger.error("Error updating engine {} to {}", engine.getName(), engine.getEndpoint(), ex);

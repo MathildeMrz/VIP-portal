@@ -33,30 +33,33 @@ package fr.insalyon.creatis.vip.visualization.client.bean;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-/** @author glatard */
+/**
+ * @author glatard
+ */
 public class Image implements IsSerializable {
     String imageDir;
     String relativeURL;
     Integer zdim;
 
-<span class="nc" id="L42">    public Image() {}</span>
+<span class="nc" id="L44">    public Image() {</span>
+<span class="nc" id="L45">    }</span>
 
-<span class="nc" id="L44">    public Image(String imageDir, Integer zdim, String relativeURL) {</span>
-<span class="nc" id="L45">        this.imageDir = imageDir;</span>
-<span class="nc" id="L46">        this.zdim = zdim;</span>
-<span class="nc" id="L47">        this.relativeURL = relativeURL;</span>
-<span class="nc" id="L48">    }</span>
+<span class="nc" id="L47">    public Image(String imageDir, Integer zdim, String relativeURL) {</span>
+<span class="nc" id="L48">        this.imageDir = imageDir;</span>
+<span class="nc" id="L49">        this.zdim = zdim;</span>
+<span class="nc" id="L50">        this.relativeURL = relativeURL;</span>
+<span class="nc" id="L51">    }</span>
 
-    public String getRelativeURL(){
-<span class="nc" id="L51">        return relativeURL;</span>
+    public String getRelativeURL() {
+<span class="nc" id="L54">        return relativeURL;</span>
     }
 
     public String getImageDir() {
-<span class="nc" id="L55">        return imageDir;</span>
+<span class="nc" id="L58">        return imageDir;</span>
     }
 
     public Integer getZdim() {
-<span class="nc" id="L59">        return zdim;</span>
+<span class="nc" id="L62">        return zdim;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

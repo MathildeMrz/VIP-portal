@@ -37,7 +37,6 @@ import fr.insalyon.creatis.vip.datamanager.client.bean.ExternalPlatform;
 import java.util.List;
 
 /**
- *
  * @author abonnet
  */
 public interface ExternalPlatformsDAO {

@@ -35,20 +35,19 @@ import java.util.Map;
 /**
  * Automatic test class that verifies a local configuration and do some
  * tests validating it can run executions.
- *
+ * <p>
  * The local instance location must be configured through the "vipConfigFolder"
  * property in the "$HOME/.vip/local-config-folder.properties" file. It must
  * include a single line "vipConfigFolder = /path/to/vip/local/folder"
- *
+ * <p>
  * The selected folder needs to include the two mandatory files "vip.conf" and
  * "vip-api.conf", and also a third "vip-local.conf" for local test
  * configuration purposes. A archive containing these three files with
  * valid content for local test is available in "src/main/resources/local-config.zip"
- *
+ * <p>
  * Theses tests are disabled because they are not meant to be run in a classic
  * build lifecycle. They are meant to validate a specific local vip
  * installation or to be adapted to add more content in a local vip.
- *
  */
 @SpringJUnitWebConfig(value = SpringCoreConfig.class)
 @ActiveProfiles({"local", "config-file", "local-db"})
@@ -188,7 +187,7 @@ public class VipLocalConfigurationIT {
         String inputFileName = Paths.get(applicationInputFileLocation).getFileName().toString();
 
         Map<String, String> inputs = new HashMap<>();
-        inputs.put(applicationTextParameter, text );
+        inputs.put(applicationTextParameter, text);
         inputs.put(applicationFileParameter, "/vip/Home/" + inputFileName);
         inputs.put("results-directory", resulFoldertLFN);
         return inputs;
@@ -215,7 +214,7 @@ public class VipLocalConfigurationIT {
     }
 
     private void waitForExecutionToFinish(String simulationID) throws BusinessException, InterruptedException {
-        while (workflowBusiness.getSimulation(simulationID, true).getStatus().equals(SimulationStatus.Running)){
+        while (workflowBusiness.getSimulation(simulationID, true).getStatus().equals(SimulationStatus.Running)) {
             // wait a little
             Thread.sleep(500);
         }

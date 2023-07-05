@@ -50,7 +50,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
 @Service
@@ -94,7 +93,7 @@ public class LFCBusiness {
         } catch (DataManagerException ex) {
             throw new BusinessException(ex);
         } catch (GRIDAClientException ex) {
-            logger.error("Error listing directory {} for {}", baseDir, user,ex);
+            logger.error("Error listing directory {} for {}", baseDir, user, ex);
             throw new BusinessException(ex);
         }
     }
@@ -109,7 +108,7 @@ public class LFCBusiness {
             throw new BusinessException(ex);
         } catch (GRIDAClientException ex) {
             logger.error("Error creating directory {}/{} for {}",
-                    baseDir, name, user,ex);
+                    baseDir, name, user, ex);
             throw new BusinessException(ex);
         }
     }
@@ -129,7 +128,7 @@ public class LFCBusiness {
                 rename(user, oldPath, newExtPath, false);
             } else {
                 logger.error("Error renaming path {} to {} for {}",
-                        oldPath, newPath, user,ex);
+                        oldPath, newPath, user, ex);
                 throw new BusinessException(ex);
             }
         } catch (DataManagerException ex) {
@@ -152,7 +151,7 @@ public class LFCBusiness {
             return gridaClient.exist(lfcPathsBusiness.parseBaseDir(user, path));
         } catch (GRIDAClientException ex) {
             logger.error("Error checking file {} existance for {}",
-                    path, user,ex);
+                    path, user, ex);
             throw new BusinessException(ex);
         } catch (DataManagerException ex) {
             throw new BusinessException(ex);
@@ -166,7 +165,7 @@ public class LFCBusiness {
                     lfcPathsBusiness.parseBaseDir(user, path));
         } catch (GRIDAClientException ex) {
             logger.error("Error getting file {} modification date for {}",
-                    path, user,ex);
+                    path, user, ex);
             throw new BusinessException(ex);
         } catch (DataManagerException ex) {
             throw new BusinessException(ex);
@@ -184,7 +183,7 @@ public class LFCBusiness {
             return gridaClient.getModificationDate(parsedPaths);
         } catch (GRIDAClientException ex) {
             logger.error("Error getting files {} modification dates for {}",
-                    paths, user,ex);
+                    paths, user, ex);
             throw new BusinessException(ex);
         } catch (DataManagerException ex) {
             throw new BusinessException(ex);

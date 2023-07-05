@@ -92,7 +92,7 @@ public class GirderStorageBusiness {
 <span class="nc" id="L92">        String token = getToken(user.getEmail(), apiUrl, externalPlatform.getIdentifier());</span>
 
 <span class="nc" id="L94">        String filename = &quot;//&quot;;</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (! CoreConstants.RESULTS_DIRECTORY_PARAM_NAME.equals(parameterName)) {</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (!CoreConstants.RESULTS_DIRECTORY_PARAM_NAME.equals(parameterName)) {</span>
 <span class="nc" id="L96">            filename = getFilename(apiUrl, fileIdentifier, token);</span>
         }
 <span class="nc" id="L98">        return buildUri(filename, apiUrl, fileIdentifier, token);</span>
@@ -100,7 +100,7 @@ public class GirderStorageBusiness {
 
     private void verifyExternalPlatform(ExternalPlatform externalPlatform)
             throws BusinessException {
-<span class="nc bnc" id="L103" title="All 2 branches missed.">        if ( ! externalPlatform.getType().equals(Type.GIRDER)) {</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (!externalPlatform.getType().equals(Type.GIRDER)) {</span>
 <span class="nc" id="L104">            logger.error(&quot;Trying to generate a girder URI for a non girder storage {}&quot;,</span>
 <span class="nc" id="L105">                    externalPlatform.getType());</span>
 <span class="nc" id="L106">            throw new BusinessException(&quot;Cannot generate girder uri&quot;);</span>
@@ -127,12 +127,12 @@ public class GirderStorageBusiness {
             throws BusinessException {
 
 <span class="nc" id="L129">        String key = apiKeyBusiness.apiKeysFor(userEmail)</span>
-<span class="nc" id="L130">            .stream()</span>
-<span class="nc" id="L131">            .filter(k -&gt; storageId.equals(k.getStorageIdentifier()))</span>
-<span class="nc" id="L132">            .findFirst()</span>
-<span class="nc" id="L133">            .map(k -&gt; k.getApiKey())</span>
-<span class="nc" id="L134">            .orElseThrow(() -&gt; new BusinessException(</span>
-                             &quot;No api key found for storageId: &quot; + storageId));
+<span class="nc" id="L130">                .stream()</span>
+<span class="nc" id="L131">                .filter(k -&gt; storageId.equals(k.getStorageIdentifier()))</span>
+<span class="nc" id="L132">                .findFirst()</span>
+<span class="nc" id="L133">                .map(k -&gt; k.getApiKey())</span>
+<span class="nc" id="L134">                .orElseThrow(() -&gt; new BusinessException(</span>
+                        &quot;No api key found for storageId: &quot; + storageId));
 
         try {
 <span class="nc" id="L138">            HttpResult res = makeHttpRequest(</span>
@@ -144,11 +144,11 @@ public class GirderStorageBusiness {
 <span class="nc bnc" id="L144" title="All 2 branches missed.">            if (res.code &gt;= 400) {</span>
 <span class="nc" id="L145">                logger.error(&quot;Unable to get girder token from api key {} : {}&quot;, key, res.response);</span>
 <span class="nc" id="L146">                throw new BusinessException(</span>
-                    &quot;Unable to get token from api key: &quot; + res.response);
+                        &quot;Unable to get token from api key: &quot; + res.response);
             }
 
 <span class="nc" id="L150">            ObjectNode node =</span>
-<span class="nc" id="L151">                new ObjectMapper().readValue(res.response, ObjectNode.class);</span>
+<span class="nc" id="L151">                    new ObjectMapper().readValue(res.response, ObjectNode.class);</span>
 <span class="nc" id="L152">            return node.get(&quot;authToken&quot;).get(&quot;token&quot;).asText();</span>
 <span class="nc" id="L153">        } catch (IOException | NullPointerException ex) {</span>
 <span class="nc" id="L154">            logger.error(&quot;Error getting girder token for {} with key {}&quot;,</span>
@@ -162,19 +162,19 @@ public class GirderStorageBusiness {
 
         try {
 <span class="nc" id="L164">            HttpResult res = makeHttpRequest(</span>
-                apiUrl + &quot;/file/&quot; + fileId,
-                METHOD_GET,
-<span class="nc" id="L167">                Optional.of(</span>
-<span class="nc" id="L168">                    con -&gt; con.setRequestProperty(&quot;Girder-Token&quot;, token)));</span>
+                    apiUrl + &quot;/file/&quot; + fileId,
+                    METHOD_GET,
+<span class="nc" id="L167">                    Optional.of(</span>
+<span class="nc" id="L168">                            con -&gt; con.setRequestProperty(&quot;Girder-Token&quot;, token)));</span>
 
 <span class="nc bnc" id="L170" title="All 2 branches missed.">            if (res.code &gt;= 400) {</span>
 <span class="nc" id="L171">                logger.error(&quot;Unable to get girder filename for file {} : {}&quot;, fileId, res.response);</span>
 <span class="nc" id="L172">                throw new BusinessException(</span>
-                    &quot;Unable to get file info: &quot; + res.response);
+                        &quot;Unable to get file info: &quot; + res.response);
             }
 
 <span class="nc" id="L176">            ObjectNode node =</span>
-<span class="nc" id="L177">                new ObjectMapper().readValue(res.response, ObjectNode.class);</span>
+<span class="nc" id="L177">                    new ObjectMapper().readValue(res.response, ObjectNode.class);</span>
 <span class="nc" id="L178">            String name = node.get(&quot;name&quot;).asText();</span>
 
             // clean filename as in an uploaded file
@@ -188,52 +188,53 @@ public class GirderStorageBusiness {
 
     private static final String METHOD_GET = &quot;GET&quot;;
     private static final String METHOD_POST = &quot;POST&quot;;
+
     private HttpResult makeHttpRequest(
-        String surl,
-        String method,
-        Optional&lt;Consumer&lt;HttpURLConnection&gt;&gt; connectionUpdater)
-        throws IOException {
+            String surl,
+            String method,
+            Optional&lt;Consumer&lt;HttpURLConnection&gt;&gt; connectionUpdater)
+            throws IOException {
 
-<span class="nc" id="L197">        URL url = new URL(surl);</span>
+<span class="nc" id="L198">        URL url = new URL(surl);</span>
 
-<span class="nc" id="L199">        HttpURLConnection con = (HttpURLConnection) url.openConnection();</span>
-<span class="nc" id="L200">        con.setRequestMethod(method);</span>
-<span class="nc bnc" id="L201" title="All 2 branches missed.">        if (METHOD_POST.equals(method)) {</span>
-<span class="nc" id="L202">            con.setDoOutput(true);</span>
-<span class="nc" id="L203">            con.setFixedLengthStreamingMode(0);</span>
+<span class="nc" id="L200">        HttpURLConnection con = (HttpURLConnection) url.openConnection();</span>
+<span class="nc" id="L201">        con.setRequestMethod(method);</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (METHOD_POST.equals(method)) {</span>
+<span class="nc" id="L203">            con.setDoOutput(true);</span>
+<span class="nc" id="L204">            con.setFixedLengthStreamingMode(0);</span>
         }
-<span class="nc" id="L205">        con.setRequestProperty(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
-<span class="nc" id="L206">        con.setRequestProperty(&quot;Accept&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L206">        con.setRequestProperty(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L207">        con.setRequestProperty(&quot;Accept&quot;, &quot;application/json&quot;);</span>
 
-<span class="nc" id="L208">        connectionUpdater.ifPresent(f -&gt; f.accept(con));</span>
+<span class="nc" id="L209">        connectionUpdater.ifPresent(f -&gt; f.accept(con));</span>
 
-<span class="nc bnc" id="L210" title="All 2 branches missed.">        InputStream is = con.getResponseCode() &gt;= 400</span>
-<span class="nc" id="L211">            ? con.getErrorStream()</span>
-<span class="nc" id="L212">            : con.getInputStream();</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        InputStream is = con.getResponseCode() &gt;= 400</span>
+<span class="nc" id="L212">                ? con.getErrorStream()</span>
+<span class="nc" id="L213">                : con.getInputStream();</span>
 
-<span class="nc" id="L214">        StringBuilder response = new StringBuilder();</span>
-<span class="nc" id="L215">        try (BufferedReader br1 =</span>
-             new BufferedReader(new InputStreamReader(is))) {
+<span class="nc" id="L215">        StringBuilder response = new StringBuilder();</span>
+<span class="nc" id="L216">        try (BufferedReader br1 =</span>
+                     new BufferedReader(new InputStreamReader(is))) {
 
-<span class="nc" id="L218">            String line = null;</span>
-<span class="nc bnc" id="L219" title="All 2 branches missed.">            while ((line = br1.readLine()) != null) {</span>
-<span class="nc" id="L220">                response.append(line);</span>
+<span class="nc" id="L219">            String line = null;</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">            while ((line = br1.readLine()) != null) {</span>
+<span class="nc" id="L221">                response.append(line);</span>
             }
         }
 
-<span class="nc" id="L224">        con.disconnect();</span>
+<span class="nc" id="L225">        con.disconnect();</span>
 
-<span class="nc" id="L226">        return new HttpResult(con.getResponseCode(), response.toString());</span>
+<span class="nc" id="L227">        return new HttpResult(con.getResponseCode(), response.toString());</span>
     }
 
     private static class HttpResult {
         final int code;
         final String response;
 
-<span class="nc" id="L233">        public HttpResult(int code, String response) {</span>
-<span class="nc" id="L234">            this.code = code;</span>
-<span class="nc" id="L235">            this.response = response;</span>
-<span class="nc" id="L236">        }</span>
+<span class="nc" id="L234">        public HttpResult(int code, String response) {</span>
+<span class="nc" id="L235">            this.code = code;</span>
+<span class="nc" id="L236">            this.response = response;</span>
+<span class="nc" id="L237">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -65,8 +65,8 @@ import java.util.List;
     @Override
     public ExternalPlatform getById(String identifier) throws DAOException {
 <span class="nc" id="L67">        try (PreparedStatement ps = getConnection().prepareStatement(</span>
-                    &quot;SELECT * FROM VIPExternalPlatforms &quot; +
-                    &quot;WHERE identifier=?&quot;)) {
+                &quot;SELECT * FROM VIPExternalPlatforms &quot; +
+                        &quot;WHERE identifier=?&quot;)) {
 <span class="nc" id="L70">            ps.setString(1, identifier);</span>
 <span class="nc" id="L71">            ResultSet rs = ps.executeQuery();</span>
 
@@ -96,7 +96,7 @@ import java.util.List;
     @Override
     public List&lt;ExternalPlatform&gt; getAll() throws DAOException {
 <span class="nc" id="L98">        try (PreparedStatement ps = getConnection().prepareStatement(</span>
-                    &quot;SELECT * FROM VIPExternalPlatforms &quot;)) {
+                &quot;SELECT * FROM VIPExternalPlatforms &quot;)) {
 
 <span class="nc" id="L101">            ResultSet rs = ps.executeQuery();</span>
 <span class="nc" id="L102">            List&lt;ExternalPlatform&gt; externalPlatformsList = new ArrayList&lt;&gt;();</span>

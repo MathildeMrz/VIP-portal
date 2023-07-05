@@ -73,12 +73,12 @@ public class ApiKeyBusiness {
 
             List<UserApiKey> keys = apiKeysDAO.getByUser(userEmail);
             UserApiKey newKey =
-                new UserApiKey(storageIdentifier, userEmail, apiKey);
+                    new UserApiKey(storageIdentifier, userEmail, apiKey);
 
             if (keys.stream().anyMatch(
                     k ->
-                    k.getStorageIdentifier().equals(storageIdentifier)
-                    && k.getUserEmail().equals(userEmail))) {
+                            k.getStorageIdentifier().equals(storageIdentifier)
+                                    && k.getUserEmail().equals(userEmail))) {
                 apiKeysDAO.updateKey(newKey);
             } else {
                 apiKeysDAO.addKey(newKey);

@@ -41,7 +41,6 @@ import fr.insalyon.creatis.vip.datamanager.client.view.system.operation.ManageOp
 import fr.insalyon.creatis.vip.datamanager.client.view.system.zombie.ManageZombieFilesTab;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class DataManagerSystemParser extends ApplicationParser {
@@ -62,27 +61,25 @@ public class DataManagerSystemParser extends ApplicationParser {
 
         if (applicationName.equals(DataManagerConstants.APP_OPERATIONS)) {
             Layout.getInstance().addTab(
-                DataManagerConstants.TAB_MANAGE_OPERATIONS,
-                ManageOperationsTab::new);
+                    DataManagerConstants.TAB_MANAGE_OPERATIONS,
+                    ManageOperationsTab::new);
             return true;
 
         } else if (applicationName.equals(DataManagerConstants.APP_CACHED_FILES)) {
             Layout.getInstance().addTab(
-                DataManagerConstants.TAB_MANAGE_CACHED_FILES,
-                ManageCachedFilesTab::new);
+                    DataManagerConstants.TAB_MANAGE_CACHED_FILES,
+                    ManageCachedFilesTab::new);
             return true;
 
         } else if (applicationName.equals(DataManagerConstants.APP_ZOMBIE_FILES)) {
             Layout.getInstance().addTab(
-                DataManagerConstants.TAB_MANAGE_ZOMBIE_FILES,
-                ManageZombieFilesTab::new);
+                    DataManagerConstants.TAB_MANAGE_ZOMBIE_FILES,
+                    ManageZombieFilesTab::new);
             return true;
 
-        }
-
-        else if (applicationName.equals(DataManagerConstants.APP_SSH)) {
+        } else if (applicationName.equals(DataManagerConstants.APP_SSH)) {
             Layout.getInstance().addTab(
-                DataManagerConstants.TAB_MANAGE_SSH, ManageSSHTab::new);
+                    DataManagerConstants.TAB_MANAGE_SSH, ManageSSHTab::new);
             return true;
 
         }

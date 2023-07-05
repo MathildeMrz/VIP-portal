@@ -816,19 +816,19 @@ import java.util.*;
     public void updateCode(String email, String code) throws DAOException {
 
         try {
-<span class="nc" id="L819">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
+<span class="fc" id="L819">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
                     + &quot;VIPUsers SET code = ? WHERE email = ?&quot;);
-<span class="nc" id="L821">            ps.setString(1, code);</span>
-<span class="nc" id="L822">            ps.setString(2, email);</span>
+<span class="fc" id="L821">            ps.setString(1, code);</span>
+<span class="fc" id="L822">            ps.setString(2, email);</span>
 
-<span class="nc" id="L824">            ps.executeUpdate();</span>
-<span class="nc" id="L825">            ps.close();</span>
+<span class="fc" id="L824">            ps.executeUpdate();</span>
+<span class="fc" id="L825">            ps.close();</span>
 
 <span class="nc" id="L827">        } catch (SQLException ex) {</span>
 <span class="nc" id="L828">            logger.error(&quot;Error updating code to {} for user {}&quot;, code, email, ex);</span>
 <span class="nc" id="L829">            throw new DAOException(ex);</span>
-<span class="nc" id="L830">        }</span>
-<span class="nc" id="L831">    }</span>
+<span class="fc" id="L830">        }</span>
+<span class="fc" id="L831">    }</span>
 
     /**
      * @param email

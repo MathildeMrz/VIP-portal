@@ -48,13 +48,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class GateLabModule extends Module {
 
     public GateLabModule() {
-      //new ApplicationModule();
+        //new ApplicationModule();
     }
 
     @Override
@@ -62,16 +61,16 @@ public class GateLabModule extends Module {
 
         if (CoreModule.user.isSystemAdministrator()
                 || CoreModule.user.hasGroupAccess(GateLabConstants.GROUP_GATELAB)) {
-            for(String GateLabClass:ApplicationModule.reservedClasses.keySet()){
-                if(ApplicationModule.reservedClasses.get(GateLabClass)==0){
+            for (String GateLabClass : ApplicationModule.reservedClasses.keySet()) {
+                if (ApplicationModule.reservedClasses.get(GateLabClass) == 0) {
                     CoreModule.addApplicationsTileGrid(new GateLabTileGrid(GateLabClass));
                 }
             }
         }
         if (CoreModule.user.isSystemAdministrator()
                 || CoreModule.user.hasGroupAccess(GateLabConstants.GROUP_GATELABTEST)) {
-            for(String GateLabClass:ApplicationModule.reservedClasses.keySet()){
-                if(ApplicationModule.reservedClasses.get(GateLabClass)==1){
+            for (String GateLabClass : ApplicationModule.reservedClasses.keySet()) {
+                if (ApplicationModule.reservedClasses.get(GateLabClass) == 1) {
                     if (GateLabClass.length() == 0)
                         GateLabClass = "GateLabEmptyName";
                     CoreModule.addApplicationsTileGrid(new GateLabTileGrid(GateLabClass));

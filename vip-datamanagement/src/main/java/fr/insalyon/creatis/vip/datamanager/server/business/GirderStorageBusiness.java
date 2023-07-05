@@ -92,7 +92,7 @@ public class GirderStorageBusiness {
         String token = getToken(user.getEmail(), apiUrl, externalPlatform.getIdentifier());
 
         String filename = "//";
-        if (! CoreConstants.RESULTS_DIRECTORY_PARAM_NAME.equals(parameterName)) {
+        if (!CoreConstants.RESULTS_DIRECTORY_PARAM_NAME.equals(parameterName)) {
             filename = getFilename(apiUrl, fileIdentifier, token);
         }
         return buildUri(filename, apiUrl, fileIdentifier, token);
@@ -100,7 +100,7 @@ public class GirderStorageBusiness {
 
     private void verifyExternalPlatform(ExternalPlatform externalPlatform)
             throws BusinessException {
-        if ( ! externalPlatform.getType().equals(Type.GIRDER)) {
+        if (!externalPlatform.getType().equals(Type.GIRDER)) {
             logger.error("Trying to generate a girder URI for a non girder storage {}",
                     externalPlatform.getType());
             throw new BusinessException("Cannot generate girder uri");
@@ -127,12 +127,12 @@ public class GirderStorageBusiness {
             throws BusinessException {
 
         String key = apiKeyBusiness.apiKeysFor(userEmail)
-            .stream()
-            .filter(k -> storageId.equals(k.getStorageIdentifier()))
-            .findFirst()
-            .map(k -> k.getApiKey())
-            .orElseThrow(() -> new BusinessException(
-                             "No api key found for storageId: " + storageId));
+                .stream()
+                .filter(k -> storageId.equals(k.getStorageIdentifier()))
+                .findFirst()
+                .map(k -> k.getApiKey())
+                .orElseThrow(() -> new BusinessException(
+                        "No api key found for storageId: " + storageId));
 
         try {
             HttpResult res = makeHttpRequest(
@@ -144,11 +144,11 @@ public class GirderStorageBusiness {
             if (res.code >= 400) {
                 logger.error("Unable to get girder token from api key {} : {}", key, res.response);
                 throw new BusinessException(
-                    "Unable to get token from api key: " + res.response);
+                        "Unable to get token from api key: " + res.response);
             }
 
             ObjectNode node =
-                new ObjectMapper().readValue(res.response, ObjectNode.class);
+                    new ObjectMapper().readValue(res.response, ObjectNode.class);
             return node.get("authToken").get("token").asText();
         } catch (IOException | NullPointerException ex) {
             logger.error("Error getting girder token for {} with key {}",
@@ -162,19 +162,19 @@ public class GirderStorageBusiness {
 
         try {
             HttpResult res = makeHttpRequest(
-                apiUrl + "/file/" + fileId,
-                METHOD_GET,
-                Optional.of(
-                    con -> con.setRequestProperty("Girder-Token", token)));
+                    apiUrl + "/file/" + fileId,
+                    METHOD_GET,
+                    Optional.of(
+                            con -> con.setRequestProperty("Girder-Token", token)));
 
             if (res.code >= 400) {
                 logger.error("Unable to get girder filename for file {} : {}", fileId, res.response);
                 throw new BusinessException(
-                    "Unable to get file info: " + res.response);
+                        "Unable to get file info: " + res.response);
             }
 
             ObjectNode node =
-                new ObjectMapper().readValue(res.response, ObjectNode.class);
+                    new ObjectMapper().readValue(res.response, ObjectNode.class);
             String name = node.get("name").asText();
 
             // clean filename as in an uploaded file
@@ -188,11 +188,12 @@ public class GirderStorageBusiness {
 
     private static final String METHOD_GET = "GET";
     private static final String METHOD_POST = "POST";
+
     private HttpResult makeHttpRequest(
-        String surl,
-        String method,
-        Optional<Consumer<HttpURLConnection>> connectionUpdater)
-        throws IOException {
+            String surl,
+            String method,
+            Optional<Consumer<HttpURLConnection>> connectionUpdater)
+            throws IOException {
 
         URL url = new URL(surl);
 
@@ -208,12 +209,12 @@ public class GirderStorageBusiness {
         connectionUpdater.ifPresent(f -> f.accept(con));
 
         InputStream is = con.getResponseCode() >= 400
-            ? con.getErrorStream()
-            : con.getInputStream();
+                ? con.getErrorStream()
+                : con.getInputStream();
 
         StringBuilder response = new StringBuilder();
         try (BufferedReader br1 =
-             new BufferedReader(new InputStreamReader(is))) {
+                     new BufferedReader(new InputStreamReader(is))) {
 
             String line = null;
             while ((line = br1.readLine()) != null) {

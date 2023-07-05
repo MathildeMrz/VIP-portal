@@ -56,14 +56,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva, Ibrahim Kallel
  */
 @Service
 @Transactional
 public class GateLabBusiness {
 
-<span class="fc" id="L66">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+<span class="fc" id="L65">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
 
     private ClassDAO classDAO;
     private ApplicationBusiness applicationBusiness;
@@ -72,13 +71,14 @@ public class GateLabBusiness {
     private EmailBusiness emailBusiness;
 
     @Autowired
-<span class="fc" id="L75">    public GateLabBusiness(ClassDAO classDAO, ApplicationBusiness applicationBusiness, UserDAO userDAO, UsersGroupsDAO usersGroupsDAO, EmailBusiness emailBusiness) {</span>
-<span class="fc" id="L76">        this.classDAO = classDAO;</span>
-<span class="fc" id="L77">        this.applicationBusiness = applicationBusiness;</span>
-<span class="fc" id="L78">        this.userDAO = userDAO;</span>
-<span class="fc" id="L79">        this.usersGroupsDAO = usersGroupsDAO;</span>
-<span class="fc" id="L80">        this.emailBusiness = emailBusiness;</span>
-<span class="fc" id="L81">    }</span>
+<span class="fc" id="L74">    public GateLabBusiness(ClassDAO classDAO, ApplicationBusiness applicationBusiness, UserDAO userDAO, UsersGroupsDAO usersGroupsDAO, EmailBusiness emailBusiness) {</span>
+<span class="fc" id="L75">        this.classDAO = classDAO;</span>
+<span class="fc" id="L76">        this.applicationBusiness = applicationBusiness;</span>
+<span class="fc" id="L77">        this.userDAO = userDAO;</span>
+<span class="fc" id="L78">        this.usersGroupsDAO = usersGroupsDAO;</span>
+<span class="fc" id="L79">        this.emailBusiness = emailBusiness;</span>
+<span class="fc" id="L80">    }</span>
+
     /*
         GateLabInputs is prototyped scoped as a new instance is needed
         at each use because each instance is linked to the parsing of a
@@ -102,7 +102,7 @@ public class GateLabBusiness {
     }
 
     public List&lt;String[]&gt; getApplications()
-        throws BusinessException {
+            throws BusinessException {
         try {
 <span class="nc" id="L107">            classDAO.add(new AppClass(</span>
                     GateLabConstants.GATELAB_CLASS, new ArrayList&lt;String&gt;()));
@@ -112,7 +112,7 @@ public class GateLabBusiness {
             }
 <span class="nc" id="L113">        }</span>
 <span class="nc" id="L114">        return applicationBusiness.getApplications(</span>
-            GateLabConstants.GATELAB_CLASS);
+                GateLabConstants.GATELAB_CLASS);
     }
 
     public Map&lt;String, String&gt; getGatelabWorkflowInputs(
@@ -122,7 +122,7 @@ public class GateLabBusiness {
         try {
 <span class="nc" id="L123">            GateLabInputs gateinputs = getGateLabInputs(workflowID);</span>
 <span class="nc" id="L124">            Map&lt;String, String&gt; inputMap =</span>
-<span class="nc" id="L125">                gateinputs.getWorkflowInputs(currentUserFolder);</span>
+<span class="nc" id="L125">                    gateinputs.getWorkflowInputs(currentUserFolder);</span>
 
 <span class="nc" id="L127">            long nb = getGateLabDAO(workflowID).getNumberParticles();</span>
 <span class="nc" id="L128">            inputMap.put(&quot;runnedparticles&quot;, &quot;&quot; + nb);</span>
@@ -145,22 +145,20 @@ public class GateLabBusiness {
     }
 
     /**
-     *
      * @param workflowID
      * @throws GateLabException
      */
     public void StopWorkflowSimulation(String workflowID) throws BusinessException {
 
         try {
-<span class="nc" id="L155">            getGateLabDAO(workflowID).StopWorkflowSimulation();</span>
+<span class="nc" id="L154">            getGateLabDAO(workflowID).StopWorkflowSimulation();</span>
 
-<span class="nc" id="L157">        } catch (DAOException ex) {</span>
-<span class="nc" id="L158">            throw new BusinessException(ex);</span>
-<span class="nc" id="L159">        }</span>
-<span class="nc" id="L160">    }</span>
+<span class="nc" id="L156">        } catch (DAOException ex) {</span>
+<span class="nc" id="L157">            throw new BusinessException(ex);</span>
+<span class="nc" id="L158">        }</span>
+<span class="nc" id="L159">    }</span>
 
     /**
-     *
      * @param email
      * @param message
      * @throws BusinessException
@@ -168,16 +166,16 @@ public class GateLabBusiness {
     public void reportProblem(String email, String message) throws BusinessException {
 
         try {
-<span class="nc" id="L171">            User user = userDAO.getUser(email);</span>
+<span class="nc" id="L169">            User user = userDAO.getUser(email);</span>
 
-<span class="nc" id="L173">            String adminsEmailContents = &quot;&lt;html&gt;&quot;</span>
+<span class="nc" id="L171">            String adminsEmailContents = &quot;&lt;html&gt;&quot;</span>
                     + &quot;&lt;head&gt;&lt;/head&gt;&quot;
                     + &quot;&lt;body&gt;&quot;
                     + &quot;&lt;p&gt;Dear Supporters,&lt;/p&gt;&quot;
                     + &quot;&lt;p&gt;The following user tried to submit a GATE-Lab simulation:&lt;/p&gt;&quot;
-<span class="nc" id="L178">                    + &quot;&lt;p&gt;&lt;b&gt;First Name:&lt;/b&gt; &quot; + user.getFirstName() + &quot;&lt;/p&gt;&quot;</span>
-<span class="nc" id="L179">                    + &quot;&lt;p&gt;&lt;b&gt;Last Name:&lt;/b&gt; &quot; + user.getLastName() + &quot;&lt;/p&gt;&quot;</span>
-<span class="nc" id="L180">                    + &quot;&lt;p&gt;&lt;b&gt;Email:&lt;/b&gt; &quot; + user.getEmail() + &quot;&lt;/p&gt;&quot;</span>
+<span class="nc" id="L176">                    + &quot;&lt;p&gt;&lt;b&gt;First Name:&lt;/b&gt; &quot; + user.getFirstName() + &quot;&lt;/p&gt;&quot;</span>
+<span class="nc" id="L177">                    + &quot;&lt;p&gt;&lt;b&gt;Last Name:&lt;/b&gt; &quot; + user.getLastName() + &quot;&lt;/p&gt;&quot;</span>
+<span class="nc" id="L178">                    + &quot;&lt;p&gt;&lt;b&gt;Email:&lt;/b&gt; &quot; + user.getEmail() + &quot;&lt;/p&gt;&quot;</span>
                     + &quot;&lt;p&gt;&amp;nbsp;&lt;/p&gt;&quot;
                     + &quot;&lt;p&gt;&lt;b&gt;Error Message:&lt;/b&gt;&lt;/p&gt;&quot;
                     + &quot;&lt;p style=\&quot;background-color: #F6F6F6\&quot;&gt;&quot; + message + &quot;&lt;/p&gt;&quot;
@@ -187,13 +185,13 @@ public class GateLabBusiness {
                     + &quot;&lt;/body&gt;&quot;
                     + &quot;&lt;/html&gt;&quot;;
 
-<span class="nc bnc" id="L190" title="All 2 branches missed.">            for (User u : usersGroupsDAO.getUsersFromGroup(CoreConstants.GROUP_SUPPORT)) {</span>
-<span class="nc" id="L191">                emailBusiness.sendEmail(&quot;[VIP Contact] GATE-Lab Error&quot;, adminsEmailContents,</span>
-<span class="nc" id="L192">                        new String[]{u.getEmail()}, false, user.getEmail());</span>
-<span class="nc" id="L193">            }</span>
-<span class="nc" id="L194">        } catch (DAOException ex) {</span>
-<span class="nc" id="L195">            throw new BusinessException(ex);</span>
-<span class="nc" id="L196">        }</span>
-<span class="nc" id="L197">    }</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            for (User u : usersGroupsDAO.getUsersFromGroup(CoreConstants.GROUP_SUPPORT)) {</span>
+<span class="nc" id="L189">                emailBusiness.sendEmail(&quot;[VIP Contact] GATE-Lab Error&quot;, adminsEmailContents,</span>
+<span class="nc" id="L190">                        new String[]{u.getEmail()}, false, user.getEmail());</span>
+<span class="nc" id="L191">            }</span>
+<span class="nc" id="L192">        } catch (DAOException ex) {</span>
+<span class="nc" id="L193">            throw new BusinessException(ex);</span>
+<span class="nc" id="L194">        }</span>
+<span class="nc" id="L195">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

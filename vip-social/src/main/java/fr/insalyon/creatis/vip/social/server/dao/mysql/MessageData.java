@@ -258,18 +258,18 @@ public class MessageData extends JdbcDaoSupport implements MessageDAO {
     public int verifyMessages(String email) throws DAOException {
 
         try {
-                PreparedStatement ps = getConnection().prepareStatement("SELECT "
-                        + "COUNT(id) AS num "
-                        + "FROM VIPSocialMessage AS sc, VIPSocialMessageSenderReceiver AS ss "
-                        + "WHERE sc.id = ss.message_id AND receiver = ? AND user_read = ?");
-                ps.setString(1, email);
-                ps.setBoolean(2, false);
+            PreparedStatement ps = getConnection().prepareStatement("SELECT "
+                    + "COUNT(id) AS num "
+                    + "FROM VIPSocialMessage AS sc, VIPSocialMessageSenderReceiver AS ss "
+                    + "WHERE sc.id = ss.message_id AND receiver = ? AND user_read = ?");
+            ps.setString(1, email);
+            ps.setBoolean(2, false);
 
-                ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
 
-                int result = rs.next() ? rs.getInt("num") : 0;
-                ps.close();
-                return result;
+            int result = rs.next() ? rs.getInt("num") : 0;
+            ps.close();
+            return result;
 
         } catch (SQLException ex) {
             logger.error("Error verifying messages for {}", email, ex);

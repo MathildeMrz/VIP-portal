@@ -94,17 +94,17 @@ import java.util.List;
     @Override
     public void update(Engine engine) throws DAOException {
         try {
-<span class="fc" id="L97">                PreparedStatement ps = getConnection().prepareStatement(</span>
-                        &quot;UPDATE VIPEngines SET endpoint = ?, &quot;
-                                + &quot;status = ? &quot;
-                                + &quot;WHERE name = ?&quot;);
+<span class="fc" id="L97">            PreparedStatement ps = getConnection().prepareStatement(</span>
+                    &quot;UPDATE VIPEngines SET endpoint = ?, &quot;
+                            + &quot;status = ? &quot;
+                            + &quot;WHERE name = ?&quot;);
 
-<span class="fc" id="L102">                ps.setString(1, engine.getEndpoint());</span>
-<span class="fc" id="L103">                ps.setString(2, engine.getStatus());</span>
-<span class="fc" id="L104">                ps.setString(3, engine.getName());</span>
-<span class="fc" id="L105">                ps.executeUpdate();</span>
+<span class="fc" id="L102">            ps.setString(1, engine.getEndpoint());</span>
+<span class="fc" id="L103">            ps.setString(2, engine.getStatus());</span>
+<span class="fc" id="L104">            ps.setString(3, engine.getName());</span>
+<span class="fc" id="L105">            ps.executeUpdate();</span>
 
-<span class="fc" id="L107">                ps.close();</span>
+<span class="fc" id="L107">            ps.close();</span>
 
 <span class="nc" id="L109">        } catch (SQLException ex) {</span>
 <span class="nc" id="L110">            logger.error(&quot;Error updating engine {} to {}&quot;, engine.getName(), engine.getEndpoint(), ex);</span>

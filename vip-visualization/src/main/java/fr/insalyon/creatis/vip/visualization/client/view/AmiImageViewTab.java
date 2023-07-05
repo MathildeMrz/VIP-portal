@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 public class AmiImageViewTab extends AbstractViewTab {
 
     private static Logger logger =
-        Logger.getLogger(AmiImageViewTab.class.getName());
+            Logger.getLogger(AmiImageViewTab.class.getName());
 
     private final HTMLPane htmlPane;
     private final String divId;
@@ -52,31 +52,31 @@ public class AmiImageViewTab extends AbstractViewTab {
         htmlPane.setShowEdges(false);
         this.divId = "id_" + sanitize(filename);
         htmlPane.setContents(
-            "<div id=\"" + divId + "\" class=\"ami-container\"></div>" +
-            "<div id=\"gui_" + divId + "\" class=\"ami-gui-container\"></div>");
+                "<div id=\"" + divId + "\" class=\"ami-container\"></div>" +
+                        "<div id=\"gui_" + divId + "\" class=\"ami-gui-container\"></div>");
         htmlPane.setWidth100();
         htmlPane.setHeight100();
         htmlPane.addResizedHandler((event) -> {
-                // The check for null is needed because some resize events are
-                // received before the image has been loaded.
-                if (amiJsViewer != null) {
-                    resizeCanvas(amiJsViewer);
-                }
-            });
+            // The check for null is needed because some resize events are
+            // received before the image has been loaded.
+            if (amiJsViewer != null) {
+                resizeCanvas(amiJsViewer);
+            }
+        });
         this.setID(tabIdFrom(filename));
         this.getPane().addChild(htmlPane);
     }
 
     public static boolean isFileSupported(String filename) {
         String[] allowedExtensions =
-            {"nii", "nii_", "dcm", "dic", "dicom", "ima", "mhd", "nrrd", "mgh"};
+                {"nii", "nii_", "dcm", "dic", "dicom", "ima", "mhd", "nrrd", "mgh"};
         String n = filename.toLowerCase();
         return n.endsWith(".mgz")
-            || java.util.Arrays.stream(allowedExtensions).anyMatch(
+                || java.util.Arrays.stream(allowedExtensions).anyMatch(
                 s -> n.endsWith("." + s) || n.endsWith("." + s + ".gz"));
     }
 
-    public static String fileTypeName(){
+    public static String fileTypeName() {
         return "image";
     }
 
@@ -93,7 +93,7 @@ public class AmiImageViewTab extends AbstractViewTab {
     }
 
     public native JavaScriptObject
-        showAmiImage(String url, String extension, String divId) /*-{
+    showAmiImage(String url, String extension, String divId) /*-{
         return $wnd.amiViewer(url, extension, divId);
     }-*/;
 

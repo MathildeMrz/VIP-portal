@@ -50,52 +50,51 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
 @Service
 @Transactional
 public class LFCBusiness {
 
-<span class="fc" id="L60">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+<span class="fc" id="L59">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
 
     private GRIDAClient gridaClient;
     private LfcPathsBusiness lfcPathsBusiness;
 
     @Autowired
-<span class="fc" id="L66">    public LFCBusiness(GRIDAClient gridaClient, LfcPathsBusiness lfcPathsBusiness) {</span>
-<span class="fc" id="L67">        this.gridaClient = gridaClient;</span>
-<span class="fc" id="L68">        this.lfcPathsBusiness = lfcPathsBusiness;</span>
-<span class="fc" id="L69">    }</span>
+<span class="fc" id="L65">    public LFCBusiness(GRIDAClient gridaClient, LfcPathsBusiness lfcPathsBusiness) {</span>
+<span class="fc" id="L66">        this.gridaClient = gridaClient;</span>
+<span class="fc" id="L67">        this.lfcPathsBusiness = lfcPathsBusiness;</span>
+<span class="fc" id="L68">    }</span>
 
     public List&lt;Data&gt; listDir(User user, String baseDir, boolean refresh)
             throws BusinessException {
 
         try {
-<span class="nc" id="L75">            List&lt;GridData&gt; list = gridaClient.getFolderData(</span>
-<span class="nc" id="L76">                    lfcPathsBusiness.parseBaseDir(user, baseDir), refresh);</span>
+<span class="nc" id="L74">            List&lt;GridData&gt; list = gridaClient.getFolderData(</span>
+<span class="nc" id="L75">                    lfcPathsBusiness.parseBaseDir(user, baseDir), refresh);</span>
 
-<span class="nc" id="L78">            List&lt;Data&gt; dataList = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L79" title="All 2 branches missed.">            for (GridData data : list) {</span>
-<span class="nc bnc" id="L80" title="All 2 branches missed.">                if (data.getType() == GridData.Type.Folder) {</span>
-<span class="nc" id="L81">                    dataList.add(new Data(data.getName(),</span>
-<span class="nc" id="L82">                            Data.Type.valueOf(data.getType().name().toLowerCase()),</span>
-<span class="nc" id="L83">                            data.getPermissions()));</span>
+<span class="nc" id="L77">            List&lt;Data&gt; dataList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">            for (GridData data : list) {</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">                if (data.getType() == GridData.Type.Folder) {</span>
+<span class="nc" id="L80">                    dataList.add(new Data(data.getName(),</span>
+<span class="nc" id="L81">                            Data.Type.valueOf(data.getType().name().toLowerCase()),</span>
+<span class="nc" id="L82">                            data.getPermissions()));</span>
 
                 } else {
-<span class="nc" id="L86">                    dataList.add(new Data(data.getName(),</span>
-<span class="nc" id="L87">                            Data.Type.valueOf(data.getType().name().toLowerCase()),</span>
-<span class="nc" id="L88">                            data.getLength(), data.getModificationDate(),</span>
-<span class="nc" id="L89">                            data.getReplicas(), data.getPermissions()));</span>
+<span class="nc" id="L85">                    dataList.add(new Data(data.getName(),</span>
+<span class="nc" id="L86">                            Data.Type.valueOf(data.getType().name().toLowerCase()),</span>
+<span class="nc" id="L87">                            data.getLength(), data.getModificationDate(),</span>
+<span class="nc" id="L88">                            data.getReplicas(), data.getPermissions()));</span>
                 }
-<span class="nc" id="L91">            }</span>
-<span class="nc" id="L92">            return dataList;</span>
+<span class="nc" id="L90">            }</span>
+<span class="nc" id="L91">            return dataList;</span>
 
-<span class="nc" id="L94">        } catch (DataManagerException ex) {</span>
-<span class="nc" id="L95">            throw new BusinessException(ex);</span>
-<span class="nc" id="L96">        } catch (GRIDAClientException ex) {</span>
-<span class="nc" id="L97">            logger.error(&quot;Error listing directory {} for {}&quot;, baseDir, user,ex);</span>
-<span class="nc" id="L98">            throw new BusinessException(ex);</span>
+<span class="nc" id="L93">        } catch (DataManagerException ex) {</span>
+<span class="nc" id="L94">            throw new BusinessException(ex);</span>
+<span class="nc" id="L95">        } catch (GRIDAClientException ex) {</span>
+<span class="nc" id="L96">            logger.error(&quot;Error listing directory {} for {}&quot;, baseDir, user, ex);</span>
+<span class="nc" id="L97">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -103,91 +102,91 @@ public class LFCBusiness {
             throws BusinessException {
 
         try {
-<span class="nc" id="L106">            gridaClient.createFolder(</span>
-<span class="nc" id="L107">                    lfcPathsBusiness.parseBaseDir(user, baseDir), name);</span>
-<span class="nc" id="L108">        } catch (DataManagerException ex) {</span>
-<span class="nc" id="L109">            throw new BusinessException(ex);</span>
-<span class="nc" id="L110">        } catch (GRIDAClientException ex) {</span>
-<span class="nc" id="L111">            logger.error(&quot;Error creating directory {}/{} for {}&quot;,</span>
-                    baseDir, name, user,ex);
-<span class="nc" id="L113">            throw new BusinessException(ex);</span>
-<span class="nc" id="L114">        }</span>
-<span class="nc" id="L115">    }</span>
+<span class="nc" id="L105">            gridaClient.createFolder(</span>
+<span class="nc" id="L106">                    lfcPathsBusiness.parseBaseDir(user, baseDir), name);</span>
+<span class="nc" id="L107">        } catch (DataManagerException ex) {</span>
+<span class="nc" id="L108">            throw new BusinessException(ex);</span>
+<span class="nc" id="L109">        } catch (GRIDAClientException ex) {</span>
+<span class="nc" id="L110">            logger.error(&quot;Error creating directory {}/{} for {}&quot;,</span>
+                    baseDir, name, user, ex);
+<span class="nc" id="L112">            throw new BusinessException(ex);</span>
+<span class="nc" id="L113">        }</span>
+<span class="nc" id="L114">    }</span>
 
     public void rename(User user, String oldPath, String newPath, boolean extendPath)
             throws BusinessException {
 
         try {
-<span class="nc" id="L121">            gridaClient.rename(</span>
-<span class="nc" id="L122">                    lfcPathsBusiness.parseBaseDir(user, oldPath),</span>
-<span class="nc" id="L123">                    lfcPathsBusiness.parseBaseDir(user, newPath));</span>
-<span class="nc" id="L124">        } catch (GRIDAClientException ex) {</span>
-<span class="nc bnc" id="L125" title="All 4 branches missed.">            if (ex.getMessage().contains(&quot;Can not rename/move&quot;) &amp;&amp; extendPath) {</span>
-<span class="nc" id="L126">                SimpleDateFormat sdf =</span>
+<span class="nc" id="L120">            gridaClient.rename(</span>
+<span class="nc" id="L121">                    lfcPathsBusiness.parseBaseDir(user, oldPath),</span>
+<span class="nc" id="L122">                    lfcPathsBusiness.parseBaseDir(user, newPath));</span>
+<span class="nc" id="L123">        } catch (GRIDAClientException ex) {</span>
+<span class="nc bnc" id="L124" title="All 4 branches missed.">            if (ex.getMessage().contains(&quot;Can not rename/move&quot;) &amp;&amp; extendPath) {</span>
+<span class="nc" id="L125">                SimpleDateFormat sdf =</span>
                         new SimpleDateFormat(&quot;-yyyy.MM.dd-HH.mm.ss&quot;);
-<span class="nc" id="L128">                String newExtPath = newPath + sdf.format(new Date());</span>
-<span class="nc" id="L129">                rename(user, oldPath, newExtPath, false);</span>
-<span class="nc" id="L130">            } else {</span>
-<span class="nc" id="L131">                logger.error(&quot;Error renaming path {} to {} for {}&quot;,</span>
-                        oldPath, newPath, user,ex);
-<span class="nc" id="L133">                throw new BusinessException(ex);</span>
+<span class="nc" id="L127">                String newExtPath = newPath + sdf.format(new Date());</span>
+<span class="nc" id="L128">                rename(user, oldPath, newExtPath, false);</span>
+<span class="nc" id="L129">            } else {</span>
+<span class="nc" id="L130">                logger.error(&quot;Error renaming path {} to {} for {}&quot;,</span>
+                        oldPath, newPath, user, ex);
+<span class="nc" id="L132">                throw new BusinessException(ex);</span>
             }
-<span class="nc" id="L135">        } catch (DataManagerException ex) {</span>
-<span class="nc" id="L136">            throw new BusinessException(ex);</span>
-<span class="nc" id="L137">        }</span>
-<span class="nc" id="L138">    }</span>
+<span class="nc" id="L134">        } catch (DataManagerException ex) {</span>
+<span class="nc" id="L135">            throw new BusinessException(ex);</span>
+<span class="nc" id="L136">        }</span>
+<span class="nc" id="L137">    }</span>
 
     public void rename(
             User user, String baseDir, List&lt;String&gt; paths, String newBaseDir,
             boolean extendPath) throws BusinessException {
 
-<span class="nc bnc" id="L144" title="All 2 branches missed.">        for (String name : paths) {</span>
-<span class="nc" id="L145">            rename(user, baseDir + &quot;/&quot; + name, newBaseDir + &quot;/&quot; + name, extendPath);</span>
-<span class="nc" id="L146">        }</span>
-<span class="nc" id="L147">    }</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        for (String name : paths) {</span>
+<span class="nc" id="L144">            rename(user, baseDir + &quot;/&quot; + name, newBaseDir + &quot;/&quot; + name, extendPath);</span>
+<span class="nc" id="L145">        }</span>
+<span class="nc" id="L146">    }</span>
 
     public boolean exists(User user, String path) throws BusinessException {
 
         try {
-<span class="nc" id="L152">            return gridaClient.exist(lfcPathsBusiness.parseBaseDir(user, path));</span>
-<span class="nc" id="L153">        } catch (GRIDAClientException ex) {</span>
-<span class="nc" id="L154">            logger.error(&quot;Error checking file {} existance for {}&quot;,</span>
-                    path, user,ex);
-<span class="nc" id="L156">            throw new BusinessException(ex);</span>
-<span class="nc" id="L157">        } catch (DataManagerException ex) {</span>
-<span class="nc" id="L158">            throw new BusinessException(ex);</span>
+<span class="nc" id="L151">            return gridaClient.exist(lfcPathsBusiness.parseBaseDir(user, path));</span>
+<span class="nc" id="L152">        } catch (GRIDAClientException ex) {</span>
+<span class="nc" id="L153">            logger.error(&quot;Error checking file {} existance for {}&quot;,</span>
+                    path, user, ex);
+<span class="nc" id="L155">            throw new BusinessException(ex);</span>
+<span class="nc" id="L156">        } catch (DataManagerException ex) {</span>
+<span class="nc" id="L157">            throw new BusinessException(ex);</span>
         }
     }
 
     public long getModificationDate(User user, String path) throws BusinessException {
 
         try {
-<span class="nc" id="L165">            return gridaClient.getModificationDate(</span>
-<span class="nc" id="L166">                    lfcPathsBusiness.parseBaseDir(user, path));</span>
-<span class="nc" id="L167">        } catch (GRIDAClientException ex) {</span>
-<span class="nc" id="L168">            logger.error(&quot;Error getting file {} modification date for {}&quot;,</span>
-                    path, user,ex);
-<span class="nc" id="L170">            throw new BusinessException(ex);</span>
-<span class="nc" id="L171">        } catch (DataManagerException ex) {</span>
-<span class="nc" id="L172">            throw new BusinessException(ex);</span>
+<span class="nc" id="L164">            return gridaClient.getModificationDate(</span>
+<span class="nc" id="L165">                    lfcPathsBusiness.parseBaseDir(user, path));</span>
+<span class="nc" id="L166">        } catch (GRIDAClientException ex) {</span>
+<span class="nc" id="L167">            logger.error(&quot;Error getting file {} modification date for {}&quot;,</span>
+                    path, user, ex);
+<span class="nc" id="L169">            throw new BusinessException(ex);</span>
+<span class="nc" id="L170">        } catch (DataManagerException ex) {</span>
+<span class="nc" id="L171">            throw new BusinessException(ex);</span>
         }
     }
 
     public List&lt;Long&gt; getModificationDate(User user, List&lt;String&gt; paths)
             throws BusinessException {
         try {
-<span class="nc" id="L179">            List&lt;String&gt; parsedPaths = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L180" title="All 2 branches missed.">            for (String path : paths) {</span>
-<span class="nc" id="L181">                parsedPaths.add(lfcPathsBusiness.parseBaseDir(user, path));</span>
-<span class="nc" id="L182">            }</span>
+<span class="nc" id="L178">            List&lt;String&gt; parsedPaths = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">            for (String path : paths) {</span>
+<span class="nc" id="L180">                parsedPaths.add(lfcPathsBusiness.parseBaseDir(user, path));</span>
+<span class="nc" id="L181">            }</span>
 
-<span class="nc" id="L184">            return gridaClient.getModificationDate(parsedPaths);</span>
-<span class="nc" id="L185">        } catch (GRIDAClientException ex) {</span>
-<span class="nc" id="L186">            logger.error(&quot;Error getting files {} modification dates for {}&quot;,</span>
-                    paths, user,ex);
-<span class="nc" id="L188">            throw new BusinessException(ex);</span>
-<span class="nc" id="L189">        } catch (DataManagerException ex) {</span>
-<span class="nc" id="L190">            throw new BusinessException(ex);</span>
+<span class="nc" id="L183">            return gridaClient.getModificationDate(parsedPaths);</span>
+<span class="nc" id="L184">        } catch (GRIDAClientException ex) {</span>
+<span class="nc" id="L185">            logger.error(&quot;Error getting files {} modification dates for {}&quot;,</span>
+                    paths, user, ex);
+<span class="nc" id="L187">            throw new BusinessException(ex);</span>
+<span class="nc" id="L188">        } catch (DataManagerException ex) {</span>
+<span class="nc" id="L189">            throw new BusinessException(ex);</span>
         }
     }
 }

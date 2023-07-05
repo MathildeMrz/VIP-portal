@@ -30,8 +30,7 @@ public class SocialIT extends BaseSpringIT {
     private MessageBusiness messageBusiness;
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException, DAOException
-    {
+    public void setUp() throws BusinessException, GRIDAClientException, DAOException {
         super.setUp();
 
         // Create test group
@@ -61,8 +60,7 @@ public class SocialIT extends BaseSpringIT {
     }
 
     @Test
-    public void testInitialisation() throws BusinessException
-    {
+    public void testInitialisation() throws BusinessException {
         Message firstIndividualMessage = messageBusiness.getMessagesByUser(emailUser1, getNextSecondDate()).get(0);
         GroupMessage firstGroupMessage = messageBusiness.getGroupMessages(nameGroup1, getNextSecondDate()).get(0);
         List<Message> sentMessagesByAdmin = messageBusiness.getSentMessagesByUser(adminEmail, getNextSecondDate());
@@ -113,8 +111,7 @@ public class SocialIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testSendMessage() throws Exception
-    {
+    public void testSendMessage() throws Exception {
         messageBusiness.sendMessage(user1, new String[]{emailUser1, emailUser3}, "subject user 2", "message user 2");
 
         // verify entry numbers in each table
@@ -138,8 +135,7 @@ public class SocialIT extends BaseSpringIT {
     }
 
     @Test
-    public void testSendMessageAll() throws BusinessException
-    {
+    public void testSendMessageAll() throws BusinessException {
         messageBusiness.sendMessage(user2, new String[]{"All"}, "subject user 2", "message user 2");
 
         // verify entry numbers in each table
@@ -165,8 +161,7 @@ public class SocialIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchNonExistentUserSendMessage()
-    {
+    public void testCatchNonExistentUserSendMessage() {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         messageBusiness.sendMessage(
@@ -222,8 +217,7 @@ public class SocialIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testRemoveByReceiver() throws BusinessException
-    {
+    public void testRemoveByReceiver() throws BusinessException {
         messageBusiness.removeByReceiver(messageBusiness.getMessagesByUser(emailUser1, new Date(System.currentTimeMillis())).get(0).getId(), emailUser3);
 
         // verify entry numbers in each table
@@ -268,12 +262,12 @@ public class SocialIT extends BaseSpringIT {
     @Test
     public void testCopyMessageToVipSupport() throws BusinessException {
         messageBusiness.copyMessageToVipSupport
-        (
-            user1,
-            new String[]{emailUser1, emailUser3},
-            "subject test copy message to Vip support",
-            "message test copy message to Vip support"
-        );
+                (
+                        user1,
+                        new String[]{emailUser1, emailUser3},
+                        "subject test copy message to Vip support",
+                        "message test copy message to Vip support"
+                );
 
         // Nothing changes
 
@@ -333,13 +327,13 @@ public class SocialIT extends BaseSpringIT {
     public void testSendMessageToVipSupport() throws BusinessException {
 
         messageBusiness.sendMessageToVipSupport
-        (
-            user2,
-            "subject",
-            "message from test2@test.fr to Vip support",
-            List.of("workflow 1", "workflow 2"),
-            List.of("simulation 1", "simulation 2")
-        );
+                (
+                        user2,
+                        "subject",
+                        "message from test2@test.fr to Vip support",
+                        List.of("workflow 1", "workflow 2"),
+                        List.of("simulation 1", "simulation 2")
+                );
 
         // Nothing changes
 
@@ -369,13 +363,13 @@ public class SocialIT extends BaseSpringIT {
     @Test
     public void testCatchNonExistentEmailSendMessageToVipSupport() throws BusinessException {
         messageBusiness.sendMessageToVipSupport
-        (
-            nonExistentUser,
-            "subject",
-            "message from test2@test.fr to Vip support",
-            List.of("workflow 1", "workflow 2"),
-            List.of("simulation 1", "simulation 2")
-        );
+                (
+                        nonExistentUser,
+                        "subject",
+                        "message from test2@test.fr to Vip support",
+                        List.of("workflow 1", "workflow 2"),
+                        List.of("simulation 1", "simulation 2")
+                );
 
         // Nothing changes
 
@@ -407,11 +401,11 @@ public class SocialIT extends BaseSpringIT {
     @Test
     public void testMarkAsRead() throws BusinessException {
         messageBusiness.markAsRead
-        (
-                messageBusiness.getMessagesByUser(emailUser1,
-                        getNextSecondDate()).get(0).getId(),
-                emailUser1
-        );
+                (
+                        messageBusiness.getMessagesByUser(emailUser1,
+                                getNextSecondDate()).get(0).getId(),
+                        emailUser1
+                );
 
         // verify entry numbers in each table
         assertRowsNbInTable("VIPSocialMessage", 1);
@@ -435,15 +429,14 @@ public class SocialIT extends BaseSpringIT {
 
 
     @Test
-    public void testCatchNonExistentUserMarkAsRead() throws BusinessException
-    {
+    public void testCatchNonExistentUserMarkAsRead() throws BusinessException {
         // UPDATE + nonExistent primary key receiver => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be updated
         messageBusiness.markAsRead
-        (
-                messageBusiness.getMessagesByUser(emailUser1, getNextSecondDate()).get(0).getId(),
-                "nonExistent user"
-        );
+                (
+                        messageBusiness.getMessagesByUser(emailUser1, getNextSecondDate()).get(0).getId(),
+                        "nonExistent user"
+                );
 
         // Nothing changes
 
@@ -470,8 +463,7 @@ public class SocialIT extends BaseSpringIT {
 
 
     @Test
-    public void testCatchNonExistentMessageMarkAsRead() throws BusinessException
-    {
+    public void testCatchNonExistentMessageMarkAsRead() throws BusinessException {
         // UPDATE + nonExistent part of primary key messageId => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be updated
         messageBusiness.markAsRead(100, emailUser1);
@@ -526,12 +518,12 @@ public class SocialIT extends BaseSpringIT {
     @Test
     public void testSendGroupMessage() throws BusinessException {
         messageBusiness.sendGroupMessage
-        (
-            user2,
-            nameGroup1, configurationBusiness.getUsersFromGroup(nameGroup1),
-            "subject user 2",
-            "message user 2"
-        );
+                (
+                        user2,
+                        nameGroup1, configurationBusiness.getUsersFromGroup(nameGroup1),
+                        "subject user 2",
+                        "message user 2"
+                );
 
         // verify entry numbers in each table
         assertRowsNbInTable("VIPSocialMessage", 1);
@@ -557,16 +549,16 @@ public class SocialIT extends BaseSpringIT {
     @Test
     public void testCatchNonExistentSenderGroupMessage() {
         Exception exception = assertThrows
-            (BusinessException.class, () ->
-                messageBusiness.sendGroupMessage
-                (
-                    nonExistentUser,
-                    nameGroup1,
-                    configurationBusiness.getUsersFromGroup(nameGroup1),
-                    "subject user 2",
-                    "message user 2"
-                )
-            );
+                (BusinessException.class, () ->
+                        messageBusiness.sendGroupMessage
+                                (
+                                        nonExistentUser,
+                                        nameGroup1,
+                                        configurationBusiness.getUsersFromGroup(nameGroup1),
+                                        "subject user 2",
+                                        "message user 2"
+                                )
+                );
 
         // INSERT + nonExistent foreign key sender => violation
         assertTrue(StringUtils.contains(exception.getMessage(), "JdbcSQLException: Referential integrity constraint violation"));
@@ -576,16 +568,16 @@ public class SocialIT extends BaseSpringIT {
     @Test
     public void testCatchNonExistentGroupMessage() throws BusinessException {
         Exception exception = assertThrows
-            (BusinessException.class, () ->
-                messageBusiness.sendGroupMessage
-                (
-                    user3,
-                    "nonExistent group",
-                    configurationBusiness.getUsersFromGroup(nameGroup1),
-                    "subject user 2",
-                    "message user 2"
-                )
-            );
+                (BusinessException.class, () ->
+                        messageBusiness.sendGroupMessage
+                                (
+                                        user3,
+                                        "nonExistent group",
+                                        configurationBusiness.getUsersFromGroup(nameGroup1),
+                                        "subject user 2",
+                                        "message user 2"
+                                )
+                );
 
         // INSERT + nonExistent foreign key groupName => violation
         assertTrue(StringUtils.contains(exception.getMessage(), "JdbcSQLException: Referential integrity constraint violation"));
@@ -596,13 +588,13 @@ public class SocialIT extends BaseSpringIT {
         // SELECT + nonExistent foreign key / part of primary key groupName => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be selected
         messageBusiness.sendGroupMessage
-        (
-            user3,
-            nameGroup1,
-            configurationBusiness.getUsersFromGroup("nonExistent group"),
-            "subject user 2",
-            "message user 2"
-        );
+                (
+                        user3,
+                        nameGroup1,
+                        configurationBusiness.getUsersFromGroup("nonExistent group"),
+                        "subject user 2",
+                        "message user 2"
+                );
 
         // verify entry numbers in each table
         assertRowsNbInTable("VIPSocialMessage", 1);
@@ -685,18 +677,16 @@ public class SocialIT extends BaseSpringIT {
     /* ******************************************************************************************************************************************************* */
 
     @Test
-    public void testGetGroupMessages() throws BusinessException
-    {
-        Assertions.assertEquals(1,messageBusiness.getGroupMessages(nameGroup1, getNextSecondDate()).size(), "Incorrect number of group messages received");
+    public void testGetGroupMessages() throws BusinessException {
+        Assertions.assertEquals(1, messageBusiness.getGroupMessages(nameGroup1, getNextSecondDate()).size(), "Incorrect number of group messages received");
     }
 
 
     @Test
-    public void testCatchGetNonExistentGroupMessages() throws BusinessException
-    {
+    public void testCatchGetNonExistentGroupMessages() throws BusinessException {
         // SELECT + nonExistent foreign key groupName => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be selected
-        Assertions.assertEquals(0,  messageBusiness.getGroupMessages("nonExistent group", getNextSecondDate()).size(), "Incorrect number of group messages received");
+        Assertions.assertEquals(0, messageBusiness.getGroupMessages("nonExistent group", getNextSecondDate()).size(), "Incorrect number of group messages received");
     }
 
     /* ******************************************************************************************************************************************************* */
@@ -705,22 +695,19 @@ public class SocialIT extends BaseSpringIT {
 
 
     @Test
-    public void testGetSentMessageByUser() throws BusinessException
-    {
+    public void testGetSentMessageByUser() throws BusinessException {
         Assertions.assertEquals(0, messageBusiness.getSentMessagesByUser(emailUser1, getNextSecondDate()).size(), "Incorrect number of individual messages sent");
     }
 
 
     @Test
-    public void testAdminGetSentMessageByUser() throws BusinessException
-    {
+    public void testAdminGetSentMessageByUser() throws BusinessException {
         Assertions.assertEquals(1, messageBusiness.getSentMessagesByUser(adminEmail, getNextSecondDate()).size(), "Incorrect number of individual messages sent");
     }
 
 
     @Test
-    public void testCatchGetSentMessageByUser() throws BusinessException
-    {
+    public void testCatchGetSentMessageByUser() throws BusinessException {
         // SELECT + nonExistent foreign key sender email  => no exception
         // We decided not to add an exception because if this occurs, it will not create problem, just no row will be selected
         Assertions.assertEquals(0, messageBusiness.getSentMessagesByUser("nonExistent user", getNextSecondDate()).size(), "Incorrect number of group messages received");

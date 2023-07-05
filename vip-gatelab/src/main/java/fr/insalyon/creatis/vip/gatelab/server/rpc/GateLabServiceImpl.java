@@ -45,7 +45,6 @@ import javax.servlet.ServletException;
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva, Ibrahim Kallel
  */
 public class GateLabServiceImpl extends AbstractRemoteServiceServlet implements GateLabService {
@@ -65,7 +64,7 @@ public class GateLabServiceImpl extends AbstractRemoteServiceServlet implements 
     public Map<String, String> getGatelabWorkflowInputs(String simulationID) throws GateLabException {
         try {
             return gatelabBusiness.getGatelabWorkflowInputs(
-                simulationID, getSessionUser().getFolder());
+                    simulationID, getSessionUser().getFolder());
         } catch (BusinessException | CoreException ex) {
             throw new GateLabException(ex);
         }

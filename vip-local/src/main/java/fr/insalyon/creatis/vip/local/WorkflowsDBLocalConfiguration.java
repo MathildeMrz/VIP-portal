@@ -41,8 +41,8 @@ public class WorkflowsDBLocalConfiguration {
     public void closeWorkflowsDB() {
         logger.info("closing workflowsdb. Already closed : {}", workflowsDbSessionFactory.isClosed());
         // close connection pool to close connections and h2 database
-        if(workflowsDbSessionFactory instanceof SessionFactoryImpl) {
-            SessionFactoryImpl sf = (SessionFactoryImpl)workflowsDbSessionFactory;
+        if (workflowsDbSessionFactory instanceof SessionFactoryImpl) {
+            SessionFactoryImpl sf = (SessionFactoryImpl) workflowsDbSessionFactory;
             ConnectionProvider conn = sf.getConnectionProvider();
             logger.info("ConnectionProvider : {}", conn);
             ((DriverManagerConnectionProviderImpl) conn).stop();

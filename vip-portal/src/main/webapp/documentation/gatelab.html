@@ -1,33 +1,64 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>The GateLab</title>
-        <link rel="StyleSheet" href="../css/doc_main.css" type="text/css" />
-    </head>
-    <body>
-        <h1>The GateLab</h1>
-		
-		<h2>Preparing your simulation</h2>
-        <p>A GATE simulation is composed of several files (macros files, but also data files. Your simulation folder <b>must</b> be organized as followed : all input files (including the GateMaterials.db file) must be in a "data" folder, all macro files in a "mac" folder and all output files in a "output" folder. All of these three folders <b>must</b> be in the same parent folder from which GATE will be executed. Your macro files <b>must</b> therefore refer to the inputs as "data/..." to macros as "mac/..." and outputs as "output/...". Note that your GateMaterials.db file has to be present in your data folder.</p>
-  
-		
-		<h2>Supported simulation types</h2>
-		
-		<p>Currently, only some types of simulations can be submitted with the GateLab. Remember that a simulation is composed of a (generally large) number of Events (primary particles) that are sequentially tracked. Some simulations also required several Runs, that are "group" of Events : the geometry is rebuild between each Run. Generally, several Runs are used when time is taken into account in the simulation. When a simulation requires more than one Run, it is a little bit less easy to be paralelized.</p>
+<head>
+    <title>The GateLab</title>
+    <link rel="StyleSheet" href="../css/doc_main.css" type="text/css"/>
+</head>
+<body>
+<h1>The GateLab</h1>
 
-		<p>To determine if your simulation can be submitted, three cases can be determined </p>
-<ul><li>Case 1. Your simulation contains <b>only one Run and all Events are strictly equivalent</b>, no matter of the order in which there are simulated. Typical examples are in the field of Radiation Therapy.
-	<ul><li>you should use the "dynamic parallelization", this is the most efficient situation. </li></ul>
-</li><li>Case 2a. Your simulation contains <b>only one Run and the order of Events is important, requiring timing information</b>. Typical examples are PET/SPECT simulations with TimeSlice = TimeStop-TimeStart (only one Run).
-	<ul><li>you have to use the "static parallelization"</li></ul>
-</li><li>Case 2b. Your simulation contains <b>several Run and the order of Events is important, requiring timing information</b>. Typical examples are SPECT simulations, but not PET simulation because, in that cases, coincidences will be biased. For typical PET simulation with several Runs, the proper way to split simulation should be to divide the TotalTime into different parts (for a dynamic scan : i frames with Ni processors per frame), each of them being an independent job. This is currently not implemented in the GateLab (mostly because it requires special care when a job fails), but we are working on it. Other examples of simulations falling in that case are Radiation Therapy simulations with motion (IMRT).
-	<ul><li>you have to use the "static parallelization"</li></ul>
-</li><li>Case 3. All other cases.
-	<ul><li>you cannot (yet) use GateLab otherwise your results will be biased. </li></ul>
-</li></ul>
+<h2>Preparing your simulation</h2>
+<p>A GATE simulation is composed of several files (macros files, but also data files. Your simulation folder <b>must</b>
+    be organized as followed : all input files (including the GateMaterials.db file) must be in a "data" folder, all
+    macro files in a "mac" folder and all output files in a "output" folder. All of these three folders <b>must</b> be
+    in the same parent folder from which GATE will be executed. Your macro files <b>must</b> therefore refer to the
+    inputs as "data/..." to macros as "mac/..." and outputs as "output/...". Note that your GateMaterials.db file has to
+    be present in your data folder.</p>
 
-<p>Remember to always use the "setTotalNumberOfPrimaries" macro command, which is the number of the events for PET/SPECT simulations. Just add this command before the commands of setting the TimeSlice, TimeStart and TimeStop.
-eg.</p>
+
+<h2>Supported simulation types</h2>
+
+<p>Currently, only some types of simulations can be submitted with the GateLab. Remember that a simulation is composed
+    of a (generally large) number of Events (primary particles) that are sequentially tracked. Some simulations also
+    required several Runs, that are "group" of Events : the geometry is rebuild between each Run. Generally, several
+    Runs are used when time is taken into account in the simulation. When a simulation requires more than one Run, it is
+    a little bit less easy to be paralelized.</p>
+
+<p>To determine if your simulation can be submitted, three cases can be determined </p>
+<ul>
+    <li>Case 1. Your simulation contains <b>only one Run and all Events are strictly equivalent</b>, no matter of the
+        order in which there are simulated. Typical examples are in the field of Radiation Therapy.
+        <ul>
+            <li>you should use the "dynamic parallelization", this is the most efficient situation.</li>
+        </ul>
+    </li>
+    <li>Case 2a. Your simulation contains <b>only one Run and the order of Events is important, requiring timing
+        information</b>. Typical examples are PET/SPECT simulations with TimeSlice = TimeStop-TimeStart (only one Run).
+        <ul>
+            <li>you have to use the "static parallelization"</li>
+        </ul>
+    </li>
+    <li>Case 2b. Your simulation contains <b>several Run and the order of Events is important, requiring timing
+        information</b>. Typical examples are SPECT simulations, but not PET simulation because, in that cases,
+        coincidences will be biased. For typical PET simulation with several Runs, the proper way to split simulation
+        should be to divide the TotalTime into different parts (for a dynamic scan : i frames with Ni processors per
+        frame), each of them being an independent job. This is currently not implemented in the GateLab (mostly because
+        it requires special care when a job fails), but we are working on it. Other examples of simulations falling in
+        that case are Radiation Therapy simulations with motion (IMRT).
+        <ul>
+            <li>you have to use the "static parallelization"</li>
+        </ul>
+    </li>
+    <li>Case 3. All other cases.
+        <ul>
+            <li>you cannot (yet) use GateLab otherwise your results will be biased.</li>
+        </ul>
+    </li>
+</ul>
+
+<p>Remember to always use the "setTotalNumberOfPrimaries" macro command, which is the number of the events for PET/SPECT
+    simulations. Just add this command before the commands of setting the TimeSlice, TimeStart and TimeStop.
+    eg.</p>
 
 /gate/application/setTotalNumberOfPrimaries 10000000
 /gate/application/setTimeSlice 1 s
@@ -35,85 +66,116 @@ eg.</p>
 /gate/application/setTimeStop 10 s
 
 
-		
-	          
-        <h2>Launching your simulation</h2>
+<h2>Launching your simulation</h2>
 
 
-        <p>Click on the "GateLab" icon in your Home tab:<br/><img alt="gatelab-icon" src="gatelab.png"/><br/>A new tab opens.</p>
+<p>Click on the "GateLab" icon in your Home tab:<br/><img alt="gatelab-icon" src="gatelab.png"/><br/>A new tab opens.
+</p>
+<ul>
+    <li>Fill in the simulation name.</li>
+    <li>Click on the LoadMac button. This will start a Java applet in your browser. Attention, you need to have the
+        <strong>Java plugin installed in your browser</strong>.
+    </li>
+    <li>Select your main macro file using the file browser opened by the LoadMac button
         <ul>
-            <li>Fill in the simulation name.</li>
-            <li>Click on the LoadMac button. This will start a Java applet in your browser. Attention, you need to have the <strong>Java plugin installed in your browser</strong>.</li>
-            <li>Select your main macro file using the file browser opened by the LoadMac button
-                <ul>
-                    <li>Your main mac file is the one that contains the initialization line (e.g. "/gate/application/setTotalNumberOfPrimaries") </li>
-                    <li>Your main mac file has to be on your local PC in a "mac/" folder as explained in the first remark below</li>
-                    <li>Your main macro file is automatically parsed and uploaded on the distant storage space (see also the <a href="./filetransfer.html">file transfer</a> page) together with your other input data</li>
-                </ul>
+            <li>Your main mac file is the one that contains the initialization line (e.g.
+                "/gate/application/setTotalNumberOfPrimaries")
             </li>
-            <li>Fill in the rest of the form:
-                <ul>
-                    <li>CPU estimation: this will determine the number of parallel jobs into which your simulation is automatically split.</li>
-                    <li>GateRelease: you can keep the default value or browse the distant storage space for available releases. Contact the portal admins if you want to deploy your own release.</li>
-                    <li>Parallelization Type: if you have multiple runs or simulations with time logic (e.g. seconds instead of events), you have to choose static parallelization.  
-                        Otherwise you can choose among the two (dynamic is known to be faster). Dynamic parallelization simulates more events than needed (the final number of simulated events is known and available)</li>
-                </ul>
+            <li>Your main mac file has to be on your local PC in a "mac/" folder as explained in the first remark
+                below
             </li>
-            <li>Before you launch the simulation, you can use the "Save Inputs" button to save the form and reload it for a future simulation </li>
-            <li>Click on the launch button to launch the simulation.</li>
-
+            <li>Your main macro file is automatically parsed and uploaded on the distant storage space (see also the <a
+                    href="./filetransfer.html">file transfer</a> page) together with your other input data
+            </li>
         </ul>
-
-        <h3>Important Remarks</h3>
+    </li>
+    <li>Fill in the rest of the form:
         <ul>
-            <li>Please note that in order for the parsing to be accurate, all input files (including your GateMaterials.db file) must be in a "data" folder, all macro files in a "mac" folder and all output files in a "output" folder, and all of these folders must be in the same parent folder from which GATE will be executed. 
-                Your macro files should therefore refer to the inputs as "data/..." to macros as "mac/..." and outputs as "output/..."</li>
-            <li>If you have header-file inputs (e.g. hdr/img hdr/bin file "couples") the data file must have the same name as the header file (for ex: input1.hdr and input1.img)</li>
-            <li>The initialization line "/gate/application/setTotalNumberOfPrimaries" must be present in the submitted macro file.</li>
-            <li>Primary particle number must be an integer number. Formats like "20e9" are not supported.</li>
-        </ul>
-
-
-        <h2>Monitoring your simulations</h2>
-        
-        <h3>All your simulations</h3>
-        <p>In your Home tab you have a 'Monitor GateLab' icon:<br/><br/><img alt="gatelab-monitor-icon" src="gatelab-monitor.png"/><br/> </p>
-        <ul>
-            <li>Click on the 'Monitor GateLab' icon. A new tab with the list of all your simulations opens.</li>
-            <li>The small icon on the left gives the status of the simulation.
-                <ul>
-                    <li>Green wheel = the simulation is running</li>
-                    <li>Red wheel = the simulation has failed</li>
-                    <li>Blue tick = the simulation has completed successefully</li>
-                </ul></li>
-            <li>For each simulation you can
-                <ul>
-                    <li>Click on the simulation you want to monitor. The simulation will open in a new tab</li>
-                    <li>Kill the simulation. This will stop all the jobs and the workflow</li>
-                    <li>Clean the simulation. Attention, this will delete the simulation output and log files!</li>
-                </ul>
+            <li>CPU estimation: this will determine the number of parallel jobs into which your simulation is
+                automatically split.
             </li>
-
+            <li>GateRelease: you can keep the default value or browse the distant storage space for available releases.
+                Contact the portal admins if you want to deploy your own release.
+            </li>
+            <li>Parallelization Type: if you have multiple runs or simulations with time logic (e.g. seconds instead of
+                events), you have to choose static parallelization.
+                Otherwise you can choose among the two (dynamic is known to be faster). Dynamic parallelization
+                simulates more events than needed (the final number of simulated events is known and available)
+            </li>
         </ul>
-        
-        <h3>One of your simulations</h3>
-         <ul>
+    </li>
+    <li>Before you launch the simulation, you can use the "Save Inputs" button to save the form and reload it for a
+        future simulation
+    </li>
+    <li>Click on the launch button to launch the simulation.</li>
+
+</ul>
+
+<h3>Important Remarks</h3>
+<ul>
+    <li>Please note that in order for the parsing to be accurate, all input files (including your GateMaterials.db file)
+        must be in a "data" folder, all macro files in a "mac" folder and all output files in a "output" folder, and all
+        of these folders must be in the same parent folder from which GATE will be executed.
+        Your macro files should therefore refer to the inputs as "data/..." to macros as "mac/..." and outputs as
+        "output/..."
+    </li>
+    <li>If you have header-file inputs (e.g. hdr/img hdr/bin file "couples") the data file must have the same name as
+        the header file (for ex: input1.hdr and input1.img)
+    </li>
+    <li>The initialization line "/gate/application/setTotalNumberOfPrimaries" must be present in the submitted macro
+        file.
+    </li>
+    <li>Primary particle number must be an integer number. Formats like "20e9" are not supported.</li>
+</ul>
+
+
+<h2>Monitoring your simulations</h2>
+
+<h3>All your simulations</h3>
+<p>In your Home tab you have a 'Monitor GateLab' icon:<br/><br/><img alt="gatelab-monitor-icon"
+                                                                     src="gatelab-monitor.png"/><br/></p>
+<ul>
+    <li>Click on the 'Monitor GateLab' icon. A new tab with the list of all your simulations opens.</li>
+    <li>The small icon on the left gives the status of the simulation.
+        <ul>
+            <li>Green wheel = the simulation is running</li>
+            <li>Red wheel = the simulation has failed</li>
+            <li>Blue tick = the simulation has completed successefully</li>
+        </ul>
+    </li>
+    <li>For each simulation you can
+        <ul>
             <li>Click on the simulation you want to monitor. The simulation will open in a new tab</li>
-            <li>On you left hand side, you have three available tabs
-            <ul>
-                    <li>General Information tab (default): gives access to general information, as well as on the simulation logs (output and error files). 
-                        The "total particles simulated" field corresponds to what has been computed (more than requested in the case of dynamic parallelization)</li>
-                    <li>Jobs Summary tab: list of jobs submitted by the platform. Error and stalled jobs are automatically resubmitted.</li>
-                    <li>Performance statistics: graphs ans stats on executed jobs</li>
-                </ul>
-            
+            <li>Kill the simulation. This will stop all the jobs and the workflow</li>
+            <li>Clean the simulation. Attention, this will delete the simulation output and log files!</li>
+        </ul>
+    </li>
+
+</ul>
+
+<h3>One of your simulations</h3>
+<ul>
+    <li>Click on the simulation you want to monitor. The simulation will open in a new tab</li>
+    <li>On you left hand side, you have three available tabs
+        <ul>
+            <li>General Information tab (default): gives access to general information, as well as on the simulation
+                logs (output and error files).
+                The "total particles simulated" field corresponds to what has been computed (more than requested in the
+                case of dynamic parallelization)
             </li>
+            <li>Jobs Summary tab: list of jobs submitted by the platform. Error and stalled jobs are automatically
+                resubmitted.
+            </li>
+            <li>Performance statistics: graphs ans stats on executed jobs</li>
         </ul>
 
-        <h2>Retrieving outputs</h2>
-        <p>In the General Information tab of you simulation, you have access to a list of the simulation's inputs and outputs.
-            In order to retrieve the output, simply click on the output link and download it. 
-            For more information on file transfer see also the <a href="./filetransfer.html">file transfer</a> page.
-        </p>
-    </body>
+    </li>
+</ul>
+
+<h2>Retrieving outputs</h2>
+<p>In the General Information tab of you simulation, you have access to a list of the simulation's inputs and outputs.
+    In order to retrieve the output, simply click on the output link and download it.
+    For more information on file transfer see also the <a href="./filetransfer.html">file transfer</a> page.
+</p>
+</body>
 </html>

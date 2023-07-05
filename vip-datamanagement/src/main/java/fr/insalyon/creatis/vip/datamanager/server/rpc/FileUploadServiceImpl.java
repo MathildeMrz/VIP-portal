@@ -61,7 +61,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
 public class FileUploadServiceImpl extends HttpServlet {
@@ -191,7 +190,7 @@ public class FileUploadServiceImpl extends HttpServlet {
     }
 
     private String processDir(User user, String dir, String baseDir, boolean usePool)
-        throws GRIDAClientException, DataManagerException {
+            throws GRIDAClientException, DataManagerException {
 
         StringBuilder ids = new StringBuilder();
         for (File f : new File(dir).listFiles()) {
@@ -204,8 +203,8 @@ public class FileUploadServiceImpl extends HttpServlet {
                                 usePool));
             } else {
                 ids.append(
-                    uploadFile(
-                        user, f.getAbsolutePath(), baseDir, usePool));
+                        uploadFile(
+                                user, f.getAbsolutePath(), baseDir, usePool));
             }
             ids.append("##");
         }

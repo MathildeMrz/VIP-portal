@@ -211,7 +211,7 @@ public class LfcPathsBusiness {
             throw new BusinessException("Invalid download path", e);
         }
         // verify it is an absolute path
-        if ( ! remotePath.isAbsolute()) {
+        if (!remotePath.isAbsolute()) {
             logger.error("Cannot download a relative path : {}", remotePathString);
             throw new BusinessException("Cannot download a relative path");
         }

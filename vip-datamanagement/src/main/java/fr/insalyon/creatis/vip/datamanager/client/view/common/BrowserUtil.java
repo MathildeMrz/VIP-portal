@@ -52,7 +52,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class BrowserUtil {
@@ -88,14 +87,14 @@ public class BrowserUtil {
     /**
      * Loads the data from a path to the grid and updates the tool strip.
      *
-     * @param modal Modal window object
-     * @param grid List grid
+     * @param modal     Modal window object
+     * @param grid      List grid
      * @param toolStrip Browser tool strip
-     * @param path Grid path
-     * @param refresh Not to use cached data
+     * @param path      Grid path
+     * @param refresh   Not to use cached data
      */
     public static void loadData(final ModalWindow modal, final ListGrid grid,
-            final BasicBrowserToolStrip toolStrip, final String path, boolean refresh) {
+                                final BasicBrowserToolStrip toolStrip, final String path, boolean refresh) {
 
         if (!path.equals(DataManagerConstants.ROOT)) {
 

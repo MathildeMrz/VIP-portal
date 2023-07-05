@@ -56,7 +56,6 @@ import fr.insalyon.creatis.vip.social.client.SocialModule;
 import fr.insalyon.creatis.vip.visualization.client.VisualizationModule;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class Main implements EntryPoint {

@@ -69,11 +69,11 @@ public class VisualizationBusiness {
     }
 
     public Image getImageSlicesURL(String imageFileName, String dir)
-        throws BusinessException {
+            throws BusinessException {
 
         File imageFile = new File(imageFileName);
         String imageDirName = imageFile.getParent() + "/"
-            + imageFile.getName() + "-" + dir + "-slices";
+                + imageFile.getName() + "-" + dir + "-slices";
         File imageDir = new File(imageDirName);
 
         if (!imageDir.exists()) {
@@ -84,7 +84,7 @@ public class VisualizationBusiness {
         if (!sliceZero.exists()) {
             //split slices
             ProcessBuilder builder = new ProcessBuilder(
-                "slice.sh", imageFileName, imageDirName, dir);
+                    "slice.sh", imageFileName, imageDirName, dir);
             builder.redirectErrorStream(true);
             try {
                 builder.start();
@@ -106,7 +106,7 @@ public class VisualizationBusiness {
         }
         //get z value
         ProcessBuilder builderZ =
-            new ProcessBuilder("getz.sh", imageFileName, dir);
+                new ProcessBuilder("getz.sh", imageFileName, dir);
         builderZ.redirectErrorStream(true);
         String number = "";
         try {
@@ -116,7 +116,7 @@ public class VisualizationBusiness {
 
                 InputStream stdout = process.getInputStream();
                 BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(stdout));
+                        new BufferedReader(new InputStreamReader(stdout));
 
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -138,10 +138,10 @@ public class VisualizationBusiness {
 
         logger.info("IMAGE DIR NAME IS " + imageDirName);
         return new Image(
-            imageDirName,
-            Integer.parseInt(number.trim()),
-            imageDirName.substring(
-                imageDirName.indexOf("/files/viewer")) + "/");
+                imageDirName,
+                Integer.parseInt(number.trim()),
+                imageDirName.substring(
+                        imageDirName.indexOf("/files/viewer")) + "/");
     }
 
     public VisualizationItem getVisualizationItemFromLFN(
@@ -166,13 +166,13 @@ public class VisualizationBusiness {
         String[] extensions = {".raw", ".zraw", ".raw.gz"};
 
         return java.util.Arrays.stream(extensions)
-            .map(extension -> buildLfnName(user, lfn, extension))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .filter(fe -> checkIfExists(fe.remotePath))
-            .findFirst()
-            .filter(fe -> downloadFile(user, fe.remotePath))
-            .map(fe -> fe.extension);
+                .map(extension -> buildLfnName(user, lfn, extension))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(fe -> checkIfExists(fe.remotePath))
+                .findFirst()
+                .filter(fe -> downloadFile(user, fe.remotePath))
+                .map(fe -> fe.extension);
     }
 
     private Optional<FilenameAndExtension> buildLfnName(
@@ -210,6 +210,7 @@ public class VisualizationBusiness {
     private static class FilenameAndExtension {
         public final String remotePath;
         public final String extension;
+
         public FilenameAndExtension(String remotePath, String extension) {
             this.remotePath = remotePath;
             this.extension = extension;

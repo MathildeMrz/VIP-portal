@@ -25,9 +25,9 @@ import java.util.Map;
 /**
  * Spring configuration to make vip work in local, without any other
  * external service.
- *
+ * <p>
  * This overrides ProxyClient and SmaClient.
- *
+ * <p>
  * This also import properties from vip-local.conf to configure all the other
  * local components of this package
  */

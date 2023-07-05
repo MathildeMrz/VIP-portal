@@ -73,12 +73,12 @@ public class ApiKeyBusiness {
 
 <span class="nc" id="L74">            List&lt;UserApiKey&gt; keys = apiKeysDAO.getByUser(userEmail);</span>
 <span class="nc" id="L75">            UserApiKey newKey =</span>
-                new UserApiKey(storageIdentifier, userEmail, apiKey);
+                    new UserApiKey(storageIdentifier, userEmail, apiKey);
 
 <span class="nc bnc" id="L78" title="All 2 branches missed.">            if (keys.stream().anyMatch(</span>
                     k -&gt;
-<span class="nc bnc" id="L80" title="All 2 branches missed.">                    k.getStorageIdentifier().equals(storageIdentifier)</span>
-<span class="nc bnc" id="L81" title="All 2 branches missed.">                    &amp;&amp; k.getUserEmail().equals(userEmail))) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                            k.getStorageIdentifier().equals(storageIdentifier)</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                                    &amp;&amp; k.getUserEmail().equals(userEmail))) {</span>
 <span class="nc" id="L82">                apiKeysDAO.updateKey(newKey);</span>
             } else {
 <span class="nc" id="L84">                apiKeysDAO.addKey(newKey);</span>

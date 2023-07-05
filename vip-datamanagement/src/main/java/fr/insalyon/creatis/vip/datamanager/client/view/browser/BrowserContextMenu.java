@@ -54,11 +54,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
-/** @author Rafael Ferreira da Silva */
+/**
+ * @author Rafael Ferreira da Silva
+ */
 public class BrowserContextMenu extends Menu {
 
     public BrowserContextMenu(final ModalWindow modal, final String baseDir,
-            final DataRecord data) {
+                              final DataRecord data) {
 
         this.setShowShadow(true);
         this.setShadowDepth(10);
@@ -120,7 +122,7 @@ public class BrowserContextMenu extends Menu {
 
         ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
         String fileName = baseDir + "/" + data.getName();
-        addVizualisers(menuItems,fileName);
+        addVizualisers(menuItems, fileName);
         MenuItemSeparator separator = new MenuItemSeparator();
         menuItems.add(uploadItem);
         menuItems.add(downloadItem);
@@ -133,7 +135,6 @@ public class BrowserContextMenu extends Menu {
     }
 
     /**
-     *
      * @param modal
      * @param baseDir
      * @param name
@@ -199,13 +200,12 @@ public class BrowserContextMenu extends Menu {
     }
 
     /**
-     *
      * @param modal
      * @param baseDir
      * @param data
      */
     private void download(final ModalWindow modal, final String baseDir,
-            final DataRecord data) {
+                          final DataRecord data) {
 
         if (data.getType() == Data.Type.file) {
             DataManagerServiceAsync service = DataManagerService.Util.getInstance();
@@ -260,30 +260,30 @@ public class BrowserContextMenu extends Menu {
     }
 
     public static void addVizualisers(
-        final ArrayList<MenuItem> menuItems,
-        final String fileName) {
+            final ArrayList<MenuItem> menuItems,
+            final String fileName) {
 
         boolean hasVisualizers = visualizers.stream()
-            .filter(v -> v.isFileSupported(fileName))
-            .mapToInt(
-                // Creating the menu item as a side-effect.
-                v -> {
-                    MenuItem viewItem = menuItemFor(
-                        fileName, v.fileTypeName(), v.viewStarter());
-                    menuItems.add(viewItem);
-                    return 1;
-                })
-            // Using sum to be sure to consume the whole stream.
-            .sum() > 0;
+                .filter(v -> v.isFileSupported(fileName))
+                .mapToInt(
+                        // Creating the menu item as a side-effect.
+                        v -> {
+                            MenuItem viewItem = menuItemFor(
+                                    fileName, v.fileTypeName(), v.viewStarter());
+                            menuItems.add(viewItem);
+                            return 1;
+                        })
+                // Using sum to be sure to consume the whole stream.
+                .sum() > 0;
 
         if (hasVisualizers)
             menuItems.add(new MenuItemSeparator());
     }
 
     private static MenuItem menuItemFor(
-        final String fileName,
-        final String fileTypeName,
-        final Consumer<String> viewStarter) {
+            final String fileName,
+            final String fileTypeName,
+            final Consumer<String> viewStarter) {
 
         MenuItem viewItem = new MenuItem("View " + fileTypeName);
         viewItem.setIcon(DataManagerConstants.ICON_VIEW);
@@ -298,7 +298,9 @@ public class BrowserContextMenu extends Menu {
 
     public static interface Visualizer {
         boolean isFileSupported(String filename);
+
         String fileTypeName();
+
         Consumer<String> viewStarter();
     }
 

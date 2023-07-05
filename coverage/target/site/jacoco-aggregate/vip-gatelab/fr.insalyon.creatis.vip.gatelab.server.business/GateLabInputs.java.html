@@ -92,7 +92,6 @@ public class GateLabInputs {
 <span class="nc" id="L92">    }</span>
 
     /**
-     *
      * @param currentUserFolder
      * @return
      * @throws BusinessException
@@ -101,7 +100,7 @@ public class GateLabInputs {
             throws BusinessException {
 
         try {
-<span class="nc" id="L104">            String input = inputsMap.get(&quot;GateInput&quot;);</span>
+<span class="nc" id="L103">            String input = inputsMap.get(&quot;GateInput&quot;);</span>
             /*
              * int ind = input.lastIndexOf(&quot;/&quot;); String inputlink =
              * input.substring(0, ind);
@@ -122,27 +121,27 @@ public class GateLabInputs {
              *
              * String outputlink = inputlink + &quot;/output&quot;;
              */
-<span class="nc" id="L125">            String release = inputsMap.get(&quot;GateRelease&quot;);</span>
-<span class="nc" id="L126">            String particles = inputsMap.get(&quot;NumberOfParticles&quot;);</span>
-<span class="nc bnc" id="L127" title="All 2 branches missed.">            String simtype = inputsMap.get(&quot;ParallelizationType&quot;).equals(&quot;dyn&quot;) ?</span>
-<span class="nc" id="L128">                    &quot;Dynamic&quot; : &quot;Static&quot;;</span>
-<span class="nc" id="L129">            String phaseSpace = inputsMap.get(&quot;phaseSpace&quot;);</span>
-<span class="nc" id="L130">            Map&lt;String, String&gt; inputMap = new HashMap&lt;String, String&gt;();</span>
-<span class="nc" id="L131">            inputMap.put(</span>
-                &quot;inputlink&quot;,
-<span class="nc" id="L133">                    lfcPathsBusiness.parseRealDir(input, currentUserFolder));</span>
+<span class="nc" id="L124">            String release = inputsMap.get(&quot;GateRelease&quot;);</span>
+<span class="nc" id="L125">            String particles = inputsMap.get(&quot;NumberOfParticles&quot;);</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">            String simtype = inputsMap.get(&quot;ParallelizationType&quot;).equals(&quot;dyn&quot;) ?</span>
+<span class="nc" id="L127">                    &quot;Dynamic&quot; : &quot;Static&quot;;</span>
+<span class="nc" id="L128">            String phaseSpace = inputsMap.get(&quot;phaseSpace&quot;);</span>
+<span class="nc" id="L129">            Map&lt;String, String&gt; inputMap = new HashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L130">            inputMap.put(</span>
+                    &quot;inputlink&quot;,
+<span class="nc" id="L132">                    lfcPathsBusiness.parseRealDir(input, currentUserFolder));</span>
             //inputMap.put(&quot;outputlink&quot;, DataManagerUtil.parseRealDir(outputlink));
-<span class="nc" id="L135">            inputMap.put(</span>
-                &quot;gate_version&quot;,
-<span class="nc" id="L137">                    lfcPathsBusiness.parseRealDir(release, currentUserFolder));</span>
-<span class="nc" id="L138">            inputMap.put(&quot;particles&quot;, particles);</span>
-<span class="nc" id="L139">            inputMap.put(&quot;simulation&quot;, simtype);</span>
-<span class="nc" id="L140">            inputMap.put(&quot;phaseSpace&quot;, phaseSpace);</span>
+<span class="nc" id="L134">            inputMap.put(</span>
+                    &quot;gate_version&quot;,
+<span class="nc" id="L136">                    lfcPathsBusiness.parseRealDir(release, currentUserFolder));</span>
+<span class="nc" id="L137">            inputMap.put(&quot;particles&quot;, particles);</span>
+<span class="nc" id="L138">            inputMap.put(&quot;simulation&quot;, simtype);</span>
+<span class="nc" id="L139">            inputMap.put(&quot;phaseSpace&quot;, phaseSpace);</span>
 
-<span class="nc" id="L142">            return inputMap;</span>
+<span class="nc" id="L141">            return inputMap;</span>
 
-<span class="nc" id="L144">        } catch (DataManagerException ex) {</span>
-<span class="nc" id="L145">            throw new BusinessException(ex);</span>
+<span class="nc" id="L143">        } catch (DataManagerException ex) {</span>
+<span class="nc" id="L144">            throw new BusinessException(ex);</span>
         }
     }
 }

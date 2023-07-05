@@ -39,14 +39,13 @@ import java.util.Collections;
  * Class that initializes necessary stuff for a local vip instance on startup.
  * If necessary it will create missing folder (admin home folder, support group
  * folder, application root folder).
- *
+ * <p>
  * And, if there are some "local.data.xxx" properties in vip-local.conf, it will
  * initialize some data : an engine, a class, an application and install an
  * application version.
- *
+ * <p>
  * The vip-local.conf provided in main/resources includes the necessary to
  * initialize a working grep application.
- *
  */
 
 @Component
@@ -122,7 +121,7 @@ public class LocalInitializer {
         // applications root folder parent must exist
         String appRootFolder = server.getApplicationImporterRootFolder();
         String appRootFolderParent = Paths.get(appRootFolder).getParent().toString();
-        if ( ! lfcBusiness.exists(admin, appRootFolderParent)) {
+        if (!lfcBusiness.exists(admin, appRootFolderParent)) {
             logger.error("Application importer parent dir [{}] must exist", appRootFolderParent);
             throw new IllegalStateException("Application importer parend dir must exist");
         }
@@ -183,7 +182,7 @@ public class LocalInitializer {
             return;
         }
         logger.info("adding application [{}]", applicationName);
-        Application application = new Application(applicationName, Collections.singletonList(className),"");
+        Application application = new Application(applicationName, Collections.singletonList(className), "");
         applicationBusiness.add(application);
     }
 

@@ -8,22 +8,15 @@ import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
 import fr.insalyon.creatis.vip.application.client.view.monitor.job.JobStatus;
 import fr.insalyon.creatis.vip.application.client.view.monitor.job.TaskStatus;
 import fr.insalyon.creatis.vip.application.server.business.SimulationBusiness;
-import fr.insalyon.creatis.vip.application.server.dao.SimulationDAO;
-import fr.insalyon.creatis.vip.application.server.rpc.JobServiceImpl;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
-import javax.servlet.ServletException;
 import java.util.GregorianCalendar;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 // testing framework must recreate a MessageBusiness after each test method
@@ -37,8 +30,7 @@ public class SimulationIT extends BaseSpringIT {
     private Job job;
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException, BusinessException
-    {
+    public void setUp() throws BusinessException, GRIDAClientException, BusinessException {
 
         simulation = new Simulation("pipelineTest1", "3", null, "execId1",
                 "fullName", new GregorianCalendar(2016, 9, 2).getTime(),
@@ -62,15 +54,13 @@ public class SimulationIT extends BaseSpringIT {
 
 
     @Test
-    public void testSimulationGetProperties()
-    {
+    public void testSimulationGetProperties() {
         Assertions.assertEquals("execId1", simulation.getID(), "Incorrect simulation id");
         Assertions.assertEquals(SimulationStatus.Running, simulation.getStatus(), "Incorrect simulation status");
     }
 
     @Test
-    public void testJobGetProperties()
-    {
+    public void testJobGetProperties() {
         Assertions.assertEquals(1, job.getId(), "Incorrect job id");
         Assertions.assertEquals(JobStatus.Completed, job.getStatus(), "Incorrect job status");
     }

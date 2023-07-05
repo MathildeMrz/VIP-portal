@@ -41,14 +41,13 @@ import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import java.util.Date;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class GateLabSimulationBoxLayout extends SimulationBoxLayout {
 
     public GateLabSimulationBoxLayout(String id, String name, String applicationName,
-            String applicationVersion, String applicationClass, String user,
-            SimulationStatus status, Date date) {
+                                      String applicationVersion, String applicationClass, String user,
+                                      SimulationStatus status, Date date) {
 
         super(id, name, applicationName, applicationVersion, applicationClass,
                 user, status, date);
@@ -58,12 +57,12 @@ public class GateLabSimulationBoxLayout extends SimulationBoxLayout {
             @Override
             public void onClick(ClickEvent event) {
                 Layout.getInstance().addTab(
-                    AbstractSimulationTab.tabIdFrom(simulationID),
-                    () -> new GateLabSimulationTab(
-                        simulationID,
-                        simulationName,
-                        simulationStatus,
-                        launchedDate.toString()));
+                        AbstractSimulationTab.tabIdFrom(simulationID),
+                        () -> new GateLabSimulationTab(
+                                simulationID,
+                                simulationName,
+                                simulationStatus,
+                                launchedDate.toString()));
             }
         });
     }

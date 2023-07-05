@@ -38,28 +38,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
-<span class="nc" id="L44">public class DataManagerUtil {</span>
+<span class="nc" id="L43">public class DataManagerUtil {</span>
 
     public static String extractName(String lfcDir) {
-<span class="nc" id="L47">        return lfcDir.substring(lfcDir.lastIndexOf(&quot;/&quot;) + 1);</span>
+<span class="nc" id="L46">        return lfcDir.substring(lfcDir.lastIndexOf(&quot;/&quot;) + 1);</span>
     }
 
-     public static List&lt;String&gt; getPaths(List&lt;String&gt; groups){
-<span class="nc" id="L51">        ArrayList&lt;String&gt; paths = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L52" title="All 2 branches missed.">        for(String s : groups)</span>
-<span class="nc" id="L53">            paths.add(s.replaceAll(&quot; &quot;, &quot;_&quot;));</span>
-<span class="nc" id="L54">        return paths;</span>
+    public static List&lt;String&gt; getPaths(List&lt;String&gt; groups) {
+<span class="nc" id="L50">        ArrayList&lt;String&gt; paths = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        for (String s : groups)</span>
+<span class="nc" id="L52">            paths.add(s.replaceAll(&quot; &quot;, &quot;_&quot;));</span>
+<span class="nc" id="L53">        return paths;</span>
     }
 
     /*
         remove spaces, accents and non-ascii characters
      */
     public static String getCleanFilename(String fileName) {
-<span class="nc" id="L61">        fileName = new File(fileName).getName().trim().replaceAll(&quot; &quot;, &quot;_&quot;);</span>
-<span class="nc" id="L62">        return CoreUtil.getCleanString(fileName);</span>
+<span class="nc" id="L60">        fileName = new File(fileName).getName().trim().replaceAll(&quot; &quot;, &quot;_&quot;);</span>
+<span class="nc" id="L61">        return CoreUtil.getCleanString(fileName);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

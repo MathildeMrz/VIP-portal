@@ -72,7 +72,7 @@ public abstract class BaseSpringIT {
     @Autowired
     protected GRIDAClient gridaClient;
 
-    protected String adminEmail;
+    protected String adminEmail = "test-admin@test.com";
     protected final String emailUser1 = "test1@test.fr";
     protected final String emailUser2 = "test2@test.fr";
     protected final String emailUser3 = "test3@test.fr";

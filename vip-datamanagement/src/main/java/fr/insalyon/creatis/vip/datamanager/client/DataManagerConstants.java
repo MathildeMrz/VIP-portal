@@ -32,7 +32,6 @@
 package fr.insalyon.creatis.vip.datamanager.client;
 
 /**
- *
  * @author Rafael Silva
  */
 public class DataManagerConstants {

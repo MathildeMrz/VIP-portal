@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 /**
  * Local engine that simulates workflow execution.
- *
+ * <p>
  * At the moment it does the basic minimum :
  * - looks for a bash script in the gwendia file
  * - creates a local directory for each execution
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * - transfers the results in a results-directory given path
  * - do all this asynchronously and handle a status
  * - handles all path as lfn and use GridaClientLocal for transfers
- *
+ * <p>
  * A lot of improvements are possible
  */
 @Component
@@ -63,12 +63,12 @@ public class LocalBashEngine {
         executionsFutures = new HashMap<>();
         workflowsDir = Paths.get(vipConfigFolder.getURI())
                 .resolve(workflowsDirName);
-        if ( ! workflowsDir.toFile().exists() && ! workflowsDir.toFile().mkdir()) {
+        if (!workflowsDir.toFile().exists() && !workflowsDir.toFile().mkdir()) {
             throw new IllegalStateException("cannot create local bash workflows directory");
         }
     }
 
-    public String launch(File workflowFile, List<ParameterSweep> parameters)  {
+    public String launch(File workflowFile, List<ParameterSweep> parameters) {
         try {
             LocalBashExecution newExecution =
                     createExecution(workflowFile, parameters);
@@ -88,7 +88,7 @@ public class LocalBashEngine {
     }
 
     public SimulationStatus getStatus(String workflowID) {
-        if ( ! executionsFutures.containsKey(workflowID)) {
+        if (!executionsFutures.containsKey(workflowID)) {
             return SimulationStatus.Killed;
         }
         Future<?> execFuture = executionsFutures.get(workflowID);
@@ -97,7 +97,7 @@ public class LocalBashEngine {
         }
         if (execFuture.isDone()) {
             return isFinishedSuccessfully(execFuture) ?
-                SimulationStatus.Completed : SimulationStatus.Failed;
+                    SimulationStatus.Completed : SimulationStatus.Failed;
         }
         return executionsInfo.get(workflowID).status;
     }
@@ -138,13 +138,14 @@ public class LocalBashEngine {
         File workflowFile;
         Path workflowDir;
         String scriptFileLFN;
-        Map<String,String> execInputs;     // name -> value
-        Map<String,String> gwendiaInputs;  // name -> type (string/URI)
-        Map<String,String> gwendiaOutputs;  // name -> type (string/URI)
+        Map<String, String> execInputs;     // name -> value
+        Map<String, String> gwendiaInputs;  // name -> type (string/URI)
+        Map<String, String> gwendiaOutputs;  // name -> type (string/URI)
         SimulationStatus status = SimulationStatus.Unknown;
     }
 
     private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yy-MM-dd-HHmmss.SSS");
+
     private String createWorkflowId() throws IOException {
         String dateString = DATE_FORMAT.format(new Date());
         return "workflow-local-" + dateString;
@@ -156,7 +157,7 @@ public class LocalBashEngine {
         return dir;
     }
 
-    private Map<String,String> getGwendiaInputs(File workflowFile) throws IOException {
+    private Map<String, String> getGwendiaInputs(File workflowFile) throws IOException {
         // <in name="results-directory" type="string/URI" />
         Pattern pattern = Pattern.compile("\\s*<in\\s+"
                 + "name=\"([\\w-]+)\"\\s+"
@@ -167,7 +168,7 @@ public class LocalBashEngine {
                 .collect(Collectors.toMap(matcher -> matcher.group(1), matcher -> matcher.group(2)));
     }
 
-    private Map<String,String> getGwendiaOutputs(File workflowFile) throws IOException {
+    private Map<String, String> getGwendiaOutputs(File workflowFile) throws IOException {
         // <out name="output" type="URI" depth="0"/>
         Pattern pattern = Pattern.compile("\\s*<out\\s+"
                 + "name=\"([\\w-]+)\"\\s+"
@@ -194,19 +195,22 @@ public class LocalBashEngine {
     }
 
 
-    private  Map<String,String> getExecInputs(List<ParameterSweep> parameters) {
+    private Map<String, String> getExecInputs(List<ParameterSweep> parameters) {
         if (parameters.stream()
                 .anyMatch(param -> param.getValues().size() != 1)) {
             throw new RuntimeException("There must be exactly 1 value for all parameters");
         }
         return parameters.stream()
-                .map(p -> {logger.info("exec input {} -- {}", p.getParameterName(), p.getValues()); return p;})
+                .map(p -> {
+                    logger.info("exec input {} -- {}", p.getParameterName(), p.getValues());
+                    return p;
+                })
                 .collect(Collectors.toMap(
-                param -> param.getParameterName(),
-                param -> param.getValues().get(0)
-        ));
+                        param -> param.getParameterName(),
+                        param -> param.getValues().get(0)
+                ));
     }
-    
+
     /*
     TODO :
     - verify inputs are present
@@ -240,11 +244,11 @@ public class LocalBashEngine {
             }
         }
 
-        private Map<String,Path> transferInputFiles() throws IOException, GRIDAClientException {
+        private Map<String, Path> transferInputFiles() throws IOException, GRIDAClientException {
             // find URI inputs
             Path toDir = exec.workflowDir.resolve("inputs");
             Files.createDirectory(toDir);
-            Map<String,Path> inputsFiles = new HashMap<>();
+            Map<String, Path> inputsFiles = new HashMap<>();
             for (String name : getFileInputNames()) {
                 Path from = Paths.get(exec.execInputs.get(name));
                 String to = gridaClient.getRemoteFile(from.toString(), toDir.toString());
@@ -303,7 +307,7 @@ public class LocalBashEngine {
                     .redirectErrorStream(true)
                     .redirectOutput(execDir.resolve("output.log").toFile());
             Process process = builder.start();
-            if ( process.waitFor() != 0) {
+            if (process.waitFor() != 0) {
                 throw new RuntimeException("process finished with error");
             }
         }
@@ -314,7 +318,7 @@ public class LocalBashEngine {
                 throw new RuntimeException("there should be a results-directory parameter");
             }
             if (exec.gwendiaOutputs.values().stream()
-                    .anyMatch(type -> ! "URI".equals(type) )) {
+                    .anyMatch(type -> !"URI".equals(type))) {
                 throw new RuntimeException("Only URI outputs are supported");
             }
             for (String output : exec.gwendiaOutputs.keySet()) {
