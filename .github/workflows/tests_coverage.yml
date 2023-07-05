@@ -5,12 +5,12 @@ name: tests_coverage_jacoco
  
 on:
   push:
-    branches: ["develop"] 
+    branches: ["master"] 
     #paths-ignore:
     #  - '**.github/coverage/**'
 
   pull_request:
-    branches: ["develop"]
+    branches: ["master"]
     #paths-ignore:
     #  - "**.github/coverage/**"
 
