@@ -20,10 +20,9 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class KeycloakBusiness {
 
+    private static final byte ALLOWED_ATTEMPTS = 2;
     private final Environment env;
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private static final byte ALLOWED_ATTEMPTS = 2;
 
     @Autowired
     KeycloakBusiness(Environment env) {

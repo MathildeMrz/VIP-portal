@@ -56,14 +56,6 @@ public enum JobStatus {
         this.description = description;
     }
 
-    public String getColor() {
-        return color;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public static List<String> valuesAsList() {
 
         List<String> list = new ArrayList<String>();
@@ -71,5 +63,13 @@ public enum JobStatus {
             list.add(status.name());
         }
         return list;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

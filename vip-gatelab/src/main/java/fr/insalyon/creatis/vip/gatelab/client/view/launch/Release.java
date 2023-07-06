@@ -36,18 +36,6 @@ package fr.insalyon.creatis.vip.gatelab.client.view.launch;
  */
 public class Release implements Comparable<Release> {
 
-    private class ReleaseNumber {
-        public int major;
-        public int minor;
-        public int bug;
-
-        public ReleaseNumber() {
-            major = 0;
-            minor = 0;
-            bug = 0;
-        }
-    }
-
     private String releaseName;
 
     public Release(String name) {
@@ -107,6 +95,18 @@ public class Release implements Comparable<Release> {
         }
 
         return rn;
+    }
+
+    private class ReleaseNumber {
+        public int major;
+        public int minor;
+        public int bug;
+
+        public ReleaseNumber() {
+            major = 0;
+            minor = 0;
+            bug = 0;
+        }
     }
 
 }

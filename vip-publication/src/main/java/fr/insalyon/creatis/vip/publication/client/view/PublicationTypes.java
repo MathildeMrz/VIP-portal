@@ -40,10 +40,10 @@ public enum PublicationTypes implements IsSerializable {
 
     ConferenceArticle("Article In Conference Proceedings"), Journal("Journal Article"), BookChapter("Book Chapter"), Other("Other");
 
+    private String value;
+
     private PublicationTypes() {
     }
-
-    private String value;
 
     private PublicationTypes(String value) {
         this.value = value;

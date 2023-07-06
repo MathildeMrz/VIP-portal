@@ -56,17 +56,16 @@ import java.util.*;
  */
 public class GateLabLaunchTab extends LaunchTab {
 
-    private LoadMacWindow loadMacWindow;
-    private String baseDir;
-    private String releaseDir;
-    private IButton loadMacButton;
-
     public static final String GATE_RELEASE_INPUT_ID = "GateRelease";
     public static final String CPU_ESTIMATION_INPUT_ID = "CPUestimation";
     public static final String PARALLELIZATION_TYPE_INPUT_ID = "ParallelizationType";
     public static final String GATE_INPUT_INPUT_ID = "GateInput";
     public static final String NB_OF_PARTICLES_INPUT_ID = "NumberOfParticles";
     public static final String PHASE_SPACE_INPUT_ID = "phaseSpace";
+    private LoadMacWindow loadMacWindow;
+    private String baseDir;
+    private String releaseDir;
+    private IButton loadMacButton;
 
     public GateLabLaunchTab(String applicationName, String applicationVersion,
                             String applicationClass) {

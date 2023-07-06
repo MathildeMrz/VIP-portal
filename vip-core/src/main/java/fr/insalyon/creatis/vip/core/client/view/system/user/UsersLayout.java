@@ -72,13 +72,13 @@ import java.util.List;
  */
 public class UsersLayout extends VLayout {
 
+    DataSource ds;
+    boolean state = true;
     private ModalWindow modal;
     private ListGrid grid;
     private HLayout rollOverCanvas;
     private ListGridRecord rollOverRecord;
     private DetailViewer detailViewer;
-    DataSource ds;
-    boolean state = true;
 
     public UsersLayout() {
 

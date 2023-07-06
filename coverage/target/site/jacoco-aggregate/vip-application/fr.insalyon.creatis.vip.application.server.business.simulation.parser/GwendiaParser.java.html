@@ -51,51 +51,50 @@ import org.xml.sax.SAXException;
 @Scope(&quot;prototype&quot;)
 public class GwendiaParser extends AbstractWorkflowParser {
 
-<span class="nc" id="L54">    private Source currentSource = null;</span>
-<span class="nc" id="L55">    private String text = null;</span>
-
-<span class="nc" id="L57">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+<span class="nc" id="L54">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+<span class="nc" id="L55">    private Source currentSource = null;</span>
+<span class="nc" id="L56">    private String text = null;</span>
 
     public GwendiaParser() {
-<span class="nc" id="L60">        super();</span>
-<span class="nc" id="L61">    }</span>
+<span class="nc" id="L59">        super();</span>
+<span class="nc" id="L60">    }</span>
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-<span class="nc bnc" id="L66" title="All 2 branches missed.">        if (localName.equals(&quot;source&quot;)) {</span>
-<span class="nc" id="L67">            Source s = new Source(attributes.getValue(&quot;name&quot;), attributes.getValue(&quot;type&quot;), attributes.getValue(&quot;user-level&quot;),</span>
-<span class="nc" id="L68">                    attributes.getValue(&quot;description&quot;), attributes.getValue(&quot;optional&quot;), attributes.getValue(&quot;default&quot;),</span>
-<span class="nc" id="L69">                    attributes.getValue(&quot;vip-type-restriction&quot;), attributes.getValue(&quot;pretty-name&quot;));</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (localName.equals(&quot;source&quot;)) {</span>
+<span class="nc" id="L66">            Source s = new Source(attributes.getValue(&quot;name&quot;), attributes.getValue(&quot;type&quot;), attributes.getValue(&quot;user-level&quot;),</span>
+<span class="nc" id="L67">                    attributes.getValue(&quot;description&quot;), attributes.getValue(&quot;optional&quot;), attributes.getValue(&quot;default&quot;),</span>
+<span class="nc" id="L68">                    attributes.getValue(&quot;vip-type-restriction&quot;), attributes.getValue(&quot;pretty-name&quot;));</span>
 
-<span class="nc" id="L71">            sources.add(s);</span>
-<span class="nc" id="L72">            currentSource = s;</span>
-<span class="nc" id="L73">            return;</span>
+<span class="nc" id="L70">            sources.add(s);</span>
+<span class="nc" id="L71">            currentSource = s;</span>
+<span class="nc" id="L72">            return;</span>
         }
-<span class="nc bnc" id="L75" title="All 4 branches missed.">        if (localName.equals(&quot;source-comment&quot;) || localName.equals(&quot;description&quot;))</span>
-<span class="nc" id="L76">            text = &quot;&quot;;</span>
-<span class="nc" id="L77">    }</span>
+<span class="nc bnc" id="L74" title="All 4 branches missed.">        if (localName.equals(&quot;source-comment&quot;) || localName.equals(&quot;description&quot;))</span>
+<span class="nc" id="L75">            text = &quot;&quot;;</span>
+<span class="nc" id="L76">    }</span>
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (text != null) {</span>
-<span class="nc" id="L82">            String chars = new String(ch);</span>
-<span class="nc" id="L83">            text += chars.substring(start, start + length);</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (text != null) {</span>
+<span class="nc" id="L81">            String chars = new String(ch);</span>
+<span class="nc" id="L82">            text += chars.substring(start, start + length);</span>
         }
-<span class="nc" id="L85">    }</span>
+<span class="nc" id="L84">    }</span>
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (localName.equals(&quot;source&quot;)) {</span>
-<span class="nc" id="L90">            currentSource = null;</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (localName.equals(&quot;source&quot;)) {</span>
+<span class="nc" id="L89">            currentSource = null;</span>
         }
-<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (localName.equals(&quot;source-comment&quot;)) {</span>
-<span class="nc" id="L93">            currentSource.setDescription(text);</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (localName.equals(&quot;source-comment&quot;)) {</span>
+<span class="nc" id="L92">            currentSource.setDescription(text);</span>
         }
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (localName.equals(&quot;description&quot;)) {</span>
-<span class="nc" id="L96">            description = text;</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (localName.equals(&quot;description&quot;)) {</span>
+<span class="nc" id="L95">            description = text;</span>
         }
-<span class="nc" id="L98">    }</span>
+<span class="nc" id="L97">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

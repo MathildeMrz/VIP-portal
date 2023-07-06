@@ -52,20 +52,20 @@ public class Descriptor implements IsSerializable {
 
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public List<Source> getSources() {
+        return sources;
     }
 
     public void setSources(List<Source> sources) {
         this.sources = sources;
     }
 
-    public List<Source> getSources() {
-        return sources;
-    }
-
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

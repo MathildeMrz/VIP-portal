@@ -70,16 +70,16 @@ public class Pipeline {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getVersion() {
         return version;
     }
 
     public ArrayList<PipelineParameter> getParameters() {
         return parameters;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @JsonProperty("canExecute") // jackson only take into account getter by default

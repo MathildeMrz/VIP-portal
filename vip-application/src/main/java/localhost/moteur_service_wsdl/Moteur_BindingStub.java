@@ -35,15 +35,34 @@ import java.rmi.RemoteException;
 
 public class Moteur_BindingStub extends org.apache.axis.client.Stub implements localhost.moteur_service_wsdl.Moteur_servicePortType {
 
-    private java.util.Vector cachedSerClasses = new java.util.Vector();
-    private java.util.Vector cachedSerQNames = new java.util.Vector();
-    private java.util.Vector cachedSerFactories = new java.util.Vector();
-    private java.util.Vector cachedDeserFactories = new java.util.Vector();
     static org.apache.axis.description.OperationDesc[] _operations;
 
     static {
         _operations = new org.apache.axis.description.OperationDesc[4];
         _initOperationDesc1();
+    }
+
+    private java.util.Vector cachedSerClasses = new java.util.Vector();
+    private java.util.Vector cachedSerQNames = new java.util.Vector();
+    private java.util.Vector cachedSerFactories = new java.util.Vector();
+    private java.util.Vector cachedDeserFactories = new java.util.Vector();
+
+    public Moteur_BindingStub() throws org.apache.axis.AxisFault {
+        this(null);
+    }
+
+    public Moteur_BindingStub(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
+        this(service);
+        super.cachedEndpoint = endpointURL;
+    }
+
+    public Moteur_BindingStub(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
+        if (service == null) {
+            super.service = new org.apache.axis.client.Service();
+        } else {
+            super.service = service;
+        }
+        ((org.apache.axis.client.Service) super.service).setTypeMappingVersion("1.2");
     }
 
     private static void _initOperationDesc1() {
@@ -95,24 +114,6 @@ public class Moteur_BindingStub extends org.apache.axis.client.Stub implements l
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
         _operations[3] = oper;
 
-    }
-
-    public Moteur_BindingStub() throws org.apache.axis.AxisFault {
-        this(null);
-    }
-
-    public Moteur_BindingStub(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
-        this(service);
-        super.cachedEndpoint = endpointURL;
-    }
-
-    public Moteur_BindingStub(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
-        if (service == null) {
-            super.service = new org.apache.axis.client.Service();
-        } else {
-            super.service = service;
-        }
-        ((org.apache.axis.client.Service) super.service).setTypeMappingVersion("1.2");
     }
 
     protected org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {

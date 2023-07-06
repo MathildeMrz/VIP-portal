@@ -40,65 +40,6 @@ import java.util.Optional;
  */
 public class ApiException extends VipException {
 
-    /* Reserved codes : 8xxx : vip-api */
-    public enum ApiError implements VipError {
-        GENERIC_API_ERROR(8000),
-        NOT_IMPLEMENTED(8001),
-        BAD_CREDENTIALS(8002),
-        INSUFFICIENT_AUTH(8003),
-        AUTHENTICATION_ERROR(8004),
-        INVALID_PIPELINE_IDENTIFIER(8005),
-        APPLICATION_NOT_FOUND(8006),
-        PIPELINE_NOT_FOUND(8007),
-        NOT_ALLOWED_TO_USE_APPLICATION(8008),
-        INPUT_FIELD_NOT_VALID(8009),
-        WRONG_DATE_FORMAT(8010),
-        WRONG_STAT_SERVICE(8011),
-        COUNTRY_UNKNOWN(8012),
-        UNAUTHORIZED_DATA_ACCESS(8013),
-        WRONG_OIDC_LOGIN(8014);
-
-        private Integer code;
-
-        ApiError(Integer code) {
-            this.code = code;
-        }
-
-        @Override
-        public Integer getCode() {
-            return code;
-        }
-
-        static private String GENERIC_ERROR_MESSAGE = "An error has been encountered on the VIP API";
-
-        static {
-            addMessage(ApiError.GENERIC_API_ERROR, GENERIC_ERROR_MESSAGE, 0);
-            addMessage(ApiError.NOT_IMPLEMENTED, "The {} method is not implemented in the VIP API", 1);
-            addMessage(ApiError.INVALID_PIPELINE_IDENTIFIER, "The {} pipeline identifier is not valid", 1);
-            addMessage(ApiError.APPLICATION_NOT_FOUND, "The {} application does not exists", 1);
-            addMessage(ApiError.PIPELINE_NOT_FOUND, "The {} pipeline does not exists or cannot be used", 1);
-            addMessage(ApiError.NOT_ALLOWED_TO_USE_APPLICATION, "Not allowed to access application {}", 1);
-            addMessage(ApiError.INPUT_FIELD_NOT_VALID, "Input field '{}' is not valid. Cause : {}", 2);
-            addMessage(ApiError.WRONG_DATE_FORMAT, "The date {} have a wrong format (needed : {})", 2);
-            addMessage(ApiError.WRONG_STAT_SERVICE, "The service {} is unknown, only 'vip' is possible", 1);
-            addMessage(ApiError.COUNTRY_UNKNOWN, "Country unknown : {}", 1);
-            addMessage(ApiError.UNAUTHORIZED_DATA_ACCESS, "Unauthorized data access to : {}", 1);
-            addMessage(ApiError.WRONG_OIDC_LOGIN, "The login process encountered an error", 0);
-        }
-
-        public Optional<String> getMessage() {
-            return getRawMessage(this);
-        }
-
-        public static String getGenericErrorMessage() {
-            return GENERIC_ERROR_MESSAGE;
-        }
-
-        public String formatMessage(Object... params) {
-            return VipException.formatMessage(this, params);
-        }
-    }
-
     public ApiException(String message) {
         super(message);
     }
@@ -117,5 +58,64 @@ public class ApiException extends VipException {
 
     public ApiException(ApiError apiError, Throwable cause, Object... params) {
         super(apiError, cause, params);
+    }
+
+    /* Reserved codes : 8xxx : vip-api */
+    public enum ApiError implements VipError {
+        GENERIC_API_ERROR(8000),
+        NOT_IMPLEMENTED(8001),
+        BAD_CREDENTIALS(8002),
+        INSUFFICIENT_AUTH(8003),
+        AUTHENTICATION_ERROR(8004),
+        INVALID_PIPELINE_IDENTIFIER(8005),
+        APPLICATION_NOT_FOUND(8006),
+        PIPELINE_NOT_FOUND(8007),
+        NOT_ALLOWED_TO_USE_APPLICATION(8008),
+        INPUT_FIELD_NOT_VALID(8009),
+        WRONG_DATE_FORMAT(8010),
+        WRONG_STAT_SERVICE(8011),
+        COUNTRY_UNKNOWN(8012),
+        UNAUTHORIZED_DATA_ACCESS(8013),
+        WRONG_OIDC_LOGIN(8014);
+
+        static private String GENERIC_ERROR_MESSAGE = "An error has been encountered on the VIP API";
+
+        static {
+            addMessage(ApiError.GENERIC_API_ERROR, GENERIC_ERROR_MESSAGE, 0);
+            addMessage(ApiError.NOT_IMPLEMENTED, "The {} method is not implemented in the VIP API", 1);
+            addMessage(ApiError.INVALID_PIPELINE_IDENTIFIER, "The {} pipeline identifier is not valid", 1);
+            addMessage(ApiError.APPLICATION_NOT_FOUND, "The {} application does not exists", 1);
+            addMessage(ApiError.PIPELINE_NOT_FOUND, "The {} pipeline does not exists or cannot be used", 1);
+            addMessage(ApiError.NOT_ALLOWED_TO_USE_APPLICATION, "Not allowed to access application {}", 1);
+            addMessage(ApiError.INPUT_FIELD_NOT_VALID, "Input field '{}' is not valid. Cause : {}", 2);
+            addMessage(ApiError.WRONG_DATE_FORMAT, "The date {} have a wrong format (needed : {})", 2);
+            addMessage(ApiError.WRONG_STAT_SERVICE, "The service {} is unknown, only 'vip' is possible", 1);
+            addMessage(ApiError.COUNTRY_UNKNOWN, "Country unknown : {}", 1);
+            addMessage(ApiError.UNAUTHORIZED_DATA_ACCESS, "Unauthorized data access to : {}", 1);
+            addMessage(ApiError.WRONG_OIDC_LOGIN, "The login process encountered an error", 0);
+        }
+
+        private Integer code;
+
+        ApiError(Integer code) {
+            this.code = code;
+        }
+
+        public static String getGenericErrorMessage() {
+            return GENERIC_ERROR_MESSAGE;
+        }
+
+        @Override
+        public Integer getCode() {
+            return code;
+        }
+
+        public Optional<String> getMessage() {
+            return getRawMessage(this);
+        }
+
+        public String formatMessage(Object... params) {
+            return VipException.formatMessage(this, params);
+        }
     }
 }

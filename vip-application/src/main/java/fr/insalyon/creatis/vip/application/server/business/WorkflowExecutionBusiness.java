@@ -71,20 +71,6 @@ public class WorkflowExecutionBusiness {
     private WebServiceEngine engine;
     private String engineEndpoint;
 
-    @Autowired
-    public final void setServer(Server server) {
-        this.server = server;
-    }
-
-    /*
-    WebServiceEngine is also prototype scoped, this creates a new instance
-    every time. 
-    */
-    @Autowired
-    public final void setEngine(WebServiceEngine engine) {
-        this.engine = engine;
-    }
-
     public WorkflowExecutionBusiness(String engineEndpoint) throws BusinessException {
 
         //HACK for testing while still having simulations launched with VIP 1.16.1; to be removed before getting in production or replaced with a proper constant
@@ -93,6 +79,20 @@ public class WorkflowExecutionBusiness {
             engineEndpoint = "http://data-manager.grid.creatis.insa-lyon.fr/cgi-bin/m2Server-gasw3.1/moteur_server";
         }
         this.engineEndpoint = engineEndpoint;
+    }
+
+    @Autowired
+    public final void setServer(Server server) {
+        this.server = server;
+    }
+
+    /*
+    WebServiceEngine is also prototype scoped, this creates a new instance
+    every time.
+    */
+    @Autowired
+    public final void setEngine(WebServiceEngine engine) {
+        this.engine = engine;
     }
 
     @PostConstruct

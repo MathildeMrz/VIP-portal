@@ -47,17 +47,6 @@ public interface DataManagerService extends RemoteService {
 
     public static final String SERVICE_URI = "/datamanagerservice";
 
-    public static class Util {
-
-        public static DataManagerServiceAsync getInstance() {
-
-            DataManagerServiceAsync instance = (DataManagerServiceAsync) GWT.create(DataManagerService.class);
-            ServiceDefTarget target = (ServiceDefTarget) instance;
-            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
-            return instance;
-        }
-    }
-
     public List<Data> listDir(String baseDir, boolean refresh) throws DataManagerException;
 
     public void delete(String path) throws DataManagerException;
@@ -115,4 +104,15 @@ public interface DataManagerService extends RemoteService {
     public void resetSSHConnections(List<List<String>> sshConnections) throws DataManagerException;
 
     public String getSSHPublicKey();
+
+    public static class Util {
+
+        public static DataManagerServiceAsync getInstance() {
+
+            DataManagerServiceAsync instance = (DataManagerServiceAsync) GWT.create(DataManagerService.class);
+            ServiceDefTarget target = (ServiceDefTarget) instance;
+            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
+            return instance;
+        }
+    }
 }

@@ -50,6 +50,7 @@ public class LocalBashEngine {
     private Map<String, LocalBashExecution> executionsInfo;
     private Map<String, Future<?>> executionsFutures;
     private ExecutorService executorService;
+    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yy-MM-dd-HHmmss.SSS");
 
     @Autowired
     public LocalBashEngine(
@@ -133,19 +134,6 @@ public class LocalBashEngine {
         return exec;
     }
 
-    private static class LocalBashExecution {
-        String id;
-        File workflowFile;
-        Path workflowDir;
-        String scriptFileLFN;
-        Map<String, String> execInputs;     // name -> value
-        Map<String, String> gwendiaInputs;  // name -> type (string/URI)
-        Map<String, String> gwendiaOutputs;  // name -> type (string/URI)
-        SimulationStatus status = SimulationStatus.Unknown;
-    }
-
-    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yy-MM-dd-HHmmss.SSS");
-
     private String createWorkflowId() throws IOException {
         String dateString = DATE_FORMAT.format(new Date());
         return "workflow-local-" + dateString;
@@ -194,7 +182,6 @@ public class LocalBashEngine {
         return bashScripts.get(0);
     }
 
-
     private Map<String, String> getExecInputs(List<ParameterSweep> parameters) {
         if (parameters.stream()
                 .anyMatch(param -> param.getValues().size() != 1)) {
@@ -209,6 +196,17 @@ public class LocalBashEngine {
                         param -> param.getParameterName(),
                         param -> param.getValues().get(0)
                 ));
+    }
+
+    private static class LocalBashExecution {
+        String id;
+        File workflowFile;
+        Path workflowDir;
+        String scriptFileLFN;
+        Map<String, String> execInputs;     // name -> value
+        Map<String, String> gwendiaInputs;  // name -> type (string/URI)
+        Map<String, String> gwendiaOutputs;  // name -> type (string/URI)
+        SimulationStatus status = SimulationStatus.Unknown;
     }
 
     /*

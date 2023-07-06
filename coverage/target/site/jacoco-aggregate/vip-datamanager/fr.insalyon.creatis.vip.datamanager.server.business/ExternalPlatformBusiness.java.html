@@ -75,62 +75,62 @@ public class ExternalPlatformBusiness {
         }
     }
 
-    public static class ParseResult {
-        final public Boolean isUri;
-        final public String result;
-
-<span class="nc" id="L82">        private ParseResult(Boolean isUri, String result) {</span>
-<span class="nc" id="L83">            this.isUri = isUri;</span>
-<span class="nc" id="L84">            this.result = result;</span>
-<span class="nc" id="L85">        }</span>
-    }
-
     public ParseResult parseParameter(
             String parameterName, String parameterValue, User user)
             throws BusinessException {
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (!parameterValue.matches(&quot;^\\w+:.*&quot;)) {</span>
-<span class="nc" id="L92">            return new ParseResult(false, parameterValue);</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (!parameterValue.matches(&quot;^\\w+:.*&quot;)) {</span>
+<span class="nc" id="L82">            return new ParseResult(false, parameterValue);</span>
         }
-<span class="nc" id="L94">        int indexOfColon = parameterValue.indexOf(':');</span>
-<span class="nc" id="L95">        String platformIdentifier = parameterValue.substring(0, indexOfColon);</span>
+<span class="nc" id="L84">        int indexOfColon = parameterValue.indexOf(':');</span>
+<span class="nc" id="L85">        String platformIdentifier = parameterValue.substring(0, indexOfColon);</span>
 
-<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (&quot;file&quot;.equals(platformIdentifier)) {</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (&quot;file&quot;.equals(platformIdentifier)) {</span>
             // its a local file keep it as it is
-<span class="nc" id="L99">            return new ParseResult(true, parameterValue);</span>
+<span class="nc" id="L89">            return new ParseResult(true, parameterValue);</span>
         }
 
-<span class="nc" id="L102">        String fileIdentifier = parameterValue.substring(indexOfColon + 1);</span>
-<span class="nc" id="L103">        ExternalPlatform externalPlatform = getById(platformIdentifier);</span>
-<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (externalPlatform == null) {</span>
-<span class="nc" id="L105">            String error = &quot;Cannot find external platform : &quot; + platformIdentifier;</span>
-<span class="nc" id="L106">            logger.error(error);</span>
-<span class="nc" id="L107">            throw new BusinessException(error);</span>
+<span class="nc" id="L92">        String fileIdentifier = parameterValue.substring(indexOfColon + 1);</span>
+<span class="nc" id="L93">        ExternalPlatform externalPlatform = getById(platformIdentifier);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (externalPlatform == null) {</span>
+<span class="nc" id="L95">            String error = &quot;Cannot find external platform : &quot; + platformIdentifier;</span>
+<span class="nc" id="L96">            logger.error(error);</span>
+<span class="nc" id="L97">            throw new BusinessException(error);</span>
         }
-<span class="nc bnc" id="L109" title="All 3 branches missed.">        switch (externalPlatform.getType()) {</span>
+<span class="nc bnc" id="L99" title="All 3 branches missed.">        switch (externalPlatform.getType()) {</span>
             case GIRDER:
-<span class="nc" id="L111">                String girderUri = girderStorageBusiness.generateUri(</span>
+<span class="nc" id="L101">                String girderUri = girderStorageBusiness.generateUri(</span>
                         externalPlatform, parameterName,
                         fileIdentifier, user);
-<span class="nc" id="L114">                return new ParseResult(true, girderUri);</span>
+<span class="nc" id="L104">                return new ParseResult(true, girderUri);</span>
             case SHANOIR:
-<span class="nc" id="L116">                String shanoirUri = shanoirStorageBusiness.generateUri(</span>
+<span class="nc" id="L106">                String shanoirUri = shanoirStorageBusiness.generateUri(</span>
                         externalPlatform, parameterName, parameterValue
                 );
-<span class="nc" id="L119">                return new ParseResult(true, shanoirUri);</span>
+<span class="nc" id="L109">                return new ParseResult(true, shanoirUri);</span>
             default:
-<span class="nc" id="L121">                String error = &quot;Only girder external storage are supported. &quot;</span>
-<span class="nc" id="L122">                        + &quot; (found : &quot; + externalPlatform.getType() + &quot; )&quot;;</span>
-<span class="nc" id="L123">                logger.error(error);</span>
-<span class="nc" id="L124">                throw new BusinessException(error);</span>
+<span class="nc" id="L111">                String error = &quot;Only girder external storage are supported. &quot;</span>
+<span class="nc" id="L112">                        + &quot; (found : &quot; + externalPlatform.getType() + &quot; )&quot;;</span>
+<span class="nc" id="L113">                logger.error(error);</span>
+<span class="nc" id="L114">                throw new BusinessException(error);</span>
         }
     }
 
     private ExternalPlatform getById(String identifier) throws BusinessException {
         try {
-<span class="nc" id="L130">            return externalPlatformsDAO.getById(identifier);</span>
-<span class="nc" id="L131">        } catch (DAOException e) {</span>
-<span class="nc" id="L132">            throw new BusinessException(e);</span>
+<span class="nc" id="L120">            return externalPlatformsDAO.getById(identifier);</span>
+<span class="nc" id="L121">        } catch (DAOException e) {</span>
+<span class="nc" id="L122">            throw new BusinessException(e);</span>
         }
+    }
+
+    public static class ParseResult {
+        final public Boolean isUri;
+        final public String result;
+
+<span class="nc" id="L130">        private ParseResult(Boolean isUri, String result) {</span>
+<span class="nc" id="L131">            this.isUri = isUri;</span>
+<span class="nc" id="L132">            this.result = result;</span>
+<span class="nc" id="L133">        }</span>
     }
 
 }

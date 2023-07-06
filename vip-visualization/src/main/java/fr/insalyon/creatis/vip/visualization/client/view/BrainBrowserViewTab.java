@@ -39,9 +39,8 @@ import fr.insalyon.creatis.vip.visualization.client.bean.VisualizationItem;
  */
 public class BrainBrowserViewTab extends AbstractViewTab {
 
-    private final HTMLPane htmlPane;
-
     public static final String ID = "brain_browser_tab";
+    private final HTMLPane htmlPane;
 
     public BrainBrowserViewTab(String lfn) {
         super(lfn);

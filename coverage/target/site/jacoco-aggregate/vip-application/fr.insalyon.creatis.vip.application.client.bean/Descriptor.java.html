@@ -52,21 +52,21 @@ public class Descriptor implements IsSerializable {
 
 <span class="nc" id="L53">    }</span>
 
-    public void setDescription(String description) {
-<span class="nc" id="L56">        this.description = description;</span>
-<span class="nc" id="L57">    }</span>
+    public List&lt;Source&gt; getSources() {
+<span class="nc" id="L56">        return sources;</span>
+    }
 
     public void setSources(List&lt;Source&gt; sources) {
 <span class="nc" id="L60">        this.sources = sources;</span>
 <span class="nc" id="L61">    }</span>
 
-    public List&lt;Source&gt; getSources() {
-<span class="nc" id="L64">        return sources;</span>
+    public String getDescription() {
+<span class="nc" id="L64">        return description;</span>
     }
 
-    public String getDescription() {
-<span class="nc" id="L68">        return description;</span>
-    }
+    public void setDescription(String description) {
+<span class="nc" id="L68">        this.description = description;</span>
+<span class="nc" id="L69">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

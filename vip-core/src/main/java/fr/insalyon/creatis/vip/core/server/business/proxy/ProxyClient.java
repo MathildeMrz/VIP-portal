@@ -67,11 +67,6 @@ import java.util.*;
 public class ProxyClient {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private SSLSocket socket;
-    private BufferedInputStream socketIn;
-    private BufferedOutputStream socketOut;
-    private Collection certificateChain;
-    private KeyPair keyPair;
     // CONSTANTS
     private final String VERSION = "VERSION=MYPROXYv2";
     private final String GETCOMMAND = "COMMAND=0";
@@ -80,7 +75,11 @@ public class ProxyClient {
     private final String LIFETIME = "LIFETIME=";
     private final String RESPONSE = "RESPONSE=";
     private final String ERROR = "ERROR=";
-
+    private SSLSocket socket;
+    private BufferedInputStream socketIn;
+    private BufferedOutputStream socketOut;
+    private Collection certificateChain;
+    private KeyPair keyPair;
     private Server server;
 
     /**
@@ -385,6 +384,101 @@ public class ProxyClient {
         return null;
     }
 
+    private X509Certificate[] getX509CertsFromStringList(String[] certList) throws CertificateException {
+
+        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+        Collection<X509Certificate> c = new ArrayList<X509Certificate>(
+                certList.length);
+        for (int i = 0; i < certList.length; i++) {
+            int index = -1;
+            String certData = certList[i];
+            if (certData != null) {
+                index = certData.indexOf("-----BEGIN CERTIFICATE-----");
+            }
+            if (index >= 0) {
+                certData = certData.substring(index);
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(
+                        certData.getBytes());
+                X509Certificate cert = (X509Certificate) certFactory.generateCertificate(inputStream);
+                c.add(cert);
+            }
+        }
+        if (c.isEmpty()) {
+            return null;
+        }
+        return c.toArray(new X509Certificate[0]);
+    }
+
+    /**
+     * Gets the existing trusted CA certificates directory.
+     *
+     * @return directory path string or null if none found
+     */
+    public String getExistingTrustRootPath() {
+        String path, GL;
+
+        GL = System.getenv("GLOBUS_LOCATION");
+        if (GL == null) {
+            GL = System.getProperty("GLOBUS_LOCATION");
+        }
+
+        path = System.getenv("X509_CERT_DIR");
+        if (path == null) {
+            path = System.getProperty("X509_CERT_DIR");
+        }
+        if (path == null) {
+            path = getDir("/etc/grid-security/certificates");
+        }
+        if (path == null) {
+            path = getDir(GL + File.separator + "share" + File.separator
+                    + "certificates");
+        }
+
+        return path;
+    }
+
+    private String getDir(String path) {
+        if (path == null) {
+            return null;
+        }
+        File f = new File(path);
+        if (f.isDirectory() && f.canRead()) {
+            return f.getAbsolutePath();
+        }
+        return null;
+    }
+
+    public void copyFile(String source, String dest) {
+        FileChannel in = null;
+        FileChannel out = null;
+
+        try {
+            // Init
+            in = new FileInputStream(source).getChannel();
+            out = new FileOutputStream(dest).getChannel();
+            in.transferTo(0, in.size(), out);
+
+        } catch (Exception e) {
+            logger.error("Error copying file from {} to {}", source, dest, e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    logger.error("Error closing FileInputStream for file copy", e);
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    logger.error("Error closing FileInputStream for file copy", e);
+                }
+            }
+        }
+
+    }
+
     private class MyTrustManager implements X509TrustManager {
 
         @Override
@@ -512,100 +606,5 @@ public class ProxyClient {
                                 + ").");
             }
         }
-    }
-
-    private X509Certificate[] getX509CertsFromStringList(String[] certList) throws CertificateException {
-
-        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
-        Collection<X509Certificate> c = new ArrayList<X509Certificate>(
-                certList.length);
-        for (int i = 0; i < certList.length; i++) {
-            int index = -1;
-            String certData = certList[i];
-            if (certData != null) {
-                index = certData.indexOf("-----BEGIN CERTIFICATE-----");
-            }
-            if (index >= 0) {
-                certData = certData.substring(index);
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(
-                        certData.getBytes());
-                X509Certificate cert = (X509Certificate) certFactory.generateCertificate(inputStream);
-                c.add(cert);
-            }
-        }
-        if (c.isEmpty()) {
-            return null;
-        }
-        return c.toArray(new X509Certificate[0]);
-    }
-
-    /**
-     * Gets the existing trusted CA certificates directory.
-     *
-     * @return directory path string or null if none found
-     */
-    public String getExistingTrustRootPath() {
-        String path, GL;
-
-        GL = System.getenv("GLOBUS_LOCATION");
-        if (GL == null) {
-            GL = System.getProperty("GLOBUS_LOCATION");
-        }
-
-        path = System.getenv("X509_CERT_DIR");
-        if (path == null) {
-            path = System.getProperty("X509_CERT_DIR");
-        }
-        if (path == null) {
-            path = getDir("/etc/grid-security/certificates");
-        }
-        if (path == null) {
-            path = getDir(GL + File.separator + "share" + File.separator
-                    + "certificates");
-        }
-
-        return path;
-    }
-
-    private String getDir(String path) {
-        if (path == null) {
-            return null;
-        }
-        File f = new File(path);
-        if (f.isDirectory() && f.canRead()) {
-            return f.getAbsolutePath();
-        }
-        return null;
-    }
-
-    public void copyFile(String source, String dest) {
-        FileChannel in = null;
-        FileChannel out = null;
-
-        try {
-            // Init
-            in = new FileInputStream(source).getChannel();
-            out = new FileOutputStream(dest).getChannel();
-            in.transferTo(0, in.size(), out);
-
-        } catch (Exception e) {
-            logger.error("Error copying file from {} to {}", source, dest, e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    logger.error("Error closing FileInputStream for file copy", e);
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    logger.error("Error closing FileInputStream for file copy", e);
-                }
-            }
-        }
-
     }
 }

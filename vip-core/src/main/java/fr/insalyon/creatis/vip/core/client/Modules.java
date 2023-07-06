@@ -49,16 +49,16 @@ public class Modules {
     private static Modules instance;
     private List<Module> modules;
 
+    private Modules() {
+
+        modules = new ArrayList<Module>();
+    }
+
     public static Modules getInstance() {
         if (instance == null) {
             instance = new Modules();
         }
         return instance;
-    }
-
-    private Modules() {
-
-        modules = new ArrayList<Module>();
     }
 
     public void add(Module module) {

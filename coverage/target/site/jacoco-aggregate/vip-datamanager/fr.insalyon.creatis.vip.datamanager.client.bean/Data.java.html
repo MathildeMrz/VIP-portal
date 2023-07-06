@@ -41,63 +41,63 @@ import java.util.List;
  */
 public class Data implements IsSerializable {
 
-<span class="nc" id="L44">    public enum Type {</span>
-
-<span class="nc" id="L46">        folder, folderSync, file, fileSync</span>
-    }
+    private String name;
 
     ;
-    private String name;
     private Type type;
     private long length;
     private String modificationDate;
     private List&lt;String&gt; replicas;
     private String permissions;
-
-<span class="nc" id="L57">    public Data() {</span>
-<span class="nc" id="L58">    }</span>
+<span class="nc" id="L52">    public Data() {</span>
+<span class="nc" id="L53">    }</span>
 
     public Data(String name, Type type, String permissions) {
-<span class="nc" id="L61">        this(name, type, 0, &quot;&quot;, new ArrayList&lt;String&gt;(), permissions);</span>
-<span class="nc" id="L62">    }</span>
+<span class="nc" id="L56">        this(name, type, 0, &quot;&quot;, new ArrayList&lt;String&gt;(), permissions);</span>
+<span class="nc" id="L57">    }</span>
 
     public Data(String name, Type type, long length, String modificationDate,
-<span class="nc" id="L65">                List&lt;String&gt; replicas, String permissions) {</span>
+<span class="nc" id="L60">                List&lt;String&gt; replicas, String permissions) {</span>
 
-<span class="nc" id="L67">        this.name = name;</span>
-<span class="nc" id="L68">        this.type = type;</span>
-<span class="nc" id="L69">        this.length = length;</span>
-<span class="nc" id="L70">        this.modificationDate = modificationDate;</span>
-<span class="nc" id="L71">        this.replicas = replicas;</span>
-<span class="nc" id="L72">        this.permissions = permissions;</span>
-<span class="nc" id="L73">    }</span>
+<span class="nc" id="L62">        this.name = name;</span>
+<span class="nc" id="L63">        this.type = type;</span>
+<span class="nc" id="L64">        this.length = length;</span>
+<span class="nc" id="L65">        this.modificationDate = modificationDate;</span>
+<span class="nc" id="L66">        this.replicas = replicas;</span>
+<span class="nc" id="L67">        this.permissions = permissions;</span>
+<span class="nc" id="L68">    }</span>
 
     public String getName() {
-<span class="nc" id="L76">        return name;</span>
+<span class="nc" id="L71">        return name;</span>
     }
 
     public Type getType() {
-<span class="nc" id="L80">        return type;</span>
-    }
-
-    public long getLength() {
-<span class="nc" id="L84">        return length;</span>
-    }
-
-    public String getModificationDate() {
-<span class="nc" id="L88">        return modificationDate;</span>
-    }
-
-    public String getPermissions() {
-<span class="nc" id="L92">        return permissions;</span>
-    }
-
-    public List&lt;String&gt; getReplicas() {
-<span class="nc" id="L96">        return replicas;</span>
+<span class="nc" id="L75">        return type;</span>
     }
 
     public void setType(Type type) {
-<span class="nc" id="L100">        this.type = type;</span>
-<span class="nc" id="L101">    }</span>
+<span class="nc" id="L79">        this.type = type;</span>
+<span class="nc" id="L80">    }</span>
+
+    public long getLength() {
+<span class="nc" id="L83">        return length;</span>
+    }
+
+    public String getModificationDate() {
+<span class="nc" id="L87">        return modificationDate;</span>
+    }
+
+    public String getPermissions() {
+<span class="nc" id="L91">        return permissions;</span>
+    }
+
+    public List&lt;String&gt; getReplicas() {
+<span class="nc" id="L95">        return replicas;</span>
+    }
+
+<span class="nc" id="L98">    public enum Type {</span>
+
+<span class="nc" id="L100">        folder, folderSync, file, fileSync</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

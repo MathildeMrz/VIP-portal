@@ -39,8 +39,6 @@ import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
  */
 public class InOutTreeNode extends TreeNode {
 
-    public static enum Icon {Input, Output, Simulation, Other}
-
     public InOutTreeNode(String name, String type, Icon icon) {
 
         setAttribute("name", name);
@@ -64,4 +62,6 @@ public class InOutTreeNode extends TreeNode {
     public String getType() {
         return getAttributeAsString("type");
     }
+
+    public static enum Icon {Input, Output, Simulation, Other}
 }

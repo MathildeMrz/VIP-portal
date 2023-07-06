@@ -64,24 +64,24 @@ public class GateLabInputs {
     private String workflowID;
     private GateLabInputsParser gateLabInputsParser;
 
+<span class="nc" id="L67">    public GateLabInputs(String workflowID) {</span>
+<span class="nc" id="L68">        this.workflowID = workflowID;</span>
+<span class="nc" id="L69">    }</span>
+
     @Autowired
     public final void setServer(Server server) {
-<span class="nc" id="L69">        this.server = server;</span>
-<span class="nc" id="L70">    }</span>
+<span class="nc" id="L73">        this.server = server;</span>
+<span class="nc" id="L74">    }</span>
 
     @Autowired
     public final void setLfcPathsBusiness(fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness lfcPathsBusiness) {
-<span class="nc" id="L74">        this.lfcPathsBusiness = lfcPathsBusiness;</span>
-<span class="nc" id="L75">    }</span>
+<span class="nc" id="L78">        this.lfcPathsBusiness = lfcPathsBusiness;</span>
+<span class="nc" id="L79">    }</span>
 
     /* GateLabInputsParser is also prototype based */
     @Autowired
     public void setGateLabInputsParser(GateLabInputsParser gateLabInputsParser) {
-<span class="nc" id="L80">        this.gateLabInputsParser = gateLabInputsParser;</span>
-<span class="nc" id="L81">    }</span>
-
-<span class="nc" id="L83">    public GateLabInputs(String workflowID) {</span>
-<span class="nc" id="L84">        this.workflowID = workflowID;</span>
+<span class="nc" id="L84">        this.gateLabInputsParser = gateLabInputsParser;</span>
 <span class="nc" id="L85">    }</span>
 
     @PostConstruct

@@ -19,32 +19,6 @@ public class ShanoirStorageBusiness {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    enum UrlKeys {
-        FILE_NAME("shanoir", "^shanoir:/(//)?([^/].*)\\?.*$", 2, "fileName"),
-        DATASET_ID("datasetId", "^.*[?&]datasetId=([^&]*)(&.*)?$", 1, "datasetId"),
-        FORMAT("format", "^.*[?&]format=([^&]*)(&.*)?$", 1, "format"),
-        TOKEN("token", "^.*[?&]token=([^&]*)(&.*)?$", 1, "token"),
-        REFRESH_TOKEN("refreshToken", "^.*[?&]refreshToken=([^&]*)(&.*)?$", 1, "refresh token"),
-        MD5("md5", "^.*[?&]md5=([^&]*)(&.*)?$", 1, "md5"),
-        TYPE("type", "^.*[?&]type=([^&]*)(&.*)?$", 1, "type"),
-        API_URI("apiUrl", "", 0, "download Url"),
-        UPLOAD_URL("upload_url", "", 0, "Import endpoint url"),
-        KEYCLOAK_CLIENT_ID("keycloak_client_id", "", 0, ""),
-        REFRESH_TOKEN_URL("refresh_token_url", "", 0, "");
-
-        public final String key;
-        public final String regex;
-        public final int regexGroup;
-        public final String errorKey;
-
-        UrlKeys(String label, String regex, int regexGroup, String errorKey) {
-            this.key = label;
-            this.regex = regex;
-            this.regexGroup = regexGroup;
-            this.errorKey = errorKey;
-        }
-    }
-
     /* GASW regexps in 3.2.0 version
 
        local token=`echo $URI | sed -r 's/^.*[?&]token=([^&]*)(&.*)?$/\1/i'`
@@ -159,6 +133,32 @@ public class ShanoirStorageBusiness {
         } else {
             logger.error("Cannot get {} from the uri", urlKey.errorKey);
             throw new BusinessException("Cannot get " + urlKey.errorKey + " from the uri");
+        }
+    }
+
+    enum UrlKeys {
+        FILE_NAME("shanoir", "^shanoir:/(//)?([^/].*)\\?.*$", 2, "fileName"),
+        DATASET_ID("datasetId", "^.*[?&]datasetId=([^&]*)(&.*)?$", 1, "datasetId"),
+        FORMAT("format", "^.*[?&]format=([^&]*)(&.*)?$", 1, "format"),
+        TOKEN("token", "^.*[?&]token=([^&]*)(&.*)?$", 1, "token"),
+        REFRESH_TOKEN("refreshToken", "^.*[?&]refreshToken=([^&]*)(&.*)?$", 1, "refresh token"),
+        MD5("md5", "^.*[?&]md5=([^&]*)(&.*)?$", 1, "md5"),
+        TYPE("type", "^.*[?&]type=([^&]*)(&.*)?$", 1, "type"),
+        API_URI("apiUrl", "", 0, "download Url"),
+        UPLOAD_URL("upload_url", "", 0, "Import endpoint url"),
+        KEYCLOAK_CLIENT_ID("keycloak_client_id", "", 0, ""),
+        REFRESH_TOKEN_URL("refresh_token_url", "", 0, "");
+
+        public final String key;
+        public final String regex;
+        public final int regexGroup;
+        public final String errorKey;
+
+        UrlKeys(String label, String regex, int regexGroup, String errorKey) {
+            this.key = label;
+            this.regex = regex;
+            this.regexGroup = regexGroup;
+            this.errorKey = errorKey;
         }
     }
 

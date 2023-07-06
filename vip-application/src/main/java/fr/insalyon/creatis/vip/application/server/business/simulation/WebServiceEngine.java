@@ -61,6 +61,15 @@ public class WebServiceEngine extends WorkflowEngineInstantiator {
     private String addressWS;
     // settings to send to the web service.
     private String settings;
+    private Server server;
+
+    public WebServiceEngine() {
+        this(null, null);
+    }
+
+    private WebServiceEngine(File workflow, List<ParameterSweep> parameters) {
+        super(workflow, parameters);
+    }
 
     public String getAddressWS() {
         return addressWS;
@@ -76,16 +85,6 @@ public class WebServiceEngine extends WorkflowEngineInstantiator {
 
     public void setSettings(String settings) {
         this.settings = settings;
-    }
-
-    public WebServiceEngine() {
-        this(null, null);
-    }
-
-    private Server server;
-
-    private WebServiceEngine(File workflow, List<ParameterSweep> parameters) {
-        super(workflow, parameters);
     }
 
     @Autowired

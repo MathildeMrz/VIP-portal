@@ -46,6 +46,21 @@ public class DataManagerConstants {
     // Layouts
     public final static String LAYOUT_BROWSER = "browser-layout";
     public final static String LAYOUT_OPERATION = "operation-layout";
+    // Application Names
+    public final static String APP_CACHED_FILES = "Cached Files";
+    public final static String APP_FILE_TRANSFER = "File Transfer";
+    public final static String APP_OPERATIONS = "Operations";
+    public final static String APP_ZOMBIE_FILES = "Zombie Files";
+    public final static String APP_SSH = "SSH Connections";
+    // Configuration Constants
+    public static final String ROOT = "/vip";
+    public static final String USERS_HOME = "Home";
+    public static final String USERS_FOLDER = "Users";
+    public static final String TRASH_HOME = "Trash";
+    public static final String VO_ROOT_FOLDER = "VO root folder";
+    public static final String GROUP_APPEND = " (group)";
+    public static final int MAX_OPERATIONS_LIMIT = 10;
+    public static final String DOWNLOAD_FOLDER = "downloads";
     // Icons
     private static final String IMG_FOLDER = "datamanager/";
     public static final String ICON_CACHE = IMG_FOLDER + "icon-cache.png";
@@ -69,32 +84,17 @@ public class DataManagerConstants {
     public static final String ICON_DEACTIVATE_SSH = IMG_FOLDER + "icon-deactivate";
     public static final String ICON_STATUS_OK_SSH = IMG_FOLDER + "icon-ok";
     public static final String ICON_STATUS_FAILED_SSH = IMG_FOLDER + "icon-failed";
-    // Application Names
-    public final static String APP_CACHED_FILES = "Cached Files";
-    public final static String APP_FILE_TRANSFER = "File Transfer";
-    public final static String APP_OPERATIONS = "Operations";
-    public final static String APP_ZOMBIE_FILES = "Zombie Files";
-    public final static String APP_SSH = "SSH Connections";
     // Application Images
     public static final String APP_IMG_CACHED_FILES = IMG_FOLDER + "app-cache.png";
     public static final String APP_IMG_FILE_TRANSFER = IMG_FOLDER + "app-file-transfer.png";
     public static final String APP_IMG_OPERATIONS = IMG_FOLDER + "app-operation.png";
     public static final String APP_IMG_ZOMBIE_FILES = IMG_FOLDER + "app-file-zombie.png";
-    public static String APP_IMG_SSH = IMG_FOLDER + "app-ssh.png";
     // Operation
     private static final String OP_FOLDER = IMG_FOLDER + "operation/";
     public static final String OP_DOWNLOAD = OP_FOLDER + "img-download.png";
     public static final String OP_UPLOAD = OP_FOLDER + "img-upload.png";
     public static final String OP_ICON_DOWNLOAD = OP_FOLDER + "icon-download.png";
     public static final String OP_ICON_CLEAR = OP_FOLDER + "icon-clear.png";
-    // Configuration Constants
-    public static final String ROOT = "/vip";
-    public static final String USERS_HOME = "Home";
-    public static final String USERS_FOLDER = "Users";
-    public static final String TRASH_HOME = "Trash";
-    public static final String VO_ROOT_FOLDER = "VO root folder";
-    public static final String GROUP_APPEND = " (group)";
-    public static final int MAX_OPERATIONS_LIMIT = 10;
-    public static final String DOWNLOAD_FOLDER = "downloads";
+    public static String APP_IMG_SSH = IMG_FOLDER + "app-ssh.png";
 
 }

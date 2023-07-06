@@ -91,12 +91,12 @@ public class Application implements IsSerializable {
         return owner;
     }
 
-    public void removeOwner() {
-        owner = null;
-    }
-
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public void removeOwner() {
+        owner = null;
     }
 
     public String getFullName() {

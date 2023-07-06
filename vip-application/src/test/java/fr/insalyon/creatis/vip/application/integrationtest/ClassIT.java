@@ -2,7 +2,6 @@ package fr.insalyon.creatis.vip.application.integrationtest;
 
 import fr.insalyon.creatis.grida.client.GRIDAClientException;
 import fr.insalyon.creatis.vip.application.client.bean.AppClass;
-import fr.insalyon.creatis.vip.application.client.bean.Application;
 import fr.insalyon.creatis.vip.application.client.bean.Engine;
 import fr.insalyon.creatis.vip.application.server.business.ClassBusiness;
 import fr.insalyon.creatis.vip.application.server.business.EngineBusiness;
@@ -18,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -63,8 +60,7 @@ public class ClassIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testAddClass() throws BusinessException
-    {
+    public void testAddClass() throws BusinessException {
         // With all parameters
         AppClass appClass1 = new AppClass("class2", engines, applicationGroups);
         classBusiness.addClass(appClass1);

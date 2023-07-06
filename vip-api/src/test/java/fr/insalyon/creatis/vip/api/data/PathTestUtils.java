@@ -48,7 +48,7 @@ import java.util.function.Function;
  */
 public class PathTestUtils {
 
-    private static Map<String, Function> pathSuppliers;
+    public static Data vipRoot, user1Dir, user2Dir, groupTestDir, testDir1;
 
     /*
        vip  /user1      /testFile1
@@ -60,14 +60,12 @@ public class PathTestUtils {
 
 
      */
-
-    public static Data vipRoot, user1Dir, user2Dir, groupTestDir, testDir1;
     public static Data testFile1, testFile2, testFile3, testFile4, testFile5, testFile6;
-
     public static PathProperties testVipRootPathProperties, testUser1DirPathProperties, testUser2DirPathProperties,
             testGroupTestDiPathProperties, testDir1PathProperties;
     public static PathProperties testFile1PathProperties, testFile2PathProperties, testFile3PathProperties,
             testFile4PathProperties, testFile5PathProperties, testFile6PathProperties;
+    private static Map<String, Function> pathSuppliers;
 
     static {
         vipRoot = new Data("vip", Type.folder, 3, null, null, null);

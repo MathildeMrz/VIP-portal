@@ -56,6 +56,8 @@ import java.util.Map;
 @TestMethodOrder(OrderAnnotation.class)
 public class VipLocalConfigurationIT {
 
+    // test application data
+    public final Integer TEST_APP_TIMEOUT_IN_SECONDS = 30;
     @Autowired
     private ApplicationBusiness applicationBusiness;
     @Autowired
@@ -70,7 +72,6 @@ public class VipLocalConfigurationIT {
     private DataManagerBusiness dataManagerBusiness;
     @Autowired
     private Server server;
-
     @Value("${local.data.class.name:localClass}")
     private String className;
     @Value("${local.data.application.name}")
@@ -85,10 +86,6 @@ public class VipLocalConfigurationIT {
     private String applicationTextParameter;
     @Value("${local.data.application.output}")
     private String applicationOutput;
-
-    // test application data
-    public final Integer TEST_APP_TIMEOUT_IN_SECONDS = 30;
-
 
     @Test
     @Order(1)

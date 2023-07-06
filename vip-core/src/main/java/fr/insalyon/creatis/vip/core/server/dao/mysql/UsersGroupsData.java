@@ -64,13 +64,13 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
     private GroupDAO groupDao;
 
     @Autowired
-    public void useDataSource(DataSource dataSource) {
-        setDataSource(dataSource);
+    public UsersGroupsData(GroupDAO groupDao) {
+        this.groupDao = groupDao;
     }
 
     @Autowired
-    public UsersGroupsData(GroupDAO groupDao) {
-        this.groupDao = groupDao;
+    public void useDataSource(DataSource dataSource) {
+        setDataSource(dataSource);
     }
 
     @Override

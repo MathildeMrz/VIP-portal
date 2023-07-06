@@ -48,20 +48,56 @@ public abstract class WorkflowEngineInstantiator {
     // content of the input for the workflow (generated depending of the user)*/
     protected String input;
 
-    public String getSimulationId(String launchID) {
-
-<span class="nc" id="L53">        return launchID.substring(launchID.lastIndexOf(&quot;/&quot;) + 1, launchID.lastIndexOf(&quot;.&quot;));</span>
-    }
-
     /**
      * @param workflow   workflow file
      * @param parameters list of parameters
      */
-<span class="nc" id="L60">    public WorkflowEngineInstantiator(File workflow, List&lt;ParameterSweep&gt; parameters) {</span>
+<span class="nc" id="L55">    public WorkflowEngineInstantiator(File workflow, List&lt;ParameterSweep&gt; parameters) {</span>
 
-<span class="nc bnc" id="L62" title="All 2 branches missed.">        this.workflow = (workflow != null) ? FileUtil.read(workflow) : null;</span>
-<span class="nc bnc" id="L63" title="All 2 branches missed.">        this.input = (parameters != null) ? WorkflowEngineInstantiator.setParametersAsXMLInput(parameters) : null;</span>
-<span class="nc" id="L64">    }</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        this.workflow = (workflow != null) ? FileUtil.read(workflow) : null;</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        this.input = (parameters != null) ? WorkflowEngineInstantiator.setParametersAsXMLInput(parameters) : null;</span>
+<span class="nc" id="L59">    }</span>
+
+    private static String setParametersAsXMLInput(List&lt;ParameterSweep&gt; parameters) {
+
+        //generate the xml input file according to the user input on the GUI
+<span class="nc" id="L64">        StringBuilder xml = new StringBuilder(&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;\n&quot;);</span>
+<span class="nc" id="L65">        xml.append(&quot;&lt;inputdata&gt;\n&quot;);</span>
+
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        for (ParameterSweep parameter : parameters) {</span>
+
+<span class="nc" id="L69">            xml.append(&quot;\t&lt;source name=\&quot;&quot;)</span>
+<span class="nc" id="L70">                    .append(parameter.getParameterName())</span>
+<span class="nc" id="L71">                    .append(&quot;\&quot;  type=\&quot;String\&quot;&gt;\n&quot;)</span>
+<span class="nc" id="L72">                    .append(&quot;&lt;array&gt;\n&quot;);</span>
+
+<span class="nc" id="L74">            int counter = 0;</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">            for (String value : parameter.getValues()) {</span>
+
+
+<span class="nc" id="L78">                xml.append(&quot;\t\t&lt;item&gt;&quot;)</span>
+<span class="nc" id="L79">                        .append(&quot;&lt;tag name=\&quot;Group\&quot; value=\&quot;&quot;)</span>
+<span class="nc" id="L80">                        .append(counter)</span>
+<span class="nc" id="L81">                        .append(&quot;\&quot;/&gt;&quot;)</span>
+<span class="nc" id="L82">                        .append(value)</span>
+<span class="nc" id="L83">                        .append(&quot;&lt;/item&gt;\n&quot;);</span>
+
+<span class="nc" id="L85">                counter++;</span>
+<span class="nc" id="L86">            }</span>
+
+<span class="nc" id="L88">            xml.append(&quot;&lt;/array&gt;\n&quot;);</span>
+<span class="nc" id="L89">            xml.append(&quot;\t&lt;/source&gt;\n&quot;);</span>
+<span class="nc" id="L90">        }</span>
+
+<span class="nc" id="L92">        xml.append(&quot;&lt;/inputdata&gt;\n&quot;);</span>
+
+<span class="nc" id="L94">        return xml.toString();</span>
+    }
+
+    public String getSimulationId(String launchID) {
+
+<span class="nc" id="L99">        return launchID.substring(launchID.lastIndexOf(&quot;/&quot;) + 1, launchID.lastIndexOf(&quot;.&quot;));</span>
+    }
 
     public abstract String launch(String proxyFileName, String userDN)
             throws
@@ -80,57 +116,21 @@ public abstract class WorkflowEngineInstantiator {
 
     public String getWorkflow() {
 
-<span class="nc" id="L83">        return workflow;</span>
+<span class="nc" id="L119">        return workflow;</span>
     }
 
     public void setWorkflow(File workflow) {
-<span class="nc" id="L87">        this.workflow = FileUtil.read(workflow);</span>
-<span class="nc" id="L88">    }</span>
+<span class="nc" id="L123">        this.workflow = FileUtil.read(workflow);</span>
+<span class="nc" id="L124">    }</span>
 
     public String getInput() {
 
-<span class="nc" id="L92">        return input;</span>
+<span class="nc" id="L128">        return input;</span>
     }
 
     public void setInput(List&lt;ParameterSweep&gt; parameters) {
 
-<span class="nc" id="L97">        this.input = WorkflowEngineInstantiator.setParametersAsXMLInput(parameters);</span>
-<span class="nc" id="L98">    }</span>
-
-    private static String setParametersAsXMLInput(List&lt;ParameterSweep&gt; parameters) {
-
-        //generate the xml input file according to the user input on the GUI
-<span class="nc" id="L103">        StringBuilder xml = new StringBuilder(&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;\n&quot;);</span>
-<span class="nc" id="L104">        xml.append(&quot;&lt;inputdata&gt;\n&quot;);</span>
-
-<span class="nc bnc" id="L106" title="All 2 branches missed.">        for (ParameterSweep parameter : parameters) {</span>
-
-<span class="nc" id="L108">            xml.append(&quot;\t&lt;source name=\&quot;&quot;)</span>
-<span class="nc" id="L109">                    .append(parameter.getParameterName())</span>
-<span class="nc" id="L110">                    .append(&quot;\&quot;  type=\&quot;String\&quot;&gt;\n&quot;)</span>
-<span class="nc" id="L111">                    .append(&quot;&lt;array&gt;\n&quot;);</span>
-
-<span class="nc" id="L113">            int counter = 0;</span>
-<span class="nc bnc" id="L114" title="All 2 branches missed.">            for (String value : parameter.getValues()) {</span>
-
-
-<span class="nc" id="L117">                xml.append(&quot;\t\t&lt;item&gt;&quot;)</span>
-<span class="nc" id="L118">                        .append(&quot;&lt;tag name=\&quot;Group\&quot; value=\&quot;&quot;)</span>
-<span class="nc" id="L119">                        .append(counter)</span>
-<span class="nc" id="L120">                        .append(&quot;\&quot;/&gt;&quot;)</span>
-<span class="nc" id="L121">                        .append(value)</span>
-<span class="nc" id="L122">                        .append(&quot;&lt;/item&gt;\n&quot;);</span>
-
-<span class="nc" id="L124">                counter++;</span>
-<span class="nc" id="L125">            }</span>
-
-<span class="nc" id="L127">            xml.append(&quot;&lt;/array&gt;\n&quot;);</span>
-<span class="nc" id="L128">            xml.append(&quot;\t&lt;/source&gt;\n&quot;);</span>
-<span class="nc" id="L129">        }</span>
-
-<span class="nc" id="L131">        xml.append(&quot;&lt;/inputdata&gt;\n&quot;);</span>
-
-<span class="nc" id="L133">        return xml.toString();</span>
-    }
+<span class="nc" id="L133">        this.input = WorkflowEngineInstantiator.setParametersAsXMLInput(parameters);</span>
+<span class="nc" id="L134">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

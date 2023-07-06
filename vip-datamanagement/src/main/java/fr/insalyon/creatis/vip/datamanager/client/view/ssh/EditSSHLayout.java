@@ -68,6 +68,7 @@ import java.util.List;
  */
 public class EditSSHLayout extends AbstractFormLayout {
 
+    PickerIcon browsePicker;
     private boolean newSSH = true;
     private TextItem emailField;
     private TextItem nameField;
@@ -82,7 +83,6 @@ public class EditSSHLayout extends AbstractFormLayout {
     private CheckboxItem deleteFilesFromSourceField;
     private CheckboxItem activateField;
     private CheckboxItem checkFilesContentField;
-    PickerIcon browsePicker;
     private TextItem lfcDirItem;
 
     public EditSSHLayout(String width, String height) {

@@ -113,6 +113,10 @@ public abstract class AbstractSimulationTab extends Tab {
         });
     }
 
+    public static String tabIdFrom(String simulationId) {
+        return simulationId.replaceAll("[ -]", "_").toLowerCase() + "_tab";
+    }
+
     protected void updateData() {
         ((AbstractCornerTab) tabSet.getSelectedTab()).update();
     }
@@ -121,9 +125,5 @@ public abstract class AbstractSimulationTab extends Tab {
         if (!completed) {
             timer.cancel();
         }
-    }
-
-    public static String tabIdFrom(String simulationId) {
-        return simulationId.replaceAll("[ -]", "_").toLowerCase() + "_tab";
     }
 }

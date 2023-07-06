@@ -38,11 +38,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class ExternalPlatform {
 
-    public enum Type {
-        GIRDER,
-        SHANOIR
-    }
-
     private String identifier;
     private Type type;
     private String description;
@@ -106,5 +101,10 @@ public class ExternalPlatform {
 
     public void setRefreshTokenUrl(String refreshTokenUrl) {
         this.refreshTokenUrl = refreshTokenUrl;
+    }
+
+    public enum Type {
+        GIRDER,
+        SHANOIR
     }
 }

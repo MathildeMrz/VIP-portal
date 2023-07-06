@@ -58,53 +58,51 @@ public abstract class AbstractJobData {
 <span class="nc" id="L58">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
 
 <span class="nc" id="L60">    private final String DRIVER = &quot;org.h2.Driver&quot;;</span>
-
-<span class="nc" id="L62">    @Value(&quot;${workflows.db.scheme:tcp}&quot;)</span>
-    private String workflowsScheme = &quot;tcp&quot;;
-
     protected Server server;
-    private String dbPath;
     protected Connection connection;
+<span class="nc" id="L63">    @Value(&quot;${workflows.db.scheme:tcp}&quot;)</span>
+    private String workflowsScheme = &quot;tcp&quot;;
+    private String dbPath;
+
+<span class="nc" id="L67">    public AbstractJobData(String dbPath) {</span>
+<span class="nc" id="L68">        this.dbPath = dbPath;</span>
+<span class="nc" id="L69">    }</span>
 
     @Autowired
     public final void setServer(Server server) {
-<span class="nc" id="L71">        this.server = server;</span>
-<span class="nc" id="L72">    }</span>
-
-<span class="nc" id="L74">    public AbstractJobData(String dbPath) {</span>
-<span class="nc" id="L75">        this.dbPath = dbPath;</span>
-<span class="nc" id="L76">    }</span>
+<span class="nc" id="L73">        this.server = server;</span>
+<span class="nc" id="L74">    }</span>
 
     protected String getDbPath() {
-<span class="nc" id="L79">        return dbPath;</span>
+<span class="nc" id="L77">        return dbPath;</span>
     }
 
     @PostConstruct
     public final void initConnection() throws DAOException {
         try {
-<span class="nc" id="L85">            Class.forName(DRIVER);</span>
-<span class="nc" id="L86">            StringBuilder dbUrl = new StringBuilder();</span>
-<span class="nc" id="L87">            dbUrl.append(&quot;jdbc:h2:&quot;).append(workflowsScheme).append(&quot;:&quot;);</span>
-<span class="nc bnc" id="L88" title="All 2 branches missed.">            if (&quot;tcp&quot;.equals(workflowsScheme)) {</span>
+<span class="nc" id="L83">            Class.forName(DRIVER);</span>
+<span class="nc" id="L84">            StringBuilder dbUrl = new StringBuilder();</span>
+<span class="nc" id="L85">            dbUrl.append(&quot;jdbc:h2:&quot;).append(workflowsScheme).append(&quot;:&quot;);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            if (&quot;tcp&quot;.equals(workflowsScheme)) {</span>
                 // if tcp, add server and port
                 // otherwise, its a local file, only the path is needed
-<span class="nc" id="L91">                dbUrl.append(&quot;//&quot;)</span>
-<span class="nc" id="L92">                        .append(server.getWorkflowsHost())</span>
-<span class="nc" id="L93">                        .append(&quot;:9092/&quot;);</span>
+<span class="nc" id="L89">                dbUrl.append(&quot;//&quot;)</span>
+<span class="nc" id="L90">                        .append(server.getWorkflowsHost())</span>
+<span class="nc" id="L91">                        .append(&quot;:9092/&quot;);</span>
             }
-<span class="nc" id="L95">            dbUrl.append(server.getWorkflowsPath())</span>
-<span class="nc" id="L96">                    .append(&quot;/&quot;)</span>
-<span class="nc" id="L97">                    .append(dbPath)</span>
-<span class="nc" id="L98">                    .append(&quot;/db/jobs&quot;);</span>
+<span class="nc" id="L93">            dbUrl.append(server.getWorkflowsPath())</span>
+<span class="nc" id="L94">                    .append(&quot;/&quot;)</span>
+<span class="nc" id="L95">                    .append(dbPath)</span>
+<span class="nc" id="L96">                    .append(&quot;/db/jobs&quot;);</span>
 
-<span class="nc" id="L100">            connection = DriverManager.getConnection(dbUrl.toString(), &quot;gasw&quot;, &quot;gasw&quot;);</span>
-<span class="nc" id="L101">            connection.setAutoCommit(true);</span>
+<span class="nc" id="L98">            connection = DriverManager.getConnection(dbUrl.toString(), &quot;gasw&quot;, &quot;gasw&quot;);</span>
+<span class="nc" id="L99">            connection.setAutoCommit(true);</span>
 
-<span class="nc" id="L103">        } catch (ClassNotFoundException | SQLException ex) {</span>
-<span class="nc" id="L104">            logger.error(&quot;Error creating database connection for {}&quot;, dbPath, ex);</span>
-<span class="nc" id="L105">            throw new DAOException(ex);</span>
-<span class="nc" id="L106">        }</span>
-<span class="nc" id="L107">    }</span>
+<span class="nc" id="L101">        } catch (ClassNotFoundException | SQLException ex) {</span>
+<span class="nc" id="L102">            logger.error(&quot;Error creating database connection for {}&quot;, dbPath, ex);</span>
+<span class="nc" id="L103">            throw new DAOException(ex);</span>
+<span class="nc" id="L104">        }</span>
+<span class="nc" id="L105">    }</span>
 
 
     /**
@@ -113,10 +111,10 @@ public abstract class AbstractJobData {
     protected void close(Logger logger) {
 
         try {
-<span class="nc" id="L116">            connection.close();</span>
-<span class="nc" id="L117">        } catch (SQLException ex) {</span>
-<span class="nc" id="L118">            logger.error(&quot;Error closing connection&quot;, ex);</span>
-<span class="nc" id="L119">        }</span>
-<span class="nc" id="L120">    }</span>
+<span class="nc" id="L114">            connection.close();</span>
+<span class="nc" id="L115">        } catch (SQLException ex) {</span>
+<span class="nc" id="L116">            logger.error(&quot;Error closing connection&quot;, ex);</span>
+<span class="nc" id="L117">        }</span>
+<span class="nc" id="L118">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

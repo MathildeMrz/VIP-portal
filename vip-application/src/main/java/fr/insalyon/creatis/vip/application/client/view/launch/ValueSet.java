@@ -16,6 +16,19 @@ public abstract class ValueSet {
     protected final List<String> valuesAsStrings = new ArrayList<>();
 
     /**
+     * @param stringValues String to convert to a ValueSet
+     * @return ValueSet representing the same values
+     */
+    public static ValueSet valueSetFactory(String stringValues) {
+        if ((stringValues != null) && stringValues.contains("Start: ")) { // Range
+            String[] v = stringValues.split("(: | - )");
+            return new ValueRange(v[1].trim(), v[3].trim(), v[5].trim());
+        } else { // List
+            return new ValueList(stringValues, "; ");
+        }
+    }
+
+    /**
      * @param value Object value to convert to String
      * @return String representation of value. null is represented by ApplicationConstants.INPUT_WITHOUT_VALUE
      * @see ApplicationConstants#INPUT_WITHOUT_VALUE
@@ -76,17 +89,4 @@ public abstract class ValueSet {
      * @see #valuesAsStrings
      */
     public abstract boolean isEqualTo(ValueSet comparedValueSet);
-
-    /**
-     * @param stringValues String to convert to a ValueSet
-     * @return ValueSet representing the same values
-     */
-    public static ValueSet valueSetFactory(String stringValues) {
-        if ((stringValues != null) && stringValues.contains("Start: ")) { // Range
-            String[] v = stringValues.split("(: | - )");
-            return new ValueRange(v[1].trim(), v[3].trim(), v[5].trim());
-        } else { // List
-            return new ValueList(stringValues, "; ");
-        }
-    }
 }

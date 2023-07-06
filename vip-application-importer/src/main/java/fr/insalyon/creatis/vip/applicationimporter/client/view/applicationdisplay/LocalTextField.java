@@ -81,11 +81,11 @@ public class LocalTextField extends VLayout {
         setValue(value);
     }
 
-    public final void setValue(String value) {
-        fieldItem.setValue(value);
-    }
-
     public String getValue() {
         return fieldItem.getValueAsString();
+    }
+
+    public final void setValue(String value) {
+        fieldItem.setValue(value);
     }
 }

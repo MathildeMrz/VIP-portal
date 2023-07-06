@@ -287,10 +287,6 @@ public enum CountryCode implements IsSerializable {
         this.name = name;
     }
 
-    public String getCountryName() {
-        return name;
-    }
-
     public static LinkedHashMap<String, String> getCountriesMap() {
 
         TreeMap<String, String> treeMap = new TreeMap<String, String>();
@@ -325,5 +321,9 @@ public enum CountryCode implements IsSerializable {
                         countryName.equalsIgnoreCase(countryCode.getCountryName()))
                 .findFirst().orElse(null);
 
+    }
+
+    public String getCountryName() {
+        return name;
     }
 }

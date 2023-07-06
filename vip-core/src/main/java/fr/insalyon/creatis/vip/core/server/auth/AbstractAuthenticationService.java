@@ -58,16 +58,15 @@ import java.io.PrintWriter;
 public abstract class AbstractAuthenticationService extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractAuthenticationService.class);
+    private UserDAO userDAO;
+    private ConfigurationBusiness configurationBusiness;
+    private VipSessionBusiness vipSessionBusiness;
 
     protected abstract void checkValidRequest(HttpServletRequest request) throws BusinessException;
 
     protected abstract String getEmail() throws BusinessException;
 
     public abstract String getDefaultGroup();
-
-    private UserDAO userDAO;
-    private ConfigurationBusiness configurationBusiness;
-    private VipSessionBusiness vipSessionBusiness;
 
     @Override
     public void init() throws ServletException {

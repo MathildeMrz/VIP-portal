@@ -1,8 +1,8 @@
 <?xml version="1.0" standalone="yes"?>
 
-<svg version="1.1" viewBox="0.0 0.0 1902.286089238845 1972.6299212598426" fill="none" stroke="none"
-     stroke-linecap="square" stroke-miterlimit="10" xmlns="http://www.w3.org/2000/svg"
-     xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0.0 0.0 1902.286089238845 1972.6299212598426" fill="none"
+     stroke="none" stroke-linecap="square" stroke-miterlimit="10"
+     xmlns="http://www.w3.org/2000/svg">
     <clipPath id="p.0">
         <path d="m0 0l1902.2861 0l0 1972.6299l-1902.2861 0l0 -1972.6299z" clip-rule="nonzero"></path>
     </clipPath>

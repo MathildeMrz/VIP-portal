@@ -61,37 +61,36 @@ public class WebServiceEngine extends WorkflowEngineInstantiator {
     private String addressWS;
     // settings to send to the web service.
     private String settings;
+    private Server server;
+
+    public WebServiceEngine() {
+<span class="nc" id="L67">        this(null, null);</span>
+<span class="nc" id="L68">    }</span>
+
+    private WebServiceEngine(File workflow, List&lt;ParameterSweep&gt; parameters) {
+<span class="nc" id="L71">        super(workflow, parameters);</span>
+<span class="nc" id="L72">    }</span>
 
     public String getAddressWS() {
-<span class="nc" id="L66">        return addressWS;</span>
+<span class="nc" id="L75">        return addressWS;</span>
     }
 
     public void setAddressWS(String addressWS) {
-<span class="nc" id="L70">        this.addressWS = addressWS;</span>
-<span class="nc" id="L71">    }</span>
+<span class="nc" id="L79">        this.addressWS = addressWS;</span>
+<span class="nc" id="L80">    }</span>
 
     public String getSettings() {
-<span class="nc" id="L74">        return settings;</span>
+<span class="nc" id="L83">        return settings;</span>
     }
 
     public void setSettings(String settings) {
-<span class="nc" id="L78">        this.settings = settings;</span>
-<span class="nc" id="L79">    }</span>
-
-    public WebServiceEngine() {
-<span class="nc" id="L82">        this(null, null);</span>
-<span class="nc" id="L83">    }</span>
-
-    private Server server;
-
-    private WebServiceEngine(File workflow, List&lt;ParameterSweep&gt; parameters) {
-<span class="nc" id="L88">        super(workflow, parameters);</span>
-<span class="nc" id="L89">    }</span>
+<span class="nc" id="L87">        this.settings = settings;</span>
+<span class="nc" id="L88">    }</span>
 
     @Autowired
     public final void setServer(Server server) {
-<span class="nc" id="L93">        this.server = server;</span>
-<span class="nc" id="L94">    }</span>
+<span class="nc" id="L92">        this.server = server;</span>
+<span class="nc" id="L93">    }</span>
 
     /**
      * Call the WS that is going to run the workflow and return the HTTP link
@@ -105,21 +104,21 @@ public class WebServiceEngine extends WorkflowEngineInstantiator {
             java.rmi.RemoteException,
             javax.xml.rpc.ServiceException {
 
-<span class="nc" id="L108">        System.setProperty(&quot;javax.net.ssl.trustStore&quot;, server.getTruststoreFile());</span>
-<span class="nc" id="L109">        System.setProperty(&quot;javax.net.ssl.trustStorePassword&quot;, server.getTruststorePass());</span>
-<span class="nc" id="L110">        System.setProperty(&quot;javax.net.ssl.trustStoreType&quot;, &quot;JKS&quot;);</span>
+<span class="nc" id="L107">        System.setProperty(&quot;javax.net.ssl.trustStore&quot;, server.getTruststoreFile());</span>
+<span class="nc" id="L108">        System.setProperty(&quot;javax.net.ssl.trustStorePassword&quot;, server.getTruststorePass());</span>
+<span class="nc" id="L109">        System.setProperty(&quot;javax.net.ssl.trustStoreType&quot;, &quot;JKS&quot;);</span>
 
         // String settings = &quot;This is going to contain settings...&quot;;
         // Get Proxy from current User's context
-<span class="nc" id="L114">        String strProxy = ProxyUtil.readAsString(proxyFileName);</span>
+<span class="nc" id="L113">        String strProxy = ProxyUtil.readAsString(proxyFileName);</span>
 
         //configure WS with the specific wsdd file (fix pb of conflict with grid service)
-<span class="nc" id="L117">        String resourcename = &quot;moteur-client-config.wsdd&quot;;</span>
-<span class="nc" id="L118">        InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourcename);</span>
-<span class="nc" id="L119">        EngineConfiguration engineConfig = new FileProvider(is);</span>
-<span class="nc" id="L120">        Moteur_ServiceLocator wfS = new Moteur_ServiceLocator(addressWS, engineConfig);</span>
+<span class="nc" id="L116">        String resourcename = &quot;moteur-client-config.wsdd&quot;;</span>
+<span class="nc" id="L117">        InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourcename);</span>
+<span class="nc" id="L118">        EngineConfiguration engineConfig = new FileProvider(is);</span>
+<span class="nc" id="L119">        Moteur_ServiceLocator wfS = new Moteur_ServiceLocator(addressWS, engineConfig);</span>
 
-<span class="nc" id="L122">        return wfS.getmoteur_service().workflowSubmit(workflow, input, strProxy, settings);</span>
+<span class="nc" id="L121">        return wfS.getmoteur_service().workflowSubmit(workflow, input, strProxy, settings);</span>
     }
 
     @Override
@@ -128,17 +127,17 @@ public class WebServiceEngine extends WorkflowEngineInstantiator {
             java.rmi.RemoteException,
             javax.xml.rpc.ServiceException {
 
-<span class="nc" id="L131">        System.setProperty(&quot;javax.net.ssl.trustStore&quot;, server.getTruststoreFile());</span>
-<span class="nc" id="L132">        System.setProperty(&quot;javax.net.ssl.trustStorePassword&quot;, server.getTruststorePass());</span>
-<span class="nc" id="L133">        System.setProperty(&quot;javax.net.ssl.trustStoreType&quot;, &quot;JKS&quot;);</span>
+<span class="nc" id="L130">        System.setProperty(&quot;javax.net.ssl.trustStore&quot;, server.getTruststoreFile());</span>
+<span class="nc" id="L131">        System.setProperty(&quot;javax.net.ssl.trustStorePassword&quot;, server.getTruststorePass());</span>
+<span class="nc" id="L132">        System.setProperty(&quot;javax.net.ssl.trustStoreType&quot;, &quot;JKS&quot;);</span>
 
-<span class="nc" id="L135">        String resourcename = &quot;moteur-client-config.wsdd&quot;;</span>
-<span class="nc" id="L136">        InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourcename);</span>
-<span class="nc" id="L137">        EngineConfiguration engineConfig = new FileProvider(is);</span>
-<span class="nc" id="L138">        Moteur_ServiceLocator wfS = new Moteur_ServiceLocator(addressWS, engineConfig);</span>
+<span class="nc" id="L134">        String resourcename = &quot;moteur-client-config.wsdd&quot;;</span>
+<span class="nc" id="L135">        InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourcename);</span>
+<span class="nc" id="L136">        EngineConfiguration engineConfig = new FileProvider(is);</span>
+<span class="nc" id="L137">        Moteur_ServiceLocator wfS = new Moteur_ServiceLocator(addressWS, engineConfig);</span>
 
-<span class="nc" id="L140">        wfS.getmoteur_service().killWorkflow(workflowID);</span>
-<span class="nc" id="L141">    }</span>
+<span class="nc" id="L139">        wfS.getmoteur_service().killWorkflow(workflowID);</span>
+<span class="nc" id="L140">    }</span>
 
     @Override
     public SimulationStatus getStatus(String workflowID)
@@ -146,35 +145,35 @@ public class WebServiceEngine extends WorkflowEngineInstantiator {
             java.rmi.RemoteException,
             javax.xml.rpc.ServiceException {
 
-<span class="nc" id="L149">        System.setProperty(&quot;javax.net.ssl.trustStore&quot;, server.getTruststoreFile());</span>
-<span class="nc" id="L150">        System.setProperty(&quot;javax.net.ssl.trustStorePassword&quot;, server.getTruststorePass());</span>
-<span class="nc" id="L151">        System.setProperty(&quot;javax.net.ssl.trustStoreType&quot;, &quot;JKS&quot;);</span>
+<span class="nc" id="L148">        System.setProperty(&quot;javax.net.ssl.trustStore&quot;, server.getTruststoreFile());</span>
+<span class="nc" id="L149">        System.setProperty(&quot;javax.net.ssl.trustStorePassword&quot;, server.getTruststorePass());</span>
+<span class="nc" id="L150">        System.setProperty(&quot;javax.net.ssl.trustStoreType&quot;, &quot;JKS&quot;);</span>
 
-<span class="nc" id="L153">        String resourcename = &quot;moteur-client-config.wsdd&quot;;</span>
-<span class="nc" id="L154">        InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourcename);</span>
-<span class="nc" id="L155">        EngineConfiguration engineConfig = new FileProvider(is);</span>
-<span class="nc" id="L156">        Moteur_ServiceLocator wfS = new Moteur_ServiceLocator(addressWS, engineConfig);</span>
+<span class="nc" id="L152">        String resourcename = &quot;moteur-client-config.wsdd&quot;;</span>
+<span class="nc" id="L153">        InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourcename);</span>
+<span class="nc" id="L154">        EngineConfiguration engineConfig = new FileProvider(is);</span>
+<span class="nc" id="L155">        Moteur_ServiceLocator wfS = new Moteur_ServiceLocator(addressWS, engineConfig);</span>
 
-<span class="nc" id="L158">        String workflowStatus = wfS.getmoteur_service().getWorkflowStatus(workflowID);</span>
-<span class="nc" id="L159">        MoteurStatus moteurStatus = MoteurStatus.valueOf(workflowStatus);</span>
-<span class="nc bnc" id="L160" title="All 5 branches missed.">        switch (moteurStatus) {</span>
+<span class="nc" id="L157">        String workflowStatus = wfS.getmoteur_service().getWorkflowStatus(workflowID);</span>
+<span class="nc" id="L158">        MoteurStatus moteurStatus = MoteurStatus.valueOf(workflowStatus);</span>
+<span class="nc bnc" id="L159" title="All 5 branches missed.">        switch (moteurStatus) {</span>
 
             case RUNNING:
-<span class="nc" id="L163">                return SimulationStatus.Running;</span>
+<span class="nc" id="L162">                return SimulationStatus.Running;</span>
             case COMPLETE:
-<span class="nc" id="L165">                return SimulationStatus.Completed;</span>
+<span class="nc" id="L164">                return SimulationStatus.Completed;</span>
             case TERMINATED:
-<span class="nc" id="L167">                return SimulationStatus.Killed;</span>
+<span class="nc" id="L166">                return SimulationStatus.Killed;</span>
             case UNKNOWN:
-<span class="nc" id="L169">                return SimulationStatus.Unknown;</span>
+<span class="nc" id="L168">                return SimulationStatus.Unknown;</span>
             default:
-<span class="nc" id="L171">                return SimulationStatus.Unknown;</span>
+<span class="nc" id="L170">                return SimulationStatus.Unknown;</span>
         }
     }
 
-<span class="nc" id="L175">    static enum MoteurStatus {</span>
+<span class="nc" id="L174">    static enum MoteurStatus {</span>
 
-<span class="nc" id="L177">        RUNNING, COMPLETE, TERMINATED, UNKNOWN</span>
+<span class="nc" id="L176">        RUNNING, COMPLETE, TERMINATED, UNKNOWN</span>
     }
 
     ;

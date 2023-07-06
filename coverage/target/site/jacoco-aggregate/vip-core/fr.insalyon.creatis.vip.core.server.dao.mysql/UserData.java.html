@@ -408,7 +408,7 @@ import java.util.*;
 <span class="pc bpc" id="L408" title="1 of 2 branches missed.">            if (rs.next()) {</span>
 <span class="fc" id="L409">                String c = rs.getString(&quot;code&quot;);</span>
 <span class="fc" id="L410">                boolean locked = rs.getBoolean(&quot;account_locked&quot;);</span>
-<span class="pc bpc" id="L411" title="2 of 4 branches missed.">                if (!locked &amp;&amp; c.equals(code)) {</span>
+<span class="pc bpc" id="L411" title="1 of 4 branches missed.">                if (!locked &amp;&amp; c.equals(code)) {</span>
 
 <span class="fc" id="L413">                    ps = getConnection().prepareStatement(&quot;UPDATE VIPUsers SET &quot;</span>
                             + &quot;confirmed=? WHERE email=?&quot;);
@@ -421,7 +421,7 @@ import java.util.*;
 <span class="fc" id="L421">                    return true;</span>
                 }
             }
-<span class="nc" id="L424">            return false;</span>
+<span class="fc" id="L424">            return false;</span>
 
 <span class="nc" id="L426">        } catch (SQLException ex) {</span>
 <span class="nc" id="L427">            logger.error(&quot;Error activating user {}&quot;, email, ex);</span>

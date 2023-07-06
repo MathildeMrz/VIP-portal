@@ -19,9 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,7 +31,7 @@ public class ApplicationIT extends BaseSpringIT {
     private ClassBusiness classBusiness;
     @Autowired
     private EngineBusiness engineBusiness;
-    
+
     @BeforeEach
     public void setUp() throws BusinessException, GRIDAClientException, DAOException {
         super.setUp();

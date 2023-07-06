@@ -45,6 +45,14 @@ public interface GateLabService extends RemoteService {
 
     public static final String SERVICE_URI = "/gatelabservice";
 
+    public Map<String, String> getGatelabWorkflowInputs(String workflowID) throws GateLabException;
+
+    public long getNumberParticles(String workflowID) throws GateLabException;
+
+    public void StopWorkflowSimulation(String workflowID) throws GateLabException;
+
+    public void reportProblem(String message) throws GateLabException;
+
     public static class Util {
 
         public static GateLabServiceAsync getInstance() {
@@ -55,12 +63,4 @@ public interface GateLabService extends RemoteService {
             return instance;
         }
     }
-
-    public Map<String, String> getGatelabWorkflowInputs(String workflowID) throws GateLabException;
-
-    public long getNumberParticles(String workflowID) throws GateLabException;
-
-    public void StopWorkflowSimulation(String workflowID) throws GateLabException;
-
-    public void reportProblem(String message) throws GateLabException;
 }

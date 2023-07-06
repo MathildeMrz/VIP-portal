@@ -54,8 +54,8 @@ import java.util.List;
  * @author Nouha Boujelben
  */
 public class MessageComposerWindowToReportIssue extends AbstractComposeWindow {
-    private TextItem subjectItem;
     List<String> recepients;
+    private TextItem subjectItem;
 
     public MessageComposerWindowToReportIssue(List<String> workflowID, List<String> simulationNames) {
 

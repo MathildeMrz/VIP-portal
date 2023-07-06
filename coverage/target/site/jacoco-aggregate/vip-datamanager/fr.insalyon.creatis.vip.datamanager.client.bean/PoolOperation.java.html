@@ -40,21 +40,12 @@ import java.util.Date;
  */
 public class PoolOperation implements IsSerializable {
 
-<span class="nc" id="L43">    public static enum Type {</span>
-
-<span class="nc" id="L45">        Download, Upload, Delete</span>
-    }
-
-    ;
-
-<span class="nc" id="L50">    public static enum Status {</span>
-
-<span class="nc" id="L52">        Queued, Running, Done, Failed, Rescheduled</span>
-    }
-
-    ;
     private String id;
+
+    ;
     private Date registration;
+
+    ;
     private String parsedRegistration;
     private String source;
     private String dest;
@@ -62,10 +53,8 @@ public class PoolOperation implements IsSerializable {
     private Status status;
     private String user;
     private int progress;
-
-<span class="nc" id="L66">    public PoolOperation() {</span>
-<span class="nc" id="L67">    }</span>
-
+<span class="nc" id="L56">    public PoolOperation() {</span>
+<span class="nc" id="L57">    }</span>
     /**
      * @param id
      * @param registration
@@ -77,57 +66,67 @@ public class PoolOperation implements IsSerializable {
      */
     public PoolOperation(String id, Date registration, String parsedResgistration,
                          String source, String dest, Type type, Status status, String user,
-<span class="nc" id="L80">                         int progress) {</span>
+<span class="nc" id="L69">                         int progress) {</span>
 
-<span class="nc" id="L82">        this.id = id;</span>
-<span class="nc" id="L83">        this.registration = registration;</span>
-<span class="nc" id="L84">        this.parsedRegistration = parsedResgistration;</span>
-<span class="nc" id="L85">        this.source = source;</span>
-<span class="nc" id="L86">        this.dest = dest;</span>
-<span class="nc" id="L87">        this.type = type;</span>
-<span class="nc" id="L88">        this.status = status;</span>
-<span class="nc" id="L89">        this.user = user;</span>
-<span class="nc" id="L90">        this.progress = progress;</span>
-<span class="nc" id="L91">    }</span>
+<span class="nc" id="L71">        this.id = id;</span>
+<span class="nc" id="L72">        this.registration = registration;</span>
+<span class="nc" id="L73">        this.parsedRegistration = parsedResgistration;</span>
+<span class="nc" id="L74">        this.source = source;</span>
+<span class="nc" id="L75">        this.dest = dest;</span>
+<span class="nc" id="L76">        this.type = type;</span>
+<span class="nc" id="L77">        this.status = status;</span>
+<span class="nc" id="L78">        this.user = user;</span>
+<span class="nc" id="L79">        this.progress = progress;</span>
+<span class="nc" id="L80">    }</span>
 
     public String getDest() {
-<span class="nc" id="L94">        return dest;</span>
+<span class="nc" id="L83">        return dest;</span>
     }
 
     public String getId() {
-<span class="nc" id="L98">        return id;</span>
+<span class="nc" id="L87">        return id;</span>
     }
 
     public Date getRegistration() {
-<span class="nc" id="L102">        return registration;</span>
+<span class="nc" id="L91">        return registration;</span>
     }
 
     public String getSource() {
-<span class="nc" id="L106">        return source;</span>
+<span class="nc" id="L95">        return source;</span>
     }
 
     public Status getStatus() {
-<span class="nc" id="L110">        return status;</span>
+<span class="nc" id="L99">        return status;</span>
     }
 
     public void setStatus(Status status) {
-<span class="nc" id="L114">        this.status = status;</span>
-<span class="nc" id="L115">    }</span>
+<span class="nc" id="L103">        this.status = status;</span>
+<span class="nc" id="L104">    }</span>
 
     public Type getType() {
-<span class="nc" id="L118">        return type;</span>
+<span class="nc" id="L107">        return type;</span>
     }
 
     public String getUser() {
-<span class="nc" id="L122">        return user;</span>
+<span class="nc" id="L111">        return user;</span>
     }
 
     public String getParsedRegistration() {
-<span class="nc" id="L126">        return parsedRegistration;</span>
+<span class="nc" id="L115">        return parsedRegistration;</span>
     }
 
     public int getProgress() {
-<span class="nc" id="L130">        return progress;</span>
+<span class="nc" id="L119">        return progress;</span>
+    }
+
+<span class="nc" id="L122">    public static enum Type {</span>
+
+<span class="nc" id="L124">        Download, Upload, Delete</span>
+    }
+
+<span class="nc" id="L127">    public static enum Status {</span>
+
+<span class="nc" id="L129">        Queued, Running, Done, Failed, Rescheduled</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

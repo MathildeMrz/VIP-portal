@@ -50,16 +50,16 @@ public class BoutiquesApplication implements IsSerializable {
 <span class="nc" id="L50">        this.version = version;</span>
 <span class="nc" id="L51">    }</span>
 
-    public void setBoutiquesExtensions(BoutiquesApplicationExtensions boutiquesExtensions) {
-<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (this.boutiquesExtensions != null) {</span>
-<span class="nc" id="L55">            throw new IllegalStateException(&quot;A boutiques application can only be extended once&quot;);</span>
-        }
-<span class="nc" id="L57">        this.boutiquesExtensions = boutiquesExtensions;</span>
-<span class="nc" id="L58">    }</span>
-
     public BoutiquesApplicationExtensions getBoutiquesExtensions() {
-<span class="nc" id="L61">        return boutiquesExtensions;</span>
+<span class="nc" id="L54">        return boutiquesExtensions;</span>
     }
+
+    public void setBoutiquesExtensions(BoutiquesApplicationExtensions boutiquesExtensions) {
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (this.boutiquesExtensions != null) {</span>
+<span class="nc" id="L59">            throw new IllegalStateException(&quot;A boutiques application can only be extended once&quot;);</span>
+        }
+<span class="nc" id="L61">        this.boutiquesExtensions = boutiquesExtensions;</span>
+<span class="nc" id="L62">    }</span>
 
     /**
      * @return String of format 'applicationName applicationVersion'
@@ -149,126 +149,125 @@ public class BoutiquesApplication implements IsSerializable {
 <span class="nc" id="L149">        return author;</span>
     }
 
+    public void setAuthor(String author) {
+<span class="nc" id="L153">        this.author = author;</span>
+<span class="nc" id="L154">    }</span>
+
     public String getToolVersion() {
-<span class="nc" id="L153">        return version;</span>
+<span class="nc" id="L157">        return version;</span>
     }
 
     public String getCommandLine() {
-<span class="nc" id="L157">        return commandLine;</span>
+<span class="nc" id="L161">        return commandLine;</span>
     }
+
+    public void setCommandLine(String commandLine) {
+<span class="nc" id="L165">        this.commandLine = commandLine;</span>
+<span class="nc" id="L166">    }</span>
 
     public String getContainerType() {
-<span class="nc" id="L161">        return containerType;</span>
+<span class="nc" id="L169">        return containerType;</span>
     }
+
+    public void setContainerType(String containerType) {
+<span class="nc" id="L173">        this.containerType = containerType;</span>
+<span class="nc" id="L174">    }</span>
 
     public String getContainerImage() {
-<span class="nc" id="L165">        return containerImage;</span>
+<span class="nc" id="L177">        return containerImage;</span>
     }
+
+    public void setContainerImage(String containerImage) {
+<span class="nc" id="L181">        this.containerImage = containerImage;</span>
+<span class="nc" id="L182">    }</span>
 
     public String getContainerIndex() {
-<span class="nc" id="L169">        return containerIndex;</span>
+<span class="nc" id="L185">        return containerIndex;</span>
     }
+
+    public void setContainerIndex(String containerIndex) {
+<span class="nc" id="L189">        this.containerIndex = containerIndex;</span>
+<span class="nc" id="L190">    }</span>
 
     public String getSchemaVersion() {
-<span class="nc" id="L173">        return schemaVersion;</span>
+<span class="nc" id="L193">        return schemaVersion;</span>
     }
+
+    public void setSchemaVersion(String schemaVersion) {
+<span class="nc" id="L197">        this.schemaVersion = schemaVersion;</span>
+<span class="nc" id="L198">    }</span>
 
     public String getChallengerEmail() {
-<span class="nc" id="L177">        return challengerEmail;</span>
+<span class="nc" id="L201">        return challengerEmail;</span>
     }
+
+    public void setChallengerEmail(String challengerEmail) {
+<span class="nc" id="L205">        this.challengerEmail = challengerEmail;</span>
+<span class="nc" id="L206">    }</span>
 
     public String getChallengerTeam() {
-<span class="nc" id="L181">        return challengerTeam;</span>
+<span class="nc" id="L209">        return challengerTeam;</span>
     }
 
+    public void setChallengerTeam(String challengerTeam) {
+<span class="nc" id="L213">        this.challengerTeam = challengerTeam;</span>
+<span class="nc" id="L214">    }</span>
+
     public Set&lt;BoutiquesOutputFile&gt; getOutputFiles() {
-<span class="nc" id="L185">        return outputFiles;</span>
+<span class="nc" id="L217">        return outputFiles;</span>
     }
 
     public String getJsonFile() {
-<span class="nc" id="L189">        return jsonFile;</span>
+<span class="nc" id="L221">        return jsonFile;</span>
     }
 
     public void setJsonFile(String jsonFile) {
-<span class="nc" id="L193">        this.jsonFile = jsonFile;</span>
-<span class="nc" id="L194">    }</span>
+<span class="nc" id="L225">        this.jsonFile = jsonFile;</span>
+<span class="nc" id="L226">    }</span>
 
     public String getApplicationLFN() {
-<span class="nc" id="L197">        return applicationLFN;</span>
+<span class="nc" id="L229">        return applicationLFN;</span>
     }
 
+    public void setApplicationLFN(String applicationLFN) {
+<span class="nc" id="L233">        this.applicationLFN = applicationLFN;</span>
+<span class="nc" id="L234">    }</span>
+
     public String getWrapperLFN() {
-<span class="nc" id="L201">        return this.applicationLFN + &quot;/bin/&quot; + getName() + &quot;.sh&quot;;</span>
+<span class="nc" id="L237">        return this.applicationLFN + &quot;/bin/&quot; + getName() + &quot;.sh&quot;;</span>
     }
 
     public String getWrapperName() {
-<span class="nc" id="L205">        return getName() + &quot;.sh&quot;;</span>
+<span class="nc" id="L241">        return getName() + &quot;.sh&quot;;</span>
     }
 
     public String getGASWLFN() {
-<span class="nc" id="L209">        return this.applicationLFN + &quot;/gasw/&quot; + getName() + &quot;.xml&quot;;</span>
+<span class="nc" id="L245">        return this.applicationLFN + &quot;/gasw/&quot; + getName() + &quot;.xml&quot;;</span>
     }
 
     public String getGwendiaLFN() {
-<span class="nc" id="L213">        return this.applicationLFN + &quot;/workflow/&quot; + getName() + &quot;.gwendia&quot;;</span>
+<span class="nc" id="L249">        return this.applicationLFN + &quot;/workflow/&quot; + getName() + &quot;.gwendia&quot;;</span>
     }
 
     public Map&lt;String, String&gt; getTags() {
-<span class="nc" id="L217">        return tags;</span>
+<span class="nc" id="L253">        return tags;</span>
     }
 
     public String getJsonLFN() {
-<span class="nc" id="L221">        return this.applicationLFN + &quot;/json/&quot; + getName() + &quot;.json&quot;;</span>
+<span class="nc" id="L257">        return this.applicationLFN + &quot;/json/&quot; + getName() + &quot;.json&quot;;</span>
     }
 
-
     public void addInput(BoutiquesInput input) {
-<span class="nc" id="L226">        this.inputs.add(input);</span>
-<span class="nc" id="L227">    }</span>
+<span class="nc" id="L261">        this.inputs.add(input);</span>
+<span class="nc" id="L262">    }</span>
 
     public void addGroup(BoutiquesGroup group) {
-<span class="nc" id="L230">        this.groups.add(group);</span>
-<span class="nc" id="L231">    }</span>
-
-    public void setAuthor(String author) {
-<span class="nc" id="L234">        this.author = author;</span>
-<span class="nc" id="L235">    }</span>
-
-    public void setCommandLine(String commandLine) {
-<span class="nc" id="L238">        this.commandLine = commandLine;</span>
-<span class="nc" id="L239">    }</span>
-
-    public void setContainerType(String containerType) {
-<span class="nc" id="L242">        this.containerType = containerType;</span>
-<span class="nc" id="L243">    }</span>
-
-    public void setContainerImage(String containerImage) {
-<span class="nc" id="L246">        this.containerImage = containerImage;</span>
-<span class="nc" id="L247">    }</span>
-
-    public void setContainerIndex(String containerIndex) {
-<span class="nc" id="L250">        this.containerIndex = containerIndex;</span>
-<span class="nc" id="L251">    }</span>
-
-    public void setSchemaVersion(String schemaVersion) {
-<span class="nc" id="L254">        this.schemaVersion = schemaVersion;</span>
-<span class="nc" id="L255">    }</span>
-
-    public void setChallengerEmail(String challengerEmail) {
-<span class="nc" id="L258">        this.challengerEmail = challengerEmail;</span>
-<span class="nc" id="L259">    }</span>
-
-    public void setChallengerTeam(String challengerTeam) {
-<span class="nc" id="L262">        this.challengerTeam = challengerTeam;</span>
-<span class="nc" id="L263">    }</span>
-
-    public void setApplicationLFN(String applicationLFN) {
-<span class="nc" id="L266">        this.applicationLFN = applicationLFN;</span>
-<span class="nc" id="L267">    }</span>
+<span class="nc" id="L265">        this.groups.add(group);</span>
+<span class="nc" id="L266">    }</span>
 
     public void addTag(String key, String value) {
-<span class="nc" id="L270">        tags.put(key, value);</span>
-<span class="nc" id="L271">    }</span>
+<span class="nc" id="L269">        tags.put(key, value);</span>
+<span class="nc" id="L270">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

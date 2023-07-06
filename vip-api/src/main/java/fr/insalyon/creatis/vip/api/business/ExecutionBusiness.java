@@ -67,17 +67,15 @@ import static fr.insalyon.creatis.vip.application.client.ApplicationConstants.IN
 public class ExecutionBusiness {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    // API dependencies
-    private Supplier<User> currentUserProvider;
     private final DataApiBusiness dataApiBusiness;
-
     // other modules dependencies
     private final SimulationBusiness simulationBusiness;
     private final WorkflowBusiness workflowBusiness;
     private final PipelineBusiness pipelineBusiness;
     private final ConfigurationBusiness configurationBusiness;
     private final ApplicationBusiness applicationBusiness;
+    // API dependencies
+    private Supplier<User> currentUserProvider;
 
     @Autowired
     public ExecutionBusiness(Supplier<User> currentUserProvider,

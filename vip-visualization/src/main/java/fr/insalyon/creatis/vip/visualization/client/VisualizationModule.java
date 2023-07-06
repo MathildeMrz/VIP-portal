@@ -45,20 +45,6 @@ import java.util.function.Consumer;
 
 public class VisualizationModule extends Module {
 
-    @Override
-    public void load() {
-        BrowserContextMenu.addVisualizer(amiImageVisualizer);
-        BrowserContextMenu.addVisualizer(brainBrowserVisualizer);
-    }
-
-    @Override
-    public void postLoading() {
-    }
-
-    @Override
-    public void terminate(Set<Tab> removedTabs) {
-    }
-
     private Visualizer brainBrowserVisualizer =
             new Visualizer() {
                 @Override
@@ -85,7 +71,6 @@ public class VisualizationModule extends Module {
                     };
                 }
             };
-
     private Visualizer amiImageVisualizer =
             new Visualizer() {
                 @Override
@@ -112,4 +97,18 @@ public class VisualizationModule extends Module {
                     };
                 }
             };
+
+    @Override
+    public void load() {
+        BrowserContextMenu.addVisualizer(amiImageVisualizer);
+        BrowserContextMenu.addVisualizer(brainBrowserVisualizer);
+    }
+
+    @Override
+    public void postLoading() {
+    }
+
+    @Override
+    public void terminate(Set<Tab> removedTabs) {
+    }
 }

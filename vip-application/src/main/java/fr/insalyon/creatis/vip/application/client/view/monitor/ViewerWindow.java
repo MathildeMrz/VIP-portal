@@ -63,31 +63,6 @@ public class ViewerWindow extends Window {
     private String content = null;
     private boolean file;
 
-    private void init(String title, String simulationID) {
-        this.simulationID = simulationID;
-        this.setTitle(title);
-        this.setCanDragReposition(true);
-        this.setCanDragResize(true);
-        this.setShowMaximizeButton(true);
-        this.setWidth(700);
-        this.setHeight(450);
-        this.centerInPage();
-
-        pane = new HTMLPane();
-        pane.setPadding(10);
-        pane.setOverflow(Overflow.AUTO);
-        pane.setStyleName("defaultBorder");
-
-        modal = new ModalWindow(pane);
-
-        configureToolStrip();
-
-        this.addItem(toolStrip);
-        this.addItem(pane);
-
-        load();
-    }
-
     /**
      * Views string content
      *
@@ -119,6 +94,31 @@ public class ViewerWindow extends Window {
         this.extension = extension;
         init(title, simulationID);
 
+    }
+
+    private void init(String title, String simulationID) {
+        this.simulationID = simulationID;
+        this.setTitle(title);
+        this.setCanDragReposition(true);
+        this.setCanDragResize(true);
+        this.setShowMaximizeButton(true);
+        this.setWidth(700);
+        this.setHeight(450);
+        this.centerInPage();
+
+        pane = new HTMLPane();
+        pane.setPadding(10);
+        pane.setOverflow(Overflow.AUTO);
+        pane.setStyleName("defaultBorder");
+
+        modal = new ModalWindow(pane);
+
+        configureToolStrip();
+
+        this.addItem(toolStrip);
+        this.addItem(pane);
+
+        load();
     }
 
     private void load() {

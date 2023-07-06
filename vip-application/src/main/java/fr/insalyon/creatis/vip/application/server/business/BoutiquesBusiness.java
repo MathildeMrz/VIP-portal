@@ -146,20 +146,6 @@ public class BoutiquesBusiness {
         return publishOutput.get(0);
     }
 
-    private class CommandErrorException extends Exception {
-
-        private List<String> cout;
-
-        public CommandErrorException(List<String> cout) {
-            this.cout = cout;
-        }
-
-        public List<String> getCout() {
-            return cout;
-        }
-    }
-
-
     private List<String> runCommandAndFailOnError(String command) throws BusinessException {
         try {
             return runCommand(command);
@@ -218,6 +204,19 @@ public class BoutiquesBusiness {
             } catch (IOException ex) {
                 logger.error("Error closing {}", c);
             }
+        }
+    }
+
+    private class CommandErrorException extends Exception {
+
+        private List<String> cout;
+
+        public CommandErrorException(List<String> cout) {
+            this.cout = cout;
+        }
+
+        public List<String> getCout() {
+            return cout;
         }
     }
 }

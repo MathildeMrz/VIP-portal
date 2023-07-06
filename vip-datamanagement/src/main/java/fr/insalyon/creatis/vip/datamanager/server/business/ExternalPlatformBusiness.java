@@ -75,16 +75,6 @@ public class ExternalPlatformBusiness {
         }
     }
 
-    public static class ParseResult {
-        final public Boolean isUri;
-        final public String result;
-
-        private ParseResult(Boolean isUri, String result) {
-            this.isUri = isUri;
-            this.result = result;
-        }
-    }
-
     public ParseResult parseParameter(
             String parameterName, String parameterValue, User user)
             throws BusinessException {
@@ -130,6 +120,16 @@ public class ExternalPlatformBusiness {
             return externalPlatformsDAO.getById(identifier);
         } catch (DAOException e) {
             throw new BusinessException(e);
+        }
+    }
+
+    public static class ParseResult {
+        final public Boolean isUri;
+        final public String result;
+
+        private ParseResult(Boolean isUri, String result) {
+            this.isUri = isUri;
+            this.result = result;
         }
     }
 

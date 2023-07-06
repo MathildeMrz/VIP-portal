@@ -34,20 +34,11 @@ import static fr.insalyon.creatis.vip.core.client.view.CoreConstants.RESULTS_DIR
  */
 public class LaunchFormLayout extends AbstractFormLayout {
     public static final String EXECUTION_NAME_ID = "Execution-name";
-    // Application information
-    protected String applicationName;
-    protected String applicationVersion;
-    protected String applicationClass;
     // Maps from input/group IDs to corresponding object
     private final Map<String, InputLayout> inputsMap = new HashMap<>();
     private final Map<String, GroupValidator> groups = new HashMap<>();
     // Buttons
     private final HLayout buttonsLayout;
-    private IButton launchButton = null;
-    private IButton saveInputsButton = null;
-    private IButton saveAsExampleButton = null;
-    // customization
-    private boolean disableErrorsAndWarnings = false;
     // Label warning user about unsupported dependencies (due to one of the inputs having multiple values)
     private final Label warningLabel;
     // Maps the problematic input ID to the set of dependencies that can't be supported because of it
@@ -58,6 +49,58 @@ public class LaunchFormLayout extends AbstractFormLayout {
     private final Set<String> invalidInputIds = new TreeSet<>();
     // Other error messages (unsatisfied groups)
     private final Set<String> errorMessages = new TreeSet<>();
+    // Application information
+    protected String applicationName;
+    protected String applicationVersion;
+    protected String applicationClass;
+    private IButton launchButton = null;
+    private IButton saveInputsButton = null;
+    private IButton saveAsExampleButton = null;
+    // customization
+    private boolean disableErrorsAndWarnings = false;
+
+    /**
+     * Initialize all visual elements
+     *
+     * @param applicationDescriptor BoutiquesApplication generated from application .json descriptor file
+     */
+    public LaunchFormLayout(final BoutiquesApplication applicationDescriptor, boolean showSeparators) {
+        super("600", "*");
+        this.setWidth(600);
+        // Documentation
+        Label docLabel = WidgetUtil.getLabel("Documentation and Terms of Use",
+                CoreConstants.ICON_INFORMATION, 30, Cursor.HAND);
+        docLabel.addClickHandler(event -> new DocumentationLayout(event.getX(), event.getY(),
+                applicationDescriptor.getDescription()).show());
+        this.addMember(docLabel);
+        // Buttons
+        this.buttonsLayout = new HLayout(5);
+        this.buttonsLayout.setAlign(VerticalAlignment.CENTER);
+        this.buttonsLayout.setMargin(20);
+        // Error message
+        this.errorLabel = WidgetUtil.getLabel("", CoreConstants.ICON_WARNING, 30);
+        this.errorLabel.setWidth(430);
+        this.errorLabel.hide();
+        // Warning message
+        this.warningLabel = WidgetUtil.getLabel("", CoreConstants.ICON_HELP, 30);
+        this.warningLabel.setWidth(430);
+        this.warningLabel.hide();
+        // verify there are extensions
+        assertCondition(applicationDescriptor.getBoutiquesExtensions() != null,
+                "The boutiques descriptor must have extensions");
+        // Add inputs, then buttons and warning/error labels below
+        this.configureInputs(applicationDescriptor, showSeparators);
+        this.addMember(buttonsLayout);
+        this.addMember(this.errorLabel);
+        this.addMember(this.warningLabel);
+        // Groups
+        for (BoutiquesGroup group : applicationDescriptor.getGroups()) {
+            this.groups.put(group.getId(), new GroupValidator(group, this));
+        }
+        this.validateGroups();
+        // Dependencies
+        this.configureDependencies(applicationDescriptor);
+    }
 
     /**
      * Assertion that given expression is true, else an IllegalStateException with given message is thrown
@@ -114,49 +157,6 @@ public class LaunchFormLayout extends AbstractFormLayout {
      */
     private static String groupMessage(List<String> memberNames, Function<String, String> messageFormatter) {
         return messageFormatter.apply(bold(memberNames.toString()));
-    }
-
-    /**
-     * Initialize all visual elements
-     *
-     * @param applicationDescriptor BoutiquesApplication generated from application .json descriptor file
-     */
-    public LaunchFormLayout(final BoutiquesApplication applicationDescriptor, boolean showSeparators) {
-        super("600", "*");
-        this.setWidth(600);
-        // Documentation
-        Label docLabel = WidgetUtil.getLabel("Documentation and Terms of Use",
-                CoreConstants.ICON_INFORMATION, 30, Cursor.HAND);
-        docLabel.addClickHandler(event -> new DocumentationLayout(event.getX(), event.getY(),
-                applicationDescriptor.getDescription()).show());
-        this.addMember(docLabel);
-        // Buttons
-        this.buttonsLayout = new HLayout(5);
-        this.buttonsLayout.setAlign(VerticalAlignment.CENTER);
-        this.buttonsLayout.setMargin(20);
-        // Error message
-        this.errorLabel = WidgetUtil.getLabel("", CoreConstants.ICON_WARNING, 30);
-        this.errorLabel.setWidth(430);
-        this.errorLabel.hide();
-        // Warning message
-        this.warningLabel = WidgetUtil.getLabel("", CoreConstants.ICON_HELP, 30);
-        this.warningLabel.setWidth(430);
-        this.warningLabel.hide();
-        // verify there are extensions
-        assertCondition(applicationDescriptor.getBoutiquesExtensions() != null,
-                "The boutiques descriptor must have extensions");
-        // Add inputs, then buttons and warning/error labels below
-        this.configureInputs(applicationDescriptor, showSeparators);
-        this.addMember(buttonsLayout);
-        this.addMember(this.errorLabel);
-        this.addMember(this.warningLabel);
-        // Groups
-        for (BoutiquesGroup group : applicationDescriptor.getGroups()) {
-            this.groups.put(group.getId(), new GroupValidator(group, this));
-        }
-        this.validateGroups();
-        // Dependencies
-        this.configureDependencies(applicationDescriptor);
     }
 
     public void hideInputs() {

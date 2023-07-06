@@ -70,15 +70,60 @@ import java.util.Set;
 public class CoreModule extends Module {
 
     public static User user;
+    public static List<String> accountTypes;
     private static GeneralTileGrid generalTileGrid;
     private static SystemTileGrid systemTileGrid;
     private static HomeTab homeTab;
     private static Map<String, Runnable> homePageActions;
-    public static List<String> accountTypes;
 
     public CoreModule() {
 
         init();
+    }
+
+    /**
+     * Adds an application parser to the general tile grid.
+     *
+     * @param parser Application parser
+     */
+    public static void addGeneralApplicationParser(ApplicationParser parser) {
+
+        generalTileGrid.addParser(parser);
+    }
+
+    /**
+     * Adds an application parser to the system tile grid.
+     *
+     * @param parser Application parser
+     */
+    public static void addSystemApplicationParser(ApplicationParser parser) {
+
+        systemTileGrid.addParser(parser);
+    }
+
+    /**
+     * Adds a new applications tile grid to the home tab.
+     *
+     * @param tileGrid
+     */
+    public static void addApplicationsTileGrid(ApplicationsTileGrid tileGrid) {
+
+        homeTab.addTileGrid(tileGrid);
+
+    }
+
+    /**
+     * Adds a layout to the home tab.
+     *
+     * @param layout
+     */
+    public static void addLayoutToHomeTab(VLayout layout) {
+
+        homeTab.addToRightLayout(layout);
+    }
+
+    public static Map<String, Runnable> getHomePageActions() {
+        return homePageActions;
     }
 
     @Override
@@ -162,51 +207,6 @@ public class CoreModule extends Module {
     @Override
     public void terminate(Set<Tab> removedTabs) {
         init();
-    }
-
-    /**
-     * Adds an application parser to the general tile grid.
-     *
-     * @param parser Application parser
-     */
-    public static void addGeneralApplicationParser(ApplicationParser parser) {
-
-        generalTileGrid.addParser(parser);
-    }
-
-    /**
-     * Adds an application parser to the system tile grid.
-     *
-     * @param parser Application parser
-     */
-    public static void addSystemApplicationParser(ApplicationParser parser) {
-
-        systemTileGrid.addParser(parser);
-    }
-
-    /**
-     * Adds a new applications tile grid to the home tab.
-     *
-     * @param tileGrid
-     */
-    public static void addApplicationsTileGrid(ApplicationsTileGrid tileGrid) {
-
-        homeTab.addTileGrid(tileGrid);
-
-    }
-
-    /**
-     * Adds a layout to the home tab.
-     *
-     * @param layout
-     */
-    public static void addLayoutToHomeTab(VLayout layout) {
-
-        homeTab.addToRightLayout(layout);
-    }
-
-    public static Map<String, Runnable> getHomePageActions() {
-        return homePageActions;
     }
 
     private void init() {

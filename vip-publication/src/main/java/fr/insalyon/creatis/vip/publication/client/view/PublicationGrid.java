@@ -61,11 +61,11 @@ import fr.insalyon.creatis.vip.publication.client.rpc.PublicationService;
  */
 public class PublicationGrid extends ListGrid {
 
+    DataSource ds;
     private ListGrid grid;
     private HLayout rollOverCanvas;
     private ListGridRecord rollOverRecord;
     private DetailViewer detailViewer;
-    DataSource ds;
 
 
     public PublicationGrid() {

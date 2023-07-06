@@ -30,6 +30,9 @@ public class StatsApiBusiness {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final StatsBusiness statsBusiness;
+    private final String DATE_TIME_FORMAT = "dd-MM-yyyy";
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+
 
     @Autowired
     public StatsApiBusiness(StatsBusiness statsBusiness) {
@@ -62,7 +65,6 @@ public class StatsApiBusiness {
         }
         return new UsersNumber(startDate.atStartOfDay(), endDateTime, usersRegisteredNumber);
     }
-
 
     public UsersList getAllUsers() throws ApiException {
         return getUsersList(new UserSearchCriteria());
@@ -186,9 +188,6 @@ public class StatsApiBusiness {
         }
         return country;
     }
-
-    private final String DATE_TIME_FORMAT = "dd-MM-yyyy";
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
     private LocalDate parseDate(String dateString) throws ApiException {
         if (dateString == null) {

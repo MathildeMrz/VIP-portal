@@ -50,35 +50,27 @@ import static org.mockito.ArgumentMatchers.anyString;
 @Transactional // each test is in a transaction that is rollbacked at the end to always leave a "clean" state
 public abstract class BaseSpringIT {
 
-    @Autowired
-    protected ApplicationContext appContext;
-
-    @Autowired
-    protected ConfigurationBusiness configurationBusiness;
-
-    @Autowired
-    @Qualifier("db-datasource")
-    protected DataSource dataSource; // this is a mockito spy wrapping the h2 memory datasource
-
-    @Autowired
-    protected DataSource lazyDataSource;
-
-    @Autowired
-    protected EmailBusiness emailBusiness;
-
-    @Autowired
-    protected Server server;
-
-    @Autowired
-    protected GRIDAClient gridaClient;
-
-    protected String adminEmail = "test-admin@test.com";
     protected final String emailUser1 = "test1@test.fr";
     protected final String emailUser2 = "test2@test.fr";
     protected final String emailUser3 = "test3@test.fr";
     protected final String emailUser4 = "test4@test.fr";
     protected final String nameGroup1 = "group1";
-
+    @Autowired
+    protected ApplicationContext appContext;
+    @Autowired
+    protected ConfigurationBusiness configurationBusiness;
+    @Autowired
+    @Qualifier("db-datasource")
+    protected DataSource dataSource; // this is a mockito spy wrapping the h2 memory datasource
+    @Autowired
+    protected DataSource lazyDataSource;
+    @Autowired
+    protected EmailBusiness emailBusiness;
+    @Autowired
+    protected Server server;
+    @Autowired
+    protected GRIDAClient gridaClient;
+    protected String adminEmail = "test-admin@test.com";
     protected User user1;
     protected User user2;
     protected User user3;

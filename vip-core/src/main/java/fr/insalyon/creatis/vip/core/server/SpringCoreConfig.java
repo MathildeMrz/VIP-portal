@@ -56,6 +56,55 @@ public class SpringCoreConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringCoreConfig.class);
 
+    // to verify the @Value injection existence
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer properties() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    // to handle list in spring @value
+    @Bean
+    public static ConversionService conversionService() {
+        return new DefaultConversionService();
+    }
+
+    // VIP dependencies beans
+
+    /*
+    find the vip configuration folder. This defaults to $HOME/.vip as this is
+    the traditional behavior.
+    This is changeable through the vipConfigFolder property which can be given
+    as a JVM parameter or a system environment variable. This can be changed
+    to a absolute path or a relative classpath.
+     */
+    @Bean
+    public static Resource vipConfigFolder(
+            ConfigurableApplicationContext configurableApplicationContext) throws IOException {
+        ConfigurableEnvironment env = configurableApplicationContext.getEnvironment();
+        // look for configLocation in environment
+        String configFolder = env.getProperty("vipConfigFolder");
+        // if present, look for file
+        if (configFolder != null) {
+            logger.info("found vipConfigFolder property : {}", configFolder);
+        } else {
+            // if not, look in user home folder
+            configFolder = env.getProperty("user.home") + Server.VIP_DIR;
+            logger.info("vipConfigFolder property not found, using user-home : {}", configFolder);
+        }
+        Resource vipConfigFolder;
+        if (configFolder.startsWith(CLASSPATH_URL_PREFIX)) {
+            vipConfigFolder = new ClassPathResource(configFolder.substring(CLASSPATH_URL_PREFIX.length()));
+        } else {
+            vipConfigFolder = new FileSystemResource(configFolder);
+        }
+        if (!vipConfigFolder.exists() &&
+                !vipConfigFolder.getFile().mkdir()) {
+            logger.error("Cannot create VIP config folder : {}", vipConfigFolder);
+            throw new BeanInitializationException("Cannot create VIP config folder");
+        }
+        return vipConfigFolder;
+    }
+
     /*
     wrapper around the "real" datasource to open a connection only when needed
     (and not every time a @Transactional method is called)
@@ -75,8 +124,6 @@ public class SpringCoreConfig {
     public PlatformTransactionManager transactionManager(LazyConnectionDataSourceProxy lazyDataSource) {
         return new DataSourceTransactionManager(lazyDataSource);
     }
-
-    // VIP dependencies beans
 
     @Bean
     public GRIDAClient gridaClient(Server server) {
@@ -113,53 +160,6 @@ public class SpringCoreConfig {
     @Bean
     public SMAClient smaClient(Server server) {
         return new SMAClient(server.getSMAHost(), server.getSMAPort());
-    }
-
-    // to verify the @Value injection existence
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer properties() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
-    // to handle list in spring @value
-    @Bean
-    public static ConversionService conversionService() {
-        return new DefaultConversionService();
-    }
-
-    /*
-    find the vip configuration folder. This defaults to $HOME/.vip as this is
-    the traditional behavior.
-    This is changeable through the vipConfigFolder property which can be given
-    as a JVM parameter or a system environment variable. This can be changed
-    to a absolute path or a relative classpath.
-     */
-    @Bean
-    public static Resource vipConfigFolder(
-            ConfigurableApplicationContext configurableApplicationContext) throws IOException {
-        ConfigurableEnvironment env = configurableApplicationContext.getEnvironment();
-        // look for configLocation in environment
-        String configFolder = env.getProperty("vipConfigFolder");
-        // if present, look for file
-        if (configFolder != null) {
-            logger.info("found vipConfigFolder property : {}", configFolder);
-        } else {
-            // if not, look in user home folder
-            configFolder = env.getProperty("user.home") + Server.VIP_DIR;
-            logger.info("vipConfigFolder property not found, using user-home : {}", configFolder);
-        }
-        Resource vipConfigFolder;
-        if (configFolder.startsWith(CLASSPATH_URL_PREFIX)) {
-            vipConfigFolder = new ClassPathResource(configFolder.substring(CLASSPATH_URL_PREFIX.length()));
-        } else {
-            vipConfigFolder = new FileSystemResource(configFolder);
-        }
-        if (!vipConfigFolder.exists() &&
-                !vipConfigFolder.getFile().mkdir()) {
-            logger.error("Cannot create VIP config folder : {}", vipConfigFolder);
-            throw new BeanInitializationException("Cannot create VIP config folder");
-        }
-        return vipConfigFolder;
     }
 
 }

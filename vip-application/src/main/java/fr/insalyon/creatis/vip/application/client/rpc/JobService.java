@@ -50,17 +50,6 @@ public interface JobService extends RemoteService {
 
     public static final String SERVICE_URI = "/jobservice";
 
-    public static class Util {
-
-        public static JobServiceAsync getInstance() {
-
-            JobServiceAsync instance = (JobServiceAsync) GWT.create(JobService.class);
-            ServiceDefTarget target = (ServiceDefTarget) instance;
-            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
-            return instance;
-        }
-    }
-
     public List<Job> getList(String simulationID) throws ApplicationException;
 
     public List<Task> getTasks(String simulationID, int jobID) throws ApplicationException;
@@ -93,4 +82,15 @@ public interface JobService extends RemoteService {
     public void sendSignal(String simulationID, List<String> jobIDs, String status) throws ApplicationException;
 
     public Map<String, Integer> getCountriesMap(String simulationID) throws ApplicationException;
+
+    public static class Util {
+
+        public static JobServiceAsync getInstance() {
+
+            JobServiceAsync instance = (JobServiceAsync) GWT.create(JobService.class);
+            ServiceDefTarget target = (ServiceDefTarget) instance;
+            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
+            return instance;
+        }
+    }
 }

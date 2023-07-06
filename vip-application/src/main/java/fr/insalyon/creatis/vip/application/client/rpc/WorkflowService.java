@@ -48,17 +48,6 @@ public interface WorkflowService extends RemoteService {
 
     public static final String SERVICE_URI = "/workflowservice";
 
-    public static class Util {
-
-        public static WorkflowServiceAsync getInstance() {
-
-            WorkflowServiceAsync instance = (WorkflowServiceAsync) GWT.create(WorkflowService.class);
-            ServiceDefTarget target = (ServiceDefTarget) instance;
-            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
-            return instance;
-        }
-    }
-
     public List<Simulation> getSimulations() throws ApplicationException;
 
     public List<Simulation> getSimulations(Date lastDate) throws ApplicationException;
@@ -133,4 +122,15 @@ public interface WorkflowService extends RemoteService {
     public void updateUser(String currentUser, String newUser) throws ApplicationException;
 
     public void changeSimulationUser(String simulationId, String user) throws ApplicationException;
+
+    public static class Util {
+
+        public static WorkflowServiceAsync getInstance() {
+
+            WorkflowServiceAsync instance = (WorkflowServiceAsync) GWT.create(WorkflowService.class);
+            ServiceDefTarget target = (ServiceDefTarget) instance;
+            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
+            return instance;
+        }
+    }
 }

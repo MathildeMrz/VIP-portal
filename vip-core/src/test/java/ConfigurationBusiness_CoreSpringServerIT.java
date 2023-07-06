@@ -3,18 +3,14 @@ import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.client.view.util.CountryCode;
-import fr.insalyon.creatis.vip.core.integrationtest.SpingTestConfig;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
-import fr.insalyon.creatis.vip.core.server.business.EmailBusiness;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.xpath.Arg;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.sql.Timestamp;
@@ -75,24 +71,17 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
     }
 
     /* ********************************************************************************************************************************************** */
-    /* ****************************************************************** create and add user *************************************************************** */
+    /* ************************************************************** create and add user *********************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testCreateUser() throws BusinessException, GRIDAClientException
-    {
+    public void testCreateUser() throws BusinessException, GRIDAClientException {
         // try all the constructors
-        User user6 = new User("firstName", "lastName", "email6@test.fr", "institution", "password", Developer, CountryCode.fr, "applications");
-        User user7 = new User("firstName", "lastName", "email7@test.fr", "institution", Developer, CountryCode.fr);
-        User user8 = new User("firstName", "lastName", "email8@test.fr", "institution", "password", Developer, CountryCode.fr);
-        User user9 = new User("firstName", "lastName", "email9@test.fr", "institution", "password", CountryCode.fr, new Timestamp(System.currentTimeMillis()));
-        createUserInGroup("email6@test.fr", "suffix6", "group2");
-        createUserInGroup("email7@test.fr", "suffix7", "group2");
-        createUserInGroup("email8@test.fr", "suffix8", "group2");
-        createUserInGroup("email9@test.fr", "suffix9", "group2");
+        User user6 = new User("firstName", "lastName", "email9@test.fr", "institution", "password", CountryCode.fr, new Timestamp(System.currentTimeMillis()));
+        configurationBusiness.signup(user6, "", false, true, group2);
 
         // Check users number
-        assertRowsNbInTable("VIPUsers", 10);
+        assertRowsNbInTable("VIPUsers", 7);
     }
 
     @Test
@@ -483,13 +472,20 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
 
     }
 
+
+    @Test
+    public void testSigninWithoutResetingSessionUser() throws BusinessException {
+        String session = configurationBusiness.getUser(emailUser3).getSession();
+        assertNotNull(configurationBusiness.signinWithoutResetingSession(emailUser3, "testPassword"));
+        Assertions.assertEquals(session, configurationBusiness.getUser(emailUser3).getSession(), "incorrect session value");
+    }
+
     /* ********************************************************************************************************************************************** */
-    /* ******************************************************************** send email *************************************************************** */
+    /* ******************************************************************** send email ************************************************************** */
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testSendActivationCode() throws BusinessException
-    {
+    public void testSendActivationCode() throws BusinessException {
         // Reset not to capture the calls to sendEmail in the Setup
         Mockito.reset(emailBusiness);
 
@@ -510,8 +506,7 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchSendActivationCode() throws BusinessException
-    {
+    public void testCatchSendActivationCode() throws BusinessException {
         Exception exception = assertThrows(
                 BusinessException.class, () ->
                         configurationBusiness.sendActivationCode("nonExistentUser@test.fr")
@@ -522,8 +517,7 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testSendResetCode() throws BusinessException
-    {
+    public void testSendResetCode() throws BusinessException {
         // Reset not to capture the calls to sendEmail in the Setup
         Mockito.reset(emailBusiness);
 
@@ -555,8 +549,7 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
-    public void testRequestNewEmail() throws BusinessException
-    {
+    public void testRequestNewEmail() throws BusinessException {
         // Reset not to capture the calls to sendEmail in the Setup
         Mockito.reset(emailBusiness);
 
@@ -582,8 +575,7 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
 
 
     @Test
-    public void testSendContactEmail() throws BusinessException
-    {
+    public void testSendContactEmail() throws BusinessException {
         // Reset not to capture the calls to sendEmail in the Setup
         Mockito.reset(emailBusiness);
 
@@ -603,10 +595,6 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
         Assertions.assertEquals(adminEmail, emailRecipients.getValue()[0], "Incorrect user recipient");
 
     }
-
-
-
-
 
     /* ********************************************************************************************************************************************** */
     /* ****************************************************************** update user *************************************************************** */
@@ -765,5 +753,35 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
     public void testAssAcceptedTermOfUses() throws BusinessException {
         assertTrue(user4.hasAcceptTermsOfUse());
     }
+
+    /* ********************************************************************************************************************************************** */
+    /* ******************************************************************** signout ***************************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testSignout() throws BusinessException {
+        assertNull(configurationBusiness.getUser(emailUser1).getSession());
+        configurationBusiness.signin(emailUser1, "testPassword");
+        assertNotNull(configurationBusiness.getUser(emailUser1).getSession());
+        configurationBusiness.signout(emailUser1);
+        // session has now a random value
+        assertNotNull(configurationBusiness.getUser(emailUser1).getSession());
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* ****************************************************************** activate account *************************************************************** */
+    /* ********************************************************************************************************************************************** */
+
+    @Test
+    public void testCatchActivateIncorrectCode() {
+        Exception exception = assertThrows(
+                BusinessException.class, () ->
+                        configurationBusiness.activate(emailUser1, "incorrect code"));
+
+        // Exception added before the beginning of the internship
+        assertTrue(StringUtils.contains(exception.getMessage(), "Activation failed."));
+
+    }
+
 
 }

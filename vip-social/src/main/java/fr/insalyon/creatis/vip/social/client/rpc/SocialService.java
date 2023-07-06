@@ -49,17 +49,6 @@ public interface SocialService extends RemoteService {
 
     public static final String SERVICE_URI = "/socialservice";
 
-    public static class Util {
-
-        public static SocialServiceAsync getInstance() {
-
-            SocialServiceAsync instance = (SocialServiceAsync) GWT.create(SocialService.class);
-            ServiceDefTarget target = (ServiceDefTarget) instance;
-            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
-            return instance;
-        }
-    }
-
     public List<Message> getMessagesByUser(Date startDate) throws SocialException;
 
     public List<Message> getSentMessagesByUser(Date startDate) throws SocialException;
@@ -85,4 +74,15 @@ public interface SocialService extends RemoteService {
     public void sendGroupMessage(String groupName, String subject, String message) throws SocialException;
 
     public int verifyMessages() throws SocialException;
+
+    public static class Util {
+
+        public static SocialServiceAsync getInstance() {
+
+            SocialServiceAsync instance = (SocialServiceAsync) GWT.create(SocialService.class);
+            ServiceDefTarget target = (ServiceDefTarget) instance;
+            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
+            return instance;
+        }
+    }
 }

@@ -39,32 +39,9 @@ import java.util.stream.Stream;
 public class SpringConfigServer implements Server {
 
     private final Logger logger = LoggerFactory.getLogger(SamlTokenValidator.class);
-
-    /**
-     * using apache config to have a reloadable config file
-     * from https://www.baeldung.com/spring-reloading-properties
-     */
-    public static class ReloadablePropertySource extends PropertySource {
-
-        private PropertiesConfiguration propertiesConfiguration;
-
-        public ReloadablePropertySource(String name, File configFile)
-                throws ConfigurationException {
-            super(name);
-            this.propertiesConfiguration = new PropertiesConfiguration(configFile);
-            this.propertiesConfiguration.setReloadingStrategy(new FileChangedReloadingStrategy());
-        }
-
-        @Override
-        public Object getProperty(String s) {
-            return propertiesConfiguration.getProperty(s);
-        }
-    }
-
     private Environment env;
     private File vipConfigFolder;
     private File proxyFolder;
-
     @Autowired
     public SpringConfigServer(
             Resource vipConfigFolder,
@@ -178,7 +155,6 @@ public class SpringConfigServer implements Server {
             Assert.notNull(env.getProperty(property, type), property + " should not be empty");
         }
     }
-
 
     @Override
     public String getConfigurationFolder() {
@@ -428,6 +404,27 @@ public class SpringConfigServer implements Server {
     @Override
     public boolean useLocalFilesInInputs() {
         return env.getProperty(CoreConstants.USE_LOCAL_FILES_AS_INPUTS, Boolean.class, false);
+    }
+
+    /**
+     * using apache config to have a reloadable config file
+     * from https://www.baeldung.com/spring-reloading-properties
+     */
+    public static class ReloadablePropertySource extends PropertySource {
+
+        private PropertiesConfiguration propertiesConfiguration;
+
+        public ReloadablePropertySource(String name, File configFile)
+                throws ConfigurationException {
+            super(name);
+            this.propertiesConfiguration = new PropertiesConfiguration(configFile);
+            this.propertiesConfiguration.setReloadingStrategy(new FileChangedReloadingStrategy());
+        }
+
+        @Override
+        public Object getProperty(String s) {
+            return propertiesConfiguration.getProperty(s);
+        }
     }
 
 

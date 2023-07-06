@@ -47,19 +47,19 @@ public class SummaryRecord extends ListGridRecord {
         setJobs(jobs);
     }
 
-    public void setState(String state) {
-        setAttribute("states", state);
-    }
-
     public String getState() {
         return getAttributeAsString("states");
     }
 
-    public void setJobs(int jobs) {
-        setAttribute("jobs", jobs);
+    public void setState(String state) {
+        setAttribute("states", state);
     }
 
     public String getJobs() {
         return getAttributeAsString("jobs");
+    }
+
+    public void setJobs(int jobs) {
+        setAttribute("jobs", jobs);
     }
 }

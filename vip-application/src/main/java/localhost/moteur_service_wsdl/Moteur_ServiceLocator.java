@@ -33,6 +33,12 @@ package localhost.moteur_service_wsdl;
 
 public class Moteur_ServiceLocator extends org.apache.axis.client.Service implements localhost.moteur_service_wsdl.Moteur_Service {
 
+    // Use to get a proxy class for moteur_service
+    private java.lang.String moteur_service_address = "http://localhost:18000";
+    // The WSDD service name defaults to the port name.
+    private java.lang.String moteur_serviceWSDDServiceName = "moteur_service";
+    private java.util.HashSet<javax.xml.namespace.QName> ports = null;
+
     /**
      * gSOAP 2.7.13 generated service definition
      */
@@ -52,15 +58,9 @@ public class Moteur_ServiceLocator extends org.apache.axis.client.Service implem
         moteur_service_address = address;
     }
 
-    // Use to get a proxy class for moteur_service
-    private java.lang.String moteur_service_address = "http://localhost:18000";
-
     public java.lang.String getmoteur_serviceAddress() {
         return moteur_service_address;
     }
-
-    // The WSDD service name defaults to the port name.
-    private java.lang.String moteur_serviceWSDDServiceName = "moteur_service";
 
     public java.lang.String getmoteur_serviceWSDDServiceName() {
         return moteur_serviceWSDDServiceName;
@@ -134,8 +134,6 @@ public class Moteur_ServiceLocator extends org.apache.axis.client.Service implem
     public javax.xml.namespace.QName getServiceName() {
         return new javax.xml.namespace.QName("moteur_service/moteur_service.wsdl", "moteur_service");
     }
-
-    private java.util.HashSet<javax.xml.namespace.QName> ports = null;
 
     public java.util.Iterator getPorts() {
         if (ports == null) {

@@ -75,15 +75,15 @@ public class InputM2Parser extends DefaultHandler {
 
     private LfcPathsBusiness lfcPathsBusiness;
 
-    @Autowired
-    public final void setLfcPathsBusiness(LfcPathsBusiness lfcPathsBusiness) {
-        this.lfcPathsBusiness = lfcPathsBusiness;
-    }
-
     public InputM2Parser(String currentUserFolder) {
         this.inputs = new HashMap<String, String>();
         this.parsingItem = false;
         this.currentUserFolder = currentUserFolder;
+    }
+
+    @Autowired
+    public final void setLfcPathsBusiness(LfcPathsBusiness lfcPathsBusiness) {
+        this.lfcPathsBusiness = lfcPathsBusiness;
     }
 
     public Map<String, String> parse(String fileName)

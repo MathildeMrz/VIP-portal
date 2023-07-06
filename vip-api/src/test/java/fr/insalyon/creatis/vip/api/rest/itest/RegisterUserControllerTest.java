@@ -13,6 +13,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Disabled
 class RegisterUserControllerTest extends BaseVIPSpringIT {
 
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     public void registerEndpointOK() throws Exception {
         mockMvc.perform(post("/rest/register")
@@ -20,15 +28,6 @@ class RegisterUserControllerTest extends BaseVIPSpringIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-    }
-
-
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }

@@ -61,8 +61,9 @@ import java.util.function.Consumer;
 @Service
 @Transactional
 public class GirderStorageBusiness {
+    private static final String METHOD_GET = "GET";
+    private static final String METHOD_POST = "POST";
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
     private ApiKeyBusiness apiKeyBusiness;
     private Server server;
 
@@ -185,9 +186,6 @@ public class GirderStorageBusiness {
             throw new BusinessException("Unable to get file info", ex);
         }
     }
-
-    private static final String METHOD_GET = "GET";
-    private static final String METHOD_POST = "POST";
 
     private HttpResult makeHttpRequest(
             String surl,

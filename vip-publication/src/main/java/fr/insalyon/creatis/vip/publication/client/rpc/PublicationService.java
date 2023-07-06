@@ -46,6 +46,16 @@ public interface PublicationService extends RemoteService {
 
     String SERVICE_URI = "/publicationservice";
 
+    void addPublication(Publication pub) throws CoreException;
+
+    void updatePublication(Publication pub) throws CoreException;
+
+    List<Publication> getPublications() throws CoreException;
+
+    void removePublication(Long id) throws CoreException;
+
+    List<Publication> parseBibtexText(String text) throws CoreException;
+
     class Util {
 
         public static PublicationServiceAsync getInstance() {
@@ -56,15 +66,5 @@ public interface PublicationService extends RemoteService {
             return instance;
         }
     }
-
-    void addPublication(Publication pub) throws CoreException;
-
-    void updatePublication(Publication pub) throws CoreException;
-
-    List<Publication> getPublications() throws CoreException;
-
-    void removePublication(Long id) throws CoreException;
-
-    List<Publication> parseBibtexText(String text) throws CoreException;
 
 }

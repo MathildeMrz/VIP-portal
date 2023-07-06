@@ -69,19 +69,19 @@ public class Group implements IsSerializable {
         this.publicGroup = publicGroup;
     }
 
-    public void setGridFile(boolean gridFile) {
-        this.gridFile = gridFile;
-    }
-
-    public void setGridJobs(boolean gridJobs) {
-        this.gridJobs = gridJobs;
-    }
-
     public boolean isGridFile() {
         return gridFile;
     }
 
+    public void setGridFile(boolean gridFile) {
+        this.gridFile = gridFile;
+    }
+
     public boolean isGridJobs() {
         return gridJobs;
+    }
+
+    public void setGridJobs(boolean gridJobs) {
+        this.gridJobs = gridJobs;
     }
 }

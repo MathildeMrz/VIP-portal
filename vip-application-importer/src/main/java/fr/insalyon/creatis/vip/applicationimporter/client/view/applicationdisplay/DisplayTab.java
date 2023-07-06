@@ -51,13 +51,13 @@ import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
 
 public class DisplayTab extends Tab {
 
+    private final ModalWindow modal;
     // Layouts
     private VLayout globalLayout;
     private GeneralLayout generalLayout;
     private InputLayout inputsLayout;
     private OutputLayout outputsLayout;
     private VIPLayout vipLayout;
-    private final ModalWindow modal;
     private BoutiquesApplication boutiquesTool;
 
     public DisplayTab(String tabIcon, String tabId, String tabName) {
@@ -68,6 +68,36 @@ public class DisplayTab extends Tab {
         configure();
         modal = new ModalWindow(globalLayout);
         this.setPane(globalLayout);
+    }
+
+    public static BoutiquesApplication parseJSON(String jsonDescriptor)
+            throws ApplicationImporterException {
+
+        BoutiquesApplication boutiquesApplication = null;
+        try {
+            boutiquesApplication = new BoutiquesParser().parseApplication(jsonDescriptor);
+            verifyBoutiquesTool(boutiquesApplication);
+        } catch (InvalidBoutiquesDescriptorException exception) {
+            throw new ApplicationImporterException(exception.getMessage(), exception);
+        }
+        return boutiquesApplication;
+    }
+
+    private static void verifyBoutiquesTool(BoutiquesApplication boutiquesTool)
+            throws ApplicationImporterException {
+
+        if (boutiquesTool.getName() == null) {
+            throw new ApplicationImporterException("Boutiques file must have a name property");
+        }
+        if (boutiquesTool.getName().matches(".*\\s.*")) {
+            throw new ApplicationImporterException("Application name should not have a space in it");
+        }
+        if (boutiquesTool.getToolVersion() == null) {
+            throw new ApplicationImporterException("Boutiques file must have a tool-version property");
+        }
+        if (boutiquesTool.getAuthor() == null) {
+            throw new ApplicationImporterException("Boutiques file must have an author");
+        }
     }
 
     /**
@@ -117,19 +147,6 @@ public class DisplayTab extends Tab {
         globalLayout.addMember(createApplicationButton);
     }
 
-    public static BoutiquesApplication parseJSON(String jsonDescriptor)
-            throws ApplicationImporterException {
-
-        BoutiquesApplication boutiquesApplication = null;
-        try {
-            boutiquesApplication = new BoutiquesParser().parseApplication(jsonDescriptor);
-            verifyBoutiquesTool(boutiquesApplication);
-        } catch (InvalidBoutiquesDescriptorException exception) {
-            throw new ApplicationImporterException(exception.getMessage(), exception);
-        }
-        return boutiquesApplication;
-    }
-
     /**
      * Populates the class with instance variables containing values in the JSON
      * object, and refreshes the display.
@@ -142,23 +159,6 @@ public class DisplayTab extends Tab {
         generalLayout.setTool(boutiquesTool);
         inputsLayout.setInputs(boutiquesTool.getInputs());
         outputsLayout.setOutputFiles(boutiquesTool.getOutputFiles());
-    }
-
-    private static void verifyBoutiquesTool(BoutiquesApplication boutiquesTool)
-            throws ApplicationImporterException {
-
-        if (boutiquesTool.getName() == null) {
-            throw new ApplicationImporterException("Boutiques file must have a name property");
-        }
-        if (boutiquesTool.getName().matches(".*\\s.*")) {
-            throw new ApplicationImporterException("Application name should not have a space in it");
-        }
-        if (boutiquesTool.getToolVersion() == null) {
-            throw new ApplicationImporterException("Boutiques file must have a tool-version property");
-        }
-        if (boutiquesTool.getAuthor() == null) {
-            throw new ApplicationImporterException("Boutiques file must have an author");
-        }
     }
 
     /**

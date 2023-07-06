@@ -21,22 +21,40 @@ public abstract class VipException extends Exception implements IsSerializable {
         - 8xxx : vip-api
      */
 
-    /* to extends as an enum */
-    public interface VipError {
-        Integer getCode();
-    }
-
-    private static class VipErrorMessage {
-        String messageFormat;
-        Integer paramsNb;
-
-        private VipErrorMessage(String messageFormat, Integer paramsNb) {
-            this.messageFormat = messageFormat;
-            this.paramsNb = paramsNb;
-        }
-    }
-
     private static final Map<VipError, VipErrorMessage> apiErrors = new HashMap<>();
+    private Integer vipErrorCode = null;
+
+    public VipException() {
+    }
+
+    public VipException(String message) {
+        super(message);
+    }
+
+    public VipException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public VipException(Throwable cause) {
+        super(cause);
+    }
+
+    public VipException(VipError vipError, Object... params) {
+        super(formatMessage(vipError, params));
+        this.vipErrorCode = vipError.getCode();
+    }
+
+    public VipException(VipError vipError, Throwable cause, Object... params) {
+        super(formatMessage(vipError, params), cause);
+        this.vipErrorCode = vipError.getCode();
+    }
+
+    public VipException(String message, VipError vipError) {
+        super(message);
+        this.vipErrorCode = vipError.getCode();
+    }
+
+    // Allow all exception constructors to be used
 
     protected static void addMessage(VipError vipError, String messageFormat, Integer paramsNb) {
         apiErrors.put(
@@ -93,44 +111,25 @@ public abstract class VipException extends Exception implements IsSerializable {
         return sb.toString();
     }
 
-    private Integer vipErrorCode = null;
+    // VIP error constructors
 
     public Optional<Integer> getVipErrorCode() {
         return Optional.ofNullable(vipErrorCode);
     }
 
-    // Allow all exception constructors to be used
-
-    public VipException() {
+    /* to extends as an enum */
+    public interface VipError {
+        Integer getCode();
     }
 
-    public VipException(String message) {
-        super(message);
-    }
+    private static class VipErrorMessage {
+        String messageFormat;
+        Integer paramsNb;
 
-    public VipException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public VipException(Throwable cause) {
-        super(cause);
-    }
-
-    // VIP error constructors
-
-    public VipException(VipError vipError, Object... params) {
-        super(formatMessage(vipError, params));
-        this.vipErrorCode = vipError.getCode();
-    }
-
-    public VipException(VipError vipError, Throwable cause, Object... params) {
-        super(formatMessage(vipError, params), cause);
-        this.vipErrorCode = vipError.getCode();
-    }
-
-    public VipException(String message, VipError vipError) {
-        super(message);
-        this.vipErrorCode = vipError.getCode();
+        private VipErrorMessage(String messageFormat, Integer paramsNb) {
+            this.messageFormat = messageFormat;
+            this.paramsNb = paramsNb;
+        }
     }
 
 }

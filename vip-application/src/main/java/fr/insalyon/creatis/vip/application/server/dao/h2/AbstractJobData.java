@@ -58,21 +58,19 @@ public abstract class AbstractJobData {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final String DRIVER = "org.h2.Driver";
-
+    protected Server server;
+    protected Connection connection;
     @Value("${workflows.db.scheme:tcp}")
     private String workflowsScheme = "tcp";
-
-    protected Server server;
     private String dbPath;
-    protected Connection connection;
+
+    public AbstractJobData(String dbPath) {
+        this.dbPath = dbPath;
+    }
 
     @Autowired
     public final void setServer(Server server) {
         this.server = server;
-    }
-
-    public AbstractJobData(String dbPath) {
-        this.dbPath = dbPath;
     }
 
     protected String getDbPath() {

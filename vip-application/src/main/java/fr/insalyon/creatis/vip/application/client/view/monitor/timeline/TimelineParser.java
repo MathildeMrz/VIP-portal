@@ -45,17 +45,17 @@ public class TimelineParser {
     public static TimelineParser instance;
     public List<TimelineParserInterface> parsers;
 
+    private TimelineParser() {
+
+        parsers = new ArrayList<TimelineParserInterface>();
+    }
+
     public static TimelineParser getInstance() {
 
         if (instance == null) {
             instance = new TimelineParser();
         }
         return instance;
-    }
-
-    private TimelineParser() {
-
-        parsers = new ArrayList<TimelineParserInterface>();
     }
 
     public void addParser(TimelineParserInterface parser) {

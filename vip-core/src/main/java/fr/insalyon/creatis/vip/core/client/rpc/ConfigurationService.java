@@ -53,17 +53,6 @@ public interface ConfigurationService extends RemoteService {
 
     String SERVICE_URI = "/configurationservice";
 
-    class Util {
-
-        public static ConfigurationServiceAsync getInstance() {
-
-            ConfigurationServiceAsync instance = GWT.create(ConfigurationService.class);
-            ServiceDefTarget target = (ServiceDefTarget) instance;
-            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
-            return instance;
-        }
-    }
-
     User configure(String email, String session) throws CoreException;
 
     void signup(User user, String comments) throws CoreException;
@@ -141,11 +130,22 @@ public interface ConfigurationService extends RemoteService {
 
     boolean compare() throws CoreException;
 
-    // api key management
-
     String getUserApikey(String email) throws CoreException;
+
+    // api key management
 
     void deleteUserApikey(String email) throws CoreException;
 
     String generateNewUserApikey(String email) throws CoreException;
+
+    class Util {
+
+        public static ConfigurationServiceAsync getInstance() {
+
+            ConfigurationServiceAsync instance = GWT.create(ConfigurationService.class);
+            ServiceDefTarget target = (ServiceDefTarget) instance;
+            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
+            return instance;
+        }
+    }
 }

@@ -60,7 +60,7 @@ coverage/vip-application-importer,fr.insalyon.creatis.vip.applicationimporter.se
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.dao,DAOException,0,13,0,0,0,6,0,3,0,3
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,Account,37,0,0,0,16,0,7,0,7,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,TermsOfUse,23,9,0,0,11,4,5,2,5,2
-coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,User,84,308,13,13,24,86,19,45,11,40
+coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,User,106,286,13,13,27,83,20,44,12,39
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,Group,11,35,0,0,6,14,3,7,3,7
 coverage/vip-core,fr.insalyon.creatis.vip.core.client.bean,UsageStats,26,0,0,0,12,0,6,0,6,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business.proxy,ProxyClient.MyTrustManager,335,0,26,0,80,0,19,0,6,0
@@ -68,7 +68,7 @@ coverage/vip-core,fr.insalyon.creatis.vip.core.server.business.proxy,ProxyClient
 coverage/vip-core,fr.insalyon.creatis.vip.core.server,SpringCoreConfig,13,127,3,5,3,34,2,14,0,12
 coverage/vip-core,fr.insalyon.creatis.vip.core.server,DataSourceConfig,6,3,0,0,1,1,1,1,1,1
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.dao.mysql,TermsUseData,11,64,0,2,3,20,0,5,0,4
-coverage/vip-core,fr.insalyon.creatis.vip.core.server.dao.mysql,UserData,1200,869,44,30,295,231,46,31,18,22
+coverage/vip-core,fr.insalyon.creatis.vip.core.server.dao.mysql,UserData,1198,871,43,31,294,232,45,32,18,22
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.dao.mysql,TableInitializer,17,40,3,1,4,10,2,3,0,3
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.dao.mysql,CoreDataInitializer,24,155,4,4,8,40,4,5,0,5
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.dao.mysql,GroupData,67,178,3,5,16,47,3,8,0,7
@@ -77,7 +77,7 @@ coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,BusinessException
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,SpringConfigServer.ReloadablePropertySource,21,0,0,0,5,0,2,0,2,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,VipSessionBusiness,338,14,24,0,81,5,23,1,11,1
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,StatsBusiness.UserSearchCriteria,35,0,0,0,13,0,9,0,9,0
-coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,ConfigurationBusiness,841,1274,57,59,217,311,52,66,12,48
+coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,ConfigurationBusiness,799,1320,54,62,207,322,48,70,10,50
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,EmailBusiness,35,11,0,0,6,4,1,1,1,1
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,SamlTokenValidator,215,0,18,0,55,0,17,0,8,0
 coverage/vip-core,fr.insalyon.creatis.vip.core.server.business,SpringConfigServer,608,0,12,0,133,0,63,0,57,0

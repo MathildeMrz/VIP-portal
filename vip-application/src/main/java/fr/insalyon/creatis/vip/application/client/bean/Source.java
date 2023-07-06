@@ -64,16 +64,16 @@ public class Source implements IsSerializable {
         return description;
     }
 
+    public void setDescription(String text) {
+        this.description = text;
+    }
+
     public String getName() {
         return name;
     }
 
     public String getUserLevel() {
         return userLevel;
-    }
-
-    public void setDescription(String text) {
-        this.description = text;
     }
 
     public boolean isOptional() {

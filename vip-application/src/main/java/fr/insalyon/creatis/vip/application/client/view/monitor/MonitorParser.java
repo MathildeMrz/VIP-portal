@@ -46,17 +46,17 @@ public class MonitorParser {
     public static MonitorParser instance;
     public List<MonitorParserInterface> parsers;
 
+    private MonitorParser() {
+
+        parsers = new ArrayList<MonitorParserInterface>();
+    }
+
     public static MonitorParser getInstance() {
 
         if (instance == null) {
             instance = new MonitorParser();
         }
         return instance;
-    }
-
-    private MonitorParser() {
-
-        parsers = new ArrayList<MonitorParserInterface>();
     }
 
     public void addParser(MonitorParserInterface parser) {

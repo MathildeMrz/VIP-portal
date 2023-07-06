@@ -8,12 +8,6 @@ import java.util.Map;
 
 public class RelaunchService {
 
-    public interface ApplicationRelauncher {
-        boolean relaunchIfSupported(
-                String applicationName, String applicationVersion, String applicationClass,
-                String simulationName, Map<String, String> inputs, String tabId);
-    }
-
     private static RelaunchService instance;
     private List<ApplicationRelauncher> applicationRelaunchers = new ArrayList<>();
 
@@ -40,5 +34,11 @@ public class RelaunchService {
         Layout.getInstance().addTab(
                 tabId,
                 () -> new LaunchTab(applicationName, applicationVersion, applicationClass, simulationName, inputs));
+    }
+
+    public interface ApplicationRelauncher {
+        boolean relaunchIfSupported(
+                String applicationName, String applicationVersion, String applicationClass,
+                String simulationName, Map<String, String> inputs, String tabId);
     }
 }

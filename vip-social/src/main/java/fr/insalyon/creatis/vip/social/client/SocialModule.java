@@ -57,6 +57,31 @@ public class SocialModule extends Module {
     private static ToolStripButton socialButton;
     private Timer timer;
 
+    public static void verifyMessages() {
+
+        SocialServiceAsync service = SocialService.Util.getInstance();
+        AsyncCallback<Integer> callback = new AsyncCallback<Integer>() {
+
+            public void onFailure(Throwable caught) {
+                Layout.getInstance().setWarningMessage("Connection lost with the server.", 20);
+            }
+
+            public void onSuccess(Integer result) {
+
+                if (result > 0) {
+                    socialButton.setTitle(Canvas.imgHTML(SocialConstants.ICON_SOCIAL)
+                            + " " + Canvas.imgHTML(SocialConstants.ICON_MESSAGE_NEW));
+                    socialButton.setPrompt(SocialConstants.APP_SOCIAL + " - New Message");
+
+                } else {
+                    socialButton.setTitle(Canvas.imgHTML(SocialConstants.ICON_SOCIAL));
+                    socialButton.setPrompt(SocialConstants.APP_SOCIAL);
+                }
+            }
+        };
+        service.verifyMessages(callback);
+    }
+
     @Override
     public void load() {
 
@@ -91,30 +116,5 @@ public class SocialModule extends Module {
     @Override
     public void terminate(Set<Tab> removedTabs) {
         timer.cancel();
-    }
-
-    public static void verifyMessages() {
-
-        SocialServiceAsync service = SocialService.Util.getInstance();
-        AsyncCallback<Integer> callback = new AsyncCallback<Integer>() {
-
-            public void onFailure(Throwable caught) {
-                Layout.getInstance().setWarningMessage("Connection lost with the server.", 20);
-            }
-
-            public void onSuccess(Integer result) {
-
-                if (result > 0) {
-                    socialButton.setTitle(Canvas.imgHTML(SocialConstants.ICON_SOCIAL)
-                            + " " + Canvas.imgHTML(SocialConstants.ICON_MESSAGE_NEW));
-                    socialButton.setPrompt(SocialConstants.APP_SOCIAL + " - New Message");
-
-                } else {
-                    socialButton.setTitle(Canvas.imgHTML(SocialConstants.ICON_SOCIAL));
-                    socialButton.setPrompt(SocialConstants.APP_SOCIAL);
-                }
-            }
-        };
-        service.verifyMessages(callback);
     }
 }

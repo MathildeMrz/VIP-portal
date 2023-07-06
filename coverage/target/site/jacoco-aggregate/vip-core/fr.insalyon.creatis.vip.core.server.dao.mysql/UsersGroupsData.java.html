@@ -64,13 +64,13 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
     private GroupDAO groupDao;
 
     @Autowired
-    public void useDataSource(DataSource dataSource) {
-<span class="fc" id="L68">        setDataSource(dataSource);</span>
+<span class="fc" id="L67">    public UsersGroupsData(GroupDAO groupDao) {</span>
+<span class="fc" id="L68">        this.groupDao = groupDao;</span>
 <span class="fc" id="L69">    }</span>
 
     @Autowired
-<span class="fc" id="L72">    public UsersGroupsData(GroupDAO groupDao) {</span>
-<span class="fc" id="L73">        this.groupDao = groupDao;</span>
+    public void useDataSource(DataSource dataSource) {
+<span class="fc" id="L73">        setDataSource(dataSource);</span>
 <span class="fc" id="L74">    }</span>
 
     @Override

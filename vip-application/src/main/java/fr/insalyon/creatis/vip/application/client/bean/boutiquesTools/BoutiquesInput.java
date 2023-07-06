@@ -15,33 +15,17 @@ public abstract class BoutiquesInput implements IsSerializable {
     protected String id;
     protected String name;
     protected String description;
-    private InputType type;
     protected boolean isOptional;
     protected Set<String> disablesInputsId;
     protected Set<String> requiresInputsId;
-
     protected Set<String> possibleValues;
-
+    private InputType type;
     private Map<String, Set<String>> valueDisablesInputsId;
     private Map<String, Set<String>> valueRequiresInputsId;
     private String valueKey;
 
     private boolean list;
     private String commandLineFlag;
-
-    public enum InputType {
-        STRING("String"), FILE("File"), NUMBER("Number"), FLAG("Flag");
-
-        private final String camelName;
-
-        InputType(String camelName) {
-            this.camelName = camelName;
-        }
-
-        public String getCamelName() {
-            return this.camelName;
-        }
-    }
 
     public BoutiquesInput() {
     }
@@ -156,6 +140,10 @@ public abstract class BoutiquesInput implements IsSerializable {
         return possibleValues;
     }
 
+    public void setPossibleValues(Set<String> possibleValues) {
+        this.possibleValues = possibleValues;
+    }
+
     /**
      * @return Object representing this input's default value, or null if there is not any
      */
@@ -165,28 +153,38 @@ public abstract class BoutiquesInput implements IsSerializable {
         return valueKey;
     }
 
-    public boolean isList() {
-        return list;
-    }
-
-    public String getCommandLineFlag() {
-        return commandLineFlag;
-    }
-
     public void setValueKey(String valueKey) {
         this.valueKey = valueKey;
+    }
+
+    public boolean isList() {
+        return list;
     }
 
     public void setList(boolean list) {
         this.list = list;
     }
 
+    public String getCommandLineFlag() {
+        return commandLineFlag;
+    }
+
     public void setCommandLineFlag(String commandLineFlag) {
         this.commandLineFlag = commandLineFlag;
     }
 
-    public void setPossibleValues(Set<String> possibleValues) {
-        this.possibleValues = possibleValues;
+    public enum InputType {
+        STRING("String"), FILE("File"), NUMBER("Number"), FLAG("Flag");
+
+        private final String camelName;
+
+        InputType(String camelName) {
+            this.camelName = camelName;
+        }
+
+        public String getCamelName() {
+            return this.camelName;
+        }
     }
 
 

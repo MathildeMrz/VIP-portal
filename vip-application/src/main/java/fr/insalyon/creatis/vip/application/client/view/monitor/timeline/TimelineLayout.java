@@ -64,14 +64,6 @@ public class TimelineLayout extends VLayout {
     private Timer timer;
     private Label loadMoreLabel;
 
-    public static TimelineLayout getInstance() {
-
-        if (instance == null) {
-            instance = new TimelineLayout();
-        }
-        return instance;
-    }
-
     private TimelineLayout() {
 
         this.setWidth100();
@@ -109,6 +101,14 @@ public class TimelineLayout extends VLayout {
             }
         };
         timer.scheduleRepeating(60000);
+    }
+
+    public static TimelineLayout getInstance() {
+
+        if (instance == null) {
+            instance = new TimelineLayout();
+        }
+        return instance;
     }
 
     private void loadData() {

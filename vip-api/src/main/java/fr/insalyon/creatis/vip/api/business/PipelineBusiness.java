@@ -65,13 +65,11 @@ import static fr.insalyon.creatis.vip.api.exception.ApiException.ApiError.*;
 public class PipelineBusiness {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private Environment env;
-
-    private Supplier<User> currentUserProvider;
     private final WorkflowBusiness workflowBusiness;
     private final ApplicationBusiness applicationBusiness;
     private final ClassBusiness classBusiness;
+    private Environment env;
+    private Supplier<User> currentUserProvider;
 
     @Autowired
     public PipelineBusiness(

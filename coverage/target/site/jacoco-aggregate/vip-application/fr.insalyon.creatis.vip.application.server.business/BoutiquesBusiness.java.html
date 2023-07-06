@@ -146,79 +146,78 @@ public class BoutiquesBusiness {
 <span class="nc" id="L146">        return publishOutput.get(0);</span>
     }
 
-    private class CommandErrorException extends Exception {
-
-        private List&lt;String&gt; cout;
-
-<span class="nc" id="L153">        public CommandErrorException(List&lt;String&gt; cout) {</span>
-<span class="nc" id="L154">            this.cout = cout;</span>
-<span class="nc" id="L155">        }</span>
-
-        public List&lt;String&gt; getCout() {
-<span class="nc" id="L158">            return cout;</span>
-        }
-    }
-
-
     private List&lt;String&gt; runCommandAndFailOnError(String command) throws BusinessException {
         try {
-<span class="nc" id="L165">            return runCommand(command);</span>
-<span class="nc" id="L166">        } catch (CommandErrorException e) {</span>
-<span class="nc" id="L167">            throw new BusinessException(&quot;Command {&quot; + command + &quot;} failed : &quot; + String.join(&quot;\n&quot;, e.getCout()));</span>
+<span class="nc" id="L151">            return runCommand(command);</span>
+<span class="nc" id="L152">        } catch (CommandErrorException e) {</span>
+<span class="nc" id="L153">            throw new BusinessException(&quot;Command {&quot; + command + &quot;} failed : &quot; + String.join(&quot;\n&quot;, e.getCout()));</span>
         }
     }
 
     private List&lt;String&gt; runCommand(String command) throws CommandErrorException, BusinessException {
-<span class="nc" id="L172">        ProcessBuilder builder = new ProcessBuilder(&quot;bash&quot;, &quot;-c&quot;, command);</span>
-<span class="nc" id="L173">        builder.redirectErrorStream(true);</span>
-<span class="nc" id="L174">        Process process = null;</span>
-<span class="nc" id="L175">        List&lt;String&gt; cout = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L158">        ProcessBuilder builder = new ProcessBuilder(&quot;bash&quot;, &quot;-c&quot;, command);</span>
+<span class="nc" id="L159">        builder.redirectErrorStream(true);</span>
+<span class="nc" id="L160">        Process process = null;</span>
+<span class="nc" id="L161">        List&lt;String&gt; cout = new ArrayList&lt;&gt;();</span>
 
         try {
-<span class="nc" id="L178">            logger.info(&quot;Executing command : &quot; + command);</span>
-<span class="nc" id="L179">            process = builder.start();</span>
-<span class="nc" id="L180">            BufferedReader r = new BufferedReader(</span>
-<span class="nc" id="L181">                    new InputStreamReader(process.getInputStream()));</span>
+<span class="nc" id="L164">            logger.info(&quot;Executing command : &quot; + command);</span>
+<span class="nc" id="L165">            process = builder.start();</span>
+<span class="nc" id="L166">            BufferedReader r = new BufferedReader(</span>
+<span class="nc" id="L167">                    new InputStreamReader(process.getInputStream()));</span>
             String s;
-<span class="nc bnc" id="L183" title="All 2 branches missed.">            while ((s = r.readLine()) != null) {</span>
-<span class="nc" id="L184">                cout.add(s);</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">            while ((s = r.readLine()) != null) {</span>
+<span class="nc" id="L170">                cout.add(s);</span>
             }
-<span class="nc" id="L186">            process.waitFor();</span>
-<span class="nc" id="L187">            closeProcess(process);</span>
-<span class="nc" id="L188">        } catch (IOException | InterruptedException e) {</span>
-<span class="nc" id="L189">            logger.error(&quot;Unexpected error in a boutiques command : {}&quot;,</span>
-<span class="nc" id="L190">                    String.join(&quot;\n&quot;, cout), e);</span>
-<span class="nc" id="L191">            throw new BusinessException(&quot;Unexpected error in a boutiques command&quot;, e);</span>
+<span class="nc" id="L172">            process.waitFor();</span>
+<span class="nc" id="L173">            closeProcess(process);</span>
+<span class="nc" id="L174">        } catch (IOException | InterruptedException e) {</span>
+<span class="nc" id="L175">            logger.error(&quot;Unexpected error in a boutiques command : {}&quot;,</span>
+<span class="nc" id="L176">                    String.join(&quot;\n&quot;, cout), e);</span>
+<span class="nc" id="L177">            throw new BusinessException(&quot;Unexpected error in a boutiques command&quot;, e);</span>
         } finally {
-<span class="nc" id="L193">            closeProcess(process);</span>
+<span class="nc" id="L179">            closeProcess(process);</span>
         }
 
-<span class="nc bnc" id="L196" title="All 2 branches missed.">        if (process.exitValue() != 0) {</span>
-<span class="nc" id="L197">            logger.error(&quot;Command failed : {}&quot;,</span>
-<span class="nc" id="L198">                    String.join(&quot;\n&quot;, cout));</span>
-<span class="nc" id="L199">            throw new CommandErrorException(cout);</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        if (process.exitValue() != 0) {</span>
+<span class="nc" id="L183">            logger.error(&quot;Command failed : {}&quot;,</span>
+<span class="nc" id="L184">                    String.join(&quot;\n&quot;, cout));</span>
+<span class="nc" id="L185">            throw new CommandErrorException(cout);</span>
         }
-<span class="nc" id="L201">        process = null;</span>
-<span class="nc" id="L202">        return cout;</span>
+<span class="nc" id="L187">        process = null;</span>
+<span class="nc" id="L188">        return cout;</span>
     }
 
     private void closeProcess(Process process) {
-<span class="nc bnc" id="L206" title="All 2 branches missed.">        if (process == null) return;</span>
-<span class="nc" id="L207">        close(process.getOutputStream());</span>
-<span class="nc" id="L208">        close(process.getInputStream());</span>
-<span class="nc" id="L209">        close(process.getErrorStream());</span>
-<span class="nc" id="L210">        process.destroy();</span>
-<span class="nc" id="L211">    }</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (process == null) return;</span>
+<span class="nc" id="L193">        close(process.getOutputStream());</span>
+<span class="nc" id="L194">        close(process.getInputStream());</span>
+<span class="nc" id="L195">        close(process.getErrorStream());</span>
+<span class="nc" id="L196">        process.destroy();</span>
+<span class="nc" id="L197">    }</span>
 
     private void close(Closeable c) {
 
-<span class="nc bnc" id="L215" title="All 2 branches missed.">        if (c != null) {</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        if (c != null) {</span>
             try {
-<span class="nc" id="L217">                c.close();</span>
-<span class="nc" id="L218">            } catch (IOException ex) {</span>
-<span class="nc" id="L219">                logger.error(&quot;Error closing {}&quot;, c);</span>
-<span class="nc" id="L220">            }</span>
+<span class="nc" id="L203">                c.close();</span>
+<span class="nc" id="L204">            } catch (IOException ex) {</span>
+<span class="nc" id="L205">                logger.error(&quot;Error closing {}&quot;, c);</span>
+<span class="nc" id="L206">            }</span>
         }
-<span class="nc" id="L222">    }</span>
+<span class="nc" id="L208">    }</span>
+
+    private class CommandErrorException extends Exception {
+
+        private List&lt;String&gt; cout;
+
+<span class="nc" id="L214">        public CommandErrorException(List&lt;String&gt; cout) {</span>
+<span class="nc" id="L215">            this.cout = cout;</span>
+<span class="nc" id="L216">        }</span>
+
+        public List&lt;String&gt; getCout() {
+<span class="nc" id="L219">            return cout;</span>
+        }
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

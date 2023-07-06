@@ -24,11 +24,7 @@ public abstract class InputLayout extends VLayout {
     public static String UNMODIFIABLE_ATTR = "unmodifiable";
     protected final LaunchFormLayout parentLayout;
     protected final BoutiquesInput input;
-    // Input forms
-    protected DynamicForm masterForm;
     protected final ArrayList<DynamicForm> additionalForms = new ArrayList<>();
-    protected final PickerIcon addValueIcon = this.configureAddValueIcon();
-    protected final PickerIcon removeValueIcon = this.configureRemoveValueIcon();
     // Dependencies with other inputs or groups
     protected final Set<InputLayout> disables = new HashSet<>();
     protected final Set<InputLayout> disabledBy = new HashSet<>();
@@ -36,25 +32,12 @@ public abstract class InputLayout extends VLayout {
     protected final Set<InputLayout> requires = new HashSet<>();
     protected final Set<InputLayout> requiredBy = new HashSet<>();
     protected final Map<ValueChoiceInputLayout, Set<String>> requiredByValue = new HashMap<>();
+    protected final PickerIcon removeValueIcon = this.configureRemoveValueIcon();
+    protected final PickerIcon addValueIcon = this.configureAddValueIcon();
+    // Input forms
+    protected DynamicForm masterForm;
     protected boolean unmodifiable = false;
     protected boolean canAddValue = true;
-
-    /**
-     * In a Map with Sets as values, add newValue to the Set corresponding to given key. If this Set does not exist yet,
-     * create it containing only newValue
-     *
-     * @param map      Map of Objects to Sets of Objects
-     * @param key      Object
-     * @param newValue Object
-     */
-    public static <K, V> void addToSetInMap(Map<K, Set<V>> map, K key,
-                                            V newValue) {
-        if (map.containsKey(key)) {
-            map.get(key).add(newValue);
-        } else {
-            map.put(key, new HashSet<>(Collections.singleton(newValue)));
-        }
-    }
 
     /**
      * Initialises graphical labels and input field
@@ -95,6 +78,23 @@ public abstract class InputLayout extends VLayout {
             descriptionLabel.setWidth(400);
         }
         this.configureLayout(nameLabel, descriptionLabel, createMasterForm);
+    }
+
+    /**
+     * In a Map with Sets as values, add newValue to the Set corresponding to given key. If this Set does not exist yet,
+     * create it containing only newValue
+     *
+     * @param map      Map of Objects to Sets of Objects
+     * @param key      Object
+     * @param newValue Object
+     */
+    public static <K, V> void addToSetInMap(Map<K, Set<V>> map, K key,
+                                            V newValue) {
+        if (map.containsKey(key)) {
+            map.get(key).add(newValue);
+        } else {
+            map.put(key, new HashSet<>(Collections.singleton(newValue)));
+        }
     }
 
     protected void configureLayout(Label nameLabel, Label descriptionLabel, boolean createMasterForm) {

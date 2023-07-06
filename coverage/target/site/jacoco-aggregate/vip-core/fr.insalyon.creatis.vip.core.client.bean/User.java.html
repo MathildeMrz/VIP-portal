@@ -76,8 +76,8 @@ public class User implements IsSerializable {
 <span class="nc" id="L76">    public User() {</span>
 <span class="nc" id="L77">    }</span>
 
-<span class="fc" id="L79">    public User(String firstName, String lastName, String email, String institution, String password, UserLevel level, CountryCode countryCode, String applications) {</span>
-<span class="fc" id="L80">    }</span>
+<span class="nc" id="L79">    public User(String firstName, String lastName, String email, String institution, String password, UserLevel level, CountryCode countryCode, String applications) {</span>
+<span class="nc" id="L80">    }</span>
 
     public User(String firstName, String lastName, String email, String institution, UserLevel level, CountryCode countryCode) {
 
@@ -88,10 +88,10 @@ public class User implements IsSerializable {
 
     public User(String firstName, String lastName, String email, String institution, String password, UserLevel level, CountryCode countryCode) {
 
-<span class="fc" id="L91">        this(firstName, lastName, email, null, institution, password, false, &quot;&quot;, &quot;&quot;,</span>
+<span class="nc" id="L91">        this(firstName, lastName, email, null, institution, password, false, &quot;&quot;, &quot;&quot;,</span>
                 &quot;&quot;, null, null, level, countryCode, 1, null, null, 0, false);
 
-<span class="fc" id="L94">    }</span>
+<span class="nc" id="L94">    }</span>
 
     public User(String firstName, String lastName, String email, String institution,
                 String password, CountryCode countryCode, Timestamp lastUpdatePublications) {
@@ -151,41 +151,41 @@ public class User implements IsSerializable {
 <span class="fc" id="L151">        return code;</span>
     }
 
+    public void setCode(String code) {
+<span class="fc" id="L155">        this.code = code;</span>
+<span class="fc" id="L156">    }</span>
+
     public String getEmail() {
-<span class="fc" id="L155">        return email;</span>
+<span class="fc" id="L159">        return email;</span>
     }
 
     public String getNextEmail() {
-<span class="fc" id="L159">        return nextEmail;</span>
+<span class="fc" id="L163">        return nextEmail;</span>
     }
 
     public String getFirstName() {
-<span class="fc" id="L163">        return firstName;</span>
+<span class="fc" id="L167">        return firstName;</span>
     }
 
     public String getFolder() {
-<span class="fc" id="L167">        return folder;</span>
+<span class="fc" id="L171">        return folder;</span>
     }
 
+    public void setFolder(String folder) {
+<span class="fc" id="L175">        this.folder = folder;</span>
+<span class="fc" id="L176">    }</span>
+
     public String getInstitution() {
-<span class="fc" id="L171">        return institution;</span>
+<span class="fc" id="L179">        return institution;</span>
     }
 
     public String getLastName() {
-<span class="fc" id="L175">        return lastName;</span>
+<span class="fc" id="L183">        return lastName;</span>
     }
 
     public String getPassword() {
-<span class="fc" id="L179">        return password;</span>
+<span class="fc" id="L187">        return password;</span>
     }
-
-    public void setCode(String code) {
-<span class="fc" id="L183">        this.code = code;</span>
-<span class="fc" id="L184">    }</span>
-
-    public void setFolder(String folder) {
-<span class="fc" id="L187">        this.folder = folder;</span>
-<span class="fc" id="L188">    }</span>
 
     public void setPassword(String password) {
 <span class="fc" id="L191">        this.password = password;</span>
@@ -204,7 +204,7 @@ public class User implements IsSerializable {
     }
 
     public String getSession() {
-<span class="nc" id="L207">        return session;</span>
+<span class="fc" id="L207">        return session;</span>
     }
 
     public Date getLastLogin() {
@@ -247,57 +247,57 @@ public class User implements IsSerializable {
 <span class="fc" id="L247">        this.registration = registration;</span>
 <span class="fc" id="L248">    }</span>
 
-    public void setGroups(Map&lt;Group, GROUP_ROLE&gt; groups) {
-<span class="fc" id="L251">        this.groups = groups;</span>
-<span class="pc bpc" id="L252" title="1 of 2 branches missed.">        this.hasGroups = !groups.isEmpty();</span>
-<span class="fc" id="L253">        filterGroups();</span>
-<span class="fc" id="L254">    }</span>
-
     public Timestamp getTermsOfUse() {
-<span class="fc" id="L257">        return termsOfUse;</span>
+<span class="fc" id="L251">        return termsOfUse;</span>
     }
 
     public void setTermsOfUse(Timestamp termsOfUse) {
-<span class="fc" id="L261">        this.termsOfUse = termsOfUse;</span>
-<span class="fc" id="L262">    }</span>
+<span class="fc" id="L255">        this.termsOfUse = termsOfUse;</span>
+<span class="fc" id="L256">    }</span>
 
     public Boolean getIsgridfile() {
-<span class="nc" id="L265">        return isGridFile;</span>
+<span class="nc" id="L259">        return isGridFile;</span>
     }
 
     public void setIsgridfile(Boolean isgridfile) {
-<span class="nc" id="L269">        this.isGridFile = isgridfile;</span>
-<span class="nc" id="L270">    }</span>
+<span class="nc" id="L263">        this.isGridFile = isgridfile;</span>
+<span class="nc" id="L264">    }</span>
 
     public Boolean getIsgridjobs() {
-<span class="nc" id="L273">        return isGridJob;</span>
+<span class="nc" id="L267">        return isGridJob;</span>
     }
 
     public void setIsgridjobs(Boolean isgridjobs) {
-<span class="nc" id="L277">        this.isGridJob = isgridjobs;</span>
-<span class="nc" id="L278">    }</span>
+<span class="nc" id="L271">        this.isGridJob = isgridjobs;</span>
+<span class="nc" id="L272">    }</span>
 
     public Timestamp getLastUpdatePublications() {
-<span class="fc" id="L281">        return lastUpdatePublications;</span>
+<span class="fc" id="L275">        return lastUpdatePublications;</span>
     }
 
     public void setLastUpdatePublications(Timestamp lastUpdatePublications) {
-<span class="fc" id="L285">        this.lastUpdatePublications = lastUpdatePublications;</span>
-<span class="fc" id="L286">    }</span>
+<span class="fc" id="L279">        this.lastUpdatePublications = lastUpdatePublications;</span>
+<span class="fc" id="L280">    }</span>
 
     public boolean hasGroupAccess(String groupName) {
 
-<span class="nc bnc" id="L290" title="All 2 branches missed.">        for (Group group : groups.keySet()) {</span>
-<span class="nc bnc" id="L291" title="All 2 branches missed.">            if (group.getName().equals(groupName)) {</span>
-<span class="nc" id="L292">                return true;</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">        for (Group group : groups.keySet()) {</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">            if (group.getName().equals(groupName)) {</span>
+<span class="nc" id="L286">                return true;</span>
             }
-<span class="nc" id="L294">        }</span>
-<span class="nc" id="L295">        return false;</span>
+<span class="nc" id="L288">        }</span>
+<span class="nc" id="L289">        return false;</span>
     }
 
     public Set&lt;Group&gt; getGroups() {
-<span class="nc" id="L299">        return groups.keySet();</span>
+<span class="nc" id="L293">        return groups.keySet();</span>
     }
+
+    public void setGroups(Map&lt;Group, GROUP_ROLE&gt; groups) {
+<span class="fc" id="L297">        this.groups = groups;</span>
+<span class="pc bpc" id="L298" title="1 of 2 branches missed.">        this.hasGroups = !groups.isEmpty();</span>
+<span class="fc" id="L299">        filterGroups();</span>
+<span class="fc" id="L300">    }</span>
 
     private void filterGroups() {
 <span class="fc" id="L303">        Iterator&lt;Group&gt; it = groups.keySet().iterator();</span>

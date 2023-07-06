@@ -95,6 +95,13 @@ public class ConfigurationBusiness {
         this.usersGroupsDAO = usersGroupsDAO;
     }
 
+    private static java.sql.Timestamp getCurrentTimeStamp() {
+
+        java.util.Date today = new java.util.Date();
+        return new java.sql.Timestamp(today.getTime());
+
+    }
+
     public void configure() throws BusinessException {
 
         try {
@@ -144,7 +151,6 @@ public class ConfigurationBusiness {
         }
     }
 
-
     public void signup(
             User user, String comments, boolean automaticCreation,
             boolean mapPrivateGroups, Group group)
@@ -158,6 +164,7 @@ public class ConfigurationBusiness {
             boolean mapPrivateGroups, List<Group> groups)
             throws BusinessException {
 
+        System.out.println("User = " + user);
         verifyEmail(user.getEmail());
 
         // Build log message
@@ -338,7 +345,6 @@ public class ConfigurationBusiness {
             }
         }
     }
-
 
     public void signup(User user, String comments, Group group) throws BusinessException {
         signup(user, comments, false, false, group);
@@ -1010,6 +1016,8 @@ public class ConfigurationBusiness {
         }
     }
 
+    // api key management
+
     public boolean testLastUpdatePublication(String email) throws BusinessException {
         try {
             if (userDAO.getLastPublicationUpdate(email) == null) {
@@ -1025,8 +1033,6 @@ public class ConfigurationBusiness {
             throw new BusinessException(ex);
         }
     }
-
-    // api key management
 
     public String getUserApikey(String email) throws BusinessException {
         try {
@@ -1085,12 +1091,5 @@ public class ConfigurationBusiness {
         } catch (DAOException e) {
             logger.error("Cannot sent mail to admin : {}. Ignoring", e.getMessage());
         }
-    }
-
-    private static java.sql.Timestamp getCurrentTimeStamp() {
-
-        java.util.Date today = new java.util.Date();
-        return new java.sql.Timestamp(today.getTime());
-
     }
 }

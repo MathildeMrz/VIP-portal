@@ -41,17 +41,17 @@ public class CenterTabSet extends TabSet {
 
     private static CenterTabSet instance;
 
-    public static CenterTabSet getInstance() {
-        if (instance == null) {
-            instance = new CenterTabSet();
-        }
-        return instance;
-    }
-
     private CenterTabSet() {
 
         this.setTabBarPosition(Side.TOP);
         this.setWidth100();
         this.setHeight100();
+    }
+
+    public static CenterTabSet getInstance() {
+        if (instance == null) {
+            instance = new CenterTabSet();
+        }
+        return instance;
     }
 }

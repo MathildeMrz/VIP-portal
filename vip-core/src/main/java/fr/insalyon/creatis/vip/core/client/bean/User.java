@@ -151,6 +151,10 @@ public class User implements IsSerializable {
         return code;
     }
 
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -167,6 +171,10 @@ public class User implements IsSerializable {
         return folder;
     }
 
+    public void setFolder(String folder) {
+        this.folder = folder;
+    }
+
     public String getInstitution() {
         return institution;
     }
@@ -177,14 +185,6 @@ public class User implements IsSerializable {
 
     public String getPassword() {
         return password;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public void setFolder(String folder) {
-        this.folder = folder;
     }
 
     public void setPassword(String password) {
@@ -247,12 +247,6 @@ public class User implements IsSerializable {
         this.registration = registration;
     }
 
-    public void setGroups(Map<Group, GROUP_ROLE> groups) {
-        this.groups = groups;
-        this.hasGroups = !groups.isEmpty();
-        filterGroups();
-    }
-
     public Timestamp getTermsOfUse() {
         return termsOfUse;
     }
@@ -297,6 +291,12 @@ public class User implements IsSerializable {
 
     public Set<Group> getGroups() {
         return groups.keySet();
+    }
+
+    public void setGroups(Map<Group, GROUP_ROLE> groups) {
+        this.groups = groups;
+        this.hasGroups = !groups.isEmpty();
+        filterGroups();
     }
 
     private void filterGroups() {

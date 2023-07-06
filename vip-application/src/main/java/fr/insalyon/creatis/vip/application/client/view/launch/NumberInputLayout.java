@@ -28,14 +28,15 @@ public class NumberInputLayout extends InputLayout {
     private CustomValidator numberValidator; // For checking we have a valid number
     private CustomValidator rangeValidator; // For checking this number is between allowed minimum and maximum
 
-    public enum FormLayout {
-        LIST, RANGE;
-        public static List<String> names = camelNames(values());
-    }
-
-    public enum RangeItem {
-        START, STEP, STOP;
-        public static List<String> names = camelNames(values());
+    /**
+     * Initialise graphical labels and main input form, which contains one value field and a SelectItem to display
+     * instead a range layout (three value fields: start, step and end)
+     *
+     * @param parsedInput  BoutiquesInputNumber to be represented
+     * @param parentLayout LaunchFormLayout containing this
+     */
+    public NumberInputLayout(final BoutiquesNumberInput parsedInput, LaunchFormLayout parentLayout) {
+        super(parsedInput, parentLayout);
     }
 
     /**
@@ -69,17 +70,6 @@ public class NumberInputLayout extends InputLayout {
         } catch (NumberFormatException exception) {
             return null;
         }
-    }
-
-    /**
-     * Initialise graphical labels and main input form, which contains one value field and a SelectItem to display
-     * instead a range layout (three value fields: start, step and end)
-     *
-     * @param parsedInput  BoutiquesInputNumber to be represented
-     * @param parentLayout LaunchFormLayout containing this
-     */
-    public NumberInputLayout(final BoutiquesNumberInput parsedInput, LaunchFormLayout parentLayout) {
-        super(parsedInput, parentLayout);
     }
 
     /**
@@ -423,5 +413,15 @@ public class NumberInputLayout extends InputLayout {
      */
     public boolean isRange() {
         return this.getSelectedFormLayout().equals(FormLayout.RANGE);
+    }
+
+    public enum FormLayout {
+        LIST, RANGE;
+        public static List<String> names = camelNames(values());
+    }
+
+    public enum RangeItem {
+        START, STEP, STOP;
+        public static List<String> names = camelNames(values());
     }
 }

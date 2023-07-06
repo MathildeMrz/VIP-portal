@@ -51,10 +51,9 @@ import org.xml.sax.SAXException;
 @Scope("prototype")
 public class GwendiaParser extends AbstractWorkflowParser {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private Source currentSource = null;
     private String text = null;
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public GwendiaParser() {
         super();

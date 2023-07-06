@@ -70,6 +70,13 @@ public class PublicationLayout extends VLayout {
 
     }
 
+    protected static void edit(String id, String title, String type, String typeName, String authors, String date, String doi, String vipApplication) {
+
+        PublicationTab pubTab = (PublicationTab) Layout.getInstance().
+                getTab(PublicationConstants.TAB_PUBLICATION);
+        pubTab.setPublication(id, title, type, typeName, authors, date, doi, vipApplication);
+    }
+
     private void configureActions(final ModalWindow modal) {
 
         ToolstripLayout toolstrip = new ToolstripLayout();
@@ -137,13 +144,6 @@ public class PublicationLayout extends VLayout {
         };
         modal.show("Loading Publications...", true);
         PublicationService.Util.getInstance().getPublications(callback);
-    }
-
-    protected static void edit(String id, String title, String type, String typeName, String authors, String date, String doi, String vipApplication) {
-
-        PublicationTab pubTab = (PublicationTab) Layout.getInstance().
-                getTab(PublicationConstants.TAB_PUBLICATION);
-        pubTab.setPublication(id, title, type, typeName, authors, date, doi, vipApplication);
     }
 
     public void setFilter() {

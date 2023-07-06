@@ -59,6 +59,8 @@ import java.util.function.Consumer;
  */
 public class BrowserContextMenu extends Menu {
 
+    private static List<Visualizer> visualizers = new LinkedList<>();
+
     public BrowserContextMenu(final ModalWindow modal, final String baseDir,
                               final DataRecord data) {
 
@@ -132,6 +134,47 @@ public class BrowserContextMenu extends Menu {
         menuItems.add(propertiesItem);
 
         this.setItems(menuItems.toArray(new MenuItem[0]));
+    }
+
+    public static void addVizualisers(
+            final ArrayList<MenuItem> menuItems,
+            final String fileName) {
+
+        boolean hasVisualizers = visualizers.stream()
+                .filter(v -> v.isFileSupported(fileName))
+                .mapToInt(
+                        // Creating the menu item as a side-effect.
+                        v -> {
+                            MenuItem viewItem = menuItemFor(
+                                    fileName, v.fileTypeName(), v.viewStarter());
+                            menuItems.add(viewItem);
+                            return 1;
+                        })
+                // Using sum to be sure to consume the whole stream.
+                .sum() > 0;
+
+        if (hasVisualizers)
+            menuItems.add(new MenuItemSeparator());
+    }
+
+    private static MenuItem menuItemFor(
+            final String fileName,
+            final String fileTypeName,
+            final Consumer<String> viewStarter) {
+
+        MenuItem viewItem = new MenuItem("View " + fileTypeName);
+        viewItem.setIcon(DataManagerConstants.ICON_VIEW);
+        viewItem.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+                viewStarter.accept(fileName);
+            }
+        });
+        return viewItem;
+    }
+
+    public static void addVisualizer(Visualizer v) {
+        visualizers.add(v);
     }
 
     /**
@@ -259,54 +302,11 @@ public class BrowserContextMenu extends Menu {
         }
     }
 
-    public static void addVizualisers(
-            final ArrayList<MenuItem> menuItems,
-            final String fileName) {
-
-        boolean hasVisualizers = visualizers.stream()
-                .filter(v -> v.isFileSupported(fileName))
-                .mapToInt(
-                        // Creating the menu item as a side-effect.
-                        v -> {
-                            MenuItem viewItem = menuItemFor(
-                                    fileName, v.fileTypeName(), v.viewStarter());
-                            menuItems.add(viewItem);
-                            return 1;
-                        })
-                // Using sum to be sure to consume the whole stream.
-                .sum() > 0;
-
-        if (hasVisualizers)
-            menuItems.add(new MenuItemSeparator());
-    }
-
-    private static MenuItem menuItemFor(
-            final String fileName,
-            final String fileTypeName,
-            final Consumer<String> viewStarter) {
-
-        MenuItem viewItem = new MenuItem("View " + fileTypeName);
-        viewItem.setIcon(DataManagerConstants.ICON_VIEW);
-        viewItem.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(MenuItemClickEvent event) {
-                viewStarter.accept(fileName);
-            }
-        });
-        return viewItem;
-    }
-
     public static interface Visualizer {
         boolean isFileSupported(String filename);
 
         String fileTypeName();
 
         Consumer<String> viewStarter();
-    }
-
-    private static List<Visualizer> visualizers = new LinkedList<>();
-
-    public static void addVisualizer(Visualizer v) {
-        visualizers.add(v);
     }
 }

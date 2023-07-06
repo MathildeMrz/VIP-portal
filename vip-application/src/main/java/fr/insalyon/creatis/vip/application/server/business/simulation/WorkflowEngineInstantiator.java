@@ -48,11 +48,6 @@ public abstract class WorkflowEngineInstantiator {
     // content of the input for the workflow (generated depending of the user)*/
     protected String input;
 
-    public String getSimulationId(String launchID) {
-
-        return launchID.substring(launchID.lastIndexOf("/") + 1, launchID.lastIndexOf("."));
-    }
-
     /**
      * @param workflow   workflow file
      * @param parameters list of parameters
@@ -61,40 +56,6 @@ public abstract class WorkflowEngineInstantiator {
 
         this.workflow = (workflow != null) ? FileUtil.read(workflow) : null;
         this.input = (parameters != null) ? WorkflowEngineInstantiator.setParametersAsXMLInput(parameters) : null;
-    }
-
-    public abstract String launch(String proxyFileName, String userDN)
-            throws
-            java.rmi.RemoteException,
-            javax.xml.rpc.ServiceException;
-
-    public abstract void kill(String workflowID)
-            throws
-            java.rmi.RemoteException,
-            javax.xml.rpc.ServiceException;
-
-    public abstract SimulationStatus getStatus(String workflowID)
-            throws
-            java.rmi.RemoteException,
-            javax.xml.rpc.ServiceException;
-
-    public String getWorkflow() {
-
-        return workflow;
-    }
-
-    public void setWorkflow(File workflow) {
-        this.workflow = FileUtil.read(workflow);
-    }
-
-    public String getInput() {
-
-        return input;
-    }
-
-    public void setInput(List<ParameterSweep> parameters) {
-
-        this.input = WorkflowEngineInstantiator.setParametersAsXMLInput(parameters);
     }
 
     private static String setParametersAsXMLInput(List<ParameterSweep> parameters) {
@@ -131,5 +92,44 @@ public abstract class WorkflowEngineInstantiator {
         xml.append("</inputdata>\n");
 
         return xml.toString();
+    }
+
+    public String getSimulationId(String launchID) {
+
+        return launchID.substring(launchID.lastIndexOf("/") + 1, launchID.lastIndexOf("."));
+    }
+
+    public abstract String launch(String proxyFileName, String userDN)
+            throws
+            java.rmi.RemoteException,
+            javax.xml.rpc.ServiceException;
+
+    public abstract void kill(String workflowID)
+            throws
+            java.rmi.RemoteException,
+            javax.xml.rpc.ServiceException;
+
+    public abstract SimulationStatus getStatus(String workflowID)
+            throws
+            java.rmi.RemoteException,
+            javax.xml.rpc.ServiceException;
+
+    public String getWorkflow() {
+
+        return workflow;
+    }
+
+    public void setWorkflow(File workflow) {
+        this.workflow = FileUtil.read(workflow);
+    }
+
+    public String getInput() {
+
+        return input;
+    }
+
+    public void setInput(List<ParameterSweep> parameters) {
+
+        this.input = WorkflowEngineInstantiator.setParametersAsXMLInput(parameters);
     }
 }

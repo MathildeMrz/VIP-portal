@@ -18,19 +18,6 @@ public class ValueRange extends ValueSet {
     protected final List<Float> rangeLimits; // start, step, end
 
     /**
-     * @param value String to convert to float
-     * @return Float representing value, or null if value is ApplicationConstants.INPUT_WITHOUT_VALUE
-     * @throws NumberFormatException if value is neither ApplicationConstants.INPUT_WITHOUT_VALUE nor a valid
-     *                               representation of a float
-     */
-    public static Float floatValue(String value) throws NumberFormatException {
-        if (value.equals(ApplicationConstants.INPUT_WITHOUT_VALUE)) {
-            return null;
-        }
-        return Float.parseFloat(value);
-    }
-
-    /**
      * Populate represented list of values from the range represented by masterForm
      *
      * @param masterForm DynamicForm containing range values (Start, Step and End values)
@@ -71,6 +58,19 @@ public class ValueRange extends ValueSet {
                     "or of an empty value.</br>" + "Received range limits: " + start + ", " + step + " and " + stop);
         }
         initializeValues();
+    }
+
+    /**
+     * @param value String to convert to float
+     * @return Float representing value, or null if value is ApplicationConstants.INPUT_WITHOUT_VALUE
+     * @throws NumberFormatException if value is neither ApplicationConstants.INPUT_WITHOUT_VALUE nor a valid
+     *                               representation of a float
+     */
+    public static Float floatValue(String value) throws NumberFormatException {
+        if (value.equals(ApplicationConstants.INPUT_WITHOUT_VALUE)) {
+            return null;
+        }
+        return Float.parseFloat(value);
     }
 
     /**

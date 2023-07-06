@@ -58,18 +58,6 @@ public class BrowserLayout extends VLayout {
     private ListGrid grid;
     private DataUploadWindow dataUploadWindow;
 
-    public static BrowserLayout getInstance() {
-        if (instance == null) {
-            instance = new BrowserLayout();
-        }
-        return instance;
-    }
-
-    public static void terminate() {
-
-        instance = null;
-    }
-
     private BrowserLayout() {
 
         initComplete(this);
@@ -93,6 +81,18 @@ public class BrowserLayout extends VLayout {
         frame.setHeight("1px");
         frame.setWidth("1px");
         this.addMember(frame);
+    }
+
+    public static BrowserLayout getInstance() {
+        if (instance == null) {
+            instance = new BrowserLayout();
+        }
+        return instance;
+    }
+
+    public static void terminate() {
+
+        instance = null;
     }
 
     private void configureGrid() {

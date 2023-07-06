@@ -47,17 +47,6 @@ public interface ApplicationService extends RemoteService {
 
     public static final String SERVICE_URI = "/applicationservice";
 
-    public static class Util {
-
-        public static ApplicationServiceAsync getInstance() {
-
-            ApplicationServiceAsync instance = (ApplicationServiceAsync) GWT.create(ApplicationService.class);
-            ServiceDefTarget target = (ServiceDefTarget) instance;
-            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
-            return instance;
-        }
-    }
-
     public void signout() throws ApplicationException;
 
     List<Application> getPublicApplications() throws ApplicationException;
@@ -109,5 +98,16 @@ public interface ApplicationService extends RemoteService {
     public List<Engine> getEngines() throws ApplicationException;
 
     public HashMap<String, Integer> getReservedClasses() throws ApplicationException;
+
+    public static class Util {
+
+        public static ApplicationServiceAsync getInstance() {
+
+            ApplicationServiceAsync instance = (ApplicationServiceAsync) GWT.create(ApplicationService.class);
+            ServiceDefTarget target = (ServiceDefTarget) instance;
+            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
+            return instance;
+        }
+    }
 
 }

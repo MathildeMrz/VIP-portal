@@ -49,9 +49,9 @@ import fr.insalyon.creatis.vip.datamanager.client.view.browser.AddFolderWindow;
  */
 public class BasicBrowserToolStrip extends ToolStrip {
 
-    private BasicBrowserToolStrip toolStrip;
     protected ModalWindow modal;
     protected SelectItem pathItem;
+    private BasicBrowserToolStrip toolStrip;
 
     public BasicBrowserToolStrip(final ModalWindow modal, final ListGrid grid) {
 

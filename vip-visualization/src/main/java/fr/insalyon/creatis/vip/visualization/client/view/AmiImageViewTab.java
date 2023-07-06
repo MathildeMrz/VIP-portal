@@ -86,6 +86,10 @@ public class AmiImageViewTab extends AbstractViewTab {
         return "ami_view_" + sanitize(name) + "_tab";
     }
 
+    private static String sanitize(String filename) {
+        return filename.replaceAll("[ -./]", "_").toLowerCase();
+    }
+
     @Override
     public void displayFile(VisualizationItem item) {
         String url = getFileUrl(item.getLfn());
@@ -100,8 +104,4 @@ public class AmiImageViewTab extends AbstractViewTab {
     public native void resizeCanvas(JavaScriptObject amiViewer) /*-{
         $wnd.amiViewerResizeCanvas(amiViewer);
     }-*/;
-
-    private static String sanitize(String filename) {
-        return filename.replaceAll("[ -./]", "_").toLowerCase();
-    }
 }

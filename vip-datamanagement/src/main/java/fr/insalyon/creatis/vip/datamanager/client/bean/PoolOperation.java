@@ -40,21 +40,12 @@ import java.util.Date;
  */
 public class PoolOperation implements IsSerializable {
 
-    public static enum Type {
-
-        Download, Upload, Delete
-    }
-
-    ;
-
-    public static enum Status {
-
-        Queued, Running, Done, Failed, Rescheduled
-    }
-
-    ;
     private String id;
+
+    ;
     private Date registration;
+
+    ;
     private String parsedRegistration;
     private String source;
     private String dest;
@@ -62,10 +53,8 @@ public class PoolOperation implements IsSerializable {
     private Status status;
     private String user;
     private int progress;
-
     public PoolOperation() {
     }
-
     /**
      * @param id
      * @param registration
@@ -128,5 +117,15 @@ public class PoolOperation implements IsSerializable {
 
     public int getProgress() {
         return progress;
+    }
+
+    public static enum Type {
+
+        Download, Upload, Delete
+    }
+
+    public static enum Status {
+
+        Queued, Running, Done, Failed, Rescheduled
     }
 }

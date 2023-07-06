@@ -113,13 +113,13 @@ public class Simulation implements IsSerializable {
         return simulationName;
     }
 
+    public void setSimulationName(String simulationName) {
+        this.simulationName = simulationName;
+    }
+
     @Override
     public String toString() {
         return applicationName + "\n" + id + "\n" + userName + "\n" + date;
-    }
-
-    public void setSimulationName(String simulationName) {
-        this.simulationName = simulationName;
     }
 
 }

@@ -67,10 +67,6 @@ public class LFCPermissionBusiness {
         this.lfcPathsBusiness = lfcPathsBusiness;
     }
 
-    public enum LFCAccessType {
-        READ, UPLOAD, DELETE
-    }
-
     public Boolean isLFCPathAllowed(User user, String path, LFCAccessType LFCAccessType, Boolean enableAdminArea)
             throws BusinessException {
         // normalize to remove "..".
@@ -195,6 +191,10 @@ public class LFCPermissionBusiness {
             }
         }
         return false;
+    }
+
+    public enum LFCAccessType {
+        READ, UPLOAD, DELETE
     }
 
 }

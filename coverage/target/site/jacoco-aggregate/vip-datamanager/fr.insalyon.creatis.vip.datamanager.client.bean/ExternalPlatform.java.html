@@ -38,11 +38,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 <span class="nc" id="L39">public class ExternalPlatform {</span>
 
-<span class="nc" id="L41">    public enum Type {</span>
-<span class="nc" id="L42">        GIRDER,</span>
-<span class="nc" id="L43">        SHANOIR</span>
-    }
-
     private String identifier;
     private Type type;
     private String description;
@@ -52,60 +47,65 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     private String refreshTokenUrl;
 
     public String getIdentifier() {
-<span class="nc" id="L55">        return identifier;</span>
+<span class="nc" id="L50">        return identifier;</span>
     }
 
     public void setIdentifier(String identifier) {
-<span class="nc" id="L59">        this.identifier = identifier;</span>
-<span class="nc" id="L60">    }</span>
+<span class="nc" id="L54">        this.identifier = identifier;</span>
+<span class="nc" id="L55">    }</span>
 
     @JsonIgnore
     public Type getType() {
-<span class="nc" id="L64">        return type;</span>
+<span class="nc" id="L59">        return type;</span>
     }
 
     public void setType(Type type) {
-<span class="nc" id="L68">        this.type = type;</span>
-<span class="nc" id="L69">    }</span>
+<span class="nc" id="L63">        this.type = type;</span>
+<span class="nc" id="L64">    }</span>
 
     public String getDescription() {
-<span class="nc" id="L72">        return description;</span>
+<span class="nc" id="L67">        return description;</span>
     }
 
     public void setDescription(String description) {
-<span class="nc" id="L76">        this.description = description;</span>
-<span class="nc" id="L77">    }</span>
+<span class="nc" id="L71">        this.description = description;</span>
+<span class="nc" id="L72">    }</span>
 
     public String getUrl() {
-<span class="nc" id="L80">        return url;</span>
+<span class="nc" id="L75">        return url;</span>
     }
 
     public void setUrl(String url) {
-<span class="nc" id="L84">        this.url = url;</span>
-<span class="nc" id="L85">    }</span>
+<span class="nc" id="L79">        this.url = url;</span>
+<span class="nc" id="L80">    }</span>
 
     public String getUploadUrl() {
-<span class="nc" id="L88">        return uploadUrl;</span>
+<span class="nc" id="L83">        return uploadUrl;</span>
     }
 
     public void setUploadUrl(String uploadUrl) {
-<span class="nc" id="L92">        this.uploadUrl = uploadUrl;</span>
-<span class="nc" id="L93">    }</span>
+<span class="nc" id="L87">        this.uploadUrl = uploadUrl;</span>
+<span class="nc" id="L88">    }</span>
 
     public String getKeycloakClientId() {
-<span class="nc" id="L96">        return keycloakClientId;</span>
+<span class="nc" id="L91">        return keycloakClientId;</span>
     }
 
     public void setKeycloakClientId(String keycloakClientId) {
-<span class="nc" id="L100">        this.keycloakClientId = keycloakClientId;</span>
-<span class="nc" id="L101">    }</span>
+<span class="nc" id="L95">        this.keycloakClientId = keycloakClientId;</span>
+<span class="nc" id="L96">    }</span>
 
     public String getRefreshTokenUrl() {
-<span class="nc" id="L104">        return refreshTokenUrl;</span>
+<span class="nc" id="L99">        return refreshTokenUrl;</span>
     }
 
     public void setRefreshTokenUrl(String refreshTokenUrl) {
-<span class="nc" id="L108">        this.refreshTokenUrl = refreshTokenUrl;</span>
-<span class="nc" id="L109">    }</span>
+<span class="nc" id="L103">        this.refreshTokenUrl = refreshTokenUrl;</span>
+<span class="nc" id="L104">    }</span>
+
+<span class="nc" id="L106">    public enum Type {</span>
+<span class="nc" id="L107">        GIRDER,</span>
+<span class="nc" id="L108">        SHANOIR</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

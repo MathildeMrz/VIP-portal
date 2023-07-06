@@ -51,60 +51,60 @@ public class BoutiquesOutputFile implements IsSerializable {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getValueKey() {
-        return valueKey;
-    }
-
-    public String getPathTemplate() {
-        return pathTemplate;
-    }
-
-    public boolean isList() {
-        return list;
-    }
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    public String getCommandLineFlag() {
-        return commandLineFlag;
-    }
-
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getValueKey() {
+        return valueKey;
     }
 
     public void setValueKey(String valueKey) {
         this.valueKey = valueKey;
     }
 
+    public String getPathTemplate() {
+        return pathTemplate;
+    }
+
     public void setPathTemplate(String pathTemplate) {
         this.pathTemplate = pathTemplate;
+    }
+
+    public boolean isList() {
+        return list;
     }
 
     public void setList(boolean list) {
         this.list = list;
     }
 
+    public boolean isOptional() {
+        return optional;
+    }
+
     public void setOptional(boolean optional) {
         this.optional = optional;
+    }
+
+    public String getCommandLineFlag() {
+        return commandLineFlag;
     }
 
     public void setCommandLineFlag(String commandLineFlag) {

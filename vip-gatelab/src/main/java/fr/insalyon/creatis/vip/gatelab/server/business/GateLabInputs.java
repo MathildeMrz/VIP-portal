@@ -64,6 +64,10 @@ public class GateLabInputs {
     private String workflowID;
     private GateLabInputsParser gateLabInputsParser;
 
+    public GateLabInputs(String workflowID) {
+        this.workflowID = workflowID;
+    }
+
     @Autowired
     public final void setServer(Server server) {
         this.server = server;
@@ -78,10 +82,6 @@ public class GateLabInputs {
     @Autowired
     public void setGateLabInputsParser(GateLabInputsParser gateLabInputsParser) {
         this.gateLabInputsParser = gateLabInputsParser;
-    }
-
-    public GateLabInputs(String workflowID) {
-        this.workflowID = workflowID;
     }
 
     @PostConstruct

@@ -14,32 +14,6 @@ import java.util.ArrayList;
  */
 public class ValueList extends ValueSet {
     /**
-     * Return the value of form's field named InputLayout.MAIN_FIELD_NAME
-     *
-     * @param form DynamicForm of interest
-     * @return Object value of form's value field
-     * @throws IllegalArgumentException if form has no field named InputLayout.MAIN_FIELD_NAME
-     * @see InputLayout#MAIN_FIELD_NAME
-     */
-    public static Object formValue(DynamicForm form) throws IllegalArgumentException {
-        FormItem valueField = form.getField(InputLayout.MAIN_FIELD_NAME);
-        if (valueField == null) {
-            throw new IllegalArgumentException("Provided form has no field with name " + InputLayout.MAIN_FIELD_NAME);
-        }
-        if (valueField.isDisabled()) {
-            if (valueField.getAttributeAsBoolean(InputLayout.UNMODIFIABLE_ATTR)) {
-                return valueField.getValue();
-            }
-            // Disable field is considered empty
-            if (valueField instanceof CheckboxItem) {
-                return false;
-            }
-            return null;
-        }
-        return valueField.getValue();
-    }
-
-    /**
      * Populate represented list of values with values from masterFrom and additionalForms
      *
      * @param masterForm      DynamicForm containing main input value
@@ -76,6 +50,32 @@ public class ValueList extends ValueSet {
             this.values.add(value.equals(valueAsString(null)) ? null : value.trim());
             this.valuesAsStrings.add(value.trim());
         }
+    }
+
+    /**
+     * Return the value of form's field named InputLayout.MAIN_FIELD_NAME
+     *
+     * @param form DynamicForm of interest
+     * @return Object value of form's value field
+     * @throws IllegalArgumentException if form has no field named InputLayout.MAIN_FIELD_NAME
+     * @see InputLayout#MAIN_FIELD_NAME
+     */
+    public static Object formValue(DynamicForm form) throws IllegalArgumentException {
+        FormItem valueField = form.getField(InputLayout.MAIN_FIELD_NAME);
+        if (valueField == null) {
+            throw new IllegalArgumentException("Provided form has no field with name " + InputLayout.MAIN_FIELD_NAME);
+        }
+        if (valueField.isDisabled()) {
+            if (valueField.getAttributeAsBoolean(InputLayout.UNMODIFIABLE_ATTR)) {
+                return valueField.getValue();
+            }
+            // Disable field is considered empty
+            if (valueField instanceof CheckboxItem) {
+                return false;
+            }
+            return null;
+        }
+        return valueField.getValue();
     }
 
     /**

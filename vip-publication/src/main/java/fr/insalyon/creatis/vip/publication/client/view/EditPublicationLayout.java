@@ -57,6 +57,9 @@ import java.util.*;
  */
 public class EditPublicationLayout extends AbstractFormLayout {
 
+    private final String[] PUBLICATION_TYPES = {"Article In Conference Proceedings", "Journal Article", "Book Chapter", "Other"};
+    private final String DEFAULT_PUBLICATION_YEAR = "2022";
+    private final String DEFAULT_PUBLICATION_APPLICATION_LABEL = "Choose VIP application used in the list";
     private TextItem titleField;
     private TextItem doiField;
     private TextItem authorsField;
@@ -67,10 +70,6 @@ public class EditPublicationLayout extends AbstractFormLayout {
     private boolean newPublication = true;
     private Long idPub;
     private ComboBoxItem vipApplication;
-
-    private final String[] PUBLICATION_TYPES = {"Article In Conference Proceedings", "Journal Article", "Book Chapter", "Other"};
-    private final String DEFAULT_PUBLICATION_YEAR = "2022";
-    private final String DEFAULT_PUBLICATION_APPLICATION_LABEL = "Choose VIP application used in the list";
 
     public EditPublicationLayout() {
 

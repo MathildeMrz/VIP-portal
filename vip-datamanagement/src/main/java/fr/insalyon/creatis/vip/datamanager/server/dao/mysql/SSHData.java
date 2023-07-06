@@ -62,6 +62,15 @@ public class SSHData extends JdbcDaoSupport implements SSHDAO {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    public static String readableUnitFileSize(long size) {
+        if (size <= 0) {
+            return "0";
+        }
+        final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
     @Autowired
     public void useDataSource(DataSource dataSource) {
         setDataSource(dataSource);
@@ -221,14 +230,5 @@ public class SSHData extends JdbcDaoSupport implements SSHDAO {
             }
 
         }
-    }
-
-    public static String readableUnitFileSize(long size) {
-        if (size <= 0) {
-            return "0";
-        }
-        final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
-        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 }

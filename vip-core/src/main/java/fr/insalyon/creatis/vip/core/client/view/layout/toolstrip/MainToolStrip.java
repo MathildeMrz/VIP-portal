@@ -45,19 +45,19 @@ public class MainToolStrip extends ToolStrip {
 
     private static MainToolStrip instance;
 
-    public static MainToolStrip getInstance() {
-        if (instance == null) {
-            instance = new MainToolStrip();
-        }
-        return instance;
-    }
-
     private MainToolStrip() {
 
         this.setWidth100();
         this.setPadding(2);
 
         setUpLogoAndVersion();
+    }
+
+    public static MainToolStrip getInstance() {
+        if (instance == null) {
+            instance = new MainToolStrip();
+        }
+        return instance;
     }
 
     public void reset() {

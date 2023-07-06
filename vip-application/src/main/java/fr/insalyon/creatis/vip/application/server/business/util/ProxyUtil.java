@@ -41,8 +41,8 @@ import java.io.*;
  */
 public class ProxyUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProxyUtil.class);
     public static final String CHARSET_UTF8 = "UTF-8";
+    private static final Logger logger = LoggerFactory.getLogger(ProxyUtil.class);
 
     public static String readAsString(String proxyFileName) {
 

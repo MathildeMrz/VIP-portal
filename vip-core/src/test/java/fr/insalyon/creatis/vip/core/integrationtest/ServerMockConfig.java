@@ -32,15 +32,6 @@ public class ServerMockConfig {
     public static final String MAX_NUMBER_EXECUTIONS = "5";
     public static final String TEST_CAS_URL = "testCasURL";
 
-
-    @Bean
-    @Primary
-    public Server testServer() throws IOException {
-        Server server = mock(Server.class);
-        reset(server);
-        return server;
-    }
-
     public static void reset(Server server) {
         Mockito.reset(server);
         Mockito.when(server.getAdminFirstName()).thenReturn(TEST_ADMIN_FIRST_NAME);
@@ -53,6 +44,14 @@ public class ServerMockConfig {
         when(server.getDataManagerUsersHome()).thenReturn("/test/prefix/vip/data/test_users");
         when(server.getDataManagerGroupsHome()).thenReturn("/test/prefix/vip/data/test_groups");
         when(server.getVoRoot()).thenReturn("/vo_test/root");
+    }
+
+    @Bean
+    @Primary
+    public Server testServer() throws IOException {
+        Server server = mock(Server.class);
+        reset(server);
+        return server;
     }
 
 }

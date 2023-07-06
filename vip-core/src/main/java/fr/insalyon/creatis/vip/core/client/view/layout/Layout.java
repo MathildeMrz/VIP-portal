@@ -61,18 +61,16 @@ public class Layout {
     private static Logger logger = Logger.getLogger(Layout.class.getName());
 
     private static Layout instance;
+
+    static {
+        Layout.exportMessageFunctionsToJS();
+    }
+
     private VLayout vLayout;
     private CenterTabSet centerTabSet;
     private SectionStack mainSectionStack;
     private ModalWindow modal;
     private MessageWindow messageWindow;
-
-    public static Layout getInstance() {
-        if (instance == null) {
-            instance = new Layout();
-        }
-        return instance;
-    }
 
     private Layout() {
 
@@ -104,6 +102,40 @@ public class Layout {
 
         vLayout.draw();
     }
+
+    public static Layout getInstance() {
+        if (instance == null) {
+            instance = new Layout();
+        }
+        return instance;
+    }
+
+    // The default delay is used, so the warning automatically disappears after
+    // some time.
+    public static void setWarningMessageFromJS(String error) {
+        Layout.getInstance().setWarningMessage(error);
+    }
+
+    // The delay is set to 0, so the message stays until it is overwritten by a
+    // new message or the hideMessage function is called.  This behavior is
+    // different from the warning case.  This is what is currently needed by the
+    // javascript code.
+    public static void setNoticeMessageFromJS(String message) {
+        Layout.getInstance().setNoticeMessage(message, 0);
+    }
+
+    public static void hideMessageFromJS() {
+        Layout.getInstance().hideMessage();
+    }
+
+    public static native void exportMessageFunctionsToJS() /*-{
+        $wnd.setWarningMessage = $entry(
+           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::setWarningMessageFromJS(Ljava/lang/String;));
+        $wnd.setNoticeMessage = $entry(
+           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::setNoticeMessageFromJS(Ljava/lang/String;));
+        $wnd.hideMessage = $entry(
+           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::hideMessageFromJS());
+    }-*/;
 
     public Canvas getLayoutCanvas() {
         return vLayout;
@@ -209,6 +241,13 @@ public class Layout {
         messageWindow.setMessage(message, "#FFFFFF", null, delay);
     }
 
+    //-------------------------------------------------------------------- Make
+    // some function for showing messages accessible from code written in
+    // javascript.  Examples:
+    //    window.setWarningMessage(msg)
+    //    window.setNoticeMessage(msg)
+    //    window.hideMessage()
+
     /**
      * @param message
      */
@@ -241,44 +280,6 @@ public class Layout {
 
     public void hideMessage() {
         messageWindow.hideMessage();
-    }
-
-    //-------------------------------------------------------------------- Make
-    // some function for showing messages accessible from code written in
-    // javascript.  Examples:
-    //    window.setWarningMessage(msg)
-    //    window.setNoticeMessage(msg)
-    //    window.hideMessage()
-
-    // The default delay is used, so the warning automatically disappears after
-    // some time.
-    public static void setWarningMessageFromJS(String error) {
-        Layout.getInstance().setWarningMessage(error);
-    }
-
-    // The delay is set to 0, so the message stays until it is overwritten by a
-    // new message or the hideMessage function is called.  This behavior is
-    // different from the warning case.  This is what is currently needed by the
-    // javascript code.
-    public static void setNoticeMessageFromJS(String message) {
-        Layout.getInstance().setNoticeMessage(message, 0);
-    }
-
-    public static void hideMessageFromJS() {
-        Layout.getInstance().hideMessage();
-    }
-
-    public static native void exportMessageFunctionsToJS() /*-{
-        $wnd.setWarningMessage = $entry(
-           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::setWarningMessageFromJS(Ljava/lang/String;));
-        $wnd.setNoticeMessage = $entry(
-           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::setNoticeMessageFromJS(Ljava/lang/String;));
-        $wnd.hideMessage = $entry(
-           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::hideMessageFromJS());
-    }-*/;
-
-    static {
-        Layout.exportMessageFunctionsToJS();
     }
 
     //--------------------------------------------------------------------

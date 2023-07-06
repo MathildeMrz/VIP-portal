@@ -173,6 +173,27 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                 vipAuthenticationEntryPoint, authenticationManager());
     }
 
+    /*
+        Do not use the default firewall (StrictHttpFirewall) because it blocks
+        "//" in url and it is used in gwt rpc calls
+     */
+    @Bean
+    public DefaultHttpFirewall httpFirewall() {
+        DefaultHttpFirewall firewall = new DefaultHttpFirewall();
+        firewall.setAllowUrlEncodedSlash(true);
+        return firewall;
+    }
+
+    /**
+     * customize roles to match keycloak roles without ROLE_
+     */
+    @Bean
+    public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
+        SimpleAuthorityMapper mapper = new SimpleAuthorityMapper();
+        mapper.setConvertToUpperCase(true);
+        return mapper;
+    }
+
     @Service
     public static class CurrentUserProvider implements Supplier<User> {
 
@@ -209,27 +230,6 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                     (SpringKeycloakPrincipal) authentication.getPrincipal();
             return springKeycloakPrincipal.getVipUser();
         }
-    }
-
-    /*
-        Do not use the default firewall (StrictHttpFirewall) because it blocks
-        "//" in url and it is used in gwt rpc calls
-     */
-    @Bean
-    public DefaultHttpFirewall httpFirewall() {
-        DefaultHttpFirewall firewall = new DefaultHttpFirewall();
-        firewall.setAllowUrlEncodedSlash(true);
-        return firewall;
-    }
-
-    /**
-     * customize roles to match keycloak roles without ROLE_
-     */
-    @Bean
-    public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
-        SimpleAuthorityMapper mapper = new SimpleAuthorityMapper();
-        mapper.setConvertToUpperCase(true);
-        return mapper;
     }
 
 

@@ -57,18 +57,6 @@ public class OperationLayout extends VLayout {
     private Date lastDate;
     private MoreOperationsBoxLayout loadMoreDataBoxLayout;
 
-    public static OperationLayout getInstance() {
-        if (instance == null) {
-            instance = new OperationLayout();
-        }
-        return instance;
-    }
-
-    public static void terminate() {
-        instance.destroy();
-        instance = null;
-    }
-
     private OperationLayout() {
 
         this.setWidth("35%");
@@ -98,6 +86,18 @@ public class OperationLayout extends VLayout {
         });
 
         loadData();
+    }
+
+    public static OperationLayout getInstance() {
+        if (instance == null) {
+            instance = new OperationLayout();
+        }
+        return instance;
+    }
+
+    public static void terminate() {
+        instance.destroy();
+        instance = null;
     }
 
     private void loadData() {

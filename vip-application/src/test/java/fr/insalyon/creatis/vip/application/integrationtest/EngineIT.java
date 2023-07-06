@@ -25,16 +25,14 @@ public class EngineIT extends BaseSpringIT {
     private Engine engine;
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException, DAOException
-    {
+    public void setUp() throws BusinessException, GRIDAClientException, DAOException {
         super.setUp();
         engine = new Engine("test engine", "test endpoint", "enabled");
         engineBusiness.add(engine);
     }
 
     @Test
-    public void testInitialization() throws BusinessException
-    {
+    public void testInitialization() throws BusinessException {
         // verify engines number
         Assertions.assertEquals(1, engineBusiness.get().size());
 
@@ -49,8 +47,7 @@ public class EngineIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testAdd() throws BusinessException
-    {
+    public void testAdd() throws BusinessException {
         Engine engine2 = new Engine("test engine 2", "test endpoint 2", "enabled");
         engineBusiness.add(engine2);
 
@@ -64,8 +61,7 @@ public class EngineIT extends BaseSpringIT {
     }
 
     @Test
-    public void testCatchAddExistingEngine()
-    {
+    public void testCatchAddExistingEngine() {
         Engine engine = new Engine("test engine", "test endpoint 2", "enabled");
 
         Exception exception = assertThrows(
@@ -82,8 +78,7 @@ public class EngineIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testUpdate() throws BusinessException
-    {
+    public void testUpdate() throws BusinessException {
         Engine engine = new Engine("test engine", "test endpoint 2", "enabled");
         engineBusiness.update(engine);
 
@@ -97,8 +92,7 @@ public class EngineIT extends BaseSpringIT {
     }
 
     @Test
-    public void testUpdateNonExistentEngine() throws BusinessException
-    {
+    public void testUpdateNonExistentEngine() throws BusinessException {
         Engine engine = new Engine("nonExistent engine", "test endpoint 2", "enabled");
 
         // UPDATE + nonExistent primary key engine name => no exception
@@ -107,8 +101,7 @@ public class EngineIT extends BaseSpringIT {
     }
 
     @Test
-    public void testSet() throws BusinessException
-    {
+    public void testSet() throws BusinessException {
         engine.setStatus("status updated");
         engineBusiness.update(engine);
         Assertions.assertTrue(StringUtils.contains(engine.getStatus(), "status updated"));
@@ -119,15 +112,13 @@ public class EngineIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testRemove() throws BusinessException, DAOException
-    {
+    public void testRemove() throws BusinessException, DAOException {
         engineBusiness.remove("test engine");
         Assertions.assertEquals(0, engineBusiness.get().size());
     }
 
     @Test
-    public void testCatchRemoveNonExistentEngine()
-    {
+    public void testCatchRemoveNonExistentEngine() {
 
         Exception exception = assertThrows(
                 BusinessException.class, () ->
@@ -141,8 +132,7 @@ public class EngineIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
 
     @Test
-    public void testGetEngine() throws BusinessException
-    {
+    public void testGetEngine() throws BusinessException {
         Assertions.assertEquals("test engine", engineBusiness.get().get(0).getName());
     }
 }

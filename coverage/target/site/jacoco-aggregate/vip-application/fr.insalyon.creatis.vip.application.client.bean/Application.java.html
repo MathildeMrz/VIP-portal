@@ -91,12 +91,12 @@ public class Application implements IsSerializable {
 <span class="fc" id="L91">        return owner;</span>
     }
 
-    public void removeOwner() {
-<span class="nc" id="L95">        owner = null;</span>
+    public void setOwner(String owner) {
+<span class="nc" id="L95">        this.owner = owner;</span>
 <span class="nc" id="L96">    }</span>
 
-    public void setOwner(String owner) {
-<span class="nc" id="L99">        this.owner = owner;</span>
+    public void removeOwner() {
+<span class="nc" id="L99">        owner = null;</span>
 <span class="nc" id="L100">    }</span>
 
     public String getFullName() {

@@ -72,12 +72,12 @@ public class SimulationBoxLayout extends HLayout {
     protected String applicationClass;
     protected SimulationStatus simulationStatus;
     protected Date launchedDate;
+    protected VLayout mainLayout;
+    protected HandlerRegistration handler;
     private Img img;
     private Label nameLabel;
     private Label actionButton;
     private Timer timer;
-    protected VLayout mainLayout;
-    protected HandlerRegistration handler;
 
     public SimulationBoxLayout(String id, String name, String applicationName,
                                String applicationVersion, String applicationClass, String user,
