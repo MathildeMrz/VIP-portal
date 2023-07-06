@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>InputM2Parser.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.server.business.simulation.parser</a> &gt; <span class="el_source">InputM2Parser.java</span></div><h1>InputM2Parser.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.server.business.simulation.parser;
+
+import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.datamanager.client.view.DataManagerException;
+import fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Parse a m2 input file.
+ * &lt;p&gt;
+ * This stores data in fields and this is not threadsafe. So it cannot be used
+ * as a spring singleton and this needs prototype scope.
+ *
+ * @author Rafael Silva
+ */
+@Service
+@Scope(&quot;prototype&quot;)
+public class InputM2Parser extends DefaultHandler {
+
+<span class="nc" id="L68">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+
+    private Map&lt;String, String&gt; inputs;
+    private String name;
+    private List&lt;String&gt; values;
+    private boolean parsingItem;
+    private String currentUserFolder;
+
+    private LfcPathsBusiness lfcPathsBusiness;
+
+<span class="nc" id="L78">    public InputM2Parser(String currentUserFolder) {</span>
+<span class="nc" id="L79">        this.inputs = new HashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L80">        this.parsingItem = false;</span>
+<span class="nc" id="L81">        this.currentUserFolder = currentUserFolder;</span>
+<span class="nc" id="L82">    }</span>
+
+    @Autowired
+    public final void setLfcPathsBusiness(LfcPathsBusiness lfcPathsBusiness) {
+<span class="nc" id="L86">        this.lfcPathsBusiness = lfcPathsBusiness;</span>
+<span class="nc" id="L87">    }</span>
+
+    public Map&lt;String, String&gt; parse(String fileName)
+            throws BusinessException {
+
+        try {
+<span class="nc" id="L93">            XMLReader reader = XMLReaderFactory.createXMLReader();</span>
+<span class="nc" id="L94">            reader.setContentHandler(this);</span>
+<span class="nc" id="L95">            reader.parse(new InputSource(new FileReader(fileName)));</span>
+
+<span class="nc" id="L97">            return inputs;</span>
+
+<span class="nc" id="L99">        } catch (IOException | SAXException ex) {</span>
+<span class="nc" id="L100">            logger.error(&quot;Error parsing {}&quot;, fileName, ex);</span>
+<span class="nc" id="L101">            throw new BusinessException(ex);</span>
+        }
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName,
+                             Attributes attributes) throws SAXException {
+
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (localName.equals(&quot;source&quot;)) {</span>
+
+<span class="nc" id="L111">            name = attributes.getValue(&quot;name&quot;);</span>
+<span class="nc" id="L112">            values = new ArrayList&lt;String&gt;();</span>
+
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        } else if (localName.equals(&quot;item&quot;)) {</span>
+
+<span class="nc" id="L116">            parsingItem = true;</span>
+        }
+<span class="nc" id="L118">    }</span>
+
+    @Override
+    public void endElement(String uri, String localName, String qName) {
+
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (localName.equals(&quot;source&quot;)) {</span>
+
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            if (values.size() == 1) {</span>
+<span class="nc" id="L126">                String path = values.get(0);</span>
+                try {
+<span class="nc" id="L128">                    path = lfcPathsBusiness.parseRealDir(</span>
+                            path, currentUserFolder);
+<span class="nc" id="L130">                } catch (DataManagerException ex) {</span>
+                    // do nothing
+<span class="nc" id="L132">                }</span>
+<span class="nc" id="L133">                inputs.put(name, path);</span>
+
+<span class="nc" id="L135">            } else {</span>
+<span class="nc" id="L136">                boolean isList = false;</span>
+<span class="nc" id="L137">                double step = -1;</span>
+<span class="nc" id="L138">                double firstValue = -1;</span>
+<span class="nc" id="L139">                double lastValue = -1;</span>
+
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                for (String v : values) {</span>
+                    try {
+<span class="nc" id="L143">                        double value = Double.valueOf(v);</span>
+
+<span class="nc bnc" id="L145" title="All 2 branches missed.">                        if (firstValue == -1) {</span>
+<span class="nc" id="L146">                            firstValue = value;</span>
+
+<span class="nc bnc" id="L148" title="All 2 branches missed.">                        } else if (lastValue == -1) {</span>
+
+<span class="nc" id="L150">                            lastValue = value;</span>
+<span class="nc" id="L151">                            step = lastValue - firstValue;</span>
+
+                        } else {
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                            if (step != (value - lastValue)) {</span>
+<span class="nc" id="L155">                                isList = true;</span>
+<span class="nc" id="L156">                                break;</span>
+                            } else {
+<span class="nc" id="L158">                                step = value - lastValue;</span>
+<span class="nc" id="L159">                                lastValue = value;</span>
+                            }
+                        }
+<span class="nc" id="L162">                    } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L163">                        isList = true;</span>
+<span class="nc" id="L164">                        break;</span>
+<span class="nc" id="L165">                    }</span>
+<span class="nc" id="L166">                }</span>
+
+<span class="nc bnc" id="L168" title="All 2 branches missed.">                if (isList) {</span>
+<span class="nc" id="L169">                    StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                    for (String v : values) {</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">                        if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L172">                            sb.append(&quot;; &quot;);</span>
+                        }
+                        try {
+<span class="nc" id="L175">                            v = lfcPathsBusiness.parseRealDir(</span>
+                                    v, currentUserFolder);
+<span class="nc" id="L177">                        } catch (DataManagerException ex) {</span>
+                            // do nothing
+<span class="nc" id="L179">                        }</span>
+<span class="nc" id="L180">                        sb.append(v);</span>
+<span class="nc" id="L181">                    }</span>
+<span class="nc" id="L182">                    inputs.put(name, sb.toString());</span>
+
+<span class="nc" id="L184">                } else {</span>
+<span class="nc" id="L185">                    inputs.put(name, &quot;Start: &quot; + firstValue + &quot; - Stop: &quot;</span>
+                            + lastValue + &quot; - Step: &quot; + step);
+                }
+<span class="nc" id="L188">            }</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        } else if (localName.equals(&quot;item&quot;)) {</span>
+<span class="nc" id="L190">            parsingItem = false;</span>
+        }
+<span class="nc" id="L192">    }</span>
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (parsingItem) {</span>
+<span class="nc" id="L198">            String chars = new String(ch);</span>
+<span class="nc" id="L199">            values.add(chars.substring(start, start + length));</span>
+        }
+<span class="nc" id="L201">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
