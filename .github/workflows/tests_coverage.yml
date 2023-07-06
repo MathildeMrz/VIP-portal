@@ -56,7 +56,7 @@ jobs:
  ##### Added #####
       - name: Commit and Push to History Branch
         run: |
-          git add "coverage/target/site/jacoco-aggregate/"
+          git add -f "coverage/target/site/jacoco-aggregate/"
           # mkdir temp_repo
           # mv coverage/target/site/jacoco-aggregate temp_repo/
           # git checkout -b history_code_coverage_and_quality
