@@ -60,11 +60,15 @@ jobs:
           git config --global user.name "MathildeMrz"
           git pull origin develop
           git add -f "coverage/target/site/jacoco-aggregate/"
-          DATE=$(date +%Y-%m-%d)
+          DATE=$(date +%Y-%m-%d-%H-%M-%S)
           mkdir -p history/"$DATE"
           cp -R "coverage/target/site/jacoco-aggregate/." history/"$DATE"/
           git add -f history/"$DATE"
           git commit -m "Update Jacoco HTML report"
+          if ! git show-ref --quiet refs/heads/history_reports; then
+            git branch history_reports
+            git push origin history_reports
+          fi
           git checkout history_reports
           git pull
           git checkout develop
