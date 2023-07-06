@@ -1,0 +1,11 @@
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/client/rpc/VisualizationService.java
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/server/business/VisualizationBusiness.java
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/client/view/BrainBrowserViewTab.java
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/client/rpc/VisualizationServiceAsync.java
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/client/bean/VisualizationItem.java
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/client/view/AmiImageViewTab.java
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/server/rpc/VisualizationServiceImpl.java
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/client/view/AbstractViewTab.java
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/client/view/VisualizationException.java
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/client/VisualizationModule.java
+/home/runner/work/VIP-portal/VIP-portal/vip-visualization/src/main/java/fr/insalyon/creatis/vip/visualization/client/bean/Image.java

@@ -1,0 +1,8 @@
+fr/insalyon/creatis/vip/core/integrationtest/database/BaseSpringIT.class
+fr/insalyon/creatis/vip/core/integrationtest/database/SpringJndiIT$1.class
+fr/insalyon/creatis/vip/core/integrationtest/database/SpringJndiIT.class
+fr/insalyon/creatis/vip/core/integrationtest/ServerMockConfig.class
+fr/insalyon/creatis/vip/core/integrationtest/TestDataSourceSpringConfig.class
+ConfigurationBusiness_CoreSpringServerIT.class
+fr/insalyon/creatis/vip/core/integrationtest/database/SpringDatabaseIT.class
+fr/insalyon/creatis/vip/core/integrationtest/SpingTestConfig.class

@@ -1,0 +1,2 @@
+serviceClass: fr.insalyon.creatis.vip.publication.client.rpc.PublicationService
+path: 4BB2197B2754F9F697D39CDAB4A7AF55.gwt.rpc

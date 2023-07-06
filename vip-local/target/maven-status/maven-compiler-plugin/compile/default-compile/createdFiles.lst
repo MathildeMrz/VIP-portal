@@ -1,0 +1,13 @@
+fr/insalyon/creatis/vip/local/LocalBashEngine.class
+fr/insalyon/creatis/vip/local/LocalConfiguration.class
+fr/insalyon/creatis/vip/local/GridaZombieClientLocal.class
+fr/insalyon/creatis/vip/local/WorkflowsDBLocalConfiguration.class
+fr/insalyon/creatis/vip/local/LocalConfiguration$SmaClientLocal.class
+fr/insalyon/creatis/vip/local/GridaClientLocal.class
+fr/insalyon/creatis/vip/local/GridaCacheClientLocal.class
+fr/insalyon/creatis/vip/local/LocalBashEngine$LocalExecutionRun.class
+fr/insalyon/creatis/vip/local/LocalBashEngine$LocalBashExecution.class
+fr/insalyon/creatis/vip/local/LocalConfiguration$ProxyClientLocal.class
+fr/insalyon/creatis/vip/local/GRIDAPoolClientLocal.class
+fr/insalyon/creatis/vip/local/LocalInitializer.class
+fr/insalyon/creatis/vip/local/WebServiceEngineLocal.class

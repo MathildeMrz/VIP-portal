@@ -1,0 +1,2 @@
+serviceClass: fr.insalyon.creatis.vip.social.client.rpc.SocialService
+path: 4255EE347DD7D8BFAE821B245F1F6BA5.gwt.rpc

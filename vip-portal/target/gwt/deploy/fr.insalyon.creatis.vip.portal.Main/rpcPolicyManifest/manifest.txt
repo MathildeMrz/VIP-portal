@@ -1,0 +1,12 @@
+# Module fr.insalyon.creatis.vip.portal.Main
+# RPC service class, partial path of RPC policy file
+fr.insalyon.creatis.vip.application.client.rpc.WorkflowService, 85419F4B27487D75B2323637A0162084.gwt.rpc
+fr.insalyon.creatis.vip.application.client.rpc.JobService, D3BAA6B6B59B66A769BBE5E65E52723B.gwt.rpc
+fr.insalyon.creatis.vip.visualization.client.rpc.VisualizationService, 74AA514802161E114F48DC9914E74751.gwt.rpc
+fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService, FA8E8256BBDC8350C3E67899B4071252.gwt.rpc
+fr.insalyon.creatis.vip.social.client.rpc.SocialService, 4255EE347DD7D8BFAE821B245F1F6BA5.gwt.rpc
+fr.insalyon.creatis.vip.publication.client.rpc.PublicationService, 4BB2197B2754F9F697D39CDAB4A7AF55.gwt.rpc
+fr.insalyon.creatis.vip.gatelab.client.rpc.GateLabService, 76081EA8F9EFA1F2E8D76BC435FA59E2.gwt.rpc
+fr.insalyon.creatis.vip.applicationimporter.client.rpc.ApplicationImporterService, 4756B2321D30068FFB698763565DFA62.gwt.rpc
+fr.insalyon.creatis.vip.application.client.rpc.ApplicationService, 4D97B3BA45867B04E01CDA0CD4B88826.gwt.rpc
+fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService, 33899691689F4AB3DB728BEC2B6E6409.gwt.rpc

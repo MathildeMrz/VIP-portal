@@ -1,0 +1,2 @@
+serviceClass: fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService
+path: FA8E8256BBDC8350C3E67899B4071252.gwt.rpc

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: fr.insalyon.creatis.vip.api.business.ExecutionBusinessTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 2.2 s - in fr.insalyon.creatis.vip.api.business.ExecutionBusinessTest

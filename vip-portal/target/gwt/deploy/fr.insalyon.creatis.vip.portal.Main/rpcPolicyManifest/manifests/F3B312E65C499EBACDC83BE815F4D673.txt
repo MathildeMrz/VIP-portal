@@ -1,0 +1,2 @@
+serviceClass: fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService
+path: 33899691689F4AB3DB728BEC2B6E6409.gwt.rpc

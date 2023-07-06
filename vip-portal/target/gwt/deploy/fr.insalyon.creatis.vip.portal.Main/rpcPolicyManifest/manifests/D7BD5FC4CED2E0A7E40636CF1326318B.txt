@@ -1,0 +1,2 @@
+serviceClass: fr.insalyon.creatis.vip.applicationimporter.client.rpc.ApplicationImporterService
+path: 4756B2321D30068FFB698763565DFA62.gwt.rpc

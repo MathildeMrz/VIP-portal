@@ -1,0 +1,2 @@
+serviceClass: fr.insalyon.creatis.vip.application.client.rpc.WorkflowService
+path: 85419F4B27487D75B2323637A0162084.gwt.rpc

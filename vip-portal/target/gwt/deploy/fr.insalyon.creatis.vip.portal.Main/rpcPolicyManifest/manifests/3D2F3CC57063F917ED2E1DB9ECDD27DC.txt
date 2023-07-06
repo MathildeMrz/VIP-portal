@@ -1,0 +1,2 @@
+serviceClass: fr.insalyon.creatis.vip.application.client.rpc.JobService
+path: D3BAA6B6B59B66A769BBE5E65E52723B.gwt.rpc

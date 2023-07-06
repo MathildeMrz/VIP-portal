@@ -1,0 +1,2 @@
+serviceClass: fr.insalyon.creatis.vip.visualization.client.rpc.VisualizationService
+path: 74AA514802161E114F48DC9914E74751.gwt.rpc

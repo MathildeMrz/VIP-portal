@@ -1,0 +1,2 @@
+serviceClass: fr.insalyon.creatis.vip.gatelab.client.rpc.GateLabService
+path: 76081EA8F9EFA1F2E8D76BC435FA59E2.gwt.rpc
