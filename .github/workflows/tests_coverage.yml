@@ -66,4 +66,4 @@ jobs:
           # cp -R temp_repo/* .
           # git add -f .
           git commit -m "Update Jacoco HTML report"
-          git push origin develop:history_code_coverage_and_quality
+          git push origin develop:history_reports
