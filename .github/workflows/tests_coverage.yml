@@ -65,5 +65,8 @@ jobs:
           cp -R "coverage/target/site/jacoco-aggregate/." history/"$DATE"/
           git add -f history/"$DATE"
           git commit -m "Update Jacoco HTML report"
-          git push origin
-          # git push origin HEAD:history_reports
+          git checkout history_reports
+          git pull
+          git checkout develop
+          # git push origin
+          git push develop history_reports
