@@ -10,7 +10,7 @@ on:
   pull_request:
     branches: [ "develop" ]
 
-  schedule:
+  schedule: 
     - cron: "0 0 1 * *" # Once a month
 
 permissions:
