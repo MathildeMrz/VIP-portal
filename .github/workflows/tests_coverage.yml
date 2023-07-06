@@ -50,18 +50,17 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+        
+      
        
  ##### Added #####
       - name: Commit and Push to History Branch
         run: |
-          git config remote.origin.url https://github.com/MathildeMrz/vip-portal.git
-          git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
-          git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-          git add results
-          mkdir temp_repo
-          mv coverage/target/site/jacoco-aggregate temp_repo/
-          git checkout -b history_code_coverage_and_quality
-          cp -R temp_repo/* .
-          git add -f .
+          git add "coverage/target/site/jacoco-aggregate/"
+          # mkdir temp_repo
+          # mv coverage/target/site/jacoco-aggregate temp_repo/
+          # git checkout -b history_code_coverage_and_quality
+          # cp -R temp_repo/* .
+          # git add -f .
           git commit -m "Update Jacoco HTML report"
-          git push origin history_code_coverage_and_quality
+          git push origin develop:history_code_coverage_and_quality
