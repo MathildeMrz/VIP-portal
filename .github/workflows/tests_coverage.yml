@@ -56,6 +56,8 @@ jobs:
  ##### Added #####
       - name: Commit and Push to History Branch
         run: |
+          git config --global user.email "mathilde.marza2001@gmail.com"
+          git config --global user.name "MathildeMrz"
           git add -f "coverage/target/site/jacoco-aggregate/"
           # mkdir temp_repo
           # mv coverage/target/site/jacoco-aggregate temp_repo/
