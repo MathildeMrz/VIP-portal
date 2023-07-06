@@ -65,12 +65,5 @@ jobs:
           cp -R "coverage/target/site/jacoco-aggregate/." history/"$DATE"/
           git add -f history/"$DATE"
           git commit -m "Update Jacoco HTML report"
-          if ! git show-ref --quiet refs/heads/history_reports; then
-            git branch history_reports
-            git push origin history_reports
-          fi
-          git checkout history_reports
-          git pull
-          git checkout develop
-          # git push origin
-          git push develop history_reports
+          git push origin
+          # git push develop history_reports
