@@ -58,7 +58,7 @@ jobs:
         run: |
           git fetch
           git branch -a
-          git checkout -- history_reports
+          git checkout -- origin/history_reports
           git config --global user.email "mathilde.marza2001@gmail.com"
           git config --global user.name "MathildeMrz"
           # git pull origin develop
