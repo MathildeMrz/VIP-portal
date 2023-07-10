@@ -6,7 +6,7 @@ name: tests_coverage_jacoco
 on:
   push:
     branches: [ "develop" ]
-
+ 
   pull_request:
     branches: [ "develop" ]
 
