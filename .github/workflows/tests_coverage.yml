@@ -2,17 +2,13 @@ env:
   PRE_BUILD_COMMAND: git config --global --add safe.directory /github/workspace
 
 name: tests_coverage_jacoco
- 
+
 on:
   push:
     branches: ["master"] 
-    #paths-ignore:
-    #  - '**.github/coverage/**'
 
   pull_request:
     branches: ["master"]
-    #paths-ignore:
-    #  - "**.github/coverage/**"
 
   schedule:
     - cron: "0 0 1 * *" # Once a month
