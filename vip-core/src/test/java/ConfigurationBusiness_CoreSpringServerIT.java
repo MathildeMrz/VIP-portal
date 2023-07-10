@@ -25,7 +25,7 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
     private User user5;
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException, DAOException {
+    public void setUp() throws Exception {
         super.setUp();
 
         // Create test group
@@ -160,6 +160,21 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
         Assertions.assertEquals("group_name_updated", updatedGroup.getName(), "Incorrect group name");
         assertFalse(updatedGroup.isPublicGroup(), "Incorrect group privacy");
     }
+
+
+    @Test
+    public void testCatchUpdateNonExistentGroup() throws BusinessException {
+        Group group = new Group();
+        group.setPublicGroup(false);
+        group.setName("group_name_updated");
+        // UPDATE + nonExistent primary key group name => no exception
+        // We decided not to add an exception because if this occurs, it will not create problem, just no row will be updated
+        configurationBusiness.updateGroup("non existent group", group);
+    }
+
+    /* ********************************************************************************************************************************************** */
+    /* ************************************************************** get group ************************************************************* */
+    /* ********************************************************************************************************************************************** */
 
     @Test
     public void testUpdateNonExistentGroup() throws BusinessException {
@@ -596,6 +611,8 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
 
     }
 
+
+
     /* ********************************************************************************************************************************************** */
     /* ****************************************************************** update user *************************************************************** */
     /* ********************************************************************************************************************************************** */
@@ -676,6 +693,14 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
     }
 
     @Test
+    public void testUpdateUserLastLogin() throws BusinessException, InterruptedException {
+        configurationBusiness.signin(emailUser1, "testPassword");
+        Date date = user1.getLastLogin();
+        configurationBusiness.updateUserLastLogin(emailUser1);
+        Assertions.assertTrue(date.compareTo(configurationBusiness.getUser(emailUser1).getLastLogin()) < 0);
+    }
+
+    @Test
     public void testSetMaxRunningSimulations() throws BusinessException {
 
         user1.setMaxRunningSimulations(5);
@@ -689,6 +714,24 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
         user1.setCountryCode(CountryCode.us);
         Assertions.assertEquals(CountryCode.us, user1.getCountryCode(), "incorrect country code");
 
+    }
+
+    @Test
+    public void testUpdateTermsOfUse() throws BusinessException {
+        Date oldDateTermeOfUse = configurationBusiness.getUser(emailUser1).getTermsOfUse();
+        configurationBusiness.updateTermsOfUse(emailUser1);
+        Date newDateTermeOfUse = configurationBusiness.getUser(emailUser1).getTermsOfUse();
+
+        Assertions.assertTrue(oldDateTermeOfUse.compareTo(newDateTermeOfUse) < 0);
+    }
+
+    @Test
+    public void testUpdateLastUpdatePublication() throws BusinessException {
+        Date oldDateTermeOfUse = configurationBusiness.getUser(emailUser1).getLastUpdatePublications();
+        configurationBusiness.updateLastUpdatePublication(emailUser1);
+        Date newDateTermeOfUse = configurationBusiness.getUser(emailUser1).getLastUpdatePublications();
+
+        Assertions.assertTrue(oldDateTermeOfUse.compareTo(newDateTermeOfUse) < 0);
     }
 
     /* ********************************************************************************************************************************************** */
@@ -716,6 +759,12 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
     /* ********************************************************************************************************************************************** */
     /* ***************************************************************** reset password ************************************************************* */
     /* ********************************************************************************************************************************************** */
+
+    // TODO : add password verification
+    /*@Test
+    public void testResetPasswordCode() throws BusinessException {
+        configurationBusiness.resetPassword(emailUser1, configurationBusiness.getUser(emailUser1).getCode(), "test new password");
+    }*/
 
     @Test
     public void testCatchSendResetPasswordWrongCode() throws BusinessException {
@@ -782,6 +831,5 @@ public class ConfigurationBusiness_CoreSpringServerIT extends BaseSpringIT {
         assertTrue(StringUtils.contains(exception.getMessage(), "Activation failed."));
 
     }
-
 
 }

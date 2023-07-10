@@ -20,7 +20,7 @@ public class PublicationsIT extends BaseSpringIT {
     private long idPublicationCreated;
 
     @BeforeEach
-    public void setUp() throws BusinessException, DAOException, GRIDAClientException {
+    public void setUp() throws Exception {
         super.setUp();
 
         adminEmail = server.getAdminEmail();

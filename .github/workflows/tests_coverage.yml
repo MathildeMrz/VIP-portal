@@ -10,7 +10,7 @@ on:
   pull_request:
     branches: [ "develop" ]
 
-  schedule: 
+  schedule:
     - cron: "0 0 1 * *" # Once a month
 
 permissions:
@@ -50,10 +50,10 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-        
-      
-       
- ##### Added #####
+
+
+
+      ##### Added #####
       - name: Commit and Push to History Branch
         run: |
           git fetch

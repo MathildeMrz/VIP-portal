@@ -33,7 +33,7 @@ public class ApplicationIT extends BaseSpringIT {
     private EngineBusiness engineBusiness;
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException, DAOException {
+    public void setUp() throws Exception {
         super.setUp();
 
         // group test and user test creation

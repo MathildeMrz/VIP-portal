@@ -25,7 +25,7 @@ public class EngineIT extends BaseSpringIT {
     private Engine engine;
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException, DAOException {
+    public void setUp() throws Exception {
         super.setUp();
         engine = new Engine("test engine", "test endpoint", "enabled");
         engineBusiness.add(engine);

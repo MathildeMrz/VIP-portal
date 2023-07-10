@@ -49,6 +49,7 @@ public class Data implements IsSerializable {
     private String modificationDate;
     private List<String> replicas;
     private String permissions;
+
     public Data() {
     }
 

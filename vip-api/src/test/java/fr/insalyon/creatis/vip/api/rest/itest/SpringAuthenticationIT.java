@@ -32,7 +32,7 @@
 package fr.insalyon.creatis.vip.api.rest.itest;
 
 import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
-import fr.insalyon.creatis.vip.api.rest.config.BaseVIPSpringIT;
+import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.api.tools.spring.ApikeyRequestPostProcessor;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
@@ -57,10 +57,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * These tests check the authentication with the spring test tools.
  * It requests a wrong url that should be secured and expects a 404 when OK
  * <p>
- * Use common vip spring test configuration ({@link BaseVIPSpringIT}
+ * Use common vip spring test configuration ({@link BaseWebSpringIT}
  */
 @Disabled
-public class SpringAuthenticationIT extends BaseVIPSpringIT {
+public class SpringAuthenticationIT extends BaseWebSpringIT {
 
     @Test
     public void authenticationOK() throws Exception {

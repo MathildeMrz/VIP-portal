@@ -32,18 +32,28 @@
 package fr.insalyon.creatis.vip.api.business;
 
 import fr.insalyon.creatis.vip.api.exception.ApiException;
+import fr.insalyon.creatis.vip.api.model.Execution;
+import fr.insalyon.creatis.vip.api.model.ExecutionStatus;
 import fr.insalyon.creatis.vip.application.client.bean.Simulation;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
 import fr.insalyon.creatis.vip.application.server.business.WorkflowBusiness;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.user.UserLevel;
+import fr.insalyon.creatis.vip.publication.server.business.PublicationBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.validation.Valid;
+import java.util.Date;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by abonnet on 7/6/16.
@@ -75,6 +85,7 @@ public class ExecutionBusinessTest {
         assertEquals("Permission denied", apiException.getMessage());
     }
 
+
     @Test
     public void checkIfBasicUserCanAccessItsExecution() throws Exception {
         Supplier<User> userSupplier = () -> prepareTestUser(0, false);
@@ -83,8 +94,6 @@ public class ExecutionBusinessTest {
         ExecutionBusiness sut = new ExecutionBusiness(userSupplier, null, mockedWb, null, null, null, null);
         sut.checkIfUserCanAccessExecution(EXEC_ID);
     }
-
-    // UTILS to be externalized later
 
     private User prepareTestUser(int userIndex, boolean isAdmin) {
         return new User(USER_FIRST_NAME[userIndex], USER_LAST_NAME[userIndex], USER_MAIL[userIndex], null,
@@ -99,8 +108,9 @@ public class ExecutionBusinessTest {
 
     private WorkflowBusiness prepareMockedWorkflowBusiness(String execId, Simulation simu) throws Exception {
         WorkflowBusiness mockedWb = Mockito.mock(WorkflowBusiness.class);
-        Mockito.when(mockedWb.getSimulation(execId)).thenReturn(simu);
+        when(mockedWb.getSimulation(execId)).thenReturn(simu);
         return mockedWb;
     }
+
 
 }

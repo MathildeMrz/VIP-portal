@@ -25,6 +25,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +47,9 @@ import static org.mockito.ArgumentMatchers.anyString;
 @SpringJUnitConfig(SpringCoreConfig.class)
 // launch all spring environment for testing, also take test bean though automatic package scan
 @ActiveProfiles({"test-db", "test"}) // to take random h2 database and not the test h2 jndi one
-@TestPropertySource(properties = "db.tableEngine=") // to disable the default mysql/innodb engine on database init
+@TestPropertySource(properties = {
+        "db.tableEngine=",             // to disable the default mysql/innodb engine on database init
+        "vipConfigFolder=classpath:"}) // to find vip-api.conf for vip-api tests
 @Transactional // each test is in a transaction that is rollbacked at the end to always leave a "clean" state
 public abstract class BaseSpringIT {
 
@@ -78,7 +81,7 @@ public abstract class BaseSpringIT {
     protected User admin;
     protected Group group1;
     protected Group group2;
-    protected List<String> applicationClasses;
+    protected List<String> applicationClasses = new ArrayList<>();
 
     protected User nonExistentUser = new User("test firstName suffix0",
             "test lastName suffix0", "unexisting_user@test.fr", "institution",
@@ -86,7 +89,7 @@ public abstract class BaseSpringIT {
             null);
 
     @BeforeEach
-    protected void setUp() throws BusinessException, GRIDAClientException, DAOException {
+    protected void setUp() throws Exception {
         ServerMockConfig.reset(server);
     }
 

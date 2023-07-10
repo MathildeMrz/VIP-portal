@@ -32,9 +32,8 @@
 package fr.insalyon.creatis.vip.api.rest.itest.processing;
 
 import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
-import fr.insalyon.creatis.vip.api.rest.config.BaseVIPSpringIT;
+import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -65,8 +64,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * <p>
  * Include 2 tests on error handling
  */
-@Disabled
-public class PipelineControllerIT extends BaseVIPSpringIT {
+public class PipelineControllerIT extends BaseWebSpringIT {
 
     @Test
     public void pipelineMethodShouldBeSecured() throws Exception {

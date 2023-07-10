@@ -158,6 +158,11 @@ knowledge of the CeCILL-B license and that you accept its terms.
             <artifactId>spring-context</artifactId>
             <version>${spring-framework.version}</version>
         </dependency>
+        <dependency>
+            <groupId>dev.rikka.tools.autoresconfig</groupId>
+            <artifactId>gradle-plugin</artifactId>
+            <version>1.2.2</version>
+        </dependency>
 
     </dependencies>
 

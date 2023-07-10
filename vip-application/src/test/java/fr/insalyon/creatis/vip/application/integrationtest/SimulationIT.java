@@ -8,17 +8,23 @@ import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
 import fr.insalyon.creatis.vip.application.client.view.monitor.job.JobStatus;
 import fr.insalyon.creatis.vip.application.client.view.monitor.job.TaskStatus;
 import fr.insalyon.creatis.vip.application.server.business.SimulationBusiness;
+import fr.insalyon.creatis.vip.application.server.dao.h2.SimulationData;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+import static org.mockito.Mockito.when;
+
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 // testing framework must recreate a MessageBusiness after each test method
 public class SimulationIT extends BaseSpringIT {
 
@@ -30,7 +36,7 @@ public class SimulationIT extends BaseSpringIT {
     private Job job;
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException, BusinessException {
+    public void setUp() throws DAOException, BusinessException {
 
         simulation = new Simulation("pipelineTest1", "3", null, "execId1",
                 "fullName", new GregorianCalendar(2016, 9, 2).getTime(),

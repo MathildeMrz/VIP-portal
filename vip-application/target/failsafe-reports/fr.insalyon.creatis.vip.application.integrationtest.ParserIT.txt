@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: fr.insalyon.creatis.vip.application.integrationtest.ParserIT
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.308 s - in fr.insalyon.creatis.vip.application.integrationtest.ParserIT
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s - in fr.insalyon.creatis.vip.application.integrationtest.ParserIT

@@ -1,7 +1,7 @@
-/home/runner/work/VIP-portal/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/database/SpringDatabaseIT.java
-/home/runner/work/VIP-portal/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/database/SpringJndiIT.java
-/home/runner/work/VIP-portal/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/TestDataSourceSpringConfig.java
-/home/runner/work/VIP-portal/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/database/BaseSpringIT.java
-/home/runner/work/VIP-portal/VIP-portal/vip-core/src/test/java/ConfigurationBusiness_CoreSpringServerIT.java
-/home/runner/work/VIP-portal/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/SpingTestConfig.java
-/home/runner/work/VIP-portal/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/ServerMockConfig.java
+/home/marza/Documents/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/database/SpringDatabaseIT.java
+/home/marza/Documents/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/database/BaseSpringIT.java
+/home/marza/Documents/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/TestDataSourceSpringConfig.java
+/home/marza/Documents/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/ServerMockConfig.java
+/home/marza/Documents/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/SpingTestConfig.java
+/home/marza/Documents/VIP-portal/vip-core/src/test/java/ConfigurationBusiness_CoreSpringServerIT.java
+/home/marza/Documents/VIP-portal/vip-core/src/test/java/fr/insalyon/creatis/vip/core/integrationtest/database/SpringJndiIT.java

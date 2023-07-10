@@ -31,32 +31,24 @@
  */
 package fr.insalyon.creatis.vip.api.rest.itest.processing;
 
-import fr.insalyon.creatis.vip.api.data.ExecutionTestUtils;
-import fr.insalyon.creatis.vip.api.data.PathTestUtils;
-import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
+import fr.insalyon.creatis.moteur.plugins.workflowsdb.bean.Workflow;
+import fr.insalyon.creatis.moteur.plugins.workflowsdb.bean.WorkflowStatus;
+import fr.insalyon.creatis.moteur.plugins.workflowsdb.dao.WorkflowDAO;
 import fr.insalyon.creatis.vip.api.model.Execution;
-import fr.insalyon.creatis.vip.api.rest.config.BaseVIPSpringIT;
-import fr.insalyon.creatis.vip.api.rest.config.RestTestUtils;
+import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.application.client.bean.Simulation;
-import fr.insalyon.creatis.vip.core.server.business.BusinessException;
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Disabled;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+import fr.insalyon.creatis.vip.application.server.business.WorkflowBusiness;
+import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import static fr.insalyon.creatis.vip.api.data.AppVersionTestUtils.version42;
-import static fr.insalyon.creatis.vip.api.data.ApplicationTestUtils.app1;
-import static fr.insalyon.creatis.vip.api.data.ClassesTestUtils.class1;
 import static fr.insalyon.creatis.vip.api.data.ExecutionTestUtils.*;
 import static fr.insalyon.creatis.vip.api.data.UserTestUtils.baseUser1;
-import static fr.insalyon.creatis.vip.api.rest.mockconfig.ApplicationsConfigurator.configureAnApplication;
-import static fr.insalyon.creatis.vip.api.rest.mockconfig.ApplicationsConfigurator.configureApplications;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -71,17 +63,45 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * <p>
  * Test method on platform path
  */
-@Disabled
-public class ExecutionControllerIT extends BaseVIPSpringIT {
+public class ExecutionControllerIT extends BaseWebSpringIT {
+
+    @Autowired
+    WorkflowDAO workflowDAO;
 
     @Test
     public void shouldListExecutions() throws Exception {
+
+        /*when(workflowDAO.get(eq(baseUser1.getFullName()), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull())).
+                thenReturn(new Execution());*/
+
+        Workflow w1 = new Workflow("workflow-test", baseUser1.getFullName(), WorkflowStatus.Completed, new Date(), new Date(), "description", "application", "applicationVersion", "applicationClass", "engine");
+
+        when(workflowDAO.get(eq(baseUser1.getFullName()), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull())).
+                thenReturn(Arrays.asList(w1, w1));
+
+        /*
         when(workflowBusiness.getSimulations(baseUser1.getFullName(), null, null, null, null, null))
                 .thenReturn(Arrays.asList(simulation1, simulation2));
         when(workflowBusiness.getSimulation(simulation1.getID(), true))
                 .thenReturn(simulation1);
         when(workflowBusiness.getSimulation(simulation2.getID(), true))
                 .thenReturn(simulation2);
+
+        Simulation simulation1 = new Simulation(null, null, null, null, baseUser1.getFullName(), null, "simulation1",SimulationStatus.Running.toString(), null);
+        Simulation simulation2 = new Simulation(null, null, null, null, baseUser1.getFullName(), null, "simulation2", SimulationStatus.Running.toString(), null);
+
+        workflowBusiness.launch(baseUser1, new ArrayList<String>(), null, "applicationName", "applicationVersion", "applicationClass", "simulation1");
+        workflowBusiness.launch(baseUser1, new ArrayList<String>(), null, "applicationName", "applicationVersion", "applicationClass", "simulation2");
+        */
+
+        // perform a getWorkflows()
+        mockMvc.perform(
+                        get("/rest/executions").with(baseUser1()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("[*]", hasSize(2)));
+        /*
         mockMvc.perform(
                         get("/rest/executions").with(baseUser1()))
                 .andDo(print())
@@ -91,10 +111,10 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
                 .andExpect(jsonPath("$[*]", containsInAnyOrder(
                         jsonCorrespondsToExecution(summariseExecution(execution1)),
                         jsonCorrespondsToExecution(summariseExecution(execution2))
-                )));
+                )));*/
     }
 
-    @Test
+    /*@Test
     public void shouldCountExecutions() throws Exception {
         when(workflowBusiness.getSimulations(baseUser1.getFullName(), null, null, null, null, null))
                 .thenReturn(Arrays.asList(simulation1, simulation2));
@@ -386,5 +406,5 @@ public class ExecutionControllerIT extends BaseVIPSpringIT {
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.errorCode").value(ApiError.GENERIC_API_ERROR.getCode()));
-    }
+    }*/
 }

@@ -42,12 +42,12 @@ public class SpringConfigServer implements Server {
     private Environment env;
     private File vipConfigFolder;
     private File proxyFolder;
+
     @Autowired
     public SpringConfigServer(
             Resource vipConfigFolder,
             ConfigurableEnvironment env) throws IOException, ConfigurationException {
         File configFile = vipConfigFolder.getFile().toPath().resolve(Server.CONF_FILE).toFile();
-
         if (!configFile.exists()) {
             throw new FileNotFoundException(configFile.toString());
         }

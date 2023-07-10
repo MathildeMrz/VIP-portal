@@ -36,6 +36,7 @@ import fr.insalyon.creatis.vip.application.server.business.ApplicationBusiness;
 import fr.insalyon.creatis.vip.application.server.business.ClassBusiness;
 import fr.insalyon.creatis.vip.application.server.business.SimulationBusiness;
 import fr.insalyon.creatis.vip.application.server.business.WorkflowBusiness;
+import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
 import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
@@ -51,8 +52,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -65,9 +65,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
-
-import static fr.insalyon.creatis.vip.api.CarminProperties.*;
-import static fr.insalyon.creatis.vip.api.data.CarminAPITestConstants.*;
 
 /**
  * Created by abonnet on 7/28/16.
@@ -82,28 +79,9 @@ import static fr.insalyon.creatis.vip.api.data.CarminAPITestConstants.*;
  * * use {@link WithMockUser} annotation
  * <p>
  * The interaction with VIP outside vip-api are mocked (see {@link SpringTestConfig} )
- * TODO : after spring is now everywhere, this does not work anymore, work needed here
  */
-@SpringJUnitWebConfig(classes = SpringTestConfig.class)
-@TestPropertySource(properties = {
-        PLATFORM_NAME + "=" + TEST_PLATFORM_NAME,
-        PLATFORM_DESCRIPTION + "=" + TEST_PLATFORM_DESCRIPTION,
-        PLATFORM_EMAIL + "=" + TEST_PLATFORM_EMAIL,
-        SUPPORTED_TRANSFER_PROTOCOLS + "=" + TEST_SUPPORTED_TRANSFER_PROTOCOLS_STRING,
-        SUPPORTED_MODULES + "=" + TEST_SUPPORTED_MODULES_STRING,
-        DEFAULT_LIMIT_LIST_EXECUTION + "=" + TEST_DEFAULT_LIST_LIMIT,
-        UNSUPPORTED_METHODS + "=" + TEST_UNSUPPORTED_METHODS_STRING,
-        SUPPORTED_API_VERSION + "=" + TEST_SUPPORTED_API_VERSION,
-        APIKEY_HEADER_NAME + "=" + TEST_APIKEY_HEADER,
-        APIKEY_GENERATE_NEW_EACH_TIME + "=" + TEST_GENERATE_NEW_APIKEY_EACH_TIME,
-        API_DIRECTORY_MIME_TYPE + "=" + TEST_DIR_MIMETYPE,
-        API_DEFAULT_MIME_TYPE + "=" + TEST_DEFAULT_MIMETYPE,
-        API_DOWNLOAD_RETRY_IN_SECONDS + "=" + Test_DATA_DOWNLOAD_RETRY,
-        API_DOWNLOAD_TIMEOUT_IN_SECONDS + "=" + TEST_DATA_DOWNLOAD_TIMEOUT,
-        API_DATA_TRANSFERT_MAX_SIZE + "=" + TEST_DATA_MAX_SIZE,
-        API_PIPELINE_WHITE_LIST + "=" + TEST_PIPELINE_WHITELIST
-})
-abstract public class BaseVIPSpringIT {
+@WebAppConfiguration
+abstract public class BaseWebSpringIT extends BaseSpringIT {
 
     @Autowired
     protected WebApplicationContext wac;
@@ -129,43 +107,6 @@ abstract public class BaseVIPSpringIT {
     @Autowired
     protected LFCPermissionBusiness lfcPermissionBusiness;
 
-    @BeforeAll
-    public static void setupEnvVariables() throws Exception {
-        String fakeHomePath = Paths.get(ClassLoader.getSystemResource("TestHome").toURI())
-                .toAbsolutePath().toString();
-        setEnv(Collections.singletonMap("HOME", fakeHomePath));
-    }
-
-    /* hack from :
-     * https://stackoverflow.com/a/7201825
-     */
-    public static void setEnv(Map<String, String> newenv) throws Exception {
-        try {
-            Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
-            Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
-            theEnvironmentField.setAccessible(true);
-            Map<String, String> env = (Map<String, String>) theEnvironmentField.get(null);
-            env.putAll(newenv);
-            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
-            theCaseInsensitiveEnvironmentField.setAccessible(true);
-            Map<String, String> cienv = (Map<String, String>) theCaseInsensitiveEnvironmentField.get(null);
-            cienv.putAll(newenv);
-        } catch (NoSuchFieldException e) {
-            Class[] classes = Collections.class.getDeclaredClasses();
-            Map<String, String> env = System.getenv();
-            for (Class cl : classes) {
-                if ("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
-                    Field field = cl.getDeclaredField("m");
-                    field.setAccessible(true);
-                    Object obj = field.get(env);
-                    Map<String, String> map = (Map<String, String>) obj;
-                    map.clear();
-                    map.putAll(newenv);
-                }
-            }
-        }
-    }
-
     @BeforeEach
     public final void setup() throws URISyntaxException {
         mockMvc = MockMvcBuilders
@@ -173,9 +114,6 @@ abstract public class BaseVIPSpringIT {
                 .defaultRequest(MockMvcRequestBuilders.get("/").servletPath("/rest"))
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
-        Mockito.reset(testUserDAO, configurationBusiness, workflowBusiness, applicationBusiness,
-                classBusiness, transferPoolBusiness, simulationBusiness,
-                lfcBusiness);
     }
 
     protected String getResourceAsString(String pathFromClasspath) throws IOException {
@@ -237,5 +175,43 @@ abstract public class BaseVIPSpringIT {
 
     protected void configureDataFS() throws BusinessException {
         DataConfigurator.configureFS(this);
+    }
+
+    /*
+    @BeforeAll
+    public static void setupEnvVariables() throws Exception {
+        String fakeHomePath = Paths.get(ClassLoader.getSystemResource("TestHome").toURI())
+                .toAbsolutePath().toString();
+        setEnv(Collections.singletonMap("HOME", fakeHomePath));
+    }*/
+
+    /* hack from :
+     * https://stackoverflow.com/a/7201825
+     */
+    public static void setEnv(Map<String, String> newenv) throws Exception {
+        try {
+            Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
+            Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
+            theEnvironmentField.setAccessible(true);
+            Map<String, String> env = (Map<String, String>) theEnvironmentField.get(null);
+            env.putAll(newenv);
+            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
+            theCaseInsensitiveEnvironmentField.setAccessible(true);
+            Map<String, String> cienv = (Map<String, String>) theCaseInsensitiveEnvironmentField.get(null);
+            cienv.putAll(newenv);
+        } catch (NoSuchFieldException e) {
+            Class[] classes = Collections.class.getDeclaredClasses();
+            Map<String, String> env = System.getenv();
+            for (Class cl : classes) {
+                if ("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
+                    Field field = cl.getDeclaredField("m");
+                    field.setAccessible(true);
+                    Object obj = field.get(env);
+                    Map<String, String> map = (Map<String, String>) obj;
+                    map.clear();
+                    map.putAll(newenv);
+                }
+            }
+        }
     }
 }

@@ -53,8 +53,10 @@ public class PoolOperation implements IsSerializable {
     private Status status;
     private String user;
     private int progress;
+
     public PoolOperation() {
     }
+
     /**
      * @param id
      * @param registration

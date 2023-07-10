@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ConfigurationBusiness.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.business</a> &gt; <span class="el_source">ConfigurationBusiness.java</span></div><h1>ConfigurationBusiness.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ConfigurationBusiness.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.business</a> &gt; <span class="el_source">ConfigurationBusiness.java</span></div><h1>ConfigurationBusiness.java</h1><pre class="source lang-java linenums">/*
  * Copyright and authors: see LICENSE.txt in base repository.
  *
  * This software is a web portal for pipeline execution on distributed systems.
@@ -861,11 +861,11 @@ public class ConfigurationBusiness {
 
     public void updateUserLastLogin(String email) throws BusinessException {
         try {
-<span class="nc" id="L864">            userDAO.updateLastLogin(email, new Date());</span>
+<span class="fc" id="L864">            userDAO.updateLastLogin(email, new Date());</span>
 <span class="nc" id="L865">        } catch (DAOException ex) {</span>
 <span class="nc" id="L866">            throw new BusinessException(ex);</span>
-<span class="nc" id="L867">        }</span>
-<span class="nc" id="L868">    }</span>
+<span class="fc" id="L867">        }</span>
+<span class="fc" id="L868">    }</span>
 
     public void addUserToGroup(String email, String groupName) throws BusinessException {
         try {
@@ -1063,34 +1063,35 @@ public class ConfigurationBusiness {
 
     private void sendErrorEmailToAdmins(
             String errorMessage, Exception exception, String userEmail) {
+<span class="nc" id="L1066">        System.out.println(&quot;OKKKK ICI&quot;);</span>
         try {
-<span class="nc" id="L1067">            StringBuilder emailContent = new StringBuilder(&quot;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&quot;);</span>
-<span class="nc" id="L1068">            emailContent.append(&quot;&lt;p&gt;Dear Administrator,&lt;/p&gt;&quot;);</span>
+<span class="nc" id="L1068">            StringBuilder emailContent = new StringBuilder(&quot;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&quot;);</span>
+<span class="nc" id="L1069">            emailContent.append(&quot;&lt;p&gt;Dear Administrator,&lt;/p&gt;&quot;);</span>
 
-<span class="nc" id="L1070">            emailContent.append(&quot;&lt;p&gt;An error has been encountered in VIP with the following user:&quot;);</span>
-<span class="nc" id="L1071">            emailContent.append(&quot;&lt;b&gt;&quot; + userEmail + &quot;&lt;/b&gt;&lt;/p&gt;&quot;);</span>
+<span class="nc" id="L1071">            emailContent.append(&quot;&lt;p&gt;An error has been encountered in VIP with the following user:&quot;);</span>
+<span class="nc" id="L1072">            emailContent.append(&quot;&lt;b&gt;&quot; + userEmail + &quot;&lt;/b&gt;&lt;/p&gt;&quot;);</span>
 
-<span class="nc" id="L1073">            emailContent.append(&quot;&lt;p&gt;&lt;b&gt;&quot; + errorMessage + &quot;&lt;/b&gt;&lt;/p&gt;&quot;);</span>
+<span class="nc" id="L1074">            emailContent.append(&quot;&lt;p&gt;&lt;b&gt;&quot; + errorMessage + &quot;&lt;/b&gt;&lt;/p&gt;&quot;);</span>
 
-<span class="nc bnc" id="L1075" title="All 2 branches missed.">            if (exception != null) {</span>
-<span class="nc" id="L1076">                emailContent.append(&quot;The exception was:&quot;);</span>
-<span class="nc" id="L1077">                emailContent.append(exception);</span>
+<span class="nc bnc" id="L1076" title="All 2 branches missed.">            if (exception != null) {</span>
+<span class="nc" id="L1077">                emailContent.append(&quot;The exception was:&quot;);</span>
+<span class="nc" id="L1078">                emailContent.append(exception);</span>
             }
 
-<span class="nc" id="L1080">            emailContent.append(&quot;&lt;p&gt;Please check the logs for more information&lt;/p&gt;&quot;);</span>
-<span class="nc" id="L1081">            emailContent.append(&quot;&lt;p&gt;&amp;nbsp;&lt;/p&gt;&quot;);</span>
-<span class="nc" id="L1082">            emailContent.append(&quot;&lt;p&gt;Best Regards,&lt;/p&gt;&lt;p&gt;VIP Team&lt;/p&gt;&quot;);</span>
-<span class="nc" id="L1083">            emailContent.append(&quot;&lt;/body&gt;&lt;/html&gt;&quot;);</span>
+<span class="nc" id="L1081">            emailContent.append(&quot;&lt;p&gt;Please check the logs for more information&lt;/p&gt;&quot;);</span>
+<span class="nc" id="L1082">            emailContent.append(&quot;&lt;p&gt;&amp;nbsp;&lt;/p&gt;&quot;);</span>
+<span class="nc" id="L1083">            emailContent.append(&quot;&lt;p&gt;Best Regards,&lt;/p&gt;&lt;p&gt;VIP Team&lt;/p&gt;&quot;);</span>
+<span class="nc" id="L1084">            emailContent.append(&quot;&lt;/body&gt;&lt;/html&gt;&quot;);</span>
 
-<span class="nc bnc" id="L1085" title="All 2 branches missed.">            for (String email : getAdministratorsEmails()) {</span>
-<span class="nc" id="L1086">                emailBusiness.sendEmail(&quot;[VIP Admin] VIP error&quot;, emailContent.toString(),</span>
+<span class="nc bnc" id="L1086" title="All 2 branches missed.">            for (String email : getAdministratorsEmails()) {</span>
+<span class="nc" id="L1087">                emailBusiness.sendEmail(&quot;[VIP Admin] VIP error&quot;, emailContent.toString(),</span>
                         new String[]{email}, true, userEmail);
             }
-<span class="nc" id="L1089">        } catch (BusinessException e) {</span>
-<span class="nc" id="L1090">            logger.error(&quot;Cannot sent mail to admin. Ignoring&quot;, e);</span>
-<span class="nc" id="L1091">        } catch (DAOException e) {</span>
-<span class="nc" id="L1092">            logger.error(&quot;Cannot sent mail to admin : {}. Ignoring&quot;, e.getMessage());</span>
-<span class="nc" id="L1093">        }</span>
-<span class="nc" id="L1094">    }</span>
+<span class="nc" id="L1090">        } catch (BusinessException e) {</span>
+<span class="nc" id="L1091">            logger.error(&quot;Cannot sent mail to admin. Ignoring&quot;, e);</span>
+<span class="nc" id="L1092">        } catch (DAOException e) {</span>
+<span class="nc" id="L1093">            logger.error(&quot;Cannot sent mail to admin : {}. Ignoring&quot;, e.getMessage());</span>
+<span class="nc" id="L1094">        }</span>
+<span class="nc" id="L1095">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

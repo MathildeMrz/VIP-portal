@@ -55,8 +55,8 @@ import static org.mockito.ArgumentMatchers.any;
  * <p>
  * TODO : after spring is now everywhere, this does not work anymore, work needed here
  */
-@Import(SpringWebConfig.class)
-@Configuration
+//@Import(SpringWebConfig.class)
+//@Configuration
 public class SpringTestConfig {
 
     @Bean

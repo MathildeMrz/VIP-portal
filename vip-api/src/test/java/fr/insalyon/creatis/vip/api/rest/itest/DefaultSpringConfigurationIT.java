@@ -36,7 +36,7 @@ import fr.insalyon.creatis.vip.api.business.VipConfigurer;
 import fr.insalyon.creatis.vip.api.controller.EgiController;
 import fr.insalyon.creatis.vip.api.controller.PlatformController;
 import fr.insalyon.creatis.vip.api.exception.ApiException;
-import fr.insalyon.creatis.vip.api.rest.config.BaseVIPSpringIT;
+import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.application.server.business.WorkflowBusiness;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,6 @@ import static org.mockito.ArgumentMatchers.any;
  * The less mock should be used to be as close as possible to the production
  * environment.
  */
-@SpringJUnitWebConfig
 public class DefaultSpringConfigurationIT {
 
     @Autowired
@@ -74,7 +73,7 @@ public class DefaultSpringConfigurationIT {
 
         String fakeHomePath = Paths.get(ClassLoader.getSystemResource("TestHome").toURI())
                 .toAbsolutePath().toString();
-        BaseVIPSpringIT.setEnv(Collections.singletonMap("HOME", fakeHomePath));
+        BaseWebSpringIT.setEnv(Collections.singletonMap("HOME", fakeHomePath));
     }
 
     @Test
@@ -84,8 +83,8 @@ public class DefaultSpringConfigurationIT {
     }
 
     // Need to override vipConfigurer that operate on the database
-    @Configuration
-    @Import(SpringWebConfig.class)
+    //@Configuration
+    //@Import(SpringWebConfig.class)
     static class TestConfig {
         @Bean
         public VipConfigurer vipConfigurer() {

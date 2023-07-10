@@ -2,8 +2,8 @@ fr/insalyon/creatis/vip/applicationimporter/client/view/applicationdisplay/Displ
 fr/insalyon/creatis/vip/applicationimporter/client/view/applicationdisplay/VIPLayout$2.class
 fr/insalyon/creatis/vip/applicationimporter/client/rpc/ApplicationImporterService$Util.class
 fr/insalyon/creatis/vip/applicationimporter/client/view/applicationdisplay/InputLayout.class
-fr/insalyon/creatis/vip/applicationimporter/client/view/applicationdisplay/OutputLayout.class
 fr/insalyon/creatis/vip/applicationimporter/client/ApplicationImporterModule.class
+fr/insalyon/creatis/vip/applicationimporter/client/view/applicationdisplay/OutputLayout.class
 fr/insalyon/creatis/vip/applicationimporter/server/business/TargzUtils.class
 fr/insalyon/creatis/vip/applicationimporter/client/view/applicationdisplay/DisplayTab.class
 fr/insalyon/creatis/vip/applicationimporter/client/view/applicationdisplay/LocalTextField.class
@@ -12,8 +12,8 @@ fr/insalyon/creatis/vip/applicationimporter/server/rpc/ApplicationImporterServic
 fr/insalyon/creatis/vip/applicationimporter/client/view/BoutiquesImportLayout.class
 fr/insalyon/creatis/vip/applicationimporter/client/view/applicationdisplay/DisplayTab$2.class
 fr/insalyon/creatis/vip/applicationimporter/client/view/BoutiquesImportLayout$2.class
-fr/insalyon/creatis/vip/applicationimporter/server/business/VelocityUtils.class
 fr/insalyon/creatis/vip/applicationimporter/client/view/ImportTab.class
+fr/insalyon/creatis/vip/applicationimporter/server/business/VelocityUtils.class
 fr/insalyon/creatis/vip/applicationimporter/client/view/Constants.class
 fr/insalyon/creatis/vip/applicationimporter/client/view/applicationdisplay/LocalTextField$1.class
 fr/insalyon/creatis/vip/applicationimporter/client/view/applicationdisplay/GeneralLayout.class

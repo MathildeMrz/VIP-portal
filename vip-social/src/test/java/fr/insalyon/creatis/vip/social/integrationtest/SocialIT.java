@@ -30,7 +30,7 @@ public class SocialIT extends BaseSpringIT {
     private MessageBusiness messageBusiness;
 
     @BeforeEach
-    public void setUp() throws BusinessException, GRIDAClientException, DAOException {
+    public void setUp() throws Exception {
         super.setUp();
 
         // Create test group

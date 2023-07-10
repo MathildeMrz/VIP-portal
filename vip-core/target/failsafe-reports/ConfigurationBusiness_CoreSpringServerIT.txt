@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: ConfigurationBusiness_CoreSpringServerIT
 -------------------------------------------------------------------------------
-Tests run: 61, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.542 s - in ConfigurationBusiness_CoreSpringServerIT
+Tests run: 65, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.728 s - in ConfigurationBusiness_CoreSpringServerIT

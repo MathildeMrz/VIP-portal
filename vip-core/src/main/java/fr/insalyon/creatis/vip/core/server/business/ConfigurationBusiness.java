@@ -1063,6 +1063,7 @@ public class ConfigurationBusiness {
 
     private void sendErrorEmailToAdmins(
             String errorMessage, Exception exception, String userEmail) {
+        System.out.println("OKKKK ICI");
         try {
             StringBuilder emailContent = new StringBuilder("<html><head></head><body>");
             emailContent.append("<p>Dear Administrator,</p>");

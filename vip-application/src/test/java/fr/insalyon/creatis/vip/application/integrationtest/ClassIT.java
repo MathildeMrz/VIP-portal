@@ -33,7 +33,7 @@ public class ClassIT extends BaseSpringIT {
     private List<String> engines = new ArrayList<>();
 
     @BeforeEach
-    public void setUp() throws BusinessException, DAOException, GRIDAClientException {
+    public void setUp() throws Exception {
         super.setUp();
 
         Group group1 = new Group("group1", true, true, true);

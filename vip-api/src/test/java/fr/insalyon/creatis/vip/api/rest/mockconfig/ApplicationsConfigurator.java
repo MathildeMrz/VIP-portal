@@ -31,7 +31,7 @@
  */
 package fr.insalyon.creatis.vip.api.rest.mockconfig;
 
-import fr.insalyon.creatis.vip.api.rest.config.BaseVIPSpringIT;
+import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.application.client.bean.AppClass;
 import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
 import fr.insalyon.creatis.vip.application.client.bean.Application;
@@ -62,7 +62,7 @@ public class ApplicationsConfigurator {
      * (an application followed by one or more version)
      */
     public static void configureApplications(
-            BaseVIPSpringIT test,
+            BaseWebSpringIT test,
             User user,
             List<AppClass> classes,
             Object... args) throws BusinessException {
@@ -108,7 +108,7 @@ public class ApplicationsConfigurator {
     }
 
     public static String configureAnApplication(
-            BaseVIPSpringIT test,
+            BaseWebSpringIT test,
             User user, Application app,
             AppVersion version,
             Integer... appParamsIndexes) throws BusinessException {

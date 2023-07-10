@@ -253,6 +253,11 @@ knowledge of the CeCILL-B license and that you accept its terms.
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>dev.rikka.tools.autoresconfig</groupId>
+            <artifactId>gradle-plugin</artifactId>
+            <version>1.2.2</version>
+        </dependency>
     </dependencies>
 
     <build>
