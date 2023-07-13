@@ -5,9 +5,9 @@ fr/insalyon/creatis/vip/api/rest/mockconfig/ApplicationsConfigurator.class
 fr/insalyon/creatis/vip/api/rest/mockconfig/DataConfigurator.class
 fr/insalyon/creatis/vip/api/rest/itest/AuthenticationControllerIT.class
 fr/insalyon/creatis/vip/api/rest/config/SpringTestConfig.class
-fr/insalyon/creatis/vip/api/rest/config/BaseVIPSpringIT.class
 fr/insalyon/creatis/vip/api/rest/itest/PlatformControllerIT.class
 fr/insalyon/creatis/vip/api/business/ExecutionBusinessTest.class
+fr/insalyon/creatis/vip/api/rest/config/BaseWebSpringIT.class
 fr/insalyon/creatis/vip/api/data/PathTestUtils.class
 fr/insalyon/creatis/vip/api/data/AppVersionTestUtils.class
 fr/insalyon/creatis/vip/api/rest/itest/DefaultSpringConfigurationIT$TestConfig.class

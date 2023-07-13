@@ -6,6 +6,7 @@
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/rest/itest/SpringAuthenticationIT.java
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/data/PipelineTestUtils.java
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/data/ApplicationTestUtils.java
+/home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/rest/config/BaseWebSpringIT.java
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/data/AppVersionTestUtils.java
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/data/UserTestUtils.java
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/data/PathTestUtils.java
@@ -17,7 +18,6 @@
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/rest/itest/AuthenticationControllerIT.java
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/rest/mockconfig/DataConfigurator.java
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/rest/mockconfig/ApplicationsConfigurator.java
-/home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/rest/config/BaseVIPSpringIT.java
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/rest/itest/processing/PipelineControllerIT.java
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/rest/itest/data/DataControllerIT.java
 /home/marza/Documents/VIP-portal/vip-api/src/test/java/fr/insalyon/creatis/vip/api/tools/spring/JsonCustomObjectMatcher.java

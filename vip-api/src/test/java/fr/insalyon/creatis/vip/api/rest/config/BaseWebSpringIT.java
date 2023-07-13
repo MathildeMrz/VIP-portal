@@ -32,10 +32,7 @@
 package fr.insalyon.creatis.vip.api.rest.config;
 
 import fr.insalyon.creatis.vip.api.rest.mockconfig.DataConfigurator;
-import fr.insalyon.creatis.vip.application.server.business.ApplicationBusiness;
-import fr.insalyon.creatis.vip.application.server.business.ClassBusiness;
-import fr.insalyon.creatis.vip.application.server.business.SimulationBusiness;
-import fr.insalyon.creatis.vip.application.server.business.WorkflowBusiness;
+import fr.insalyon.creatis.vip.application.server.business.*;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
@@ -44,9 +41,7 @@ import fr.insalyon.creatis.vip.datamanager.server.business.LFCBusiness;
 import fr.insalyon.creatis.vip.datamanager.server.business.LFCPermissionBusiness;
 import fr.insalyon.creatis.vip.datamanager.server.business.TransferPoolBusiness;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -62,7 +57,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 
@@ -103,12 +97,47 @@ abstract public class BaseWebSpringIT extends BaseSpringIT {
     @Autowired
     protected SimulationBusiness simulationBusiness;
     @Autowired
+    protected EngineBusiness engineBusiness;
+    @Autowired
     protected LFCBusiness lfcBusiness;
+
     @Autowired
     protected LFCPermissionBusiness lfcPermissionBusiness;
 
+    /* hack from :
+     * https://stackoverflow.com/a/7201825
+     */
+    public static void setEnv(Map<String, String> newenv) throws Exception {
+        try {
+            Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
+            Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
+            theEnvironmentField.setAccessible(true);
+            Map<String, String> env = (Map<String, String>) theEnvironmentField.get(null);
+            env.putAll(newenv);
+            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
+            theCaseInsensitiveEnvironmentField.setAccessible(true);
+            Map<String, String> cienv = (Map<String, String>) theCaseInsensitiveEnvironmentField.get(null);
+            cienv.putAll(newenv);
+        } catch (NoSuchFieldException e) {
+            Class[] classes = Collections.class.getDeclaredClasses();
+            Map<String, String> env = System.getenv();
+            for (Class cl : classes) {
+                if ("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
+                    Field field = cl.getDeclaredField("m");
+                    field.setAccessible(true);
+                    Object obj = field.get(env);
+                    Map<String, String> map = (Map<String, String>) obj;
+                    map.clear();
+                    map.putAll(newenv);
+                }
+            }
+        }
+    }
+
     @BeforeEach
-    public final void setup() throws URISyntaxException {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(wac)
                 .defaultRequest(MockMvcRequestBuilders.get("/").servletPath("/rest"))
@@ -173,10 +202,6 @@ abstract public class BaseWebSpringIT extends BaseSpringIT {
         return lfcPermissionBusiness;
     }
 
-    protected void configureDataFS() throws BusinessException {
-        DataConfigurator.configureFS(this);
-    }
-
     /*
     @BeforeAll
     public static void setupEnvVariables() throws Exception {
@@ -185,33 +210,7 @@ abstract public class BaseWebSpringIT extends BaseSpringIT {
         setEnv(Collections.singletonMap("HOME", fakeHomePath));
     }*/
 
-    /* hack from :
-     * https://stackoverflow.com/a/7201825
-     */
-    public static void setEnv(Map<String, String> newenv) throws Exception {
-        try {
-            Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
-            Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
-            theEnvironmentField.setAccessible(true);
-            Map<String, String> env = (Map<String, String>) theEnvironmentField.get(null);
-            env.putAll(newenv);
-            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
-            theCaseInsensitiveEnvironmentField.setAccessible(true);
-            Map<String, String> cienv = (Map<String, String>) theCaseInsensitiveEnvironmentField.get(null);
-            cienv.putAll(newenv);
-        } catch (NoSuchFieldException e) {
-            Class[] classes = Collections.class.getDeclaredClasses();
-            Map<String, String> env = System.getenv();
-            for (Class cl : classes) {
-                if ("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
-                    Field field = cl.getDeclaredField("m");
-                    field.setAccessible(true);
-                    Object obj = field.get(env);
-                    Map<String, String> map = (Map<String, String>) obj;
-                    map.clear();
-                    map.putAll(newenv);
-                }
-            }
-        }
+    protected void configureDataFS() throws BusinessException {
+        DataConfigurator.configureFS(this);
     }
 }

@@ -1,6 +1,5 @@
 package fr.insalyon.creatis.vip.application.integrationtest;
 
-import fr.insalyon.creatis.grida.client.GRIDAClientException;
 import fr.insalyon.creatis.vip.application.client.bean.Engine;
 import fr.insalyon.creatis.vip.application.server.business.EngineBusiness;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;

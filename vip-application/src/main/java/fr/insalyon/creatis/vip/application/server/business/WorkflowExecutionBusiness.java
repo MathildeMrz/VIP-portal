@@ -68,6 +68,7 @@ public class WorkflowExecutionBusiness {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Server server;
+
     private WebServiceEngine engine;
     private String engineEndpoint;
 

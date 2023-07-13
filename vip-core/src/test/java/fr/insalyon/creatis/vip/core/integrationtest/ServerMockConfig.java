@@ -40,7 +40,7 @@ public class ServerMockConfig {
         Mockito.when(server.getAdminPassword()).thenReturn(TEST_ADMIN_PASSWORD);
         Mockito.when(server.getAdminInstitution()).thenReturn(TEST_ADMIN_INSTITUTION);
         Mockito.when(server.getCasURL()).thenReturn(TEST_CAS_URL);
-        Mockito.when(server.getMaxPlatformRunningSimulations()).thenReturn(Integer.valueOf(MAX_NUMBER_EXECUTIONS));
+        when(server.getMaxPlatformRunningSimulations()).thenReturn(Integer.valueOf(MAX_NUMBER_EXECUTIONS));
         when(server.getDataManagerUsersHome()).thenReturn("/test/prefix/vip/data/test_users");
         when(server.getDataManagerGroupsHome()).thenReturn("/test/prefix/vip/data/test_groups");
         when(server.getVoRoot()).thenReturn("/vo_test/root");

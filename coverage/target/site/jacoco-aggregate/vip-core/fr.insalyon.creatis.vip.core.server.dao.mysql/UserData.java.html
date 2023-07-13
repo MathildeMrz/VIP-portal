@@ -666,20 +666,20 @@ import java.util.*;
     public void updateTermsOfUse(String email, Timestamp termsUse) throws DAOException {
 
         try {
-<span class="nc" id="L669">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
+<span class="fc" id="L669">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
                     + &quot;VIPUsers SET termsUse = ? WHERE email = ?&quot;);
 
-<span class="nc" id="L672">            ps.setTimestamp(1, termsUse);</span>
-<span class="nc" id="L673">            ps.setString(2, email);</span>
+<span class="fc" id="L672">            ps.setTimestamp(1, termsUse);</span>
+<span class="fc" id="L673">            ps.setString(2, email);</span>
 
-<span class="nc" id="L675">            ps.executeUpdate();</span>
-<span class="nc" id="L676">            ps.close();</span>
+<span class="fc" id="L675">            ps.executeUpdate();</span>
+<span class="fc" id="L676">            ps.close();</span>
 
 <span class="nc" id="L678">        } catch (SQLException ex) {</span>
 <span class="nc" id="L679">            logger.error(&quot;Error updating terms of use to {} for {}&quot;, termsUse, email, ex);</span>
 <span class="nc" id="L680">            throw new DAOException(ex);</span>
-<span class="nc" id="L681">        }</span>
-<span class="nc" id="L682">    }</span>
+<span class="fc" id="L681">        }</span>
+<span class="fc" id="L682">    }</span>
 
     /**
      * @param session
@@ -839,19 +839,19 @@ import java.util.*;
     public void resetPassword(String email, String newPassword) throws DAOException {
 
         try {
-<span class="nc" id="L842">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
+<span class="fc" id="L842">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
                     + &quot;VIPUsers SET pass = ? WHERE email = ?&quot;);
 
-<span class="nc" id="L845">            ps.setString(1, newPassword);</span>
-<span class="nc" id="L846">            ps.setString(2, email);</span>
-<span class="nc" id="L847">            ps.executeUpdate();</span>
-<span class="nc" id="L848">            ps.close();</span>
+<span class="fc" id="L845">            ps.setString(1, newPassword);</span>
+<span class="fc" id="L846">            ps.setString(2, email);</span>
+<span class="fc" id="L847">            ps.executeUpdate();</span>
+<span class="fc" id="L848">            ps.close();</span>
 
 <span class="nc" id="L850">        } catch (SQLException ex) {</span>
 <span class="nc" id="L851">            logger.error(&quot;Error resetting password for user {}&quot;, email, ex);</span>
 <span class="nc" id="L852">            throw new DAOException(ex);</span>
-<span class="nc" id="L853">        }</span>
-<span class="nc" id="L854">    }</span>
+<span class="fc" id="L853">        }</span>
+<span class="fc" id="L854">    }</span>
 
     @Override
     public int getNUsers() throws DAOException {
@@ -910,19 +910,19 @@ import java.util.*;
     @Override
     public void updateLastUpdatePublication(String email, Timestamp lastUpdatePublication) throws DAOException {
         try {
-<span class="nc" id="L913">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
+<span class="fc" id="L913">            PreparedStatement ps = getConnection().prepareStatement(&quot;UPDATE &quot;</span>
                     + &quot;VIPUsers SET lastUpdatePublications = ? WHERE email = ?&quot;);
 
-<span class="nc" id="L916">            ps.setTimestamp(1, lastUpdatePublication);</span>
-<span class="nc" id="L917">            ps.setString(2, email);</span>
-<span class="nc" id="L918">            ps.executeUpdate();</span>
-<span class="nc" id="L919">            ps.close();</span>
+<span class="fc" id="L916">            ps.setTimestamp(1, lastUpdatePublication);</span>
+<span class="fc" id="L917">            ps.setString(2, email);</span>
+<span class="fc" id="L918">            ps.executeUpdate();</span>
+<span class="fc" id="L919">            ps.close();</span>
 
 <span class="nc" id="L921">        } catch (SQLException ex) {</span>
 <span class="nc" id="L922">            logger.error(&quot;Error updating last publication to {} for {}&quot;, lastUpdatePublication, email, ex);</span>
 <span class="nc" id="L923">            throw new DAOException(ex);</span>
-<span class="nc" id="L924">        }</span>
-<span class="nc" id="L925">    }</span>
+<span class="fc" id="L924">        }</span>
+<span class="fc" id="L925">    }</span>
 
     @Override
     public int getNFailedAuthentications(String email) throws DAOException {

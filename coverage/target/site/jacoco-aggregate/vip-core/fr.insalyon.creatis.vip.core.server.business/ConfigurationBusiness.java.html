@@ -817,19 +817,19 @@ public class ConfigurationBusiness {
 
     public void updateTermsOfUse(String email) throws BusinessException {
         try {
-<span class="nc" id="L820">            userDAO.updateTermsOfUse(email, getCurrentTimeStamp());</span>
+<span class="fc" id="L820">            userDAO.updateTermsOfUse(email, getCurrentTimeStamp());</span>
 <span class="nc" id="L821">        } catch (DAOException ex) {</span>
 <span class="nc" id="L822">            throw new BusinessException(ex);</span>
-<span class="nc" id="L823">        }</span>
-<span class="nc" id="L824">    }</span>
+<span class="fc" id="L823">        }</span>
+<span class="fc" id="L824">    }</span>
 
     public void updateLastUpdatePublication(String email) throws BusinessException {
         try {
-<span class="nc" id="L828">            userDAO.updateLastUpdatePublication(email, getCurrentTimeStamp());</span>
+<span class="fc" id="L828">            userDAO.updateLastUpdatePublication(email, getCurrentTimeStamp());</span>
 <span class="nc" id="L829">        } catch (DAOException ex) {</span>
 <span class="nc" id="L830">            throw new BusinessException(ex);</span>
-<span class="nc" id="L831">        }</span>
-<span class="nc" id="L832">    }</span>
+<span class="fc" id="L831">        }</span>
+<span class="fc" id="L832">    }</span>
 
     public void sendContactMail(
             User user, String category, String subject, String comment)
@@ -912,8 +912,8 @@ public class ConfigurationBusiness {
         try {
 <span class="fc" id="L913">            User user = userDAO.getUser(email);</span>
 
-<span class="pc bpc" id="L915" title="1 of 2 branches missed.">            if (code.equals(user.getCode())) {</span>
-<span class="nc" id="L916">                userDAO.resetPassword(email, MD5.get(password));</span>
+<span class="fc bfc" id="L915" title="All 2 branches covered.">            if (code.equals(user.getCode())) {</span>
+<span class="fc" id="L916">                userDAO.resetPassword(email, MD5.get(password));</span>
             } else {
 <span class="fc" id="L918">                logger.error(&quot;Wrong reset code for {} : {}&quot;, email, code);</span>
 <span class="fc" id="L919">                throw new BusinessException(&quot;Wrong reset code.&quot;);</span>
@@ -923,8 +923,8 @@ public class ConfigurationBusiness {
 <span class="nc" id="L923">            throw new BusinessException(ex);</span>
 <span class="nc" id="L924">        } catch (DAOException ex) {</span>
 <span class="nc" id="L925">            throw new BusinessException(ex);</span>
-<span class="nc" id="L926">        }</span>
-<span class="nc" id="L927">    }</span>
+<span class="fc" id="L926">        }</span>
+<span class="fc" id="L927">    }</span>
 
     /**
      * Gets an array of administrator's e-mails

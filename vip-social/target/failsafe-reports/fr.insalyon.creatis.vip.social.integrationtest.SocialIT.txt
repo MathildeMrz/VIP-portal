@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: fr.insalyon.creatis.vip.social.integrationtest.SocialIT
 -------------------------------------------------------------------------------
-Tests run: 30, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.74 s - in fr.insalyon.creatis.vip.social.integrationtest.SocialIT
+Tests run: 30, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.914 s - in fr.insalyon.creatis.vip.social.integrationtest.SocialIT

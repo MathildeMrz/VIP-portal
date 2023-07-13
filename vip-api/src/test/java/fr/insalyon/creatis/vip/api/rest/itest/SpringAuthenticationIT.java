@@ -36,8 +36,12 @@ import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.api.tools.spring.ApikeyRequestPostProcessor;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import java.io.UnsupportedEncodingException;
@@ -45,6 +49,7 @@ import java.security.NoSuchAlgorithmException;
 
 import static fr.insalyon.creatis.vip.api.data.UserTestUtils.baseUser1;
 import static fr.insalyon.creatis.vip.api.data.UserTestUtils.baseUser1Password;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -62,9 +67,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Disabled
 public class SpringAuthenticationIT extends BaseWebSpringIT {
 
+    @Autowired
+    UserDAO userDAO;
+
+    @BeforeEach
+    public void setUp() throws Exception
+    {
+        super.setUp();
+        Mockito.reset(userDAO);
+        when(userDAO.getUserByApikey(eq("apikeyvalue"))).thenReturn(baseUser1);
+    }
+
     @Test
-    public void authenticationOK() throws Exception {
-        prepareUser1Configuration();
+    public void authenticationOK() throws Exception
+    {
         mockMvc.perform(get("/rest/wrongUrl")
                         .with(ApikeyRequestPostProcessor.apikey("testapikey", "apikeyvalue")))
                 .andDo(print())
@@ -72,9 +88,11 @@ public class SpringAuthenticationIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void authenticationWithCoreKo() throws Exception {
-        when(getUserDAO().getUserByApikey("apikeyvalue"))
+    public void authenticationWithCoreKo() throws Exception
+    {
+        when(userDAO.getUserByApikey("apikeyvalue"))
                 .thenThrow(new RuntimeException("hey hey"));
+
         mockMvc.perform(get("/rest/wrongUrl")
                         .with(ApikeyRequestPostProcessor.apikey("testapikey", "apikeyvalue")))
                 .andDo(print())
@@ -85,8 +103,8 @@ public class SpringAuthenticationIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void authenticationWithBasicShouldBeKo() throws Exception {
-        prepareUser1Configuration();
+    public void authenticationWithBasicShouldBeKo() throws Exception
+    {
         mockMvc.perform(get("/rest/wrongUrl")
                         .with(httpBasic(baseUser1.getEmail(), baseUser1Password)))
                 .andDo(print())
@@ -96,9 +114,10 @@ public class SpringAuthenticationIT extends BaseWebSpringIT {
                         .value(ApiError.INSUFFICIENT_AUTH.getCode()));
     }
 
+    // authException instanceof InsufficientAuthenticationException not BAD_CREDENTIALS
     @Test
-    public void authenticationWithWrongApikey() throws Exception {
-        prepareUser1Configuration();
+    public void authenticationWithWrongApikey() throws Exception
+    {
         mockMvc.perform(get("/rest/wrongUrl")
                         .with(ApikeyRequestPostProcessor.apikey("testapikey", "WRONG")))
                 .andDo(print())
@@ -109,8 +128,8 @@ public class SpringAuthenticationIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void authenticationWithoutCredentials() throws Exception {
-        prepareUser1Configuration();
+    public void authenticationWithoutCredentials() throws Exception
+    {
         mockMvc.perform(get("/rest/wrongUrl"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
@@ -118,9 +137,4 @@ public class SpringAuthenticationIT extends BaseWebSpringIT {
                 .andExpect(jsonPath("$.errorCode")
                         .value(ApiError.INSUFFICIENT_AUTH.getCode()));
     }
-
-    private void prepareUser1Configuration() throws DAOException, BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
-        when(getUserDAO().getUserByApikey("apikeyvalue")).thenReturn(baseUser1);
-    }
-
 }

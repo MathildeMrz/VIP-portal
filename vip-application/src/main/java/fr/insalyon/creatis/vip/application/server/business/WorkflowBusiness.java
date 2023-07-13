@@ -94,8 +94,12 @@ public class WorkflowBusiness {
     private ApplicationDAO applicationDAO;
     private UsersGroupsDAO usersGroupsDAO;
     private EngineBusiness engineBusiness;
+
+    @Autowired
     private DataManagerBusiness dataManagerBusiness;
     private EmailBusiness emailBusiness;
+
+    @Autowired
     private LfcPathsBusiness lfcPathsBusiness;
     private GRIDAPoolClient gridaPoolClient;
     private GRIDAClient gridaClient;

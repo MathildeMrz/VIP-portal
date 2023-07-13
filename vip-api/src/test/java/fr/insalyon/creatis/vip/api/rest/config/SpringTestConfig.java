@@ -31,7 +31,6 @@
  */
 package fr.insalyon.creatis.vip.api.rest.config;
 
-import fr.insalyon.creatis.vip.api.SpringWebConfig;
 import fr.insalyon.creatis.vip.api.business.VipConfigurer;
 import fr.insalyon.creatis.vip.application.server.business.ApplicationBusiness;
 import fr.insalyon.creatis.vip.application.server.business.ClassBusiness;
@@ -40,11 +39,10 @@ import fr.insalyon.creatis.vip.application.server.business.WorkflowBusiness;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
 import fr.insalyon.creatis.vip.datamanager.server.business.LFCBusiness;
 import fr.insalyon.creatis.vip.datamanager.server.business.LFCPermissionBusiness;
+import fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness;
 import fr.insalyon.creatis.vip.datamanager.server.business.TransferPoolBusiness;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -99,6 +97,11 @@ public class SpringTestConfig {
     @Bean
     public LFCBusiness lfcBusiness() {
         return Mockito.mock(LFCBusiness.class);
+    }
+
+    @Bean
+    public LfcPathsBusiness lfcPathsBusiness() {
+        return Mockito.mock(LfcPathsBusiness.class);
     }
 
     @Bean

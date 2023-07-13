@@ -114,7 +114,9 @@ public class ApplicationsConfigurator {
             Integer... appParamsIndexes) throws BusinessException {
         WorkflowBusiness workflowBusiness = test.getWorkflowBusiness();
         when(workflowBusiness.getApplicationDescriptor(
-                eq(user), eq(app.getName()), eq(version.getVersion())))
+                eq(user),
+                eq(app.getName()),
+                eq(version.getVersion())))
                 .thenReturn(getDescriptor("desc test", appParamsIndexes));
         return app.getName() + "/" + version.getVersion();
     }

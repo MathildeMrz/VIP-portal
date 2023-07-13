@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: fr.insalyon.creatis.vip.core.integrationtest.database.SpringDatabaseIT
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 3.912 s - in fr.insalyon.creatis.vip.core.integrationtest.database.SpringDatabaseIT
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 3.891 s - in fr.insalyon.creatis.vip.core.integrationtest.database.SpringDatabaseIT

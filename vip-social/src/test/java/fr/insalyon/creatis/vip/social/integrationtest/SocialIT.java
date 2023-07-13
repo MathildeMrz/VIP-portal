@@ -1,12 +1,10 @@
 package fr.insalyon.creatis.vip.social.integrationtest;
 
-import fr.insalyon.creatis.grida.client.GRIDAClientException;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.integrationtest.ServerMockConfig;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
-import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.social.client.bean.GroupMessage;
 import fr.insalyon.creatis.vip.social.client.bean.Message;
 import fr.insalyon.creatis.vip.social.server.business.MessageBusiness;

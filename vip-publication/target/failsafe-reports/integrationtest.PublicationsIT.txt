@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: integrationtest.PublicationsIT
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.119 s - in integrationtest.PublicationsIT
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.09 s - in integrationtest.PublicationsIT

@@ -42,12 +42,12 @@ public class SpringConfigServer implements Server {
     private Environment env;
     private File vipConfigFolder;
     private File proxyFolder;
+
     @Autowired
     public SpringConfigServer(
             Resource vipConfigFolder,
-<span class="nc" id="L48">            ConfigurableEnvironment env) throws IOException, ConfigurationException {</span>
-<span class="nc" id="L49">        File configFile = vipConfigFolder.getFile().toPath().resolve(Server.CONF_FILE).toFile();</span>
-
+<span class="nc" id="L49">            ConfigurableEnvironment env) throws IOException, ConfigurationException {</span>
+<span class="nc" id="L50">        File configFile = vipConfigFolder.getFile().toPath().resolve(Server.CONF_FILE).toFile();</span>
 <span class="nc bnc" id="L51" title="All 2 branches missed.">        if (!configFile.exists()) {</span>
 <span class="nc" id="L52">            throw new FileNotFoundException(configFile.toString());</span>
         }

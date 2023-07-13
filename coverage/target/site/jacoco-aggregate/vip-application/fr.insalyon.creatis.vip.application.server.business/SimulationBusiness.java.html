@@ -54,6 +54,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -63,16 +65,16 @@ import java.util.*;
 @Transactional
 public class SimulationBusiness {
 
-<span class="fc" id="L66">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+<span class="fc" id="L68">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
 
     private LfcPathsBusiness lfcPathsBusiness;
     private Server server;
 
     @Autowired
-<span class="fc" id="L72">    public SimulationBusiness(LfcPathsBusiness lfcPathsBusiness, Server server) {</span>
-<span class="fc" id="L73">        this.lfcPathsBusiness = lfcPathsBusiness;</span>
-<span class="fc" id="L74">        this.server = server;</span>
-<span class="fc" id="L75">    }</span>
+<span class="fc" id="L74">    public SimulationBusiness(LfcPathsBusiness lfcPathsBusiness, Server server) {</span>
+<span class="fc" id="L75">        this.lfcPathsBusiness = lfcPathsBusiness;</span>
+<span class="fc" id="L76">        this.server = server;</span>
+<span class="fc" id="L77">    }</span>
 
     /*
      Both SimulationDAO and ExecutionNodeDAO have a dbPath parameter field which
@@ -86,35 +88,35 @@ public class SimulationBusiness {
     protected SimulationDAO getSimulationDAO(String dbPath) {
         // spring will override it to return a new prototype SimulationData
         // each time
-<span class="nc" id="L89">        return null;</span>
+<span class="nc" id="L91">        return null;</span>
     }
 
     @Lookup
     protected ExecutionNodeDAO getExecutionNodeDAO(String dbPath) {
         // spring will override it to return a new prototype ExecutionNodeData
         // each time
-<span class="nc" id="L96">        return null;</span>
+<span class="nc" id="L98">        return null;</span>
     }
 
     public List&lt;Job&gt; getList(String simulationID) throws BusinessException {
 
         try {
-<span class="nc" id="L102">            Map&lt;Integer, Job&gt; jobsMap = new HashMap&lt;Integer, Job&gt;();</span>
+<span class="nc" id="L104">            Map&lt;Integer, Job&gt; jobsMap = new HashMap&lt;Integer, Job&gt;();</span>
 
-<span class="nc bnc" id="L104" title="All 2 branches missed.">            for (Task task : getSimulationDAO(simulationID).getTasks()) {</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            for (Task task : getSimulationDAO(simulationID).getTasks()) {</span>
 
-<span class="nc bnc" id="L106" title="All 6 branches missed.">                switch (task.getStatus()) {</span>
+<span class="nc bnc" id="L108" title="All 6 branches missed.">                switch (task.getStatus()) {</span>
                     case QUEUED:
                     case SUCCESSFULLY_SUBMITTED:
-<span class="nc bnc" id="L109" title="All 2 branches missed.">                        if (jobsMap.containsKey(task.getJobID())) {</span>
-<span class="nc" id="L110">                            Job job = jobsMap.get(task.getJobID());</span>
-<span class="nc bnc" id="L111" title="All 4 branches missed.">                            if (job.getStatus() == JobStatus.Failed || job.getStatus() == JobStatus.Held) {</span>
-<span class="nc" id="L112">                                job.setStatus(JobStatus.Queued_with_errors);</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">                        if (jobsMap.containsKey(task.getJobID())) {</span>
+<span class="nc" id="L112">                            Job job = jobsMap.get(task.getJobID());</span>
+<span class="nc bnc" id="L113" title="All 4 branches missed.">                            if (job.getStatus() == JobStatus.Failed || job.getStatus() == JobStatus.Held) {</span>
+<span class="nc" id="L114">                                job.setStatus(JobStatus.Queued_with_errors);</span>
                             }
-<span class="nc" id="L114">                        } else {</span>
-<span class="nc" id="L115">                            jobsMap.put(task.getJobID(), new Job(task.getJobID(), task.getCommand(), JobStatus.Queued));</span>
+<span class="nc" id="L116">                        } else {</span>
+<span class="nc" id="L117">                            jobsMap.put(task.getJobID(), new Job(task.getJobID(), task.getCommand(), JobStatus.Queued));</span>
                         }
-<span class="nc" id="L117">                        break;</span>
+<span class="nc" id="L119">                        break;</span>
                     case RUNNING:
                     case REPLICATE:
                     case REPLICATING:
@@ -122,28 +124,28 @@ public class SimulationBusiness {
                     case RESCHEDULE:
                     case KILL:
                     case KILL_REPLICA:
-<span class="nc bnc" id="L125" title="All 2 branches missed.">                        if (jobsMap.containsKey(task.getJobID())) {</span>
-<span class="nc" id="L126">                            Job job = jobsMap.get(task.getJobID());</span>
-<span class="nc bnc" id="L127" title="All 2 branches missed.">                            if (job.getStatus() == JobStatus.Queued) {</span>
-<span class="nc" id="L128">                                job.setStatus(JobStatus.Running);</span>
-<span class="nc bnc" id="L129" title="All 2 branches missed.">                            } else if (job.getStatus() == JobStatus.Queued_with_errors</span>
-<span class="nc bnc" id="L130" title="All 2 branches missed.">                                    || job.getStatus() == JobStatus.Failed</span>
-<span class="nc bnc" id="L131" title="All 2 branches missed.">                                    || job.getStatus() == JobStatus.Held) {</span>
-<span class="nc" id="L132">                                job.setStatus(JobStatus.Running_with_erros);</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                        if (jobsMap.containsKey(task.getJobID())) {</span>
+<span class="nc" id="L128">                            Job job = jobsMap.get(task.getJobID());</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">                            if (job.getStatus() == JobStatus.Queued) {</span>
+<span class="nc" id="L130">                                job.setStatus(JobStatus.Running);</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">                            } else if (job.getStatus() == JobStatus.Queued_with_errors</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                                    || job.getStatus() == JobStatus.Failed</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                                    || job.getStatus() == JobStatus.Held) {</span>
+<span class="nc" id="L134">                                job.setStatus(JobStatus.Running_with_erros);</span>
                             }
-<span class="nc" id="L134">                        } else {</span>
-<span class="nc" id="L135">                            jobsMap.put(task.getJobID(), new Job(task.getJobID(), task.getCommand(), JobStatus.Running));</span>
+<span class="nc" id="L136">                        } else {</span>
+<span class="nc" id="L137">                            jobsMap.put(task.getJobID(), new Job(task.getJobID(), task.getCommand(), JobStatus.Running));</span>
                         }
-<span class="nc" id="L137">                        break;</span>
+<span class="nc" id="L139">                        break;</span>
                     case COMPLETED:
                     case CANCELLED:
                     case DELETED:
-<span class="nc bnc" id="L141" title="All 2 branches missed.">                        if (jobsMap.containsKey(task.getJobID())) {</span>
-<span class="nc" id="L142">                            jobsMap.get(task.getJobID()).setStatus(JobStatus.Completed);</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">                        if (jobsMap.containsKey(task.getJobID())) {</span>
+<span class="nc" id="L144">                            jobsMap.get(task.getJobID()).setStatus(JobStatus.Completed);</span>
                         } else {
-<span class="nc" id="L144">                            jobsMap.put(task.getJobID(), new Job(task.getJobID(), task.getCommand(), JobStatus.Completed));</span>
+<span class="nc" id="L146">                            jobsMap.put(task.getJobID(), new Job(task.getJobID(), task.getCommand(), JobStatus.Completed));</span>
                         }
-<span class="nc" id="L146">                        break;</span>
+<span class="nc" id="L148">                        break;</span>
                     case ERROR:
                     case ERROR_FINISHING:
                     case ERROR_RESUBMITTING:
@@ -152,40 +154,40 @@ public class SimulationBusiness {
                     case STALLED:
                     case UNHOLD_ERROR:
                     case UNHOLD_STALLED:
-<span class="nc bnc" id="L155" title="All 2 branches missed.">                        if (jobsMap.containsKey(task.getJobID())) {</span>
-<span class="nc" id="L156">                            Job job = jobsMap.get(task.getJobID());</span>
-<span class="nc bnc" id="L157" title="All 2 branches missed.">                            if (job.getStatus() == JobStatus.Queued) {</span>
-<span class="nc" id="L158">                                job.setStatus(JobStatus.Queued_with_errors);</span>
-<span class="nc bnc" id="L159" title="All 2 branches missed.">                            } else if (job.getStatus() == JobStatus.Running) {</span>
-<span class="nc" id="L160">                                job.setStatus(JobStatus.Running_with_erros);</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">                        if (jobsMap.containsKey(task.getJobID())) {</span>
+<span class="nc" id="L158">                            Job job = jobsMap.get(task.getJobID());</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">                            if (job.getStatus() == JobStatus.Queued) {</span>
+<span class="nc" id="L160">                                job.setStatus(JobStatus.Queued_with_errors);</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">                            } else if (job.getStatus() == JobStatus.Running) {</span>
+<span class="nc" id="L162">                                job.setStatus(JobStatus.Running_with_erros);</span>
                             }
-<span class="nc" id="L162">                        } else {</span>
-<span class="nc" id="L163">                            jobsMap.put(task.getJobID(), new Job(task.getJobID(), task.getCommand(), JobStatus.Failed));</span>
+<span class="nc" id="L164">                        } else {</span>
+<span class="nc" id="L165">                            jobsMap.put(task.getJobID(), new Job(task.getJobID(), task.getCommand(), JobStatus.Failed));</span>
                         }
-<span class="nc" id="L165">                        break;</span>
+<span class="nc" id="L167">                        break;</span>
                     case ERROR_HELD:
                     case STALLED_HELD:
-<span class="nc bnc" id="L168" title="All 2 branches missed.">                        if (jobsMap.containsKey(task.getJobID())) {</span>
-<span class="nc" id="L169">                            Job job = jobsMap.get(task.getJobID());</span>
-<span class="nc bnc" id="L170" title="All 2 branches missed.">                            if (job.getStatus() == JobStatus.Failed) {</span>
-<span class="nc" id="L171">                                job.setStatus(JobStatus.Held);</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                        if (jobsMap.containsKey(task.getJobID())) {</span>
+<span class="nc" id="L171">                            Job job = jobsMap.get(task.getJobID());</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">                            if (job.getStatus() == JobStatus.Failed) {</span>
+<span class="nc" id="L173">                                job.setStatus(JobStatus.Held);</span>
                             }
-<span class="nc" id="L173">                        } else {</span>
-<span class="nc" id="L174">                            jobsMap.put(task.getJobID(), new Job(task.getJobID(), task.getCommand(), JobStatus.Held));</span>
+<span class="nc" id="L175">                        } else {</span>
+<span class="nc" id="L176">                            jobsMap.put(task.getJobID(), new Job(task.getJobID(), task.getCommand(), JobStatus.Held));</span>
                         }
-<span class="nc" id="L176">                        break;</span>
+<span class="nc" id="L178">                        break;</span>
                     case CANCELLED_REPLICA:
                     case DELETED_REPLICA:
                         // ignore, there should be at least on another task
                         // for the same invocation
                         break;
                 }
-<span class="nc" id="L183">            }</span>
+<span class="nc" id="L185">            }</span>
 
-<span class="nc" id="L185">            return new ArrayList&lt;Job&gt;(jobsMap.values());</span>
+<span class="nc" id="L187">            return new ArrayList&lt;Job&gt;(jobsMap.values());</span>
 
-<span class="nc" id="L187">        } catch (DAOException ex) {</span>
-<span class="nc" id="L188">            throw new BusinessException(ex);</span>
+<span class="nc" id="L189">        } catch (DAOException ex) {</span>
+<span class="nc" id="L190">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -194,19 +196,19 @@ public class SimulationBusiness {
             throws BusinessException {
 
         try {
-<span class="nc" id="L197">            List&lt;Task&gt; list = getSimulationDAO(simulationID).getTasks(jobID);</span>
-<span class="nc bnc" id="L198" title="All 2 branches missed.">            for (Task task : list) {</span>
-<span class="nc" id="L199">                String[] params = task.getParameters();</span>
-<span class="nc bnc" id="L200" title="All 2 branches missed.">                for (int i = 0; i &lt; params.length; i++) {</span>
-<span class="nc" id="L201">                    params[i] = lfcPathsBusiness.parseRealDir(</span>
+<span class="nc" id="L199">            List&lt;Task&gt; list = getSimulationDAO(simulationID).getTasks(jobID);</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            for (Task task : list) {</span>
+<span class="nc" id="L201">                String[] params = task.getParameters();</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">                for (int i = 0; i &lt; params.length; i++) {</span>
+<span class="nc" id="L203">                    params[i] = lfcPathsBusiness.parseRealDir(</span>
                             params[i], currentUserFolder);
                 }
-<span class="nc" id="L204">                task.setParameters(params);</span>
-<span class="nc" id="L205">            }</span>
-<span class="nc" id="L206">            return list;</span>
+<span class="nc" id="L206">                task.setParameters(params);</span>
+<span class="nc" id="L207">            }</span>
+<span class="nc" id="L208">            return list;</span>
 
-<span class="nc" id="L208">        } catch (DataManagerException | DAOException ex) {</span>
-<span class="nc" id="L209">            throw new BusinessException(ex);</span>
+<span class="nc" id="L210">        } catch (DataManagerException | DAOException ex) {</span>
+<span class="nc" id="L211">            throw new BusinessException(ex);</span>
 
         }
     }
@@ -216,39 +218,39 @@ public class SimulationBusiness {
             throws BusinessException {
 
         try {
-<span class="nc" id="L219">            Task task = getSimulationDAO(simulationID).getTask(taskID);</span>
-<span class="nc" id="L220">            String folder = null;</span>
-<span class="nc" id="L221">            String extension = null;</span>
+<span class="nc" id="L221">            Task task = getSimulationDAO(simulationID).getTask(taskID);</span>
+<span class="nc" id="L222">            String folder = null;</span>
+<span class="nc" id="L223">            String extension = null;</span>
 
-<span class="nc bnc" id="L223" title="All 6 branches missed.">            switch (fileType) {</span>
+<span class="nc bnc" id="L225" title="All 6 branches missed.">            switch (fileType) {</span>
                 case OutputFile:
-<span class="nc" id="L225">                    folder = &quot;out&quot;;</span>
-<span class="nc" id="L226">                    extension = &quot;.sh.out&quot;;</span>
-<span class="nc" id="L227">                    break;</span>
+<span class="nc" id="L227">                    folder = &quot;out&quot;;</span>
+<span class="nc" id="L228">                    extension = &quot;.sh.out&quot;;</span>
+<span class="nc" id="L229">                    break;</span>
                 case ErrorFile:
-<span class="nc" id="L229">                    folder = &quot;err&quot;;</span>
-<span class="nc" id="L230">                    extension = &quot;.sh.err&quot;;</span>
-<span class="nc" id="L231">                    break;</span>
+<span class="nc" id="L231">                    folder = &quot;err&quot;;</span>
+<span class="nc" id="L232">                    extension = &quot;.sh.err&quot;;</span>
+<span class="nc" id="L233">                    break;</span>
                 case ApplicationOutputFile:
-<span class="nc" id="L233">                    folder = &quot;out&quot;;</span>
-<span class="nc" id="L234">                    extension = &quot;.sh.app.out&quot;;</span>
-<span class="nc" id="L235">                    break;</span>
+<span class="nc" id="L235">                    folder = &quot;out&quot;;</span>
+<span class="nc" id="L236">                    extension = &quot;.sh.app.out&quot;;</span>
+<span class="nc" id="L237">                    break;</span>
                 case ApplicationErrorFile:
-<span class="nc" id="L237">                    folder = &quot;err&quot;;</span>
-<span class="nc" id="L238">                    extension = &quot;.sh.app.err&quot;;</span>
-<span class="nc" id="L239">                    break;</span>
+<span class="nc" id="L239">                    folder = &quot;err&quot;;</span>
+<span class="nc" id="L240">                    extension = &quot;.sh.app.err&quot;;</span>
+<span class="nc" id="L241">                    break;</span>
                 case ScriptFile:
-<span class="nc" id="L241">                    folder = &quot;sh&quot;;</span>
-<span class="nc" id="L242">                    extension = &quot;.sh&quot;;</span>
+<span class="nc" id="L243">                    folder = &quot;sh&quot;;</span>
+<span class="nc" id="L244">                    extension = &quot;.sh&quot;;</span>
                 default:
             }
-<span class="nc" id="L245">            String[] result = new String[2];</span>
-<span class="nc" id="L246">            result[0] = &quot;/&quot; + simulationID + &quot;/&quot; + folder + &quot;/&quot; + task.getFileName() + extension;</span>
-<span class="nc" id="L247">            result[1] = readFile(simulationID, folder, task.getFileName(), extension);</span>
-<span class="nc" id="L248">            return result;</span>
+<span class="nc" id="L247">            String[] result = new String[2];</span>
+<span class="nc" id="L248">            result[0] = &quot;/&quot; + simulationID + &quot;/&quot; + folder + &quot;/&quot; + task.getFileName() + extension;</span>
+<span class="nc" id="L249">            result[1] = readFile(simulationID, folder, task.getFileName(), extension);</span>
+<span class="nc" id="L250">            return result;</span>
 
-<span class="nc" id="L250">        } catch (DAOException ex) {</span>
-<span class="nc" id="L251">            throw new BusinessException(ex);</span>
+<span class="nc" id="L252">        } catch (DAOException ex) {</span>
+<span class="nc" id="L253">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -256,20 +258,20 @@ public class SimulationBusiness {
             throws BusinessException {
 
         try {
-<span class="nc" id="L259">            getSimulationDAO(simulationID).sendTaskSignal(taskID, status);</span>
+<span class="nc" id="L261">            getSimulationDAO(simulationID).sendTaskSignal(taskID, status);</span>
 
-<span class="nc" id="L261">        } catch (DAOException ex) {</span>
-<span class="nc" id="L262">            throw new BusinessException(ex);</span>
-<span class="nc" id="L263">        }</span>
-<span class="nc" id="L264">    }</span>
+<span class="nc" id="L263">        } catch (DAOException ex) {</span>
+<span class="nc" id="L264">            throw new BusinessException(ex);</span>
+<span class="nc" id="L265">        }</span>
+<span class="nc" id="L266">    }</span>
 
     public List&lt;Task&gt; getJobsList(String simulationID) throws BusinessException {
 
         try {
-<span class="nc" id="L269">            return getSimulationDAO(simulationID).getJobs();</span>
+<span class="nc" id="L271">            return getSimulationDAO(simulationID).getJobs();</span>
 
-<span class="nc" id="L271">        } catch (DAOException ex) {</span>
-<span class="nc" id="L272">            throw new BusinessException(ex);</span>
+<span class="nc" id="L273">        } catch (DAOException ex) {</span>
+<span class="nc" id="L274">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -278,23 +280,35 @@ public class SimulationBusiness {
             throws BusinessException {
 
         try {
-<span class="nc" id="L281">            fileName += extension;</span>
-<span class="nc" id="L282">            Scanner scanner = new Scanner(new FileInputStream(server.getWorkflowsPath()</span>
+
+<span class="nc" id="L284">            String currentDir = Paths.get(&quot;&quot;).toAbsolutePath().toString();</span>
+<span class="nc" id="L285">            System.out.println(&quot;Chemin courant : &quot; + currentDir);</span>
+
+<span class="nc" id="L287">            Path currentPath = Paths.get(&quot;&quot;).toAbsolutePath();</span>
+<span class="nc" id="L288">            System.out.println(&quot;Chemin absolu courant : &quot; + currentPath);</span>
+
+<span class="nc" id="L290">            System.out.println(&quot;Liste des dossiers courants :&quot;);</span>
+<span class="nc bnc" id="L291" title="All 2 branches missed.">            for (Path directory : currentPath) {</span>
+<span class="nc" id="L292">                System.out.println(directory.getFileName());</span>
+<span class="nc" id="L293">            }</span>
+
+<span class="nc" id="L295">            fileName += extension;</span>
+<span class="nc" id="L296">            Scanner scanner = new Scanner(new FileInputStream(server.getWorkflowsPath()</span>
                     + &quot;/&quot; + simulationID + &quot;/&quot; + folder + &quot;/&quot; + fileName));
 
-<span class="nc" id="L285">            StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L299">            StringBuilder sb = new StringBuilder();</span>
 
-<span class="nc bnc" id="L287" title="All 2 branches missed.">            while (scanner.hasNext()) {</span>
-<span class="nc" id="L288">                sb.append(scanner.nextLine());</span>
-<span class="nc" id="L289">                sb.append(&quot;\n&quot;);</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">            while (scanner.hasNext()) {</span>
+<span class="nc" id="L302">                sb.append(scanner.nextLine());</span>
+<span class="nc" id="L303">                sb.append(&quot;\n&quot;);</span>
             }
 
-<span class="nc" id="L292">            scanner.close();</span>
-<span class="nc" id="L293">            return sb.toString();</span>
+<span class="nc" id="L306">            scanner.close();</span>
+<span class="nc" id="L307">            return sb.toString();</span>
 
-<span class="nc" id="L295">        } catch (IOException ex) {</span>
-<span class="nc" id="L296">            logger.error(&quot;Error reading Simulation {} file {}&quot;, simulationID, fileName, ex);</span>
-<span class="nc" id="L297">            throw new BusinessException(ex);</span>
+<span class="nc" id="L309">        } catch (IOException ex) {</span>
+<span class="nc" id="L310">            logger.error(&quot;Error reading Simulation {} file {}&quot;, simulationID, fileName, ex);</span>
+<span class="nc" id="L311">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -302,10 +316,10 @@ public class SimulationBusiness {
             String simulationID, int binSize) throws BusinessException {
 
         try {
-<span class="nc" id="L305">            return getSimulationDAO(simulationID).getExecutionPerNumberOfJobs(binSize);</span>
+<span class="nc" id="L319">            return getSimulationDAO(simulationID).getExecutionPerNumberOfJobs(binSize);</span>
 
-<span class="nc" id="L307">        } catch (DAOException ex) {</span>
-<span class="nc" id="L308">            throw new BusinessException(ex);</span>
+<span class="nc" id="L321">        } catch (DAOException ex) {</span>
+<span class="nc" id="L322">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -313,10 +327,10 @@ public class SimulationBusiness {
             String simulationID, int binSize) throws BusinessException {
 
         try {
-<span class="nc" id="L316">            return getSimulationDAO(simulationID).getDownloadPerNumberOfJobs(binSize);</span>
+<span class="nc" id="L330">            return getSimulationDAO(simulationID).getDownloadPerNumberOfJobs(binSize);</span>
 
-<span class="nc" id="L318">        } catch (DAOException ex) {</span>
-<span class="nc" id="L319">            throw new BusinessException(ex);</span>
+<span class="nc" id="L332">        } catch (DAOException ex) {</span>
+<span class="nc" id="L333">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -324,10 +338,10 @@ public class SimulationBusiness {
             String simulationID, int binSize) throws BusinessException {
 
         try {
-<span class="nc" id="L327">            return getSimulationDAO(simulationID).getUploadPerNumberOfJobs(binSize);</span>
+<span class="nc" id="L341">            return getSimulationDAO(simulationID).getUploadPerNumberOfJobs(binSize);</span>
 
-<span class="nc" id="L329">        } catch (DAOException ex) {</span>
-<span class="nc" id="L330">            throw new BusinessException(ex);</span>
+<span class="nc" id="L343">        } catch (DAOException ex) {</span>
+<span class="nc" id="L344">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -335,10 +349,10 @@ public class SimulationBusiness {
             String simulationID) throws BusinessException {
 
         try {
-<span class="nc" id="L338">            return getSimulationDAO(simulationID).getJobsPerTime();</span>
+<span class="nc" id="L352">            return getSimulationDAO(simulationID).getJobsPerTime();</span>
 
-<span class="nc" id="L340">        } catch (DAOException ex) {</span>
-<span class="nc" id="L341">            throw new BusinessException(ex);</span>
+<span class="nc" id="L354">        } catch (DAOException ex) {</span>
+<span class="nc" id="L355">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -346,20 +360,20 @@ public class SimulationBusiness {
             throws BusinessException {
 
         try {
-<span class="nc" id="L349">            return getSimulationDAO(simulationID).getCkptsPerJob();</span>
+<span class="nc" id="L363">            return getSimulationDAO(simulationID).getCkptsPerJob();</span>
 
-<span class="nc" id="L351">        } catch (DAOException ex) {</span>
-<span class="nc" id="L352">            throw new BusinessException(ex);</span>
+<span class="nc" id="L365">        } catch (DAOException ex) {</span>
+<span class="nc" id="L366">            throw new BusinessException(ex);</span>
         }
     }
 
     public List&lt;String&gt; getSiteHistogram(String simulationID)
             throws BusinessException {
         try {
-<span class="nc" id="L359">            return getSimulationDAO(simulationID).getSiteHistogram();</span>
+<span class="nc" id="L373">            return getSimulationDAO(simulationID).getSiteHistogram();</span>
 
-<span class="nc" id="L361">        } catch (DAOException ex) {</span>
-<span class="nc" id="L362">            throw new BusinessException(ex);</span>
+<span class="nc" id="L375">        } catch (DAOException ex) {</span>
+<span class="nc" id="L376">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -367,36 +381,36 @@ public class SimulationBusiness {
             throws BusinessException {
 
         try {
-<span class="nc" id="L370">            getSimulationDAO(simulationID).sendSignal(jobID, status);</span>
+<span class="nc" id="L384">            getSimulationDAO(simulationID).sendSignal(jobID, status);</span>
 
-<span class="nc" id="L372">        } catch (DAOException ex) {</span>
-<span class="nc" id="L373">            throw new BusinessException(ex);</span>
-<span class="nc" id="L374">        }</span>
-<span class="nc" id="L375">    }</span>
+<span class="nc" id="L386">        } catch (DAOException ex) {</span>
+<span class="nc" id="L387">            throw new BusinessException(ex);</span>
+<span class="nc" id="L388">        }</span>
+<span class="nc" id="L389">    }</span>
 
     public void sendSignal(
             String simulationID, List&lt;String&gt; jobIDs, TaskStatus status)
             throws BusinessException {
 
-<span class="nc bnc" id="L381" title="All 2 branches missed.">        for (String jobID : jobIDs) {</span>
-<span class="nc" id="L382">            sendSignal(simulationID, jobID, status);</span>
-<span class="nc" id="L383">        }</span>
-<span class="nc" id="L384">    }</span>
+<span class="nc bnc" id="L395" title="All 2 branches missed.">        for (String jobID : jobIDs) {</span>
+<span class="nc" id="L396">            sendSignal(simulationID, jobID, status);</span>
+<span class="nc" id="L397">        }</span>
+<span class="nc" id="L398">    }</span>
 
     public int[] getNumberOfActiveTasks(List&lt;Simulation&gt; simulations)
             throws BusinessException {
 
         try {
-<span class="nc" id="L390">            int[] tasks = new int[2];</span>
-<span class="nc bnc" id="L391" title="All 2 branches missed.">            for (Simulation simulation : simulations) {</span>
-<span class="nc" id="L392">                int[] t = getSimulationDAO(simulation.getID()).getNumberOfActiveTasks();</span>
-<span class="nc" id="L393">                tasks[0] += t[0];</span>
-<span class="nc" id="L394">                tasks[1] += t[1];</span>
-<span class="nc" id="L395">            }</span>
-<span class="nc" id="L396">            return tasks;</span>
+<span class="nc" id="L404">            int[] tasks = new int[2];</span>
+<span class="nc bnc" id="L405" title="All 2 branches missed.">            for (Simulation simulation : simulations) {</span>
+<span class="nc" id="L406">                int[] t = getSimulationDAO(simulation.getID()).getNumberOfActiveTasks();</span>
+<span class="nc" id="L407">                tasks[0] += t[0];</span>
+<span class="nc" id="L408">                tasks[1] += t[1];</span>
+<span class="nc" id="L409">            }</span>
+<span class="nc" id="L410">            return tasks;</span>
 
-<span class="nc" id="L398">        } catch (DAOException ex) {</span>
-<span class="nc" id="L399">            throw new BusinessException(ex);</span>
+<span class="nc" id="L412">        } catch (DAOException ex) {</span>
+<span class="nc" id="L413">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -404,10 +418,10 @@ public class SimulationBusiness {
             throws BusinessException {
 
         try {
-<span class="nc" id="L407">            return getExecutionNodeDAO(simulationID).getNode(siteName, nodeName);</span>
+<span class="nc" id="L421">            return getExecutionNodeDAO(simulationID).getNode(siteName, nodeName);</span>
 
-<span class="nc" id="L409">        } catch (DAOException ex) {</span>
-<span class="nc" id="L410">            throw new BusinessException(ex);</span>
+<span class="nc" id="L423">        } catch (DAOException ex) {</span>
+<span class="nc" id="L424">            throw new BusinessException(ex);</span>
         }
     }
 
@@ -415,10 +429,10 @@ public class SimulationBusiness {
             throws BusinessException {
 
         try {
-<span class="nc" id="L418">            return getSimulationDAO(simulationID).getNodeCountriesMap();</span>
+<span class="nc" id="L432">            return getSimulationDAO(simulationID).getNodeCountriesMap();</span>
 
-<span class="nc" id="L420">        } catch (DAOException ex) {</span>
-<span class="nc" id="L421">            throw new BusinessException(ex);</span>
+<span class="nc" id="L434">        } catch (DAOException ex) {</span>
+<span class="nc" id="L435">            throw new BusinessException(ex);</span>
         }
     }
 }

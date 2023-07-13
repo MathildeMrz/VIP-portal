@@ -41,6 +41,8 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -71,7 +73,7 @@ public class PlatformControllerIT extends BaseWebSpringIT {
     @Test
     public void testPlatformProperties() throws Exception {
         // the test properties are set in BaseVIPSpringIT (with @TestPropertySource)
-        mockMvc.perform(get("/rest/platform"))
+        ResultActions resultActions = mockMvc.perform(get("/rest/platform"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -102,6 +104,10 @@ public class PlatformControllerIT extends BaseWebSpringIT {
                                 jsonCorrespondsToErrorCodeAndMessage(ApiError.NOT_ALLOWED_TO_USE_APPLICATION),
                                 jsonCorrespondsToErrorCodeAndMessage(ApplicationError.USER_MAX_EXECS),
                                 jsonCorrespondsToErrorCodeAndMessage(8002, "The error message for 'bad credentials' cannot be known in advance"))));
+
+        MvcResult result = resultActions.andReturn();
+        String responseContent = result.getResponse().getContentAsString();
+        System.out.println("Response: " + responseContent);
 
     }
 

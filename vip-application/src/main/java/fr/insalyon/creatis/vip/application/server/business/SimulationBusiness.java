@@ -278,6 +278,7 @@ public class SimulationBusiness {
             throws BusinessException {
 
         try {
+
             fileName += extension;
             Scanner scanner = new Scanner(new FileInputStream(server.getWorkflowsPath()
                     + "/" + simulationID + "/" + folder + "/" + fileName));
