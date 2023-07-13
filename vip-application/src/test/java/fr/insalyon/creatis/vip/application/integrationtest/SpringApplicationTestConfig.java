@@ -61,13 +61,8 @@ public class SpringApplicationTestConfig {
     }
 
     @Bean
-    @Primary
+    //@Primary
     public UserDAO getTestUserDAO() {return Mockito.mock(UserDAO.class);}
-    /*@Bean
-    @Primary
-    public TransferPoolBusiness getTransferPoolBusiness() {
-        return Mockito.mock(TransferPoolBusiness.class);
-    }*/
 
     @Bean
     @Primary
@@ -80,7 +75,7 @@ public class SpringApplicationTestConfig {
     public StatsDAO getTestStatsDAO() {return Mockito.mock(StatsDAO.class);}
 
     @Bean
-    @Primary
+    //@Primary
     public ApplicationDAO getTestApplicationDAO() {
         return Mockito.mock(ApplicationDAO.class);
     }
@@ -92,13 +87,13 @@ public class SpringApplicationTestConfig {
     }
 
     @Bean
-    @Primary
+    //@Primary
     public GroupDAO getTestGroupDAO() {
         return Mockito.mock(GroupDAO.class);
     }
 
     @Bean
-    @Primary
+    //@Primary
     public ClassDAO getTestClassDAO() {
         return Mockito.mock(ClassDAO.class);
     }
