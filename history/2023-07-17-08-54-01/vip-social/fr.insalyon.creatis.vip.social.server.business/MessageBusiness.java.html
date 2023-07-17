@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MessageBusiness.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-social</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.social.server.business</a> &gt; <span class="el_source">MessageBusiness.java</span></div><h1>MessageBusiness.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.social.server.business;
+
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
+import fr.insalyon.creatis.vip.core.server.business.EmailBusiness;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import fr.insalyon.creatis.vip.core.server.dao.UsersGroupsDAO;
+import fr.insalyon.creatis.vip.social.client.SocialConstants;
+import fr.insalyon.creatis.vip.social.client.bean.GroupMessage;
+import fr.insalyon.creatis.vip.social.client.bean.Message;
+import fr.insalyon.creatis.vip.social.server.dao.GroupMessageDAO;
+import fr.insalyon.creatis.vip.social.server.dao.MessageDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+@Service
+@Transactional
+public class MessageBusiness {
+
+    private MessageDAO messageDAO;
+    private GroupMessageDAO groupMessageDAO;
+    private UsersGroupsDAO usersGroupsDAO;
+    private ConfigurationBusiness configurationBusiness;
+    private EmailBusiness emailBusiness;
+
+    @Autowired
+    public MessageBusiness(
+            MessageDAO messageDAO, GroupMessageDAO groupMessageDAO,
+<span class="fc" id="L71">            UsersGroupsDAO usersGroupsDAO, ConfigurationBusiness configurationBusiness, EmailBusiness emailBusiness) {</span>
+<span class="fc" id="L72">        this.messageDAO = messageDAO;</span>
+<span class="fc" id="L73">        this.groupMessageDAO = groupMessageDAO;</span>
+<span class="fc" id="L74">        this.usersGroupsDAO = usersGroupsDAO;</span>
+<span class="fc" id="L75">        this.configurationBusiness = configurationBusiness;</span>
+<span class="fc" id="L76">        this.emailBusiness = emailBusiness;</span>
+<span class="fc" id="L77">    }</span>
+
+    public List&lt;Message&gt; getMessagesByUser(String email, Date startDate)
+            throws BusinessException {
+
+        try {
+<span class="fc" id="L83">            return messageDAO.getMessagesByUser(</span>
+                    email, SocialConstants.MESSAGE_MAX_DISPLAY, startDate);
+<span class="nc" id="L85">        } catch (DAOException ex) {</span>
+<span class="nc" id="L86">            throw new BusinessException(ex);</span>
+        }
+    }
+
+    public List&lt;Message&gt; getSentMessagesByUser(String email, Date startDate)
+            throws BusinessException {
+
+        try {
+<span class="fc" id="L94">            return messageDAO.getSentMessagesByUser(</span>
+                    email, SocialConstants.MESSAGE_MAX_DISPLAY, startDate);
+<span class="nc" id="L96">        } catch (DAOException ex) {</span>
+<span class="nc" id="L97">            throw new BusinessException(ex);</span>
+        }
+    }
+
+    public List&lt;GroupMessage&gt; getGroupMessages(String groupName, Date startDate)
+            throws BusinessException {
+
+        try {
+<span class="fc" id="L105">            return groupMessageDAO.getMessageByGroup(</span>
+                    groupName, SocialConstants.MESSAGE_MAX_DISPLAY, startDate);
+
+<span class="nc" id="L108">        } catch (DAOException ex) {</span>
+<span class="nc" id="L109">            throw new BusinessException(ex);</span>
+        }
+    }
+
+    public void markAsRead(long id, String receiver) throws BusinessException {
+        try {
+<span class="fc" id="L115">            messageDAO.markAsRead(id, receiver);</span>
+<span class="nc" id="L116">        } catch (DAOException ex) {</span>
+<span class="nc" id="L117">            throw new BusinessException(ex);</span>
+<span class="fc" id="L118">        }</span>
+<span class="fc" id="L119">    }</span>
+
+    public void remove(long id) throws BusinessException {
+        try {
+<span class="fc" id="L123">            messageDAO.remove(id);</span>
+<span class="nc" id="L124">        } catch (DAOException ex) {</span>
+<span class="nc" id="L125">            throw new BusinessException(ex);</span>
+<span class="fc" id="L126">        }</span>
+<span class="fc" id="L127">    }</span>
+
+    public void removeByReceiver(long id, String receiver) throws BusinessException {
+        try {
+<span class="fc" id="L131">            messageDAO.removeByReceiver(id, receiver);</span>
+<span class="nc" id="L132">        } catch (DAOException ex) {</span>
+<span class="nc" id="L133">            throw new BusinessException(ex);</span>
+<span class="fc" id="L134">        }</span>
+<span class="fc" id="L135">    }</span>
+
+    public void removeGroupMessage(long id) throws BusinessException {
+        try {
+<span class="fc" id="L139">            groupMessageDAO.remove(id);</span>
+<span class="nc" id="L140">        } catch (DAOException ex) {</span>
+<span class="nc" id="L141">            throw new BusinessException(ex);</span>
+<span class="fc" id="L142">        }</span>
+<span class="fc" id="L143">    }</span>
+
+    public void sendMessage(
+            User user, String[] recipients, String subject, String message)
+            throws BusinessException {
+
+        try {
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            if (recipients[0].equals(&quot;All&quot;)) {</span>
+<span class="fc" id="L151">                List&lt;String&gt; users = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                for (User u : configurationBusiness.getUsers()) {</span>
+                    // Dont send mail to locked users
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">                    if (!u.isAccountLocked()) {</span>
+<span class="fc" id="L155">                        users.add(u.getEmail());</span>
+                    }
+<span class="fc" id="L157">                }</span>
+<span class="fc" id="L158">                recipients = users.toArray(new String[]{});</span>
+            }
+
+<span class="fc" id="L161">            long messageId = messageDAO.add(user.getEmail(), subject, message);</span>
+
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            for (String recipient : recipients) {</span>
+<span class="fc" id="L164">                messageDAO.associateMessageToUser(recipient, messageId);</span>
+            }
+
+<span class="fc" id="L167">            String emailContent = &quot;&lt;html&gt;&quot;</span>
+                    + &quot;&lt;head&gt;&lt;/head&gt;&quot;
+                    + &quot;&lt;body&gt;&quot;
+                    + &quot;&lt;p&gt;Hello,&lt;/p&gt;&quot;
+<span class="fc" id="L171">                    + &quot;&lt;p&gt;&lt;b&gt;&quot; + user.getFullName() + &quot;&lt;/b&gt; sent you a message on VIP:&lt;/p&gt;&quot;</span>
+                    + &quot;&lt;div style=\&quot;background-color: #F2F2F2\&quot;&gt;&quot;
+                    + &quot;&lt;br /&gt;&lt;b&gt;Subject:&lt;/b&gt; &quot; + subject + &quot;&lt;br /&gt;&quot;
+                    + &quot;&lt;em&gt;&quot; + message + &quot;&lt;/em&gt;&lt;br /&gt;&lt;/div&gt;&quot;
+                    + &quot;&lt;p&gt;Best Regards,&lt;/p&gt;&quot;
+                    + &quot;&lt;p&gt;VIP Team&lt;/p&gt;&quot;
+                    + &quot;&lt;/body&gt;&quot;
+                    + &quot;&lt;/html&gt;&quot;;
+
+<span class="fc bfc" id="L180" title="All 2 branches covered.">            for (String email : recipients) {</span>
+<span class="fc" id="L181">                emailBusiness.sendEmail(&quot;VIP Message: &quot; + subject + &quot; (&quot; + user.getFullName() + &quot;)&quot;,</span>
+<span class="fc" id="L182">                        emailContent, new String[]{email}, true, user.getEmail());</span>
+            }
+<span class="fc" id="L184">        } catch (DAOException ex) {</span>
+<span class="fc" id="L185">            throw new BusinessException(ex);</span>
+<span class="fc" id="L186">        }</span>
+<span class="fc" id="L187">    }</span>
+
+    public void copyMessageToVipSupport(
+            User sender, String[] recipients, String subject, String message)
+            throws BusinessException {
+
+        try {
+<span class="fc" id="L194">            String emailContent = &quot;&lt;html&gt;&quot;</span>
+                    + &quot;&lt;head&gt;&lt;/head&gt;&quot;
+                    + &quot;&lt;body&gt;&quot;
+<span class="fc" id="L197">                    + &quot;&lt;p&gt;&lt;b&gt;&quot; + sender.getFullName() + &quot;&lt;/b&gt; sent a message to &lt;b&gt;&quot;</span>
+<span class="fc" id="L198">                    + Arrays.asList(recipients) + &quot;&lt;/b&gt; on VIP:&lt;/p&gt;&quot;</span>
+                    + &quot;&lt;div style=\&quot;background-color: #F2F2F2\&quot;&gt;&quot;
+                    + &quot;&lt;br /&gt;&lt;b&gt;Subject:&lt;/b&gt; &quot; + subject + &quot;&lt;br /&gt;&quot;
+                    + &quot;&lt;em&gt;&quot; + message + &quot;&lt;/em&gt;&lt;br /&gt;&lt;/div&gt;&quot;
+                    + &quot;&lt;/body&gt;&quot;
+                    + &quot;&lt;/html&gt;&quot;;
+
+            // if there is only one receiver, name it in subject, otherwise name the sender
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">            String subjectInfo = recipients.length == 1 ?</span>
+<span class="pc" id="L207">                    &quot;to &quot; + recipients[0] : &quot;from &quot; + sender.getFullName();</span>
+
+<span class="fc bfc" id="L209" title="All 2 branches covered.">            for (User u : usersGroupsDAO.getUsersFromGroup(CoreConstants.GROUP_SUPPORT)) {</span>
+<span class="fc" id="L210">                emailBusiness.sendEmail(</span>
+                        &quot;[VIP Support Copy] &quot; + subject + &quot;(&quot; + subjectInfo + &quot;)&quot;,
+                        emailContent,
+<span class="fc" id="L213">                        new String[]{u.getEmail()}, true, sender.getEmail());</span>
+<span class="fc" id="L214">            }</span>
+<span class="nc" id="L215">        } catch (DAOException ex) {</span>
+<span class="nc" id="L216">            throw new BusinessException(ex);</span>
+<span class="fc" id="L217">        }</span>
+<span class="fc" id="L218">    }</span>
+
+    public void sendMessageToVipSupport(
+            User user, String subject, String message, List&lt;String&gt; workflowIDs,
+            List&lt;String&gt; simulationNames) throws BusinessException {
+
+        try {
+<span class="fc" id="L225">            String emailContent = &quot;&lt;html&gt;&quot;</span>
+                    + &quot;&lt;head&gt;&lt;/head&gt;&quot;
+                    + &quot;&lt;body&gt;&quot;
+<span class="fc" id="L228">                    + &quot;&lt;p&gt;&lt;b&gt;&quot; + user.getFullName() + &quot;&lt;/b&gt; sent you a message on VIP:&lt;/p&gt;&quot;</span>
+                    + &quot;&lt;div style=\&quot;background-color: #F2F2F2\&quot;&gt;&quot;
+                    + &quot;&lt;br /&gt;&lt;b&gt;Subject:&lt;/b&gt; &quot; + subject + &quot;&lt;br /&gt;&quot;
+                    + &quot;&lt;em&gt;&quot; + message + &quot;&lt;/em&gt;&lt;br /&gt;&lt;/div&gt;&quot;
+                    + &quot;&lt;p&gt;Workflow ID &quot; + workflowIDs + &quot;&lt;/p&gt;&quot;
+                    + &quot;&lt;p&gt;Simulation Name &quot; + simulationNames + &quot;&lt;/p&gt;&quot;
+                    + &quot;&lt;/body&gt;&quot;
+                    + &quot;&lt;/html&gt;&quot;;
+
+<span class="fc bfc" id="L237" title="All 2 branches covered.">            for (User u : usersGroupsDAO.getUsersFromGroup(CoreConstants.GROUP_SUPPORT)) {</span>
+<span class="fc" id="L238">                emailBusiness.sendEmail(</span>
+<span class="fc" id="L239">                        &quot;[VIP Contact] &quot; + subject + &quot; (&quot; + user.getFullName() + &quot;)&quot;,</span>
+                        emailContent,
+<span class="fc" id="L241">                        new String[]{u.getEmail()}, true, user.getEmail());</span>
+<span class="fc" id="L242">            }</span>
+<span class="nc" id="L243">        } catch (DAOException ex) {</span>
+<span class="nc" id="L244">            throw new BusinessException(ex);</span>
+<span class="fc" id="L245">        }</span>
+<span class="fc" id="L246">    }</span>
+
+    public void sendGroupMessage(
+            User user, String groupName, List&lt;User&gt; users, String subject,
+            String message) throws BusinessException {
+
+        try {
+<span class="fc" id="L253">            groupMessageDAO.add(user.getEmail(), groupName, subject, message);</span>
+
+<span class="fc" id="L255">            String emailContent = &quot;&lt;html&gt;&quot;</span>
+                    + &quot;&lt;head&gt;&lt;/head&gt;&quot;
+                    + &quot;&lt;body&gt;&quot;
+                    + &quot;&lt;p&gt;Hello,&lt;/p&gt;&quot;
+<span class="fc" id="L259">                    + &quot;&lt;p&gt;&lt;b&gt;&quot; + user.getFullName() + &quot;&lt;/b&gt; sent a message to &quot;</span>
+                    + &quot;the group '&quot; + groupName + &quot;' on VIP:&lt;/p&gt;&quot;
+                    + &quot;&lt;p style=\&quot;background-color: #F2F2F2\&quot;&gt;&lt;br /&gt;&quot;
+                    + &quot;&lt;b&gt;Subject:&lt;/b&gt; &quot; + subject + &quot;&lt;br /&gt;&quot;
+                    + &quot;&lt;em&gt;&quot; + message + &quot;&lt;/em&gt;&lt;br /&gt;&lt;/p&gt;&quot;
+                    + &quot;&lt;p&gt;Best Regards,&lt;/p&gt;&quot;
+                    + &quot;&lt;p&gt;VIP Team&lt;/p&gt;&quot;
+                    + &quot;&lt;/body&gt;&quot;
+                    + &quot;&lt;/html&gt;&quot;;
+
+<span class="fc bfc" id="L269" title="All 2 branches covered.">            for (User u : users) {</span>
+                // Dont send mail to locked users and to itself
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">                if (!u.isAccountLocked() &amp;&amp;</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">                        !u.getEmail().equals(user.getEmail())) {</span>
+<span class="fc" id="L273">                    emailBusiness.sendEmail(&quot;VIP Message: &quot; + subject + &quot; (&quot; + groupName + &quot;)&quot;,</span>
+<span class="fc" id="L274">                            emailContent, new String[]{u.getEmail()}, true, user.getEmail());</span>
+                }
+<span class="fc" id="L276">            }</span>
+<span class="fc" id="L277">        } catch (DAOException ex) {</span>
+<span class="fc" id="L278">            throw new BusinessException(ex);</span>
+<span class="fc" id="L279">        }</span>
+<span class="fc" id="L280">    }</span>
+
+    public int verifyMessages(String email) throws BusinessException {
+
+        try {
+<span class="fc" id="L285">            return messageDAO.verifyMessages(email);</span>
+<span class="nc" id="L286">        } catch (DAOException ex) {</span>
+<span class="nc" id="L287">            throw new BusinessException(ex);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
