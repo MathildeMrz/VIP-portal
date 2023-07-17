@@ -41,11 +41,7 @@ import java.util.Date;
 public class PoolOperation implements IsSerializable {
 
     private String id;
-
-    ;
     private Date registration;
-
-    ;
     private String parsedRegistration;
     private String source;
     private String dest;

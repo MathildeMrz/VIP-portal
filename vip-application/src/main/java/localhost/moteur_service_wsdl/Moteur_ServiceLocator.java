@@ -58,11 +58,11 @@ public class Moteur_ServiceLocator extends org.apache.axis.client.Service implem
         moteur_service_address = address;
     }
 
-    public java.lang.String getmoteur_serviceAddress() {
+    public String getmoteur_serviceAddress() {
         return moteur_service_address;
     }
 
-    public java.lang.String getmoteur_serviceWSDDServiceName() {
+    public String getmoteur_serviceWSDDServiceName() {
         return moteur_serviceWSDDServiceName;
     }
 

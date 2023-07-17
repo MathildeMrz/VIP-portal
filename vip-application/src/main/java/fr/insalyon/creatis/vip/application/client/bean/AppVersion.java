@@ -44,7 +44,7 @@ public class AppVersion implements IsSerializable {
     private String jsonLfn;
     private String doi;
     private boolean visible;
-    ;
+
     private boolean boutiquesForm;
 
     public AppVersion() {

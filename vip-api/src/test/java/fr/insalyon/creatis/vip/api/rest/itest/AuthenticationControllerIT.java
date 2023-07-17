@@ -88,7 +88,6 @@ public class AuthenticationControllerIT extends BaseWebSpringIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.errorCode")
                         .value(ApiError.INPUT_FIELD_NOT_VALID.getCode()));
-        ;
     }
 
 }

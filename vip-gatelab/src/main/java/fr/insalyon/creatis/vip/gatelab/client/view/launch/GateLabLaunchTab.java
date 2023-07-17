@@ -196,7 +196,6 @@ public class GateLabLaunchTab extends LaunchTab {
                 Collections.sort(releases);
                 updateGateReleaseInput(releaseInput, extensions, releases);
                 doNextStep.run();
-                ;
             }
         };
         service.listDir(releaseDir, true, callback);

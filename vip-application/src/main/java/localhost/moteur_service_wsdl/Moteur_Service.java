@@ -36,7 +36,7 @@ public interface Moteur_Service extends javax.xml.rpc.Service {
     /**
      * gSOAP 2.7.13 generated service definition
      */
-    public java.lang.String getmoteur_serviceAddress();
+    public String getmoteur_serviceAddress();
 
     public localhost.moteur_service_wsdl.Moteur_servicePortType getmoteur_service() throws javax.xml.rpc.ServiceException;
 

@@ -148,7 +148,7 @@ public class Moteur_BindingStub extends org.apache.axis.client.Stub implements l
         }
     }
 
-    public java.lang.String workflowSubmit(java.lang.String scuflDocument, java.lang.String inputDocument, java.lang.String proxy, java.lang.String settings) throws java.rmi.RemoteException {
+    public String workflowSubmit(java.lang.String scuflDocument, java.lang.String inputDocument, java.lang.String proxy, java.lang.String settings) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -240,7 +240,7 @@ public class Moteur_BindingStub extends org.apache.axis.client.Stub implements l
         }
     }
 
-    public java.lang.String getVersion() throws java.rmi.RemoteException {
+    public String getVersion() throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }

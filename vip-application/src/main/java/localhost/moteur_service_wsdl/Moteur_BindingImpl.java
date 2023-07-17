@@ -35,14 +35,14 @@ import java.rmi.RemoteException;
 
 public class Moteur_BindingImpl implements localhost.moteur_service_wsdl.Moteur_servicePortType {
 
-    public java.lang.String workflowSubmit(java.lang.String scuflDocument, java.lang.String inputDocument, java.lang.String proxy, java.lang.String settings) throws java.rmi.RemoteException {
+    public String workflowSubmit(java.lang.String scuflDocument, java.lang.String inputDocument, java.lang.String proxy, java.lang.String settings) throws java.rmi.RemoteException {
         return null;
     }
 
     public void killWorkflow(java.lang.String workflowID) throws java.rmi.RemoteException {
     }
 
-    public java.lang.String getVersion() throws java.rmi.RemoteException {
+    public String getVersion() throws java.rmi.RemoteException {
         return null;
     }
 
