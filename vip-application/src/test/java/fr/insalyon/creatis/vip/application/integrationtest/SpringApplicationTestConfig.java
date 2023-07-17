@@ -8,14 +8,10 @@ import fr.insalyon.creatis.vip.core.server.dao.GroupDAO;
 import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
 import fr.insalyon.creatis.vip.core.server.dao.UsersGroupsDAO;
 import fr.insalyon.creatis.vip.datamanager.server.business.DataManagerBusiness;
-import fr.insalyon.creatis.vip.datamanager.server.business.LFCBusiness;
-import fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness;
-import fr.insalyon.creatis.vip.datamanager.server.business.TransferPoolBusiness;
 import org.hibernate.SessionFactory;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 /*
@@ -52,7 +48,9 @@ public class SpringApplicationTestConfig {
 
     @Bean
     //@Primary
-    public OutputDAO mockOutputDAO() {return Mockito.mock(OutputDAO.class);}
+    public OutputDAO mockOutputDAO() {
+        return Mockito.mock(OutputDAO.class);
+    }
 
     @Bean
     //@Primary
@@ -62,7 +60,9 @@ public class SpringApplicationTestConfig {
 
     @Bean
     //@Primary
-    public UserDAO mockUserDAO() {return Mockito.mock(UserDAO.class);}
+    public UserDAO mockUserDAO() {
+        return Mockito.mock(UserDAO.class);
+    }
 
     @Bean
     //@Primary
@@ -72,7 +72,9 @@ public class SpringApplicationTestConfig {
 
     @Bean
     //@Primary
-    public StatsDAO mockStatsDAO() {return Mockito.mock(StatsDAO.class);}
+    public StatsDAO mockStatsDAO() {
+        return Mockito.mock(StatsDAO.class);
+    }
 
     @Bean
     //@Primary

@@ -81,18 +81,18 @@ public class ApiException extends VipException {
         static private String GENERIC_ERROR_MESSAGE = "An error has been encountered on the VIP API";
 
         static {
-            addMessage(ApiError.GENERIC_API_ERROR, GENERIC_ERROR_MESSAGE, 0);
-            addMessage(ApiError.NOT_IMPLEMENTED, "The {} method is not implemented in the VIP API", 1);
-            addMessage(ApiError.INVALID_PIPELINE_IDENTIFIER, "The {} pipeline identifier is not valid", 1);
-            addMessage(ApiError.APPLICATION_NOT_FOUND, "The {} application does not exists", 1);
-            addMessage(ApiError.PIPELINE_NOT_FOUND, "The {} pipeline does not exists or cannot be used", 1);
-            addMessage(ApiError.NOT_ALLOWED_TO_USE_APPLICATION, "Not allowed to access application {}", 1);
-            addMessage(ApiError.INPUT_FIELD_NOT_VALID, "Input field '{}' is not valid. Cause : {}", 2);
-            addMessage(ApiError.WRONG_DATE_FORMAT, "The date {} have a wrong format (needed : {})", 2);
-            addMessage(ApiError.WRONG_STAT_SERVICE, "The service {} is unknown, only 'vip' is possible", 1);
-            addMessage(ApiError.COUNTRY_UNKNOWN, "Country unknown : {}", 1);
-            addMessage(ApiError.UNAUTHORIZED_DATA_ACCESS, "Unauthorized data access to : {}", 1);
-            addMessage(ApiError.WRONG_OIDC_LOGIN, "The login process encountered an error", 0);
+            addMessage(GENERIC_API_ERROR, GENERIC_ERROR_MESSAGE, 0);
+            addMessage(NOT_IMPLEMENTED, "The {} method is not implemented in the VIP API", 1);
+            addMessage(INVALID_PIPELINE_IDENTIFIER, "The {} pipeline identifier is not valid", 1);
+            addMessage(APPLICATION_NOT_FOUND, "The {} application does not exists", 1);
+            addMessage(PIPELINE_NOT_FOUND, "The {} pipeline does not exists or cannot be used", 1);
+            addMessage(NOT_ALLOWED_TO_USE_APPLICATION, "Not allowed to access application {}", 1);
+            addMessage(INPUT_FIELD_NOT_VALID, "Input field '{}' is not valid. Cause : {}", 2);
+            addMessage(WRONG_DATE_FORMAT, "The date {} have a wrong format (needed : {})", 2);
+            addMessage(WRONG_STAT_SERVICE, "The service {} is unknown, only 'vip' is possible", 1);
+            addMessage(COUNTRY_UNKNOWN, "Country unknown : {}", 1);
+            addMessage(UNAUTHORIZED_DATA_ACCESS, "Unauthorized data access to : {}", 1);
+            addMessage(WRONG_OIDC_LOGIN, "The login process encountered an error", 0);
         }
 
         private Integer code;

@@ -8,7 +8,6 @@ import fr.insalyon.creatis.vip.publication.server.business.PublicationBusiness;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -33,13 +33,8 @@ package fr.insalyon.creatis.vip.api.rest.itest.processing;
 
 import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
-import fr.insalyon.creatis.vip.application.client.bean.AppClass;
-import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
-import fr.insalyon.creatis.vip.application.client.bean.Application;
-import fr.insalyon.creatis.vip.application.client.bean.Engine;
 import fr.insalyon.creatis.vip.application.server.dao.ApplicationDAO;
 import fr.insalyon.creatis.vip.application.server.dao.ClassDAO;
-import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.datamanager.server.business.DataManagerBusiness;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,18 +44,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import static fr.insalyon.creatis.vip.api.data.AppVersionTestUtils.*;
 import static fr.insalyon.creatis.vip.api.data.ApplicationTestUtils.*;
-import static fr.insalyon.creatis.vip.api.data.ClassesTestUtils.class1;
-import static fr.insalyon.creatis.vip.api.data.ClassesTestUtils.class2;
 import static fr.insalyon.creatis.vip.api.data.PipelineTestUtils.*;
 import static fr.insalyon.creatis.vip.api.data.UserTestUtils.baseUser1;
 import static fr.insalyon.creatis.vip.api.rest.mockconfig.ApplicationsConfigurator.configureAnApplication;
-import static fr.insalyon.creatis.vip.api.rest.mockconfig.ApplicationsConfigurator.configureApplications;
 import static fr.insalyon.creatis.vip.application.client.view.ApplicationException.ApplicationError.WRONG_APPLICATION_DESCRIPTOR;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
@@ -97,16 +85,14 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void pipelineMethodShouldBeSecured() throws Exception
-    {
+    public void pipelineMethodShouldBeSecured() throws Exception {
         mockMvc.perform(get("/rest/pipelines"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void shouldReturnErrorOnBusinessException() throws Exception
-    {
+    public void shouldReturnErrorOnBusinessException() throws Exception {
         when(classDAO.getUserClasses(eq(baseUser1.getEmail()), anyBoolean()))
                 .thenAnswer(invocation -> {
                     throw new BusinessException("test exception");
@@ -120,8 +106,7 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldReturnErrorOnUnexpectedException() throws Exception
-    {
+    public void shouldReturnErrorOnUnexpectedException() throws Exception {
         when(classDAO.getUserClasses(eq(baseUser1.getEmail()), anyBoolean()))
                 .thenAnswer(invocation -> {
                     throw new RuntimeException("test exception");
@@ -135,8 +120,7 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldReturnErrorOnAPIException() throws Exception
-    {
+    public void shouldReturnErrorOnAPIException() throws Exception {
         mockMvc.perform(get("/rest/pipelines/WRONG_APP").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -145,8 +129,7 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldReturnErrorOnConfiguredVipException() throws Exception
-    {
+    public void shouldReturnErrorOnConfiguredVipException() throws Exception {
         /*configureApplications(this, baseUser1, Arrays.asList(class1, class2),
                 app2, version42);*/
 
@@ -165,8 +148,7 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void userGetAPipelineWithPathParameterNonEncoded() throws Exception
-    {
+    public void userGetAPipelineWithPathParameterNonEncoded() throws Exception {
         /*configureApplications(this, baseUser1, Arrays.asList(class1, class2),
                 app2, version42);*/
 
@@ -179,8 +161,7 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldReturnPipelines() throws Exception
-    {
+    public void shouldReturnPipelines() throws Exception {
         /*configureApplications(this, baseUser1, Arrays.asList(class1, class2),
                 app1, version42, version43,
                 app2, version01,
@@ -200,8 +181,7 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void userGetAPipelineWithQueryParameter() throws Exception
-    {
+    public void userGetAPipelineWithQueryParameter() throws Exception {
         /*configureApplications(this, baseUser1, Arrays.asList(class1, class2),
                 app2, version42);*/
 

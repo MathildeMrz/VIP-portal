@@ -65,16 +65,14 @@ public class DefaultSpringConfigurationIT {
     private EgiController egiController;
 
     @BeforeAll
-    public static void setup() throws Exception
-    {
+    public static void setup() throws Exception {
         String fakeHomePath = Paths.get(ClassLoader.getSystemResource("TestHome").toURI())
                 .toAbsolutePath().toString();
         BaseWebSpringIT.setEnv(Collections.singletonMap("HOME", fakeHomePath));
     }
 
     @Test
-    public void propertiesShouldBePresent() throws ApiException
-    {
+    public void propertiesShouldBePresent() throws ApiException {
         // test that the platform properties generation does not throw any exception
         Assert.notNull(platformController.getPlatformProperties(), "platform properties should be present");
     }
@@ -82,14 +80,14 @@ public class DefaultSpringConfigurationIT {
     // Need to override vipConfigurer that operate on the database
     //@Configuration
     //@Import(SpringWebConfig.class)
-    static class TestConfig
-    {
+    static class TestConfig {
         @Bean
         public VipConfigurer vipConfigurer() {
             VipConfigurer mock = Mockito.mock(VipConfigurer.class);
             Mockito.when(mock.preHandle(any(), any(), any())).thenReturn(true);
             return mock;
         }
+
         @Bean
         public WorkflowBusiness workflowBusiness() {
             return Mockito.mock(WorkflowBusiness.class);

@@ -34,8 +34,6 @@ package fr.insalyon.creatis.vip.api.rest.itest;
 import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.api.tools.spring.ApikeyRequestPostProcessor;
-import fr.insalyon.creatis.vip.core.server.business.BusinessException;
-import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -44,9 +42,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
-
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 
 import static fr.insalyon.creatis.vip.api.data.UserTestUtils.baseUser1;
 import static fr.insalyon.creatis.vip.api.data.UserTestUtils.baseUser1Password;
@@ -73,16 +68,14 @@ public class SpringAuthenticationIT extends BaseWebSpringIT {
     UserDAO userDAO;
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
         Mockito.reset(userDAO);
         when(userDAO.getUserByApikey(eq("apikeyvalue"))).thenReturn(baseUser1);
     }
 
     @Test
-    public void authenticationOK() throws Exception
-    {
+    public void authenticationOK() throws Exception {
         mockMvc.perform(get("/rest/wrongUrl")
                         .with(ApikeyRequestPostProcessor.apikey("testapikey", "apikeyvalue")))
                 .andDo(print())
@@ -90,8 +83,7 @@ public class SpringAuthenticationIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void authenticationWithCoreKo() throws Exception
-    {
+    public void authenticationWithCoreKo() throws Exception {
         when(userDAO.getUserByApikey("apikeyvalue"))
                 .thenThrow(new RuntimeException("hey hey"));
 
@@ -105,8 +97,7 @@ public class SpringAuthenticationIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void authenticationWithBasicShouldBeKo() throws Exception
-    {
+    public void authenticationWithBasicShouldBeKo() throws Exception {
         mockMvc.perform(get("/rest/wrongUrl")
                         .with(httpBasic(baseUser1.getEmail(), baseUser1Password)))
                 .andDo(print())
@@ -118,8 +109,7 @@ public class SpringAuthenticationIT extends BaseWebSpringIT {
 
     // authException instanceof InsufficientAuthenticationException not BAD_CREDENTIALS
     @Test
-    public void authenticationWithWrongApikey() throws Exception
-    {
+    public void authenticationWithWrongApikey() throws Exception {
         mockMvc.perform(get("/rest/wrongUrl")
                         .with(ApikeyRequestPostProcessor.apikey("testapikey", "WRONG")))
                 .andDo(print())
@@ -130,8 +120,7 @@ public class SpringAuthenticationIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void authenticationWithoutCredentials() throws Exception
-    {
+    public void authenticationWithoutCredentials() throws Exception {
         mockMvc.perform(get("/rest/wrongUrl"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())

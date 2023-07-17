@@ -97,7 +97,17 @@
                         </goals>
                     </execution>
                 </executions>
-
+                <configuration>
+                    <!-- this configuration affects all goals -->
+                    <includes>
+                        <include>**/server/**/*.class</include>
+                        <include>**/client/bean/**/*.class</include>
+                        <include>**/vip/api/**/*.class</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/server/rpc/**/*.class</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

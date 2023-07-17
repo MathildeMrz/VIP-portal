@@ -45,7 +45,7 @@ public class EgiController {
             logger.error("Egi login must only be called after an OIDC login. User [{}]", user);
             throw new ApiException(ApiException.ApiError.WRONG_OIDC_LOGIN);
         }
-        OAuth2AuthenticationToken authToken = ((OAuth2AuthenticationToken) user);
+        OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) user;
         if (!authToken.isAuthenticated()) {
             logger.error("Egi login method called with an anonymous user");
             throw new ApiException(ApiException.ApiError.WRONG_OIDC_LOGIN);

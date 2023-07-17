@@ -35,26 +35,17 @@ import fr.insalyon.creatis.moteur.plugins.workflowsdb.bean.*;
 import fr.insalyon.creatis.moteur.plugins.workflowsdb.dao.InputDAO;
 import fr.insalyon.creatis.moteur.plugins.workflowsdb.dao.OutputDAO;
 import fr.insalyon.creatis.moteur.plugins.workflowsdb.dao.WorkflowDAO;
-import fr.insalyon.creatis.vip.api.data.PathTestUtils;
 import fr.insalyon.creatis.vip.api.exception.ApiException;
 import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.api.rest.config.RestTestUtils;
-import fr.insalyon.creatis.vip.application.client.bean.AppClass;
-import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
-import fr.insalyon.creatis.vip.application.client.bean.Application;
-import fr.insalyon.creatis.vip.application.client.bean.Engine;
 import fr.insalyon.creatis.vip.application.server.business.simulation.WebServiceEngine;
 import fr.insalyon.creatis.vip.application.server.dao.ApplicationDAO;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.dao.GroupDAO;
 import fr.insalyon.creatis.vip.core.server.dao.UsersGroupsDAO;
-import fr.insalyon.creatis.vip.datamanager.server.business.LFCBusiness;
-import fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,15 +54,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
 
 import static fr.insalyon.creatis.vip.api.data.ExecutionTestUtils.*;
 import static fr.insalyon.creatis.vip.api.data.UserTestUtils.baseUser1;
-import static fr.insalyon.creatis.vip.api.rest.mockconfig.ApplicationsConfigurator.configureAnApplication;
-import static fr.insalyon.creatis.vip.api.rest.mockconfig.ApplicationsConfigurator.configureApplications;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -109,8 +100,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     private Workflow w2;
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
         Mockito.reset(workflowDAO);
         Mockito.reset(outputDAO);
@@ -124,12 +114,11 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldListExecutions() throws Exception
-    {
-        when(workflowDAO.get(eq(simulation1.getID()))).thenReturn(w1,null);
-        when(workflowDAO.get(eq(simulation2.getID()))).thenReturn(w2,null);
+    public void shouldListExecutions() throws Exception {
+        when(workflowDAO.get(eq(simulation1.getID()))).thenReturn(w1, null);
+        when(workflowDAO.get(eq(simulation2.getID()))).thenReturn(w2, null);
         when(workflowDAO.get(eq(baseUser1.getFullName()), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull()))
-                .thenReturn(Arrays.asList(w1, w2),null);
+                .thenReturn(Arrays.asList(w1, w2), null);
 
         // perform a getWorkflows()
         ResultActions resultActions = mockMvc.perform(
@@ -151,8 +140,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldCountExecutions() throws Exception
-    {
+    public void shouldCountExecutions() throws Exception {
         when(workflowDAO.get(eq(baseUser1.getFullName()), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.isNull()))
                 .thenReturn(Arrays.asList(w1, w2), null);
 
@@ -166,8 +154,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldGetExecution1() throws Exception
-    {
+    public void shouldGetExecution1() throws Exception {
         when(workflowDAO.get(eq(simulation1.getID()))).thenReturn(w1, w1, null);
 
         // perform a getWorkflows()
@@ -182,8 +169,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldGetExecution2() throws Exception
-    {
+    public void shouldGetExecution2() throws Exception {
         when(workflowDAO.get(eq(simulation2.getID()))).thenReturn(w2, w2, null);
 
         // perform a getWorkflows()
@@ -198,8 +184,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldGetErrorWhenGettingUnknownExecution() throws Exception
-    {
+    public void shouldGetErrorWhenGettingUnknownExecution() throws Exception {
         when(workflowDAO.get(argThat(argument -> !simulation1.getID().equals(argument) && !simulation2.getID().equals(argument))))
                 .thenAnswer(invocation -> {
                     throw new BusinessException("no test execution");
@@ -215,11 +200,10 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldUpdateExecution1() throws Exception
-    {
+    public void shouldUpdateExecution1() throws Exception {
         String newName = "Exec test 1 - modified";
 
-        when(workflowDAO.get(eq(simulation1.getID()))).thenReturn(w1,w1, w1, w1, null);
+        when(workflowDAO.get(eq(simulation1.getID()))).thenReturn(w1, w1, w1, w1, null);
 
         workflowDAO.get(w1.getId()).setId(newName);
 
@@ -237,8 +221,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void testNotInitExecutionMissingField() throws Exception
-    {
+    public void testNotInitExecutionMissingField() throws Exception {
         mockMvc.perform(
                         post("/rest/executions").contentType("application/json")
                                 .content("{}")
@@ -252,9 +235,8 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldDeleteWithFilesExecution2() throws Exception
-    {
-        when(workflowDAO.get(eq(simulation2.getID()))).thenReturn(w2,w2, w2, w2, null);
+    public void shouldDeleteWithFilesExecution2() throws Exception {
+        when(workflowDAO.get(eq(simulation2.getID()))).thenReturn(w2, w2, w2, w2, null);
 
         // perform a getWorkflows() and then delete
         mockMvc.perform(
@@ -268,8 +250,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldReturn500() throws Exception
-    {
+    public void shouldReturn500() throws Exception {
         when(workflowDAO.get(baseUser1.getFullName(), null, null, null, null, null)).thenThrow(new RuntimeException("test exception"));
 
         // perform a getWorkflows() with an undetermined error
@@ -282,8 +263,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldReturn400() throws Exception
-    {
+    public void shouldReturn400() throws Exception {
         // perform a getWorkflows() with a client error
         mockMvc.perform(
                         put("/rest/executions/whynotthisid").with(baseUser1()))
@@ -295,8 +275,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
 
 
     @Test
-    public void shouldGetExecution2Stderr() throws Exception
-    {
+    public void shouldGetExecution2Stderr() throws Exception {
         when(workflowDAO.get(eq(simulation2.getID()))).thenReturn(w2, w2, null);
         when(server.getWorkflowsPath()).thenReturn("testFolder");
 
@@ -311,8 +290,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldDeleteWithoutExecution2() throws Exception
-    {
+    public void shouldDeleteWithoutExecution2() throws Exception {
         when(workflowDAO.get(eq(simulation2.getID()))).thenReturn(w2, w2, w2, w2, null);
 
         mockMvc.perform(
@@ -339,8 +317,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }*/
 
     @Test
-    public void testPlayExecutionIsNotImplemented() throws Exception
-    {
+    public void testPlayExecutionIsNotImplemented() throws Exception {
         mockMvc.perform(
                         put("/rest/executions/" + simulation1.getID() + "/play")
                                 .with(baseUser1()))
@@ -351,8 +328,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldGetExecution2Stdout() throws Exception
-    {
+    public void shouldGetExecution2Stdout() throws Exception {
         when(workflowDAO.get(eq(simulation2.getID()))).thenReturn(w2);
         when(server.getWorkflowsPath()).thenReturn("testFolder");
 
@@ -367,8 +343,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
     @Test
-    public void shouldGetExecution2Results() throws Exception
-    {
+    public void shouldGetExecution2Results() throws Exception {
         String resultPath = simulation2OutData.get(0).getPath();
         when(workflowDAO.get(eq(simulation2.getID()))).thenReturn(w2, null);
         Output output = new Output(new OutputID("workflowID", resultPath, "processor"), DataType.URI, "port");
