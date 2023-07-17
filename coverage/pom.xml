@@ -97,10 +97,7 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <!-- this configuration affects all goals -->
 
-                </configuration>
             </plugin>
         </plugins>
     </build>
