@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationModule.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client</a> &gt; <span class="el_source">ApplicationModule.java</span></div><h1>ApplicationModule.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client;
+
+import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.tab.events.CloseClickHandler;
+import com.smartgwt.client.widgets.tab.events.TabCloseClickEvent;
+import fr.insalyon.creatis.vip.application.client.bean.AppClass;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.view.ApplicationHomeParser;
+import fr.insalyon.creatis.vip.application.client.view.ApplicationSystemParser;
+import fr.insalyon.creatis.vip.application.client.view.ApplicationTileGrid;
+import fr.insalyon.creatis.vip.application.client.view.common.AbstractSimulationTab;
+import fr.insalyon.creatis.vip.application.client.view.monitor.timeline.TimelineLayout;
+import fr.insalyon.creatis.vip.application.client.view.system.application.ManageApplicationsTab;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.Module;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.layout.CenterTabSet;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class ApplicationModule extends Module {
+
+    public static HashMap&lt;String, Integer&gt; reservedClasses;
+
+<span class="nc" id="L66">    public ApplicationModule() {</span>
+<span class="nc" id="L67">        CoreModule.getHomePageActions().put(CoreConstants.HOME_ACTION_SHOW_APPLICATIONS, new Runnable() {</span>
+            @Override
+            public void run() {
+<span class="nc" id="L70">                Layout.getInstance().addTab(</span>
+                        ApplicationConstants.TAB_MANAGE_APPLICATION,
+<span class="nc" id="L72">                        () -&gt; new ManageApplicationsTab(true));</span>
+<span class="nc" id="L73">            }</span>
+        });
+
+<span class="nc" id="L76">        final AsyncCallback&lt;HashMap&lt;String, Integer&gt;&gt; callback = new AsyncCallback&lt;HashMap&lt;String, Integer&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L79">                Layout.getInstance().setWarningMessage(&quot;Unable to load applet gatelab classes:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L80">            }</span>
+
+            @Override
+            public void onSuccess(HashMap&lt;String, Integer&gt; result) {
+<span class="nc" id="L84">                reservedClasses = result;</span>
+<span class="nc" id="L85">            }</span>
+        };
+<span class="nc" id="L87">        ApplicationService.Util.getInstance().getReservedClasses(callback);</span>
+
+<span class="nc" id="L89">    }</span>
+
+    @Override
+    public void load() {
+<span class="nc" id="L93">        Layout.getInstance().removeTab(ApplicationConstants.TAB_MANAGE_APPLICATION);</span>
+
+<span class="nc" id="L95">        CoreModule.addGeneralApplicationParser(new ApplicationHomeParser());</span>
+<span class="nc" id="L96">        CoreModule.addSystemApplicationParser(new ApplicationSystemParser());</span>
+<span class="nc" id="L97">        CoreModule.addLayoutToHomeTab(TimelineLayout.getInstance());</span>
+
+        // Applications Tile Grid
+<span class="nc" id="L100">        final AsyncCallback&lt;List&lt;AppClass&gt;&gt; callback = new AsyncCallback&lt;List&lt;AppClass&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L103">                Layout.getInstance().setWarningMessage(&quot;Unable to load classes:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L104">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;AppClass&gt; result) {
+
+<span class="nc bnc" id="L109" title="All 2 branches missed.">                for (AppClass appClass : result) {</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                    if (!reservedClasses.keySet().contains(appClass.getName())) {</span>
+<span class="nc" id="L111">                        CoreModule.addApplicationsTileGrid(</span>
+<span class="nc" id="L112">                                new ApplicationTileGrid(appClass.getName()));</span>
+                    }
+<span class="nc" id="L114">                }</span>
+<span class="nc" id="L115">            }</span>
+        };
+<span class="nc" id="L117">        ApplicationService.Util.getInstance().getClasses(callback);</span>
+
+        // Simulation close tab
+<span class="nc" id="L120">        CenterTabSet.getInstance().addCloseClickHandler(new CloseClickHandler() {</span>
+            @Override
+            public void onCloseClick(TabCloseClickEvent event) {
+<span class="nc" id="L123">                Tab tab = event.getTab();</span>
+                try {
+<span class="nc" id="L125">                    ((AbstractSimulationTab) tab).destroy();</span>
+<span class="nc" id="L126">                } catch (ClassCastException ex) {</span>
+                    // do nothing
+<span class="nc" id="L128">                }</span>
+<span class="nc" id="L129">            }</span>
+        });
+<span class="nc" id="L131">    }</span>
+
+    @Override
+    public void postLoading() {
+<span class="nc" id="L135">    }</span>
+
+    @Override
+    public void terminate(Set&lt;Tab&gt; removedTabs) {
+
+<span class="nc" id="L140">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L143">                Layout.getInstance().setWarningMessage(&quot;Unable to signout:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L144">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L148">            }</span>
+        };
+<span class="nc" id="L150">        ApplicationService.Util.getInstance().signout(callback);</span>
+<span class="nc" id="L151">        TimelineLayout.getInstance().terminate();</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        for (Tab tab : removedTabs) {</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">            if (tab instanceof AbstractSimulationTab) {</span>
+<span class="nc" id="L154">                ((AbstractSimulationTab) tab).destroy();</span>
+            }
+<span class="nc" id="L156">        }</span>
+<span class="nc" id="L157">    }</span>
+
+    @Override
+    public void userRemoved(User user) {
+
+<span class="nc" id="L162">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L165">                Layout.getInstance().setWarningMessage(&quot;Unable to anonymize user data:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L166">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L170">            }</span>
+        };
+<span class="nc" id="L172">        WorkflowService.Util.getInstance().updateUser(user.getFullName(), &quot;User-&quot; + Random.nextInt(100000), callback);</span>
+<span class="nc" id="L173">    }</span>
+
+    @Override
+    public void userUpdated(User oldUser, User updatedUser) {
+
+<span class="nc bnc" id="L178" title="All 2 branches missed.">        if (!oldUser.getFullName().equals(updatedUser.getFullName())) {</span>
+<span class="nc" id="L179">            final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                @Override
+                public void onFailure(Throwable caught) {
+<span class="nc" id="L182">                    Layout.getInstance().setWarningMessage(&quot;Unable to anonymize user data:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L183">                }</span>
+
+                @Override
+                public void onSuccess(Void result) {
+<span class="nc" id="L187">                }</span>
+            };
+<span class="nc" id="L189">            WorkflowService.Util.getInstance().updateUser(oldUser.getFullName(), updatedUser.getFullName(), callback);</span>
+        }
+<span class="nc" id="L191">    }</span>
+
+    @Override
+    public boolean requiresGridJob() {
+<span class="nc" id="L195">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

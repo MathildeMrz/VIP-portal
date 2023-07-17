@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AddFolderWindow.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client.view.browser</a> &gt; <span class="el_source">AddFolderWindow.java</span></div><h1>AddFolderWindow.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client.view.browser;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.ButtonItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class AddFolderWindow extends Window {
+
+    private DynamicForm form;
+    private TextItem nameItem;
+    private ModalWindow modal;
+    private String baseDir;
+
+<span class="nc" id="L62">    public AddFolderWindow(ModalWindow modal, String baseDir) {</span>
+
+<span class="nc" id="L64">        this.modal = modal;</span>
+<span class="nc" id="L65">        this.baseDir = baseDir;</span>
+
+<span class="nc" id="L67">        this.setTitle(Canvas.imgHTML(DataManagerConstants.ICON_FOLDER_ADD) + &quot; Create folder into: &quot; + baseDir);</span>
+<span class="nc" id="L68">        this.setWidth(350);</span>
+<span class="nc" id="L69">        this.setHeight(110);</span>
+<span class="nc" id="L70">        this.setShowMinimizeButton(false);</span>
+<span class="nc" id="L71">        this.setIsModal(true);</span>
+<span class="nc" id="L72">        this.setShowModalMask(true);</span>
+<span class="nc" id="L73">        this.centerInPage();</span>
+
+<span class="nc" id="L75">        form = new DynamicForm();</span>
+<span class="nc" id="L76">        form.setAutoFocus(true);</span>
+<span class="nc" id="L77">        form.setHeight100();</span>
+<span class="nc" id="L78">        form.setWidth100();</span>
+<span class="nc" id="L79">        form.setPadding(5);</span>
+<span class="nc" id="L80">        form.setLayoutAlign(VerticalAlignment.BOTTOM);</span>
+
+<span class="nc" id="L82">        nameItem = FieldUtil.getTextItem(200, true, &quot;Name&quot;, &quot;[0-9A-Za-z-_]&quot;);</span>
+<span class="nc" id="L83">        nameItem.addKeyPressHandler(new KeyPressHandler() {</span>
+
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                if (event.getKeyName().equals(&quot;Enter&quot;)) {</span>
+<span class="nc" id="L88">                    createFolder();</span>
+                }
+<span class="nc" id="L90">            }</span>
+        });
+<span class="nc" id="L92">        nameItem.setSelectOnFocus(true);</span>
+
+<span class="nc" id="L94">        ButtonItem saveButton = new ButtonItem(&quot;addButton&quot;, &quot;Create&quot;);</span>
+<span class="nc" id="L95">        saveButton.setWidth(60);</span>
+<span class="nc" id="L96">        saveButton.addClickHandler(new ClickHandler() {</span>
+
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L100">                createFolder();</span>
+<span class="nc" id="L101">            }</span>
+        });
+
+<span class="nc" id="L104">        form.setFields(nameItem, saveButton);</span>
+<span class="nc" id="L105">        this.addItem(form);</span>
+<span class="nc" id="L106">    }</span>
+
+    private void createFolder() {
+
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        if (form.validate()) {</span>
+<span class="nc" id="L111">            DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L112">            AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+
+                @Override
+                public void onFailure(Throwable caught) {
+<span class="nc" id="L116">                    modal.hide();</span>
+<span class="nc" id="L117">                    Layout.getInstance().setWarningMessage(&quot;Unable to create folder:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L118">                }</span>
+
+                @Override
+                public void onSuccess(Void result) {
+<span class="nc" id="L122">                    modal.hide();</span>
+<span class="nc" id="L123">                    BrowserLayout.getInstance().loadData(baseDir, true);</span>
+<span class="nc" id="L124">                }</span>
+            };
+<span class="nc" id="L126">            modal.show(&quot;Creating folder...&quot;, true);</span>
+<span class="nc" id="L127">            service.createDir(baseDir, nameItem.getValueAsString().trim(), callback);</span>
+<span class="nc" id="L128">            destroy();</span>
+        }
+<span class="nc" id="L130">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

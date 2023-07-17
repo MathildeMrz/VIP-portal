@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimulationsContextMenu.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.menu</a> &gt; <span class="el_source">SimulationsContextMenu.java</span></div><h1>SimulationsContextMenu.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.menu;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.menu.Menu;
+import com.smartgwt.client.widgets.menu.MenuItem;
+import com.smartgwt.client.widgets.menu.MenuItemSeparator;
+import com.smartgwt.client.widgets.menu.events.ClickHandler;
+import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.view.common.AbstractSimulationTab;
+import fr.insalyon.creatis.vip.application.client.view.launch.RelaunchService;
+import fr.insalyon.creatis.vip.application.client.view.monitor.ChangeSimulationUserLayout;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationTab;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationsTab;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
+import java.util.Map;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class SimulationsContextMenu extends Menu {
+
+    private ModalWindow modal;
+    private String simulationID;
+    private String simulationName;
+    private String applicationName;
+    private String applicationVersion;
+    private String applicationClass;
+    private String simulationUser;
+
+    public SimulationsContextMenu(ModalWindow modal, final String simulationID,
+                                  final String title, final SimulationStatus status, String applicationName,
+<span class="nc" id="L72">                                  String applicationVersion, String applicationClass, String simulationUser) {</span>
+
+<span class="nc" id="L74">        this.modal = modal;</span>
+<span class="nc" id="L75">        this.simulationID = simulationID;</span>
+<span class="nc" id="L76">        this.simulationName = title;</span>
+<span class="nc" id="L77">        this.applicationName = applicationName;</span>
+<span class="nc" id="L78">        this.applicationVersion = applicationVersion;</span>
+<span class="nc" id="L79">        this.applicationClass = applicationClass;</span>
+<span class="nc" id="L80">        this.simulationUser = simulationUser;</span>
+
+<span class="nc" id="L82">        this.setShowShadow(true);</span>
+<span class="nc" id="L83">        this.setShadowDepth(10);</span>
+<span class="nc" id="L84">        this.setWidth(90);</span>
+
+<span class="nc" id="L86">        MenuItem viewItem = new MenuItem(&quot;View Execution&quot;);</span>
+<span class="nc" id="L87">        viewItem.setIcon(ApplicationConstants.ICON_SIMULATION_VIEW);</span>
+<span class="nc" id="L88">        viewItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L91">                Layout.getInstance().addTab(</span>
+<span class="nc" id="L92">                        AbstractSimulationTab.tabIdFrom(simulationID),</span>
+<span class="nc" id="L93">                        () -&gt; new SimulationTab(simulationID, title, status));</span>
+<span class="nc" id="L94">            }</span>
+        });
+
+<span class="nc" id="L97">        MenuItem killItem = new MenuItem(&quot;Kill Execution&quot;);</span>
+<span class="nc" id="L98">        killItem.setIcon(ApplicationConstants.ICON_KILL);</span>
+<span class="nc" id="L99">        killItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L102">                SC.ask(&quot;Do you really want to kill this execution (&quot;</span>
+<span class="nc" id="L103">                        + title + &quot;)?&quot;, new BooleanCallback() {</span>
+                    @Override
+                    public void execute(Boolean value) {
+<span class="nc bnc" id="L106" title="All 2 branches missed.">                        if (value) {</span>
+<span class="nc" id="L107">                            killSimulation();</span>
+                        }
+<span class="nc" id="L109">                    }</span>
+                });
+<span class="nc" id="L111">            }</span>
+        });
+
+<span class="nc" id="L114">        MenuItem cleanItem = new MenuItem(&quot;Clean Execution&quot;);</span>
+<span class="nc" id="L115">        cleanItem.setIcon(ApplicationConstants.ICON_CLEAN);</span>
+<span class="nc" id="L116">        cleanItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L119">                SC.ask(&quot;Do you really want to clean this execution (&quot;</span>
+<span class="nc" id="L120">                        + title + &quot;)?&quot;, new BooleanCallback() {</span>
+                    @Override
+                    public void execute(Boolean value) {
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                        if (value) {</span>
+<span class="nc" id="L124">                            cleanSimulation();</span>
+                        }
+<span class="nc" id="L126">                    }</span>
+                });
+<span class="nc" id="L128">            }</span>
+        });
+
+<span class="nc" id="L131">        MenuItem purgeItem = new MenuItem(&quot;Purge Execution&quot;);</span>
+<span class="nc" id="L132">        purgeItem.setIcon(CoreConstants.ICON_CLEAR);</span>
+<span class="nc" id="L133">        purgeItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L136">                SC.ask(&quot;Do you really want to purge this execution (&quot;</span>
+<span class="nc" id="L137">                        + title + &quot;)?&quot;, new BooleanCallback() {</span>
+                    @Override
+                    public void execute(Boolean value) {
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                        if (value) {</span>
+<span class="nc" id="L141">                            purgeSimulation();</span>
+                        }
+<span class="nc" id="L143">                    }</span>
+                });
+<span class="nc" id="L145">            }</span>
+        });
+
+<span class="nc" id="L148">        MenuItem markCompletedItem = new MenuItem(&quot;Mark Execution Completed&quot;);</span>
+<span class="nc" id="L149">        markCompletedItem.setIcon(ApplicationConstants.ICON_MARK_COMPLETED);</span>
+<span class="nc" id="L150">        markCompletedItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L153">                SC.ask(&quot;Do you really want to mark this execution as completed (&quot;</span>
+<span class="nc" id="L154">                        + title + &quot;)?&quot;, new BooleanCallback() {</span>
+                    @Override
+                    public void execute(Boolean value) {
+<span class="nc bnc" id="L157" title="All 2 branches missed.">                        if (value) {</span>
+<span class="nc" id="L158">                            markCompleted();</span>
+                        }
+<span class="nc" id="L160">                    }</span>
+                });
+<span class="nc" id="L162">            }</span>
+        });
+
+<span class="nc" id="L165">        MenuItem relauchItem = new MenuItem(&quot;Relaunch Execution&quot;);</span>
+<span class="nc" id="L166">        relauchItem.setIcon(ApplicationConstants.ICON_RELAUNCH);</span>
+<span class="nc" id="L167">        relauchItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L170">                relaunchSimulation();</span>
+<span class="nc" id="L171">            }</span>
+        });
+
+<span class="nc" id="L174">        MenuItem changeUserItem = new MenuItem(&quot;Change Execution User&quot;);</span>
+<span class="nc" id="L175">        changeUserItem.setIcon(ApplicationConstants.ICON_USER);</span>
+<span class="nc" id="L176">        changeUserItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L179">                changeUser();</span>
+<span class="nc" id="L180">            }</span>
+        });
+
+<span class="nc" id="L183">        MenuItemSeparator separator = new MenuItemSeparator();</span>
+
+<span class="nc bnc" id="L185" title="All 5 branches missed.">        switch (status) {</span>
+            case Running:
+<span class="nc bnc" id="L187" title="All 2 branches missed.">                if (CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L188">                    this.setItems(viewItem, killItem, separator, relauchItem, separator, changeUserItem);</span>
+                } else {
+<span class="nc" id="L190">                    this.setItems(viewItem, killItem, separator, relauchItem);</span>
+                }
+<span class="nc" id="L192">                break;</span>
+
+            case Completed:
+<span class="nc bnc" id="L195" title="All 2 branches missed.">                if (CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L196">                    this.setItems(viewItem, cleanItem, separator, relauchItem, separator, changeUserItem);</span>
+                } else {
+<span class="nc" id="L198">                    this.setItems(viewItem, cleanItem, separator, relauchItem);</span>
+                }
+<span class="nc" id="L200">                break;</span>
+
+            case Cleaned:
+<span class="nc bnc" id="L203" title="All 2 branches missed.">                if (CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L204">                    this.setItems(viewItem, purgeItem, separator, changeUserItem);</span>
+                } else {
+<span class="nc" id="L206">                    this.setItems(viewItem);</span>
+                }
+<span class="nc" id="L208">                break;</span>
+
+            case Failed:
+            case Killed:
+<span class="nc bnc" id="L212" title="All 2 branches missed.">                if (CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L213">                    this.setItems(viewItem, markCompletedItem, cleanItem, separator, relauchItem, separator, changeUserItem);</span>
+                } else {
+<span class="nc" id="L215">                    this.setItems(viewItem, cleanItem, separator, relauchItem);</span>
+                }
+        }
+<span class="nc" id="L218">    }</span>
+
+    /**
+     * Sends a request to kill the simulation.
+     */
+    private void killSimulation() {
+
+<span class="nc" id="L225">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L228">                modal.hide();</span>
+<span class="nc" id="L229">                Layout.getInstance().setWarningMessage(&quot;Unable to kill execution:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L230">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L234">                modal.hide();</span>
+<span class="nc" id="L235">                getSimulationsTab().loadData();</span>
+<span class="nc" id="L236">            }</span>
+        };
+<span class="nc" id="L238">        WorkflowService.Util.getInstance().killWorkflow(simulationID, callback);</span>
+<span class="nc" id="L239">        modal.show(&quot;Sending killing signal to &quot; + simulationName + &quot;...&quot;, true);</span>
+<span class="nc" id="L240">    }</span>
+
+    /**
+     * Sends a request to clean the simulation.
+     */
+    private void cleanSimulation() {
+
+<span class="nc" id="L247">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L250">                modal.hide();</span>
+<span class="nc" id="L251">                Layout.getInstance().setWarningMessage(&quot;Unable to clean execution:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L252">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L256">                modal.hide();</span>
+<span class="nc" id="L257">                getSimulationsTab().loadData();</span>
+<span class="nc" id="L258">            }</span>
+        };
+<span class="nc" id="L260">        WorkflowService.Util.getInstance().cleanWorkflow(simulationID, callback);</span>
+<span class="nc" id="L261">        modal.show(&quot;Cleaning execution &quot; + simulationName + &quot;...&quot;, true);</span>
+<span class="nc" id="L262">    }</span>
+
+    /**
+     * Sends a request to purge the simulation.
+     */
+    private void purgeSimulation() {
+
+<span class="nc" id="L269">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L272">                modal.hide();</span>
+<span class="nc" id="L273">                Layout.getInstance().setWarningMessage(&quot;Unable to purge execution:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L274">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L278">                modal.hide();</span>
+<span class="nc" id="L279">                getSimulationsTab().loadData();</span>
+<span class="nc" id="L280">            }</span>
+        };
+<span class="nc" id="L282">        WorkflowService.Util.getInstance().purgeWorkflow(simulationID, callback);</span>
+<span class="nc" id="L283">        modal.show(&quot;Purging execution &quot; + simulationName + &quot;...&quot;, true);</span>
+<span class="nc" id="L284">    }</span>
+
+    private void markCompleted() {
+<span class="nc" id="L287">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L290">                modal.hide();</span>
+<span class="nc" id="L291">                Layout.getInstance().setWarningMessage(&quot;Unable to mark execution completed:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L292">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L296">                modal.hide();</span>
+<span class="nc" id="L297">                getSimulationsTab().loadData();</span>
+<span class="nc" id="L298">            }</span>
+        };
+<span class="nc" id="L300">        WorkflowService.Util.getInstance().markWorkflowCompleted(simulationID, callback);</span>
+<span class="nc" id="L301">        modal.show(&quot;Marking execution &quot; + simulationName + &quot; cmopleted...&quot;, true);</span>
+<span class="nc" id="L302">    }</span>
+
+    /**
+     * Relaunches a simulation.
+     */
+    private void relaunchSimulation() {
+
+<span class="nc" id="L309">        AsyncCallback&lt;Map&lt;String, String&gt;&gt; callback = new AsyncCallback&lt;Map&lt;String, String&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L312">                modal.hide();</span>
+<span class="nc" id="L313">                Layout.getInstance().setWarningMessage(&quot;Unable to relauch execution:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L314">            }</span>
+
+            @Override
+            public void onSuccess(final Map&lt;String, String&gt; result) {
+<span class="nc" id="L318">                modal.hide();</span>
+<span class="nc" id="L319">                String tabId =</span>
+<span class="nc" id="L320">                        ApplicationConstants.getLaunchTabID(applicationName);</span>
+<span class="nc" id="L321">                Layout.getInstance().removeTab(tabId);</span>
+<span class="nc" id="L322">                RelaunchService.getInstance().relaunch(</span>
+                        applicationName, applicationVersion, applicationClass, simulationName, result, tabId);
+<span class="nc" id="L324">            }</span>
+        };
+<span class="nc" id="L326">        WorkflowService.Util.getInstance().relaunchSimulation(simulationID, callback);</span>
+<span class="nc" id="L327">        modal.show(&quot;Relaunching execution &quot; + simulationName + &quot;...&quot;, true);</span>
+<span class="nc" id="L328">    }</span>
+
+    private void changeUser() {
+<span class="nc" id="L331">        new ChangeSimulationUserLayout(modal, simulationID, simulationName,</span>
+<span class="nc" id="L332">                simulationUser).show();</span>
+<span class="nc" id="L333">    }</span>
+
+    private SimulationsTab getSimulationsTab() {
+<span class="nc" id="L336">        return (SimulationsTab) Layout.getInstance().getTab(ApplicationConstants.TAB_MONITOR);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

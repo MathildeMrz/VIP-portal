@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DataManagerServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.server.rpc</a> &gt; <span class="el_source">DataManagerServiceImpl.java</span></div><h1>DataManagerServiceImpl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.server.rpc;
+
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.CoreException;
+import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.business.Server;
+import fr.insalyon.creatis.vip.core.server.rpc.AbstractRemoteServiceServlet;
+import fr.insalyon.creatis.vip.datamanager.client.bean.*;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.view.DataManagerException;
+import fr.insalyon.creatis.vip.datamanager.server.business.DataManagerBusiness;
+import fr.insalyon.creatis.vip.datamanager.server.business.LFCBusiness;
+import fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness;
+import fr.insalyon.creatis.vip.datamanager.server.business.TransferPoolBusiness;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @author Rafael Silva
+ */
+<span class="nc" id="L58">public class DataManagerServiceImpl extends AbstractRemoteServiceServlet implements DataManagerService {</span>
+
+<span class="nc" id="L60">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+    private DataManagerBusiness dataManagerBusiness;
+    private LFCBusiness lfcBusiness;
+    private TransferPoolBusiness transferPoolBusiness;
+    private LfcPathsBusiness lfcPathsBusiness;
+    private Server server;
+
+    @Override
+    public void init() throws ServletException {
+<span class="nc" id="L69">        super.init();</span>
+<span class="nc" id="L70">        transferPoolBusiness = getBean(TransferPoolBusiness.class);</span>
+<span class="nc" id="L71">        lfcBusiness = getBean(LFCBusiness.class);</span>
+<span class="nc" id="L72">        dataManagerBusiness = getBean(DataManagerBusiness.class);</span>
+<span class="nc" id="L73">        lfcPathsBusiness = getBean(LfcPathsBusiness.class);</span>
+<span class="nc" id="L74">        server = getBean(Server.class);</span>
+<span class="nc" id="L75">    }</span>
+
+    @Override
+    public List&lt;Data&gt; listDir(String baseDir, boolean refresh) throws DataManagerException {
+        try {
+<span class="nc" id="L80">            List&lt;SSH&gt; sshs = dataManagerBusiness.getSSHConnections();</span>
+<span class="nc" id="L81">            List&lt;String&gt; LfcDirSSHSynchronization = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">            for (SSH ssh : sshs) {</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                if (ssh.getTransferType().equals(TransferType.Synchronization)) {</span>
+<span class="nc" id="L84">                    LfcDirSSHSynchronization.add(ssh.getLfcDir());</span>
+                }
+<span class="nc" id="L86">            }</span>
+<span class="nc" id="L87">            List&lt;Data&gt; data = lfcBusiness.listDir(getSessionUser(), baseDir, refresh);</span>
+
+<span class="nc" id="L89">            String lfcBaseDir = lfcPathsBusiness.parseBaseDir(getSessionUser(), baseDir);</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            for (Data d : data) {</span>
+<span class="nc" id="L91">                String dataPath = lfcBaseDir + &quot;/&quot; + d.getName();</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                for (String s : LfcDirSSHSynchronization) {</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                    if (s.equals(dataPath)) {</span>
+<span class="nc" id="L94">                        d.setType(Data.Type.folderSync);</span>
+<span class="nc bnc" id="L95" title="All 4 branches missed.">                    } else if (dataPath.contains(s + &quot;/&quot;) &amp;&amp; d.getType().equals(Data.Type.file)) {</span>
+<span class="nc" id="L96">                        d.setType(Data.Type.fileSync);</span>
+<span class="nc bnc" id="L97" title="All 4 branches missed.">                    } else if (dataPath.contains(s + &quot;/&quot;) &amp;&amp; d.getType().equals(Data.Type.folder)) {</span>
+<span class="nc" id="L98">                        d.setType(Data.Type.folderSync);</span>
+                    }
+<span class="nc" id="L100">                }</span>
+<span class="nc" id="L101">            }</span>
+<span class="nc" id="L102">            return data;</span>
+<span class="nc" id="L103">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L104">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public void delete(String path) throws DataManagerException {
+        try {
+<span class="nc" id="L111">            trace(logger, &quot;Deleting: &quot; + path);</span>
+<span class="nc" id="L112">            User user = getSessionUser();</span>
+<span class="nc" id="L113">            transferPoolBusiness.delete(user, path);</span>
+<span class="nc" id="L114">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L115">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L116">        }</span>
+<span class="nc" id="L117">    }</span>
+
+    @Override
+    public void delete(List&lt;String&gt; paths) throws DataManagerException {
+        try {
+<span class="nc" id="L122">            trace(logger, &quot;Deleting: &quot; + paths);</span>
+<span class="nc" id="L123">            User user = getSessionUser();</span>
+<span class="nc" id="L124">            transferPoolBusiness.delete(user, paths.toArray(new String[]{}));</span>
+<span class="nc" id="L125">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L126">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L127">        }</span>
+<span class="nc" id="L128">    }</span>
+
+    @Override
+    public void createDir(String baseDir, String name) throws DataManagerException {
+        try {
+<span class="nc" id="L133">            trace(logger, &quot;Creating folder: &quot; + baseDir + &quot;/&quot; + name);</span>
+<span class="nc" id="L134">            lfcBusiness.createDir(getSessionUser(), baseDir, name);</span>
+<span class="nc" id="L135">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L136">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L137">        }</span>
+<span class="nc" id="L138">    }</span>
+
+    @Override
+    public void rename(String oldPath, String newPath, boolean extendPath)
+            throws DataManagerException {
+        try {
+<span class="nc" id="L144">            trace(logger, &quot;Renaming '&quot; + oldPath + &quot;' to '&quot; + newPath + &quot;'&quot;);</span>
+<span class="nc" id="L145">            lfcBusiness.rename(getSessionUser(), oldPath, newPath, extendPath);</span>
+<span class="nc" id="L146">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L147">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L148">        }</span>
+<span class="nc" id="L149">    }</span>
+
+    @Override
+    public void rename(String baseDir, List&lt;String&gt; paths, String newBaseDir,
+                       boolean extendPath) throws DataManagerException {
+        try {
+<span class="nc" id="L155">            lfcBusiness.rename(</span>
+<span class="nc" id="L156">                    getSessionUser(), baseDir, paths, newBaseDir, extendPath);</span>
+<span class="nc" id="L157">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L158">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L159">        }</span>
+<span class="nc" id="L160">    }</span>
+
+    @Override
+    public List&lt;DMCachedFile&gt; getCachedFiles() throws DataManagerException {
+
+        try {
+<span class="nc" id="L166">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L167">            return dataManagerBusiness.getCachedFiles();</span>
+
+<span class="nc" id="L169">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L170">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public void deleteCachedFiles(List&lt;String&gt; cachedFiles) throws DataManagerException {
+
+        try {
+<span class="nc" id="L178">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L179">            trace(logger, &quot;Removing chached files: &quot; + cachedFiles);</span>
+<span class="nc" id="L180">            dataManagerBusiness.deleteCachedFiles(cachedFiles);</span>
+
+<span class="nc" id="L182">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L183">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L184">        }</span>
+<span class="nc" id="L185">    }</span>
+
+    @Override
+    public List&lt;PoolOperation&gt; getPoolOperationsByUser() throws DataManagerException {
+        try {
+<span class="nc" id="L190">            User user = getSessionUser();</span>
+<span class="nc" id="L191">            return transferPoolBusiness.getOperations(</span>
+<span class="nc" id="L192">                    user.getEmail(), new Date(), user.getFolder());</span>
+<span class="nc" id="L193">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L194">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public List&lt;PoolOperation&gt; getPoolOperationsByUserAndDate(Date startDate)
+            throws DataManagerException {
+        try {
+<span class="nc" id="L202">            User user = getSessionUser();</span>
+<span class="nc" id="L203">            return transferPoolBusiness.getOperations(</span>
+<span class="nc" id="L204">                    user.getEmail(), startDate, user.getFolder());</span>
+<span class="nc" id="L205">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L206">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public List&lt;PoolOperation&gt; getPoolOperations() throws DataManagerException {
+        try {
+<span class="nc" id="L213">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L214">            return transferPoolBusiness.getOperations(getSessionUser().getFolder());</span>
+<span class="nc" id="L215">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L216">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public PoolOperation getPoolOperationById(String operationId)
+            throws DataManagerException {
+        try {
+<span class="nc" id="L224">            return transferPoolBusiness.getOperationById(</span>
+<span class="nc" id="L225">                    operationId, getSessionUser().getFolder());</span>
+<span class="nc" id="L226">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L227">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public void removeOperations(List&lt;String&gt; ids) throws DataManagerException {
+
+        try {
+<span class="nc" id="L235">            trace(logger, &quot;Removing operations: &quot; + ids);</span>
+<span class="nc" id="L236">            transferPoolBusiness.removeOperations(ids);</span>
+
+<span class="nc" id="L238">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L239">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L240">        }</span>
+<span class="nc" id="L241">    }</span>
+
+    @Override
+    public void removeUserOperations() throws DataManagerException {
+
+        try {
+<span class="nc" id="L247">            trace(logger, &quot;Removing all operations.&quot;);</span>
+<span class="nc" id="L248">            transferPoolBusiness.removeUserOperations(getSessionUser().getEmail());</span>
+
+<span class="nc" id="L250">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L251">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L252">        }</span>
+<span class="nc" id="L253">    }</span>
+
+    @Override
+    public void removeOperationById(String id) throws DataManagerException {
+
+        try {
+<span class="nc" id="L259">            trace(logger, &quot;Removing operation: &quot; + id);</span>
+<span class="nc" id="L260">            transferPoolBusiness.removeOperationById(id);</span>
+
+<span class="nc" id="L262">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L263">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L264">        }</span>
+<span class="nc" id="L265">    }</span>
+
+    @Override
+    public String downloadFile(String remoteFile) throws DataManagerException {
+        try {
+<span class="nc" id="L270">            trace(logger, &quot;Adding file to transfer queue: &quot; + remoteFile);</span>
+<span class="nc" id="L271">            User user = getSessionUser();</span>
+<span class="nc" id="L272">            return transferPoolBusiness.downloadFile(user, remoteFile);</span>
+<span class="nc" id="L273">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L274">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public String downloadFiles(List&lt;String&gt; remoteFiles, String packName)
+            throws DataManagerException {
+        try {
+<span class="nc" id="L282">            trace(logger, &quot;Adding files to transfer queue: &quot; + remoteFiles);</span>
+<span class="nc" id="L283">            User user = getSessionUser();</span>
+<span class="nc" id="L284">            return transferPoolBusiness.downloadFiles(user, remoteFiles, packName);</span>
+<span class="nc" id="L285">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L286">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public String downloadFolder(String remoteFolder) throws DataManagerException {
+        try {
+<span class="nc" id="L293">            trace(logger, &quot;Adding folder to transfer queue: &quot; + remoteFolder);</span>
+<span class="nc" id="L294">            User user = getSessionUser();</span>
+<span class="nc" id="L295">            return transferPoolBusiness.downloadFolder(user, remoteFolder);</span>
+<span class="nc" id="L296">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L297">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public void uploadFile(String localFile, String remoteName, String remoteDir)
+            throws DataManagerException {
+
+<span class="nc" id="L305">        File f = new File(</span>
+<span class="nc" id="L306">                server.getDataManagerPath() + &quot;/uploads/&quot; + localFile);</span>
+<span class="nc" id="L307">        f.renameTo(new File(</span>
+<span class="nc" id="L308">                server.getDataManagerPath() + &quot;/uploads/&quot; + remoteName));</span>
+<span class="nc" id="L309">        uploadFile(f.getAbsolutePath(), remoteDir);</span>
+<span class="nc" id="L310">    }</span>
+
+    @Override
+    public void uploadFile(String localFilePath, String remoteFile)
+            throws DataManagerException {
+        try {
+<span class="nc" id="L316">            trace(logger, &quot;Uploading file '&quot; + localFilePath + &quot;' to '&quot; + remoteFile + &quot;'.&quot;);</span>
+<span class="nc" id="L317">            User user = getSessionUser();</span>
+<span class="nc" id="L318">            transferPoolBusiness.uploadFile(user, localFilePath, remoteFile);</span>
+<span class="nc" id="L319">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L320">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L321">        }</span>
+<span class="nc" id="L322">    }</span>
+
+    @Override
+    public boolean exists(String remoteFile) throws DataManagerException {
+        try {
+<span class="nc" id="L327">            trace(logger, &quot;Test if file '&quot; + remoteFile + &quot; exists&quot;);</span>
+<span class="nc" id="L328">            User user = getSessionUser();</span>
+<span class="nc" id="L329">            return lfcBusiness.exists(user, remoteFile);</span>
+<span class="nc" id="L330">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L331">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public List&lt;DMZombieFile&gt; getZombieFiles() throws DataManagerException {
+
+        try {
+<span class="nc" id="L339">            return dataManagerBusiness.getZombieFiles();</span>
+<span class="nc" id="L340">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L341">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public void deleteZombieFiles(List&lt;String&gt; surls) throws DataManagerException {
+
+        try {
+<span class="nc" id="L349">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L350">            trace(logger, &quot;Removing zombie files: &quot; + surls);</span>
+<span class="nc" id="L351">            dataManagerBusiness.deleteZombieFiles(surls);</span>
+
+<span class="nc" id="L353">        } catch (CoreException | BusinessException ex) {</span>
+<span class="nc" id="L354">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L355">        }</span>
+<span class="nc" id="L356">    }</span>
+
+    @Override
+    public List&lt;SSH&gt; getSSHConnections() throws DataManagerException {
+        try {
+<span class="nc" id="L361">            trace(logger, &quot;Getting ssh connections&quot;);</span>
+
+<span class="nc" id="L363">            return dataManagerBusiness.getSSHConnections();</span>
+<span class="nc" id="L364">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L365">            throw new DataManagerException(ex);</span>
+        }
+    }
+
+    @Override
+    public void addSSH(SSH ssh) throws DataManagerException {
+        try {
+<span class="nc" id="L372">            trace(logger, &quot;Adding ssh connection &quot; + ssh.getEmail() + &quot; ; &quot; + ssh.getHost());</span>
+<span class="nc" id="L373">            dataManagerBusiness.addSSH(ssh);</span>
+<span class="nc" id="L374">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L375">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L376">        }</span>
+<span class="nc" id="L377">    }</span>
+
+    @Override
+    public void updateSSH(SSH ssh) throws DataManagerException {
+        try {
+<span class="nc" id="L382">            trace(logger, &quot;Updating ssh connection &quot; + ssh.getEmail() + &quot; ; &quot; + ssh.getHost());</span>
+<span class="nc" id="L383">            dataManagerBusiness.updateSSH(ssh);</span>
+<span class="nc" id="L384">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L385">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L386">        }</span>
+<span class="nc" id="L387">    }</span>
+
+    @Override
+    public void removeSSH(String email, String name) throws DataManagerException {
+        try {
+<span class="nc" id="L392">            trace(logger, &quot;Removing ssh connection &quot; + email + &quot; ; &quot; + name);</span>
+<span class="nc" id="L393">            dataManagerBusiness.removeSSH(email, name);</span>
+<span class="nc" id="L394">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L395">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L396">        }</span>
+<span class="nc" id="L397">    }</span>
+
+    @Override
+    public void resetSSHConnections(List&lt;List&lt;String&gt;&gt; sshConnections) throws DataManagerException {
+        try {
+<span class="nc bnc" id="L402" title="All 2 branches missed.">            for (List&lt;String&gt; sshC : sshConnections) {</span>
+<span class="nc" id="L403">                trace(logger, &quot;Removing ssh connection &quot; + sshC.get(0) + &quot; ; &quot; + sshC.get(1));</span>
+<span class="nc" id="L404">            }</span>
+<span class="nc" id="L405">            dataManagerBusiness.resetSSHs(sshConnections);</span>
+<span class="nc" id="L406">        } catch (BusinessException | CoreException ex) {</span>
+<span class="nc" id="L407">            throw new DataManagerException(ex);</span>
+<span class="nc" id="L408">        }</span>
+<span class="nc" id="L409">    }</span>
+
+    @Override
+    public String getSSHPublicKey() {
+<span class="nc" id="L413">        return server.getSshPublicKey();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

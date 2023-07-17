@@ -1,0 +1,909 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LaunchFormLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.launch</a> &gt; <span class="el_source">LaunchFormLayout.java</span></div><h1>LaunchFormLayout.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.launch;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.Layout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.*;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.application.client.view.boutiquesParsing.InvalidBoutiquesDescriptorException;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static fr.insalyon.creatis.vip.core.client.view.CoreConstants.RESULTS_DIRECTORY_PARAM_NAME;
+
+/**
+ * Launch form automatically generated from a Boutiques descriptor.
+ *
+ * @author Guillaume Vanel
+ * @version %I%, %G%
+ */
+public class LaunchFormLayout extends AbstractFormLayout {
+    public static final String EXECUTION_NAME_ID = &quot;Execution-name&quot;;
+    // Maps from input/group IDs to corresponding object
+<span class="nc" id="L38">    private final Map&lt;String, InputLayout&gt; inputsMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L39">    private final Map&lt;String, GroupValidator&gt; groups = new HashMap&lt;&gt;();</span>
+    // Buttons
+    private final HLayout buttonsLayout;
+    // Label warning user about unsupported dependencies (due to one of the inputs having multiple values)
+    private final Label warningLabel;
+    // Maps the problematic input ID to the set of dependencies that can't be supported because of it
+<span class="nc" id="L45">    private final Map&lt;String, Set&lt;String&gt;&gt; unsupportedDependencies = new HashMap&lt;&gt;();</span>
+    // Label pointing out errors in the form
+    private final Label errorLabel;
+    // Names of the inputs with invalid values
+<span class="nc" id="L49">    private final Set&lt;String&gt; invalidInputIds = new TreeSet&lt;&gt;();</span>
+    // Other error messages (unsatisfied groups)
+<span class="nc" id="L51">    private final Set&lt;String&gt; errorMessages = new TreeSet&lt;&gt;();</span>
+    // Application information
+    protected String applicationName;
+    protected String applicationVersion;
+    protected String applicationClass;
+<span class="nc" id="L56">    private IButton launchButton = null;</span>
+<span class="nc" id="L57">    private IButton saveInputsButton = null;</span>
+<span class="nc" id="L58">    private IButton saveAsExampleButton = null;</span>
+    // customization
+<span class="nc" id="L60">    private boolean disableErrorsAndWarnings = false;</span>
+
+    /**
+     * Initialize all visual elements
+     *
+     * @param applicationDescriptor BoutiquesApplication generated from application .json descriptor file
+     */
+    public LaunchFormLayout(final BoutiquesApplication applicationDescriptor, boolean showSeparators) {
+<span class="nc" id="L68">        super(&quot;600&quot;, &quot;*&quot;);</span>
+<span class="nc" id="L69">        this.setWidth(600);</span>
+        // Documentation
+<span class="nc" id="L71">        Label docLabel = WidgetUtil.getLabel(&quot;Documentation and Terms of Use&quot;,</span>
+                CoreConstants.ICON_INFORMATION, 30, Cursor.HAND);
+<span class="nc" id="L73">        docLabel.addClickHandler(event -&gt; new DocumentationLayout(event.getX(), event.getY(),</span>
+<span class="nc" id="L74">                applicationDescriptor.getDescription()).show());</span>
+<span class="nc" id="L75">        this.addMember(docLabel);</span>
+        // Buttons
+<span class="nc" id="L77">        this.buttonsLayout = new HLayout(5);</span>
+<span class="nc" id="L78">        this.buttonsLayout.setAlign(VerticalAlignment.CENTER);</span>
+<span class="nc" id="L79">        this.buttonsLayout.setMargin(20);</span>
+        // Error message
+<span class="nc" id="L81">        this.errorLabel = WidgetUtil.getLabel(&quot;&quot;, CoreConstants.ICON_WARNING, 30);</span>
+<span class="nc" id="L82">        this.errorLabel.setWidth(430);</span>
+<span class="nc" id="L83">        this.errorLabel.hide();</span>
+        // Warning message
+<span class="nc" id="L85">        this.warningLabel = WidgetUtil.getLabel(&quot;&quot;, CoreConstants.ICON_HELP, 30);</span>
+<span class="nc" id="L86">        this.warningLabel.setWidth(430);</span>
+<span class="nc" id="L87">        this.warningLabel.hide();</span>
+        // verify there are extensions
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        assertCondition(applicationDescriptor.getBoutiquesExtensions() != null,</span>
+                &quot;The boutiques descriptor must have extensions&quot;);
+        // Add inputs, then buttons and warning/error labels below
+<span class="nc" id="L92">        this.configureInputs(applicationDescriptor, showSeparators);</span>
+<span class="nc" id="L93">        this.addMember(buttonsLayout);</span>
+<span class="nc" id="L94">        this.addMember(this.errorLabel);</span>
+<span class="nc" id="L95">        this.addMember(this.warningLabel);</span>
+        // Groups
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        for (BoutiquesGroup group : applicationDescriptor.getGroups()) {</span>
+<span class="nc" id="L98">            this.groups.put(group.getId(), new GroupValidator(group, this));</span>
+<span class="nc" id="L99">        }</span>
+<span class="nc" id="L100">        this.validateGroups();</span>
+        // Dependencies
+<span class="nc" id="L102">        this.configureDependencies(applicationDescriptor);</span>
+<span class="nc" id="L103">    }</span>
+
+    /**
+     * Assertion that given expression is true, else an IllegalStateException with given message is thrown
+     *
+     * @param expression boolean: expression to verify, should evaluate to true in normal execution
+     * @param message    String message of thrown exception when expression is false
+     * @throws IllegalStateException if expression is false
+     */
+    public static void assertCondition(boolean expression, String message) throws IllegalStateException {
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (!expression) {</span>
+<span class="nc" id="L114">            throw new IllegalStateException(message);</span>
+        }
+<span class="nc" id="L116">    }</span>
+
+    /**
+     * @param text String
+     * @return String with content from text enclosed by HTML bold tag
+     */
+    public static String bold(String text) {
+<span class="nc" id="L123">        return &quot;&lt;b&gt;&quot; + text + &quot;&lt;/b&gt;&quot;;</span>
+    }
+
+    /**
+     * @param memberNames List of Strings containing a group's member names
+     * @return String message describing the group as mutually exclusive
+     */
+    public static String mutuallyExclusiveMessage(List&lt;String&gt; memberNames) {
+<span class="nc" id="L131">        return groupMessage(memberNames, names -&gt; &quot;At most one of &quot; + names + &quot; can be non-empty.&quot;);</span>
+    }
+
+    /**
+     * @param memberNames List of Strings containing a group's member names
+     * @return String message describing the group as all-or-none
+     */
+    public static String allOrNoneMessage(List&lt;String&gt; memberNames) {
+<span class="nc" id="L139">        return groupMessage(memberNames, names -&gt; &quot;Either all or none of &quot; + names + &quot; must be empty.&quot;);</span>
+    }
+
+    /**
+     * @param memberNames List of Strings containing a group's member names
+     * @return String message describing the group as one-is-required
+     */
+    public static String oneIsRequiredMessage(List&lt;String&gt; memberNames) {
+<span class="nc" id="L147">        return groupMessage(memberNames, names -&gt; &quot;At least one of &quot; + names + &quot; must be non-empty.&quot;);</span>
+    }
+
+    /**
+     * Generate a String description of a group from its members and a message formatter function
+     *
+     * @param memberNames      List of Strings containing names of group member inputs
+     * @param messageFormatter Function returning a group description as String from a String argument that lists
+     *                         the group members
+     * @return String description of the group
+     */
+    private static String groupMessage(List&lt;String&gt; memberNames, Function&lt;String, String&gt; messageFormatter) {
+<span class="nc" id="L159">        return messageFormatter.apply(bold(memberNames.toString()));</span>
+    }
+
+    public void hideInputs() {
+<span class="nc" id="L163">        setInputsVisible(false);</span>
+<span class="nc" id="L164">    }</span>
+
+    public void showInputs() {
+<span class="nc" id="L167">        setInputsVisible(true);</span>
+<span class="nc" id="L168">    }</span>
+
+    private void setInputsVisible(Boolean visible) {
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        for (InputLayout inputLayout : inputsMap.values()) {</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">            if (inputLayout.getInputId().equals(EXECUTION_NAME_ID)) {</span>
+<span class="nc" id="L173">                continue;</span>
+            }
+<span class="nc" id="L175">            inputLayout.setVisible(visible);</span>
+<span class="nc" id="L176">        }</span>
+<span class="nc" id="L177">    }</span>
+
+    public void hideInput(String inputId) {
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        for (InputLayout inputLayout : inputsMap.values()) {</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">            if (inputLayout.getInputId().equals(inputId)) {</span>
+<span class="nc" id="L182">                inputLayout.setVisible(false);</span>
+            }
+<span class="nc" id="L184">        }</span>
+<span class="nc" id="L185">    }</span>
+
+    public void makeInputUnmodifiable(String inputId) {
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        for (InputLayout inputLayout : inputsMap.values()) {</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">            if (inputLayout.getInputId().equals(inputId)) {</span>
+<span class="nc" id="L190">                inputLayout.makeUnmodifiablePermanently();</span>
+            }
+<span class="nc" id="L192">        }</span>
+<span class="nc" id="L193">    }</span>
+
+    public void disableErrorsAndWarnings() {
+<span class="nc" id="L196">        this.disableErrorsAndWarnings = true;</span>
+<span class="nc" id="L197">        this.errorLabel.hide();</span>
+<span class="nc" id="L198">        this.warningLabel.hide();</span>
+<span class="nc" id="L199">    }</span>
+
+    public void enableErrorsAndWarnings() {
+<span class="nc" id="L202">        this.disableErrorsAndWarnings = false;</span>
+<span class="nc" id="L203">        this.updateWarningMessage();</span>
+<span class="nc" id="L204">        this.updateErrorMessages();</span>
+<span class="nc" id="L205">    }</span>
+
+    /**
+     * Add given launch, save inputs and save as example buttons to this
+     *
+     * @param launchButton        IButton
+     * @param saveInputsButton    IButton
+     * @param saveAsExampleButton IButton, or null
+     */
+    public void setButtons(IButton launchButton, IButton saveInputsButton, IButton saveAsExampleButton) {
+<span class="nc" id="L215">        this.launchButton = launchButton;</span>
+<span class="nc" id="L216">        this.saveInputsButton = saveInputsButton;</span>
+        HLayout layout;
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        if (saveAsExampleButton == null) {</span>
+<span class="nc" id="L219">            layout = getButtonLayout(20, launchButton, saveInputsButton);</span>
+        } else {
+<span class="nc" id="L221">            this.saveAsExampleButton = saveAsExampleButton;</span>
+<span class="nc" id="L222">            layout = getButtonLayout(20, launchButton, saveInputsButton, saveAsExampleButton);</span>
+        }
+<span class="nc" id="L224">        this.setButtonsLayout(layout);</span>
+<span class="nc" id="L225">        this.updateErrorMessages();</span>
+<span class="nc" id="L226">    }</span>
+
+    /**
+     * Add given buttons to this
+     *
+     * @param margin  int margin before added buttons
+     * @param buttons IButton... to add to this
+     */
+    public void setButtons(int margin, IButton... buttons) {
+<span class="nc" id="L235">        this.setButtonsLayout(getButtonLayout(margin, buttons));</span>
+<span class="nc" id="L236">    }</span>
+
+    protected HLayout getButtonLayout(int margin, IButton... buttons) {
+<span class="nc" id="L239">        HLayout newButtonLayout = new HLayout(5);</span>
+<span class="nc" id="L240">        newButtonLayout.setAlign(VerticalAlignment.CENTER);</span>
+<span class="nc" id="L241">        newButtonLayout.setMargin(margin);</span>
+
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        for (IButton button : buttons) {</span>
+<span class="nc" id="L244">            newButtonLayout.addMember(button);</span>
+        }
+<span class="nc" id="L246">        return newButtonLayout;</span>
+    }
+
+    private void setButtonsLayout(Layout newButtonsLayout) {
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        for (Canvas child : this.buttonsLayout.getChildren()) {</span>
+<span class="nc" id="L251">            this.buttonsLayout.removeChild(child);</span>
+        }
+<span class="nc" id="L253">        this.buttonsLayout.addMember(newButtonsLayout);</span>
+<span class="nc" id="L254">    }</span>
+
+
+    public void configureCitation(String applicationName) {
+
+<span class="nc" id="L259">        AsyncCallback&lt;String&gt; callback = new AsyncCallback&lt;String&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L262">                fr.insalyon.creatis.vip.core.client.view.layout.Layout.getInstance().setWarningMessage(&quot;Unable to load citation:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L263">            }</span>
+
+            @Override
+            public void onSuccess(String result) {
+<span class="nc bnc" id="L267" title="All 4 branches missed.">                if (result != null &amp;&amp; !result.isEmpty()) {</span>
+<span class="nc" id="L268">                    VLayout citationLayout = new VLayout(5);</span>
+<span class="nc" id="L269">                    citationLayout.addMember(WidgetUtil.getLabel(&quot;&lt;b&gt;Please refer to the following publication:&lt;/b&gt;&quot;, 20));</span>
+
+<span class="nc" id="L271">                    Label citation = new Label(result);</span>
+<span class="nc" id="L272">                    citation.setWidth100();</span>
+<span class="nc" id="L273">                    citation.setAutoHeight();</span>
+<span class="nc" id="L274">                    citation.setCanSelectText(true);</span>
+<span class="nc" id="L275">                    citation.setPadding(5);</span>
+<span class="nc" id="L276">                    citation.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+<span class="nc" id="L277">                    citation.setBorder(&quot;1px solid #CCCCCC&quot;);</span>
+<span class="nc" id="L278">                    citationLayout.addMember(citation);</span>
+
+<span class="nc" id="L280">                    addMember(citationLayout);</span>
+                }
+<span class="nc" id="L282">            }</span>
+        };
+<span class="nc" id="L284">        ApplicationService.Util.getInstance().getCitation(applicationName, callback);</span>
+<span class="nc" id="L285">    }</span>
+
+    /**
+     * Generate forms for results directory inputs as well as all inputs described in applicationDescriptor
+     *
+     * @param applicationDescriptor BoutiquesDescriptor generated from application .json descriptor file
+     */
+    private void configureInputs(BoutiquesApplication applicationDescriptor, boolean showSeparators) {
+        // Execution name and results directory inputs
+<span class="nc bnc" id="L294" title="All 2 branches missed.">        if (showSeparators) {</span>
+<span class="nc" id="L295">            Label separator = WidgetUtil.getLabel(&quot;&lt;hr/&gt;Mandatory inputs :&quot;, 15);</span>
+<span class="nc" id="L296">            this.addMember(separator);</span>
+        }
+
+        try {
+<span class="nc" id="L300">            this.createArtificialStringInput(&quot;Execution name&quot;, EXECUTION_NAME_ID, false, null,</span>
+                    false, &quot;[&quot; + ApplicationConstants.EXEC_NAME_VALID_CHARS + &quot;]&quot;);
+<span class="nc bnc" id="L302" title="All 2 branches missed.">            if (applicationDescriptor.getBoutiquesExtensions().getAddResultsDirectoryInput()) {</span>
+<span class="nc" id="L303">                this.createArtificialStringInput(&quot;Results directory&quot;, RESULTS_DIRECTORY_PARAM_NAME, true,</span>
+                        DataManagerConstants.ROOT + &quot;/&quot; + DataManagerConstants.USERS_HOME,
+                        true, &quot;[&quot; + ApplicationConstants.INPUT_VALID_CHARS + &quot;]&quot;);
+            }
+<span class="nc" id="L307">        } catch (InvalidBoutiquesDescriptorException exception) {</span>
+            // This should not happen as parameters provided to createArtificialStringInput should be valid.
+<span class="nc" id="L309">            throw new RuntimeException(&quot;Could not create 'Execution name' and 'Results directory' input layouts.&quot;);</span>
+<span class="nc" id="L310">        }</span>
+        // Application descriptor inputs
+<span class="nc" id="L312">        Set&lt;BoutiquesInput&gt; mandatoryInputs = applicationDescriptor.getInputs().stream()</span>
+<span class="nc bnc" id="L313" title="All 2 branches missed.">                .filter(i -&gt; !i.isOptional()).collect(Collectors.toSet());</span>
+<span class="nc" id="L314">        Set&lt;BoutiquesInput&gt; optionalInputs = applicationDescriptor.getInputs().stream()</span>
+<span class="nc" id="L315">                .filter(i -&gt; i.isOptional()).collect(Collectors.toSet());</span>
+
+
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        for (BoutiquesInput input : mandatoryInputs) {</span>
+<span class="nc" id="L319">            configureInput(applicationDescriptor, input);</span>
+<span class="nc" id="L320">        }</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (optionalInputs.isEmpty()) {</span>
+<span class="nc" id="L322">            return;</span>
+        }
+<span class="nc bnc" id="L324" title="All 2 branches missed.">        if (showSeparators) {</span>
+<span class="nc" id="L325">            Label separator = WidgetUtil.getLabel(&quot;&lt;hr/&gt;Optional inputs :&quot;, 15);</span>
+<span class="nc" id="L326">            this.addMember(separator);</span>
+        }
+
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        for (BoutiquesInput input : optionalInputs) {</span>
+<span class="nc" id="L330">            configureInput(applicationDescriptor, input);</span>
+<span class="nc" id="L331">        }</span>
+<span class="nc" id="L332">    }</span>
+
+    private void configureInput(BoutiquesApplication applicationDescriptor, BoutiquesInput input) {
+        InputLayout inputLayout;
+<span class="nc bnc" id="L336" title="All 2 branches missed.">        if (input.getPossibleValues() != null) {</span>
+<span class="nc" id="L337">            Map&lt;String, String&gt; labels =</span>
+<span class="nc" id="L338">                    applicationDescriptor.getBoutiquesExtensions().getValueChoicesLabelsForInput(input.getId());</span>
+<span class="nc" id="L339">            inputLayout = new ValueChoiceInputLayout(input, this, labels);</span>
+<span class="nc" id="L340">        } else {</span>
+<span class="nc bnc" id="L341" title="All 4 branches missed.">            switch (input.getType()) {</span>
+                case STRING:
+                case FILE:
+<span class="nc" id="L344">                    String allowedChar = &quot;[&quot; + ApplicationConstants.INPUT_VALID_CHARS + &quot;]&quot;;</span>
+<span class="nc" id="L345">                    inputLayout = new StringInputLayout((BoutiquesStringInput) input, this,</span>
+                            true, allowedChar);
+<span class="nc" id="L347">                    break;</span>
+                case NUMBER:
+<span class="nc" id="L349">                    inputLayout = new NumberInputLayout((BoutiquesNumberInput) input, this);</span>
+<span class="nc" id="L350">                    break;</span>
+                case FLAG:
+<span class="nc" id="L352">                    inputLayout = new FlagInputLayout((BoutiquesFlagInput) input, this);</span>
+<span class="nc" id="L353">                    break;</span>
+                default:
+<span class="nc" id="L355">                    throw new RuntimeException(&quot;Unknown input type: &quot; + input.getType());</span>
+            }
+        }
+        // handle extensions
+<span class="nc bnc" id="L359" title="All 2 branches missed.">        if (applicationDescriptor.getBoutiquesExtensions().getNonListInputs().contains(input.getId())) {</span>
+<span class="nc" id="L360">            inputLayout.disableAddingValue();</span>
+        }
+<span class="nc" id="L362">        this.inputsMap.put(input.getId(), inputLayout);</span>
+<span class="nc" id="L363">        this.addMember(inputLayout);</span>
+        // Validate input value and dependencies
+<span class="nc" id="L365">        inputLayout.onValueChanged();</span>
+<span class="nc" id="L366">    }</span>
+
+    /**
+     * Create and displays an artificial String input from its attributes (used for execution name and results
+     * directory)
+     *
+     * @param name              String name of the input
+     * @param id                String input ID
+     * @param isFile            boolean: true if input is a File, false if it is a free String
+     * @param defaultValue      input default value (&quot;&quot; for empty default)
+     * @param hasAddValueButton boolean: true if input should have a &quot;add value&quot; button, false otherwise
+     * @param allowedChar       String representing a regexp of allowed characters (ex: &quot;[a-zA-z0-9]&quot; for alphanumeric).
+     *                          null with use default value &quot;[&quot; + ApplicationConstants.INPUT_VALID_CHARS + &quot;]&quot;.
+     * @throws InvalidBoutiquesDescriptorException if provided properties are invalid
+     */
+    private void createArtificialStringInput(String name, String id, boolean isFile,
+                                             String defaultValue, boolean hasAddValueButton, String allowedChar)
+            throws InvalidBoutiquesDescriptorException {
+<span class="nc bnc" id="L384" title="All 2 branches missed.">        BoutiquesInput.InputType type = isFile ? BoutiquesInput.InputType.FILE : BoutiquesInput.InputType.STRING;</span>
+<span class="nc" id="L385">        BoutiquesStringInput input = new BoutiquesStringInput(id, name, null, type, false,</span>
+                null, null, null, null, null,
+                defaultValue);
+<span class="nc" id="L388">        InputLayout inputLayout = new StringInputLayout(input, this, hasAddValueButton, allowedChar);</span>
+<span class="nc" id="L389">        this.inputsMap.put(id, inputLayout);</span>
+<span class="nc" id="L390">        this.addMember(inputLayout);</span>
+<span class="nc" id="L391">        inputLayout.onValueChanged();</span>
+<span class="nc" id="L392">    }</span>
+
+    /**
+     * Add inter-inputs dependencies.
+     * Preconditions: this.inputsMap has already been populated with correct InputLayouts (using this.configureInputs)
+     * this.groups has already been populated with correct GroupValidators (by constructor)
+     *
+     * @param applicationDescriptor BoutiquesDescriptor generated from application .json descriptor file
+     */
+    private void configureDependencies(BoutiquesApplication applicationDescriptor) {
+        // Disables-inputs
+<span class="nc" id="L403">        applicationDescriptor.getDisablesInputsMap().forEach(this::addDisablesInputs);</span>
+        // Requires-inputs
+<span class="nc" id="L405">        applicationDescriptor.getRequiresInputsMap().forEach(this::addRequiresInputs);</span>
+        // Value-disables
+<span class="nc" id="L407">        applicationDescriptor.getValueDisablesInputsMap().forEach(this::addValueDisables);</span>
+        // Value-requires
+<span class="nc" id="L409">        applicationDescriptor.getValueRequiresInputsMap().forEach(this::addValueRequires);</span>
+<span class="nc" id="L410">    }</span>
+
+    /**
+     * Make input with ID masterID disable all optional inputs with IDs in disabledIds when it is not empty
+     *
+     * @param masterId    String representing disabling input ID
+     * @param disabledIds Set of String IDs of dependent inputs
+     */
+    private void addDisablesInputs(String masterId, Set&lt;String&gt; disabledIds) {
+<span class="nc" id="L419">        assertCondition(this.inputsMap.containsKey(masterId),</span>
+                &quot;Invalid master input ID: &quot; + masterId);
+<span class="nc" id="L421">        InputLayout masterInput = this.inputsMap.get(masterId);</span>
+<span class="nc bnc" id="L422" title="All 2 branches missed.">        for (String disabledInputId : disabledIds) {</span>
+<span class="nc" id="L423">            assertCondition(this.inputsMap.containsKey(disabledInputId),</span>
+                    &quot;Invalid disabled input ID: &quot; + disabledInputId);
+<span class="nc" id="L425">            InputLayout disabledInput = this.inputsMap.get(disabledInputId);</span>
+            // Add dependency only if disabledInput can indeed be disabled, which means it is optional
+<span class="nc bnc" id="L427" title="All 2 branches missed.">            if (disabledInput.isOptional()) {</span>
+<span class="nc" id="L428">                masterInput.addDisables(disabledInput);</span>
+            }
+<span class="nc" id="L430">        }</span>
+<span class="nc" id="L431">    }</span>
+
+    /**
+     * Make input with ID masterID require all inputs and groups with IDs in requiredIds. This means it will be disabled
+     * if one of them is left empty
+     *
+     * @param masterId    String representing dependent input ID
+     * @param requiredIds Set of String IDs of required inputs or groups of inputs
+     */
+    private void addRequiresInputs(String masterId, Set&lt;String&gt; requiredIds) {
+<span class="nc" id="L441">        assertCondition(this.inputsMap.containsKey(masterId), &quot;Invalid master input ID: &quot; + masterId);</span>
+<span class="nc" id="L442">        InputLayout masterInput = this.inputsMap.get(masterId);</span>
+        // Ignore dependency if master input is not optional (thus cannot be disabled)
+<span class="nc bnc" id="L444" title="All 2 branches missed.">        if (!masterInput.isOptional()) {</span>
+<span class="nc" id="L445">            return;</span>
+        }
+<span class="nc bnc" id="L447" title="All 2 branches missed.">        for (String requiredInputId : requiredIds) {</span>
+<span class="nc bnc" id="L448" title="All 2 branches missed.">            if (this.inputsMap.containsKey(requiredInputId)) {</span>
+<span class="nc" id="L449">                InputLayout requiredInput = this.inputsMap.get(requiredInputId);</span>
+<span class="nc" id="L450">                masterInput.addRequires(requiredInput);</span>
+<span class="nc" id="L451">            } else {</span>
+                // A whole group is required
+<span class="nc" id="L453">                LaunchFormLayout.assertCondition(this.groups.containsKey(requiredInputId),</span>
+                        &quot;Invalid group ID: &quot; + requiredInputId);
+<span class="nc bnc" id="L455" title="All 2 branches missed.">                for (InputLayout requiredMember : this.groups.get(requiredInputId).getMembers()) {</span>
+<span class="nc" id="L456">                    masterInput.addRequires(requiredMember);</span>
+<span class="nc" id="L457">                }</span>
+            }
+<span class="nc" id="L459">        }</span>
+<span class="nc" id="L460">    }</span>
+
+    /**
+     * Make input with ID masterId values disable certain inputs. valueDisablesIds maps values to IDs of inputs disabled
+     * when these values are selected.
+     *
+     * @param masterId         String representing disabling input ID.
+     * @param valueDisablesIds Map from String input values to Sets of String IDs of inputs disabled by those values
+     */
+    private void addValueDisables(String masterId, Map&lt;String, Set&lt;String&gt;&gt; valueDisablesIds) {
+<span class="nc" id="L470">        LaunchFormLayout.assertCondition(this.inputsMap.containsKey(masterId),</span>
+                &quot;Invalid master input ID: &quot; + masterId);
+<span class="nc" id="L472">        InputLayout masterInput = this.inputsMap.get(masterId);</span>
+<span class="nc" id="L473">        LaunchFormLayout.assertCondition(masterInput instanceof ValueChoiceInputLayout,</span>
+                &quot;Invalid state: can't add value-disables to non value choice input: &quot; + masterId);
+<span class="nc bnc" id="L475" title="All 2 branches missed.">        for (String iValue : valueDisablesIds.keySet()) {</span>
+<span class="nc" id="L476">            Set&lt;InputLayout&gt; disabledInputSet = new HashSet&lt;&gt;();</span>
+<span class="nc bnc" id="L477" title="All 2 branches missed.">            for (String disabledInputId : valueDisablesIds.get(iValue)) {</span>
+<span class="nc" id="L478">                LaunchFormLayout.assertCondition(this.inputsMap.containsKey(disabledInputId),</span>
+                        &quot;Invalid disabled input ID: &quot; + disabledInputId);
+<span class="nc" id="L480">                InputLayout disabledInput = this.inputsMap.get(disabledInputId);</span>
+                // Only optional inputs can be disabled
+<span class="nc bnc" id="L482" title="All 2 branches missed.">                if (disabledInput.isOptional()) {</span>
+<span class="nc" id="L483">                    disabledInputSet.add(disabledInput);</span>
+                }
+<span class="nc" id="L485">            }</span>
+<span class="nc" id="L486">            ((ValueChoiceInputLayout) masterInput).addValueDisables(iValue, disabledInputSet);</span>
+<span class="nc" id="L487">        }</span>
+<span class="nc" id="L488">    }</span>
+
+    /**
+     * Make input with ID masterId values require certain inputs. valueRequiresIds maps values to IDs of inputs that
+     * cannot be empty when these values are selected.
+     *
+     * @param masterId         String representing dependent input ID.
+     * @param valueRequiresIds Map from input values as Strings to Set of String IDs of inputs required by those
+     *                         values
+     */
+    private void addValueRequires(String masterId, Map&lt;String, Set&lt;String&gt;&gt; valueRequiresIds) {
+<span class="nc" id="L499">        LaunchFormLayout.assertCondition(this.inputsMap.containsKey(masterId),</span>
+                &quot;Invalid master input ID: &quot; + masterId);
+<span class="nc" id="L501">        InputLayout masterInput = this.inputsMap.get(masterId);</span>
+<span class="nc" id="L502">        LaunchFormLayout.assertCondition(masterInput instanceof ValueChoiceInputLayout,</span>
+                &quot;Can't add value-requires to non value choice input: &quot; + masterId);
+<span class="nc" id="L504">        Map&lt;String, Set&lt;InputLayout&gt;&gt; valueRequiresLayouts = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L505" title="All 2 branches missed.">        for (String iValue : valueRequiresIds.keySet()) {</span>
+<span class="nc" id="L506">            Set&lt;InputLayout&gt; requiredInputs = valueRequiresIds.get(iValue).stream()</span>
+<span class="nc" id="L507">                    .map(this.inputsMap::get)</span>
+<span class="nc" id="L508">                    .collect(Collectors.toSet());</span>
+<span class="nc" id="L509">            valueRequiresLayouts.put(iValue, requiredInputs);</span>
+<span class="nc" id="L510">        }</span>
+<span class="nc" id="L511">        ((ValueChoiceInputLayout) masterInput).addValueRequires(valueRequiresLayouts);</span>
+<span class="nc" id="L512">    }</span>
+
+    /**
+     * Validate groups using corresponding GroupValidators validate method. This adds
+     */
+    public void validateGroups() {
+<span class="nc" id="L518">        this.groups.values().forEach(GroupValidator::validate);</span>
+<span class="nc" id="L519">    }</span>
+
+    /**
+     * Add dependencies involving masterInput to unsupported dependencies, usually because the input has
+     * multiple values. A warning message will be displayed to inform user
+     *
+     * @param masterInput InputLayout representing problematic input
+     * @see #removeUnsupportedDependencies(String)
+     * @see #updateWarningMessage()
+     */
+    public void addUnsupportedDependencies(InputLayout masterInput) {
+<span class="nc" id="L530">        final String masterName = bold(masterInput.getInputName());</span>
+        Set&lt;String&gt; newUnsupportedDependencies; // Warning messages to display
+        // Requires-inputs
+<span class="nc" id="L533">        newUnsupportedDependencies = this.formatDependencies(masterInput.getRequires(),</span>
+<span class="nc" id="L534">                inputName -&gt; masterName + &quot; requires &quot; + inputName);</span>
+<span class="nc" id="L535">        newUnsupportedDependencies.addAll(this.formatDependencies(masterInput.getRequiredBy(),</span>
+<span class="nc" id="L536">                inputName -&gt; inputName + &quot; requires &quot; + masterName));</span>
+        // Disables-inputs
+<span class="nc" id="L538">        newUnsupportedDependencies.addAll(this.formatDependencies(masterInput.getDisables(),</span>
+<span class="nc" id="L539">                inputName -&gt; masterName + &quot; disables &quot; + inputName));</span>
+<span class="nc" id="L540">        newUnsupportedDependencies.addAll(this.formatDependencies(masterInput.getDisabledBy(),</span>
+<span class="nc" id="L541">                inputName -&gt; inputName + &quot; disables &quot; + masterName));</span>
+        // Value-disables
+<span class="nc" id="L543">        newUnsupportedDependencies.addAll(this.formatDependencies(masterInput.getRequiredByValue(),</span>
+<span class="nc" id="L544">                (inputName, values) -&gt; inputName + &quot; values &quot; + values + &quot; require &quot; + masterName));</span>
+        // Value-requires
+<span class="nc" id="L546">        newUnsupportedDependencies.addAll(this.formatDependencies(masterInput.getDisabledByValue(),</span>
+<span class="nc" id="L547">                (inputName, values) -&gt; inputName + &quot; values &quot; + values + &quot; disable &quot; + masterName));</span>
+<span class="nc bnc" id="L548" title="All 2 branches missed.">        if (masterInput instanceof ValueChoiceInputLayout) {</span>
+<span class="nc" id="L549">            ValueChoiceInputLayout masterChoiceInput = (ValueChoiceInputLayout) masterInput;</span>
+            // Value-disables
+<span class="nc" id="L551">            newUnsupportedDependencies.addAll(this.formatDependencies(masterChoiceInput.getValueDisables(),</span>
+<span class="nc" id="L552">                    (inputName, values) -&gt; masterName + &quot; values &quot; + values + &quot; disable &quot; + inputName));</span>
+            // Value-requires
+<span class="nc" id="L554">            newUnsupportedDependencies.addAll(this.formatDependencies(masterChoiceInput.getValueRequires(),</span>
+<span class="nc" id="L555">                    (inputName, values) -&gt; masterName + &quot; values &quot; + values + &quot; require &quot; + inputName));</span>
+        }
+        // Update warning message
+<span class="nc bnc" id="L558" title="All 2 branches missed.">        if (newUnsupportedDependencies.size() &gt; 0) {</span>
+<span class="nc" id="L559">            this.unsupportedDependencies.put(masterInput.getInputId(), newUnsupportedDependencies);</span>
+        }
+<span class="nc" id="L561">        this.updateWarningMessage();</span>
+<span class="nc" id="L562">    }</span>
+
+    /**
+     * Generate a set of dependency messages from a set of InputLayouts involved in the dependencies. A formatter
+     * Function generates one dependency message given involved input's name
+     *
+     * @param inputSet  Set of InputLayout involved in dependencies to describe
+     * @param formatter Function taking a String containing an input name as argument and returning a String
+     *                  representing the dependency its involved in
+     * @return Set of Strings containing dependency messages
+     * @see #addUnsupportedDependencies(InputLayout)
+     */
+    private Set&lt;String&gt; formatDependencies(Set&lt;InputLayout&gt; inputSet,
+                                           Function&lt;String, String&gt; formatter) {
+<span class="nc" id="L576">        return inputSet.stream()</span>
+<span class="nc" id="L577">                .map(input -&gt; bold(input.getInputName()))</span>
+<span class="nc" id="L578">                .map(formatter)</span>
+<span class="nc" id="L579">                .collect(Collectors.toSet());</span>
+    }
+
+    /**
+     * Generate a set of dependency messages from a Map containing InputLayouts and input values involved in the
+     * dependencies. A formatter BiFunction generates one dependency message given involved input's name and
+     * involved Set of values.
+     *
+     * @param valueChoices Map containing InputLayouts as keys and Sets of Strings as values. These respectively
+     *                     represent inputs and input values involved together in a dependency
+     * @param formatter    BiFunction taking two Strings as arguments and returning a dependency message as String.
+     *                     Arguments are respectively involved input's name and the list of involved input values
+     * @return Set of Strings containing dependency messages
+     * @see #addUnsupportedDependencies(InputLayout)
+     */
+    private Set&lt;String&gt; formatDependencies(Map&lt;InputLayout, Set&lt;String&gt;&gt; valueChoices,
+                                           BiFunction&lt;String, String, String&gt; formatter) {
+<span class="nc" id="L596">        return valueChoices.entrySet().stream()</span>
+<span class="nc" id="L597">                .map(entry -&gt; formatter.apply(bold(entry.getKey().getInputName()), entry.getValue().toString()))</span>
+<span class="nc" id="L598">                .collect(Collectors.toSet());</span>
+    }
+
+    /**
+     * Remove dependencies involving input with ID masterId from unsupported dependencies, then update corresponding
+     * warning message
+     *
+     * @param masterId String containing involved input's ID
+     * @see #addUnsupportedDependencies(InputLayout)
+     * @see #updateWarningMessage()
+     */
+    public void removeUnsupportedDependencies(String masterId) {
+<span class="nc" id="L610">        this.unsupportedDependencies.remove(masterId);</span>
+<span class="nc" id="L611">        this.updateWarningMessage();</span>
+<span class="nc" id="L612">    }</span>
+
+    /**
+     * Add dependencies involving unsupportedGroup to unsupported dependencies, usually because the group input has
+     * members with multiple values. A warning message will be displayed to inform user
+     *
+     * @param unsupportedGroup GroupValidator representing problematic group
+     * @see #addUnsupportedDependencies(InputLayout)
+     * @see #updateWarningMessage()
+     */
+    public void addUnsupportedGroup(GroupValidator unsupportedGroup) {
+<span class="nc" id="L623">        HashSet&lt;String&gt; newUnsupportedDependencies = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L624">        List&lt;String&gt; memberNames = unsupportedGroup.getMemberNames();</span>
+<span class="nc bnc" id="L625" title="All 2 branches missed.">        if (unsupportedGroup.isMutuallyExclusive()) {</span>
+<span class="nc" id="L626">            newUnsupportedDependencies.add(mutuallyExclusiveMessage(memberNames));</span>
+        }
+<span class="nc bnc" id="L628" title="All 2 branches missed.">        if (unsupportedGroup.isAllOrNone()) {</span>
+<span class="nc" id="L629">            newUnsupportedDependencies.add(allOrNoneMessage(memberNames));</span>
+        }
+<span class="nc bnc" id="L631" title="All 2 branches missed.">        if (unsupportedGroup.isOneIsRequired()) {</span>
+<span class="nc" id="L632">            newUnsupportedDependencies.add(oneIsRequiredMessage(memberNames));</span>
+        }
+<span class="nc bnc" id="L634" title="All 2 branches missed.">        if (newUnsupportedDependencies.size() &gt; 0) {</span>
+<span class="nc" id="L635">            this.unsupportedDependencies.put(unsupportedGroup.getGroupId(), newUnsupportedDependencies);</span>
+<span class="nc" id="L636">            newUnsupportedDependencies.forEach(message -&gt; this.groupErrorMessage(message, false));</span>
+        }
+<span class="nc" id="L638">        this.updateWarningMessage();</span>
+<span class="nc" id="L639">    }</span>
+
+    /**
+     * Remove dependencies involving group with ID nowSupportedGroup from unsupported dependencies, then update
+     * corresponding warning message
+     *
+     * @param nowSupportedGroup GroupValidator representing the group
+     * @see #addUnsupportedGroup(GroupValidator)
+     * @see #removeUnsupportedDependencies(String)
+     * @see #updateWarningMessage()
+     */
+    public void removeUnsupportedGroup(GroupValidator nowSupportedGroup) {
+<span class="nc" id="L651">        this.unsupportedDependencies.remove(nowSupportedGroup.getGroupId());</span>
+<span class="nc" id="L652">        this.updateWarningMessage();</span>
+<span class="nc" id="L653">    }</span>
+
+    /**
+     * Update this.warningLabel to show current user warnings. Hide it if there is no warning to show
+     */
+    public void updateWarningMessage() {
+<span class="nc bnc" id="L659" title="All 2 branches missed.">        if (this.disableErrorsAndWarnings) return;</span>
+
+<span class="nc" id="L661">        Set&lt;String&gt; warningDependencies = new TreeSet&lt;&gt;();</span>
+<span class="nc" id="L662">        this.unsupportedDependencies.forEach((keyId, warnings) -&gt; warningDependencies.addAll(warnings));</span>
+<span class="nc bnc" id="L663" title="All 2 branches missed.">        if (warningDependencies.size() == 0) {</span>
+<span class="nc" id="L664">            this.warningLabel.hide();</span>
+        } else {
+<span class="nc" id="L666">            String message = warningDependencies.stream()</span>
+<span class="nc" id="L667">                    .map(dependency -&gt; &quot;&lt;li&gt; &quot; + dependency + &quot;&lt;/li&gt;&quot;)</span>
+<span class="nc" id="L668">                    .collect(Collectors.joining(&quot;&quot;, &quot;&lt;font color=\&quot;orange\&quot;&gt;Following input &quot;</span>
+                            + &quot;dependencies can't be checked because some inputs have multiple values. Please ensure &quot;
+                            + &quot;they are met to avoid execution errors: &lt;ul&gt;&quot;, &quot;&lt;/ul&gt;&quot;));
+<span class="nc" id="L671">            this.warningLabel.setContents(message);</span>
+<span class="nc" id="L672">            this.warningLabel.show();</span>
+        }
+<span class="nc" id="L674">    }</span>
+
+    /**
+     * Add an InputLayout input name to the list of inputs with invalid value, then update user error messages
+     *
+     * @param input InputLayout representing problematic input
+     * @see #removeValidationErrorOnInput(InputLayout)
+     * @see #updateErrorMessages()
+     * @see #addUnsupportedDependencies(InputLayout)
+     */
+    public void addValidationErrorOnInput(InputLayout input) {
+<span class="nc" id="L685">        this.invalidInputIds.add(input.getInputId());</span>
+<span class="nc" id="L686">        this.updateErrorMessages();</span>
+<span class="nc" id="L687">    }</span>
+
+    /**
+     * Remove an InputLayout input name from the list of inputs with invalid value, then update user error messages
+     *
+     * @param input InputLayout representing concerned input
+     * @see #addValidationErrorOnInput(InputLayout)
+     * @see #updateErrorMessages()
+     * @see #removeUnsupportedDependencies(String)
+     */
+    public void removeValidationErrorOnInput(InputLayout input) {
+<span class="nc" id="L698">        this.invalidInputIds.remove(input.getInputId());</span>
+<span class="nc" id="L699">        this.updateErrorMessages();</span>
+<span class="nc" id="L700">    }</span>
+
+    /**
+     * Add or remove a group from unsatisfied group error messages, then update visible error messages
+     *
+     * @param message  String containing the group error message to add or remove
+     * @param addError boolean: true if the error message should be added, false if it should be removed
+     * @see #addValidationErrorOnInput(InputLayout)
+     * @see #removeValidationErrorOnInput(InputLayout)
+     * @see #updateErrorMessages()
+     */
+    public void groupErrorMessage(String message, boolean addError) {
+<span class="nc bnc" id="L712" title="All 2 branches missed.">        if (addError) {</span>
+<span class="nc" id="L713">            this.errorMessages.add(message);</span>
+        } else {
+<span class="nc" id="L715">            this.errorMessages.remove(message);</span>
+        }
+<span class="nc" id="L717">        this.updateErrorMessages();</span>
+<span class="nc" id="L718">    }</span>
+
+    /**
+     * Update displayed user error messages to match field invalidInputNames and errorMessages. If there is no error
+     * to display, also enable launch simulation, save inputs and save as example buttons, else disable them
+     *
+     * @see #addValidationErrorOnInput(InputLayout)
+     * @see #removeValidationErrorOnInput(InputLayout)
+     * @see #groupErrorMessage(String, boolean)
+     */
+    public void updateErrorMessages() {
+<span class="nc bnc" id="L729" title="All 2 branches missed.">        if (this.disableErrorsAndWarnings) return;</span>
+
+<span class="nc bnc" id="L731" title="All 2 branches missed.">        if ((this.invalidInputIds.size() + this.errorMessages.size()) == 0) {</span>
+            // No errors: enable buttons and hide error messages label
+<span class="nc bnc" id="L733" title="All 4 branches missed.">            if ((this.launchButton != null) &amp;&amp; (this.saveInputsButton != null)) {</span>
+<span class="nc" id="L734">                this.launchButton.enable();</span>
+<span class="nc" id="L735">                this.launchButton.setPrompt(&quot;&quot;);</span>
+<span class="nc" id="L736">                this.saveInputsButton.enable();</span>
+<span class="nc" id="L737">                this.saveInputsButton.setPrompt(&quot;&quot;);</span>
+            }
+<span class="nc bnc" id="L739" title="All 2 branches missed.">            if (this.saveAsExampleButton != null) {</span>
+<span class="nc" id="L740">                this.saveAsExampleButton.enable();</span>
+<span class="nc" id="L741">                this.saveAsExampleButton.setPrompt(&quot;Save the inputs as a featured example that will &quot;</span>
+                        + &quot;be available for all users.&quot;);
+            }
+<span class="nc" id="L744">            this.errorLabel.hide();</span>
+        } else {
+            // Errors: disable buttons and show error messages
+<span class="nc bnc" id="L747" title="All 4 branches missed.">            if ((this.launchButton != null) &amp;&amp; (this.saveInputsButton != null)) {</span>
+<span class="nc" id="L748">                this.launchButton.disable();</span>
+<span class="nc" id="L749">                this.launchButton.setPrompt(&quot;Cannot launch. Some inputs are not valid (see below).&quot;);</span>
+<span class="nc" id="L750">                this.saveInputsButton.disable();</span>
+<span class="nc" id="L751">                this.saveInputsButton.setPrompt(&quot;Cannot save Inputs. Some inputs are not valid (see below).&quot;);</span>
+            }
+<span class="nc bnc" id="L753" title="All 2 branches missed.">            if (this.saveAsExampleButton != null) {</span>
+<span class="nc" id="L754">                this.saveAsExampleButton.disable();</span>
+<span class="nc" id="L755">                this.saveAsExampleButton.setPrompt(&quot;Cannot save Inputs. Some inputs are not valid (see below).&quot;);</span>
+            }
+<span class="nc" id="L757">            this.errorLabel.show();</span>
+            // Error messages
+<span class="nc" id="L759">            StringBuilder errorContent = new StringBuilder(&quot;&lt;font color=\&quot;red\&quot;&gt;&lt;ul&gt;&quot;);</span>
+<span class="nc bnc" id="L760" title="All 2 branches missed.">            if (this.invalidInputIds.size() &gt; 0) {</span>
+<span class="nc" id="L761">                Set&lt;String&gt; invalidInputNames = this.invalidInputIds.stream()</span>
+<span class="nc" id="L762">                        .map(id -&gt; this.inputsMap.get(id).getInputName())</span>
+<span class="nc" id="L763">                        .collect(Collectors.toSet());</span>
+<span class="nc" id="L764">                errorContent.append(&quot;&lt;li&gt;Following inputs are invalid: &lt;b&gt;&quot;)</span>
+<span class="nc" id="L765">                        .append(invalidInputNames)</span>
+<span class="nc" id="L766">                        .append(&quot;&lt;/b&gt;.&lt;/li&gt;&quot;);</span>
+            }
+<span class="nc" id="L768">            this.errorMessages.forEach(iMessage -&gt; errorContent.append(&quot;&lt;li&gt;&quot;).append(iMessage).append(&quot;&lt;/li&gt;&quot;));</span>
+<span class="nc" id="L769">            this.errorLabel.setContents(errorContent + &quot;&lt;/ul&gt;&quot;);</span>
+        }
+<span class="nc" id="L771">    }</span>
+
+    /**
+     * Returns a map of input IDs to corresponding input values represented as ValueSets
+     *
+     * @return Map with String containing input IDs as keys and ValuesSets representing input values as values
+     */
+    private Map&lt;String, ValueSet&gt; getInputValueMap() {
+<span class="nc" id="L779">        Map&lt;String, ValueSet&gt; inputValuesMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L780">        this.inputsMap.forEach((inputId, inputLayout) -&gt; inputValuesMap.put(inputId, inputLayout.getValueList()));</span>
+<span class="nc" id="L781">        return inputValuesMap;</span>
+    }
+
+    /**
+     * Returns a map of input IDs to corresponding input values represented as one String
+     *
+     * @return Map with String containing input IDs as keys and String representing input values as values
+     */
+    public Map&lt;String, String&gt; getParametersMap() {
+<span class="nc" id="L790">        Map&lt;String, String&gt; parameterMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L791">        this.getInputValueMap().forEach((inputId, valueSet) -&gt; {</span>
+<span class="nc bnc" id="L792" title="All 2 branches missed.">            if (!inputId.equals(EXECUTION_NAME_ID)) {</span>
+                String inputValue;
+<span class="nc bnc" id="L794" title="All 2 branches missed.">                if (valueSet instanceof ValueList) {</span>
+<span class="nc" id="L795">                    inputValue = String.join(ApplicationConstants.SEPARATOR_LIST, valueSet.getValuesAsStrings());</span>
+                } else {
+<span class="nc" id="L797">                    List&lt;Float&gt; startStepStop = ((ValueRange) valueSet).getRangeLimits();</span>
+<span class="nc" id="L798">                    inputValue = startStepStop.get(0) + ApplicationConstants.SEPARATOR_INPUT</span>
+<span class="nc" id="L799">                            + startStepStop.get(2) + ApplicationConstants.SEPARATOR_INPUT</span>
+<span class="nc" id="L800">                            + startStepStop.get(1);</span>
+                }
+<span class="nc" id="L802">                parameterMap.put(inputId, inputValue);</span>
+            }
+<span class="nc" id="L804">        });</span>
+<span class="nc" id="L805">        return parameterMap;</span>
+    }
+
+    /**
+     * Load saved values after confirming with user if some non default values are to be overwritten
+     *
+     * @param valueMap Map of String representing input IDs to ValueSet representing corresponding values to load
+     */
+    private void loadValueMap(final Map&lt;String, ValueSet&gt; valueMap, boolean askConfirmation) {
+        // Check if some inputs have non default values that will be overwritten with different values,
+        // in order to alert the user
+<span class="nc" id="L816">        Set&lt;String&gt; overwrittenInputs = new TreeSet&lt;&gt;();</span>
+<span class="nc bnc" id="L817" title="All 2 branches missed.">        for (String inputId : valueMap.keySet()) {</span>
+<span class="nc" id="L818">            InputLayout input = this.inputsMap.get(inputId);</span>
+<span class="nc" id="L819">            boolean overwriteInput = false;</span>
+<span class="nc" id="L820">            ValueSet currentValueList = input.getValueList();</span>
+<span class="nc" id="L821">            ValueSet loadedValueList = valueMap.get(inputId);</span>
+<span class="nc bnc" id="L822" title="All 2 branches missed.">            if (!currentValueList.isEqualTo(loadedValueList)) {</span>
+<span class="nc bnc" id="L823" title="All 2 branches missed.">                if (!input.hasUniqueValue()) {</span>
+<span class="nc" id="L824">                    overwriteInput = true;</span>
+                } else {
+                    // Overwrite only if current value is different from default value.
+<span class="nc" id="L827">                    Object uniqueValue = currentValueList.getValueNo(0);</span>
+<span class="nc" id="L828">                    Object defaultValue = input.getDefaultValue();</span>
+<span class="nc bnc" id="L829" title="All 4 branches missed.">                    if (!((uniqueValue == null) &amp;&amp; (defaultValue == null))) {</span>
+<span class="nc bnc" id="L830" title="All 4 branches missed.">                        if ((uniqueValue == null) || (defaultValue == null)) {</span>
+                            // Current value or default value is null while the other is not
+<span class="nc" id="L832">                            overwriteInput = true;</span>
+                        } else {
+                            // String comparison in case defaultValue is not the same type as uniqueValue.
+                            // For instance if descriptor has default value &quot;1&quot; for an input of type &quot;Number&quot;, we want
+                            // the Float value 1 to be considered equal to default.
+<span class="nc bnc" id="L837" title="All 2 branches missed.">                            if (!defaultValue.toString().equals(uniqueValue.toString())) {</span>
+<span class="nc" id="L838">                                overwriteInput = true;</span>
+                            }
+                        }
+                    }
+                }
+            }
+<span class="nc bnc" id="L844" title="All 2 branches missed.">            if (overwriteInput) {</span>
+<span class="nc" id="L845">                overwrittenInputs.add(input.getInputId());</span>
+            }
+<span class="nc" id="L847">        }</span>
+        // If some values are to be overwritten, ask user to confirm
+<span class="nc bnc" id="L849" title="All 4 branches missed.">        if (overwrittenInputs.size() == 0 || !askConfirmation) {</span>
+<span class="nc" id="L850">            this.overwriteValues(valueMap);</span>
+        } else {
+<span class="nc" id="L852">            Set&lt;String&gt; overwrittenNames = overwrittenInputs.stream()</span>
+<span class="nc" id="L853">                    .map(id -&gt; this.inputsMap.get(id).getInputName())</span>
+<span class="nc" id="L854">                    .collect(Collectors.toSet());</span>
+<span class="nc" id="L855">            SC.confirm(&quot;The following fields already have a value.&lt;br /&gt;&quot;</span>
+                            + &quot;Do you want to replace them?&lt;br /&gt;&quot;
+                            + &quot;Fields: &quot; + overwrittenNames,
+                    confirmed -&gt; {
+<span class="nc bnc" id="L859" title="All 2 branches missed.">                        if (confirmed) {</span>
+<span class="nc" id="L860">                            this.overwriteValues(valueMap);</span>
+                        }
+<span class="nc" id="L862">                    });</span>
+        }
+<span class="nc" id="L864">    }</span>
+
+    /**
+     * Overwrite current in put values with provided ones
+     *
+     * @param valueMap Map of String representing input IDs to ValueSet representing corresponding values to write
+     */
+    private void overwriteValues(Map&lt;String, ValueSet&gt; valueMap) {
+<span class="nc" id="L872">        valueMap.forEach((inputId, values) -&gt; this.inputsMap.get(inputId).overwriteValues(values));</span>
+<span class="nc" id="L873">    }</span>
+
+    /**
+     * Load inputs from a parameters map
+     *
+     * @param simulationName Execution name to load
+     * @param valuesMap      Map of String input IDs to String representation of corresponding input values
+     */
+    public void loadInputs(String simulationName, Map&lt;String, String&gt; valuesMap, boolean askConfirmation) {
+<span class="nc" id="L882">        Map&lt;String, ValueSet&gt; valueSetMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L883">        valueSetMap.put(EXECUTION_NAME_ID, ValueSet.valueSetFactory(simulationName));</span>
+<span class="nc" id="L884">        valuesMap.forEach((inputId, valueString) -&gt; valueSetMap.put(inputId, ValueSet.valueSetFactory(valueString)));</span>
+<span class="nc" id="L885">        this.loadValueMap(valueSetMap, askConfirmation);</span>
+<span class="nc" id="L886">    }</span>
+
+    /**
+     * @return Map of String representing IDs of inputs contained in this form to corresponding InputLayouts
+     */
+    public Map&lt;String, InputLayout&gt; getInputsMap() {
+<span class="nc" id="L892">        return this.inputsMap;</span>
+    }
+
+    /**
+     * @return Simulation name
+     */
+    public String getSimulationName() {
+<span class="nc" id="L899">        return this.getInputValueMap().get(EXECUTION_NAME_ID).getStringValueNo(0);</span>
+    }
+
+    /**
+     * @return boolean: true if all inputs and groups are valid, false otherwise
+     */
+    public boolean validate() {
+<span class="nc bnc" id="L906" title="All 2 branches missed.">        return (this.invalidInputIds.size() + this.errorMessages.size()) == 0;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SentMessageBoxLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-social</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.social.client.view.message.sent</a> &gt; <span class="el_source">SentMessageBoxLayout.java</span></div><h1>SentMessageBoxLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.social.client.view.message.sent;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.social.client.SocialConstants;
+import fr.insalyon.creatis.vip.social.client.bean.Message;
+import fr.insalyon.creatis.vip.social.client.rpc.SocialService;
+import fr.insalyon.creatis.vip.social.client.rpc.SocialServiceAsync;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class SentMessageBoxLayout extends HLayout {
+
+    private Message message;
+
+<span class="nc" id="L60">    public SentMessageBoxLayout(Message message) {</span>
+
+<span class="nc" id="L62">        this.message = message;</span>
+
+<span class="nc" id="L64">        this.setMembersMargin(2);</span>
+<span class="nc" id="L65">        this.setWidth100();</span>
+<span class="nc" id="L66">        this.setHeight(50);</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (message.isRead()) {</span>
+<span class="nc" id="L68">            this.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+        } else {
+<span class="nc" id="L70">            this.setBackgroundColor(&quot;#D8E8EB&quot;);</span>
+        }
+
+<span class="nc" id="L73">        configureImageLayout();</span>
+<span class="nc" id="L74">        configureMainLayout();</span>
+<span class="nc" id="L75">        configureDateLayout();</span>
+<span class="nc" id="L76">        configureActionLayout();</span>
+<span class="nc" id="L77">    }</span>
+
+    /**
+     * Configures the image layout.
+     */
+    private void configureImageLayout() {
+
+<span class="nc" id="L84">        VLayout imgLayout = new VLayout();</span>
+<span class="nc" id="L85">        imgLayout.setPadding(2);</span>
+<span class="nc" id="L86">        imgLayout.setWidth(50);</span>
+<span class="nc" id="L87">        imgLayout.setHeight(50);</span>
+<span class="nc" id="L88">        imgLayout.setAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L90">        imgLayout.addMember(new Img(SocialConstants.ICON_USER, 48, 48));</span>
+<span class="nc" id="L91">        this.addMember(imgLayout);</span>
+<span class="nc" id="L92">    }</span>
+
+    /**
+     * Configures the main layout of a message.
+     */
+    private void configureMainLayout() {
+
+<span class="nc" id="L99">        VLayout mainLayout = new VLayout(2);</span>
+<span class="nc" id="L100">        mainLayout.setWidth(&quot;*&quot;);</span>
+<span class="nc" id="L101">        mainLayout.setHeight(50);</span>
+<span class="nc" id="L102">        mainLayout.setAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L104">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L105">        int count = 0;</span>
+<span class="nc" id="L106">        int numOfReceivers = message.getReceivers().length;</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        for (User user : message.getReceivers()) {</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">            if (count == SocialConstants.MESSAGE_MAX_RECEIVERS_DISPLAY) {</span>
+<span class="nc" id="L109">                sb.append(&quot; and &quot;).append(numOfReceivers - count).append(&quot; other users&quot;);</span>
+<span class="nc" id="L110">                break;</span>
+            } else {
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L113">                    sb.append(&quot;, &quot;);</span>
+                }
+<span class="nc" id="L115">                sb.append(user.getFullName());</span>
+<span class="nc" id="L116">                count++;</span>
+            }
+        }
+
+<span class="nc" id="L120">        mainLayout.addMember(WidgetUtil.getLabel(&quot;&lt;strong&gt;&quot; + sb.toString() + &quot;&lt;/strong&gt;: &quot;</span>
+<span class="nc" id="L121">                + message.getTitle(), 15, Cursor.HAND));</span>
+
+<span class="nc" id="L123">        mainLayout.addMember(WidgetUtil.getLabel(&quot;&lt;font color=\&quot;#666666\&quot;&gt;&quot;</span>
+<span class="nc" id="L124">                + message.getMessage().substring(0, 50) + &quot;...&lt;/font&gt;&quot;, 15, Cursor.HAND));</span>
+
+<span class="nc" id="L126">        mainLayout.addClickHandler(new ClickHandler() {</span>
+
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L129">                new SentMessageViewerWindow(message).show();</span>
+<span class="nc" id="L130">            }</span>
+        });
+
+<span class="nc" id="L133">        this.addMember(mainLayout);</span>
+<span class="nc" id="L134">    }</span>
+
+    /**
+     * Configures message posted date.
+     */
+    private void configureDateLayout() {
+
+<span class="nc" id="L141">        VLayout dateLayout = new VLayout(5);</span>
+<span class="nc" id="L142">        dateLayout.setHeight(50);</span>
+<span class="nc" id="L143">        dateLayout.setWidth(150);</span>
+<span class="nc" id="L144">        dateLayout.setAlign(VerticalAlignment.TOP);</span>
+
+<span class="nc" id="L146">        dateLayout.addMember(WidgetUtil.getLabel(&quot;&lt;font color=\&quot;#666666\&quot;&gt;&quot;</span>
+<span class="nc" id="L147">                + message.getPosted() + &quot;&lt;/font&gt;&quot;, 15));</span>
+
+<span class="nc" id="L149">        this.addMember(dateLayout);</span>
+<span class="nc" id="L150">    }</span>
+
+    /**
+     * Configures actions related to a message.
+     */
+    private void configureActionLayout() {
+
+<span class="nc" id="L157">        VLayout actionLayout = new VLayout(5);</span>
+<span class="nc" id="L158">        actionLayout.setHeight(50);</span>
+<span class="nc" id="L159">        actionLayout.setWidth(30);</span>
+<span class="nc" id="L160">        actionLayout.setAlign(VerticalAlignment.TOP);</span>
+
+<span class="nc" id="L162">        Img removeImg = new Img(SocialConstants.ICON_REMOVE, 16, 16);</span>
+<span class="nc" id="L163">        removeImg.setCursor(Cursor.HAND);</span>
+<span class="nc" id="L164">        removeImg.setPrompt(&quot;Remove&quot;);</span>
+<span class="nc" id="L165">        removeImg.addClickHandler(new ClickHandler() {</span>
+
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L168">                remove();</span>
+<span class="nc" id="L169">            }</span>
+        });
+<span class="nc" id="L171">        actionLayout.addMember(removeImg);</span>
+
+<span class="nc" id="L173">        this.addMember(actionLayout);</span>
+<span class="nc" id="L174">    }</span>
+
+    private void remove() {
+
+<span class="nc" id="L178">        SC.confirm(&quot;Do you really want to remove this message?&quot;, new BooleanCallback() {</span>
+
+            public void execute(Boolean value) {
+
+<span class="nc bnc" id="L182" title="All 4 branches missed.">                if (value != null &amp;&amp; value) {</span>
+<span class="nc" id="L183">                    SocialServiceAsync service = SocialService.Util.getInstance();</span>
+<span class="nc" id="L184">                    AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+
+                        public void onFailure(Throwable caught) {
+<span class="nc" id="L187">                            Layout.getInstance().setWarningMessage(&quot;Unable to remove message:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L188">                        }</span>
+
+                        public void onSuccess(Void result) {
+<span class="nc" id="L191">                            destroy();</span>
+<span class="nc" id="L192">                        }</span>
+                    };
+<span class="nc" id="L194">                    service.removeMessage(message.getId(), callback);</span>
+                }
+<span class="nc" id="L196">            }</span>
+        });
+<span class="nc" id="L198">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

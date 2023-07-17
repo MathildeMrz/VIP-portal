@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BibtexLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-publication</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.publication.client.view</a> &gt; <span class="el_source">BibtexLayout.java</span></div><h1>BibtexLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.publication.client.view;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.TextAreaItem;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.publication.client.bean.Publication;
+import fr.insalyon.creatis.vip.publication.client.rpc.PublicationService;
+
+import java.util.List;
+
+/**
+ * @author Nouha Boujelben
+ */
+public class BibtexLayout extends AbstractFormLayout {
+
+    TextAreaItem textAreaItem;
+    private IButton saveButton;
+
+    public BibtexLayout() {
+<span class="nc" id="L57">        super(&quot;100%&quot;, &quot;50%&quot;);</span>
+<span class="nc" id="L58">        addTitle(&quot;Add Publications From Bibtex Format&quot;, PublicationConstants.ICON_PUBLICATION);</span>
+<span class="nc" id="L59">        configure();</span>
+<span class="nc" id="L60">    }</span>
+
+    private void configure() {
+
+<span class="nc" id="L64">        textAreaItem = new TextAreaItem();</span>
+<span class="nc" id="L65">        textAreaItem.setShowTitle(false);</span>
+<span class="nc" id="L66">        textAreaItem.setWidth(500);</span>
+<span class="nc" id="L67">        textAreaItem.setHeight(&quot;100%&quot;);</span>
+
+<span class="nc" id="L69">        saveButton = WidgetUtil.getIButton(&quot;Add&quot;, CoreConstants.ICON_ADD,</span>
+<span class="nc" id="L70">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+
+<span class="nc" id="L74">                        final AsyncCallback&lt;List&lt;Publication&gt;&gt; callback = new AsyncCallback&lt;List&lt;Publication&gt;&gt;() {</span>
+                            @Override
+                            public void onFailure(Throwable caught) {
+
+<span class="nc" id="L78">                                Layout.getInstance().setWarningMessage(&quot;Unable to parse publication:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L79">                            }</span>
+
+                            @Override
+                            public void onSuccess(List&lt;Publication&gt; result) {
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                                for (Publication p : result) {</span>
+<span class="nc" id="L84">                                    save(p);</span>
+<span class="nc" id="L85">                                }</span>
+
+
+<span class="nc" id="L88">                            }</span>
+                        };
+
+<span class="nc" id="L91">                        PublicationService.Util.getInstance().parseBibtexText(textAreaItem.getValueAsString(), callback);</span>
+
+
+<span class="nc" id="L94">                    }</span>
+                });
+
+<span class="nc" id="L97">        addFieldResponsiveHeight(&quot;Add your bibtex base here:&quot;, textAreaItem);</span>
+<span class="nc" id="L98">        addButtons(saveButton);</span>
+
+
+<span class="nc" id="L101">    }</span>
+
+    private void save(Publication pub) {
+
+<span class="nc" id="L105">        PublicationService.Util.getInstance().addPublication(pub, getCallback(&quot;add&quot;));</span>
+
+<span class="nc" id="L107">    }</span>
+
+
+    private AsyncCallback&lt;Void&gt; getCallback(final String text) {
+
+<span class="nc" id="L112">        return new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L115">                Layout.getInstance().setWarningMessage(&quot;Unable to &quot; + text + &quot; publication:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L116">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+
+
+<span class="nc" id="L122">                PublicationTab pubTab = (PublicationTab) Layout.getInstance().</span>
+<span class="nc" id="L123">                        getTab(PublicationConstants.TAB_PUBLICATION);</span>
+<span class="nc" id="L124">                pubTab.loadPublication();</span>
+<span class="nc" id="L125">            }</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ProgressLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.progress</a> &gt; <span class="el_source">ProgressLayout.java</span></div><h1>ProgressLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.progress;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.bean.Activity;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+import fr.insalyon.creatis.vip.application.client.view.monitor.job.JobStatus;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class ProgressLayout extends VLayout {
+
+    protected String simulationID;
+    protected SimulationStatus status;
+    protected VLayout barLayout;
+    protected Label progressLabel;
+    protected Label statusLabel;
+
+<span class="nc" id="L59">    public ProgressLayout(String simulationID, SimulationStatus status) {</span>
+
+<span class="nc" id="L61">        this.simulationID = simulationID;</span>
+<span class="nc" id="L62">        this.status = status;</span>
+<span class="nc" id="L63">        this.setWidth100();</span>
+<span class="nc" id="L64">        this.setHeight(60);</span>
+<span class="nc" id="L65">        this.setMembersMargin(5);</span>
+
+<span class="nc" id="L67">        VLayout barBorderLayout = new VLayout();</span>
+<span class="nc" id="L68">        barBorderLayout.setWidth100();</span>
+<span class="nc" id="L69">        barBorderLayout.setHeight(30);</span>
+<span class="nc" id="L70">        barBorderLayout.setBorder(&quot;1px solid #CCCCCC&quot;);</span>
+<span class="nc" id="L71">        barBorderLayout.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+
+<span class="nc" id="L73">        barLayout = new VLayout();</span>
+<span class="nc" id="L74">        barLayout.setWidth(1);</span>
+<span class="nc" id="L75">        barLayout.setHeight100();</span>
+<span class="nc" id="L76">        barLayout.setMargin(3);</span>
+<span class="nc" id="L77">        barLayout.setOpacity(80);</span>
+<span class="nc" id="L78">        barLayout.setBackgroundColor(JobStatus.Running.getColor());</span>
+
+<span class="nc" id="L80">        progressLabel = new Label(&quot;&lt;b&gt;0%&lt;/b&gt;&quot;);</span>
+<span class="nc" id="L81">        progressLabel.setWidth(30);</span>
+<span class="nc" id="L82">        progressLabel.setHeight(25);</span>
+<span class="nc" id="L83">        progressLabel.setLayoutAlign(Alignment.CENTER);</span>
+
+<span class="nc" id="L85">        barLayout.addMember(progressLabel);</span>
+<span class="nc" id="L86">        barBorderLayout.addMember(barLayout);</span>
+<span class="nc" id="L87">        this.addMember(barBorderLayout);</span>
+
+<span class="nc" id="L89">        statusLabel = new Label(&quot;Loading information...&quot;);</span>
+<span class="nc" id="L90">        statusLabel.setWidth100();</span>
+<span class="nc" id="L91">        statusLabel.setHeight(22);</span>
+<span class="nc" id="L92">        statusLabel.setBorder(&quot;1px solid #CCCCCC&quot;);</span>
+<span class="nc" id="L93">        statusLabel.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+<span class="nc" id="L94">        statusLabel.setPadding(3);</span>
+<span class="nc" id="L95">        statusLabel.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L96">        statusLabel.setValign(VerticalAlignment.TOP);</span>
+<span class="nc" id="L97">        this.addMember(statusLabel);</span>
+
+<span class="nc" id="L99">        loadData();</span>
+<span class="nc" id="L100">    }</span>
+
+    protected void loadData() {
+
+<span class="nc" id="L104">        AsyncCallback&lt;List&lt;Activity&gt;&gt; callback = new AsyncCallback&lt;List&lt;Activity&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L107">                Layout.getInstance().setWarningMessage(&quot;Unable to load progress:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L108">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Activity&gt; result) {
+
+<span class="nc" id="L113">                double completed = 0;</span>
+<span class="nc" id="L114">                double active = 0;</span>
+<span class="nc" id="L115">                StringBuilder sb = new StringBuilder();</span>
+
+<span class="nc bnc" id="L117" title="All 2 branches missed.">                for (Activity processor : result) {</span>
+
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                    if (processor.getStatus() == ProcessorStatus.Completed) {</span>
+<span class="nc" id="L120">                        completed++;</span>
+
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                    } else if (processor.getStatus() == ProcessorStatus.Unstarted) {</span>
+<span class="nc" id="L123">                        active++;</span>
+
+<span class="nc bnc" id="L125" title="All 2 branches missed.">                    } else if (processor.getStatus() == ProcessorStatus.Active) {</span>
+
+<span class="nc" id="L127">                        completed += ((double) processor.getCompleted()) / (processor.getCompleted() + processor.getQueued());</span>
+<span class="nc" id="L128">                        active += ((double) processor.getQueued()) / (processor.getCompleted() + processor.getQueued());</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                        if (sb.length() == 0) {</span>
+<span class="nc" id="L131">                            sb.append(&quot;&lt;font color=\&quot;#666666\&quot;&gt;Running &quot;);</span>
+                        } else {
+<span class="nc" id="L133">                            sb.append(&quot;, &quot;);</span>
+                        }
+<span class="nc" id="L135">                        sb.append(processor.getName());</span>
+                    }
+<span class="nc" id="L137">                }</span>
+<span class="nc bnc" id="L138" title="All 4 branches missed.">                if (completed &gt; 0 || active &gt; 0) {</span>
+<span class="nc" id="L139">                    int progress = (int) ((completed * 100) / (active + completed));</span>
+
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                    if (progress == 100) {</span>
+<span class="nc" id="L142">                        barLayout.setBackgroundColor(JobStatus.Completed.getColor());</span>
+<span class="nc" id="L143">                        barLayout.setWidth100();</span>
+<span class="nc" id="L144">                        statusLabel.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;Execution completed!&lt;/font&gt;&quot;);</span>
+                    } else {
+<span class="nc bnc" id="L146" title="All 2 branches missed.">                        if (status == SimulationStatus.Killed) {</span>
+<span class="nc" id="L147">                            barLayout.setBackgroundColor(JobStatus.Failed.getColor());</span>
+<span class="nc" id="L148">                            sb.append(&quot;. &lt;b&gt;Execution killed!&lt;/b&gt;&quot;);</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                        } else if (status == SimulationStatus.Failed) {</span>
+<span class="nc" id="L150">                            barLayout.setBackgroundColor(JobStatus.Failed.getColor());</span>
+<span class="nc" id="L151">                            sb.append(&quot;. &lt;b&gt;Execution Failed!&lt;/b&gt;&quot;);</span>
+                        }
+<span class="nc" id="L153">                        sb.append(&quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L154">                        barLayout.setWidth(progress + &quot;%&quot;);</span>
+<span class="nc" id="L155">                        statusLabel.setContents(sb.toString());</span>
+                    }
+<span class="nc" id="L157">                    progressLabel.setContents(&quot;&lt;b&gt;&quot; + progress + &quot;%&lt;/b&gt;&quot;);</span>
+                }
+<span class="nc" id="L159">            }</span>
+        };
+<span class="nc" id="L161">        WorkflowService.Util.getInstance().getProcessors(simulationID, callback);</span>
+<span class="nc" id="L162">    }</span>
+
+    public void update() {
+<span class="nc" id="L165">        loadData();</span>
+<span class="nc" id="L166">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationConstants.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client</a> &gt; <span class="el_source">ApplicationConstants.java</span></div><h1>ApplicationConstants.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client;
+
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+<span class="nc" id="L39">public class ApplicationConstants {</span>
+
+    // Tabs
+    public final static String TAB_APPLICATION = &quot;applications_tab&quot;;
+    public final static String TAB_MANAGE_APPLICATION = &quot;manage_application_tab&quot;;
+    public final static String TAB_MANAGE_CLASSES = &quot;manage_classes_tab&quot;;
+    public final static String TAB_MANAGE_ENGINE = &quot;manage_engine_tab&quot;;
+    public final static String TAB_MONITOR = &quot;monitor_tab&quot;;
+    public final static String TAB_STATS = &quot;stats_tab&quot;;
+    // Application Names
+    public static final String APP_APPLICATION = &quot;Applications&quot;;
+    public static final String APP_CLASSES = &quot;Classes&quot;;
+    public static final String APP_MONITOR = &quot;Execution Monitor&quot;;
+    public static final String APP_ENGINE = &quot;Engines&quot;;
+    public static final String APP_SIMULATION_ERROR = &quot;Error File&quot;;
+    public static final String APP_SIMULATION_OUT = &quot;Output File&quot;;
+    public static final String APP_PUBLIC_APPLICATION = &quot;Applications&quot;;
+    // Application launch, input without value
+    public static final String INPUT_WITHOUT_VALUE = &quot;No_value_provided&quot;;
+    public static final String INPUT_WITHOUT_VALUE_REQUIRED_MESSAGE = &quot;Either you deselect the field or you fill it in&quot;;
+    // Configuration
+    public static final String SESSION_CLASSES = &quot;vip-classes&quot;;
+    public static final String SEPARATOR_INPUT = &quot;##&quot;;
+    public static final String SEPARATOR_LIST = &quot;@@&quot;;
+    public static final String INPUT_VALID_CHARS = &quot;0-9.,A-Za-z-+@/_(): &quot;;
+    public static final String EXEC_NAME_VALID_CHARS = &quot;0-9A-Za-z-_ &quot;;
+    // Icons
+    private static final String IMG_FOLDER = &quot;application/&quot;;
+    public static final String ICON_APPLICATION = IMG_FOLDER + &quot;icon-application.png&quot;;
+    public static final String ICON_APPLICATION_MONITOR = IMG_FOLDER + &quot;icon-application-monitor.png&quot;;
+    public static final String ICON_CHART = IMG_FOLDER + &quot;icon-chart.png&quot;;
+    public static final String ICON_CLASSES = IMG_FOLDER + &quot;icon-classes.png&quot;;
+    public static final String ICON_CLEAN = IMG_FOLDER + &quot;icon-clean.png&quot;;
+    public static final String ICON_GENERAL = IMG_FOLDER + &quot;icon-general.png&quot;;
+    public static final String ICON_KILL = IMG_FOLDER + &quot;icon-kill.png&quot;;
+    public static final String ICON_KILLWR = IMG_FOLDER + &quot;icon-killWR.png&quot;;
+    public static final String ICON_REPORT_ISSUE = IMG_FOLDER + &quot;icon-reportIssue.png&quot;;
+    public static final String ICON_LAUNCH = IMG_FOLDER + &quot;icon-launch.png&quot;;
+    ;
+    public static final String ICON_LOG = IMG_FOLDER + &quot;icon-log.png&quot;;
+    public static final String ICON_SEMANTICS = IMG_FOLDER + &quot;icon-semantics.png&quot;;
+    public static final String ICON_MONITOR = IMG_FOLDER + &quot;icon-monitor.png&quot;;
+    public static final String ICON_MONITOR_DEBUG = IMG_FOLDER + &quot;monitor/icon-debug.png&quot;;
+    public static final String ICON_MONITOR_DOWNLOAD = IMG_FOLDER + &quot;monitor/icon-download.png&quot;;
+    public static final String ICON_MONITOR_ERROR_FILE = IMG_FOLDER + &quot;monitor/icon-error-file.png&quot;;
+    public static final String ICON_MONITOR_JOB = IMG_FOLDER + &quot;monitor/icon-job.png&quot;;
+    public static final String ICON_MONITOR_OUTPUT_FILE = IMG_FOLDER + &quot;monitor/icon-output-file.png&quot;;
+    public static final String ICON_MONITOR_RELAUNCH = IMG_FOLDER + &quot;monitor/icon-relaunch.png&quot;;
+    public static final String ICON_MONITOR_SEARCH = IMG_FOLDER + &quot;monitor/icon-search.png&quot;;
+    public static final String ICON_MONITOR_SIMULATION_CLEANED = IMG_FOLDER + &quot;monitor/icon-simulation-cleaned.png&quot;;
+    public static final String ICON_MONITOR_SIMULATION_COMPLETED = IMG_FOLDER + &quot;monitor/icon-simulation-completed.png&quot;;
+    public static final String ICON_MARK_COMPLETED = IMG_FOLDER + &quot;icon-mark-completed.png&quot;;
+    public static final String ICON_USER = IMG_FOLDER + &quot;icon-user.png&quot;;
+    public static final String ICON_MONITOR_SIMULATION_FAILED = IMG_FOLDER + &quot;monitor/icon-simulation-failed.png&quot;;
+    public static final String ICON_MONITOR_SIMULATION_KILLED = IMG_FOLDER + &quot;monitor/icon-simulation-killed.png&quot;;
+    public static final String ICON_MONITOR_SIMULATION_RUNNING = IMG_FOLDER + &quot;monitor/icon-simulation-running.png&quot;;
+    public static final String ICON_MONITOR_TIMELINE = IMG_FOLDER + &quot;monitor/icon-timeline.png&quot;;
+    public static final String ICON_MONITOR_TASK_CRITICAL = IMG_FOLDER + &quot;monitor/icon-critical.png&quot;;
+    public static final String ICON_MONITOR_TASK_NONCRITICAL = IMG_FOLDER + &quot;monitor/icon-noncritical.png&quot;;
+    public static final String ICON_MONITOR_TASK_OK = IMG_FOLDER + &quot;monitor/icon-ok.png&quot;;
+    public static final String ICON_MONITOR_TASKS = IMG_FOLDER + &quot;monitor/icon-tasks.png&quot;;
+    public static final String ICON_ENGINE = IMG_FOLDER + &quot;icon-engines.png&quot;;
+    public static final String ICON_PICKER_MORE = IMG_FOLDER + &quot;icon-picker-more.png&quot;;
+    public static final String ICON_PICKER_LESS = IMG_FOLDER + &quot;icon-picker-less.png&quot;;
+    public static final String ICON_PREVIEW = IMG_FOLDER + &quot;icon-preview.png&quot;;
+    public static final String ICON_PROCESSOR = IMG_FOLDER + &quot;icon-processor.png&quot;;
+    public static final String ICON_RELAUNCH = IMG_FOLDER + &quot;icon-relaunch.png&quot;;
+    public static final String ICON_SEARCH = IMG_FOLDER + &quot;icon-search.png&quot;;
+    public static final String ICON_SIMULATION_VIEW = IMG_FOLDER + &quot;icon-simulation-view.png&quot;;
+    public static final String ICON_STATUS = IMG_FOLDER + &quot;icon-status.png&quot;;
+    public static final String ICON_SUMMARY = IMG_FOLDER + &quot;icon-summary.png&quot;;
+    public static final String ICON_TASK_KILL = IMG_FOLDER + &quot;icon-task-kill.png&quot;;
+    public static final String ICON_TASK_REPLICATE = IMG_FOLDER + &quot;icon-task-replicate.png&quot;;
+    public static final String ICON_TASK_RESCHEDULE = IMG_FOLDER + &quot;icon-task-reschedule.png&quot;;
+    public static final String ICON_TASK_UNHOLD = IMG_FOLDER + &quot;icon-task-unhold.png&quot;;
+    public static final String ICON_TREE_INPUT = IMG_FOLDER + &quot;tree/icon-tree-input.png&quot;;
+    public static final String ICON_TREE_OUTPUT = IMG_FOLDER + &quot;tree/icon-tree-output.png&quot;;
+    public static final String ICON_TREE_SERVICE = IMG_FOLDER + &quot;tree/icon-tree-service.png&quot;;
+    public static final String ICON_TREE_SIMULATION = IMG_FOLDER + &quot;tree/icon-tree-simulation.png&quot;;
+    // Application Images
+    public static final String APP_IMG_APPLICATION = IMG_FOLDER + &quot;app-application.png&quot;;
+    public static final String APP_IMG_CLASSES = IMG_FOLDER + &quot;app-classes.png&quot;;
+    public static final String APP_IMG_MONITOR = IMG_FOLDER + &quot;app-monitor.png&quot;;
+    public static final String APP_IMG_ENGINE = IMG_FOLDER + &quot;app-engine.png&quot;;
+    public static final String APP_IMG_SIMULATION_ERROR = IMG_FOLDER + &quot;app-simulation-error.png&quot;;
+    public static final String APP_IMG_SIMULATION_OUT = IMG_FOLDER + &quot;app-simulation-out.png&quot;;
+
+    public static String getLaunchTabID(String applicationName) {
+<span class="nc" id="L127">        return &quot;launch_&quot;</span>
+<span class="nc" id="L128">                + CoreConstants.replaceSpacesInIds(applicationName)</span>
+                + &quot;_tab&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
