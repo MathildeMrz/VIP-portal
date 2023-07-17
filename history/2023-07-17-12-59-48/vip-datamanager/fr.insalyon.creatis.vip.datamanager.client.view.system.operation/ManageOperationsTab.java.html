@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ManageOperationsTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client.view.system.operation</a> &gt; <span class="el_source">ManageOperationsTab.java</span></div><h1>ManageOperationsTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client.view.system.operation;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.SelectionAppearance;
+import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.widgets.grid.HoverCustomizer;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellContextClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellContextClickHandler;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractManageTab;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class ManageOperationsTab extends AbstractManageTab {
+
+    private ListGrid grid;
+    private ModalWindow modal;
+
+    public ManageOperationsTab() {
+
+<span class="nc" id="L65">        super(DataManagerConstants.ICON_OPERATION, DataManagerConstants.APP_OPERATIONS,</span>
+                DataManagerConstants.TAB_MANAGE_OPERATIONS);
+
+<span class="nc" id="L68">        configureGrid();</span>
+<span class="nc" id="L69">        modal = new ModalWindow(grid);</span>
+<span class="nc" id="L70">        toolStrip = new ManageOperationsToolStrip(modal);</span>
+
+<span class="nc" id="L72">        vLayout.addMember(toolStrip);</span>
+<span class="nc" id="L73">        vLayout.addMember(grid);</span>
+
+<span class="nc" id="L75">        loadData();</span>
+<span class="nc" id="L76">    }</span>
+
+    private void configureGrid() {
+
+<span class="nc" id="L80">        grid = new ListGrid();</span>
+<span class="nc" id="L81">        grid.setWidth100();</span>
+<span class="nc" id="L82">        grid.setHeight100();</span>
+<span class="nc" id="L83">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L84">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L85">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+<span class="nc" id="L86">        grid.setSelectionType(SelectionStyle.SIMPLE);</span>
+<span class="nc" id="L87">        grid.setSelectionAppearance(SelectionAppearance.CHECKBOX);</span>
+
+<span class="nc" id="L89">        ListGridField iconField = FieldUtil.getIconGridField(&quot;typeIcon&quot;);</span>
+<span class="nc" id="L90">        iconField.setShowHover(true);</span>
+<span class="nc" id="L91">        iconField.setHoverCustomizer(new HoverCustomizer() {</span>
+            @Override
+            public String hoverHTML(Object value, ListGridRecord record, int rowNum, int colNum) {
+<span class="nc" id="L94">                OperationRecord operationRecord = (OperationRecord) record;</span>
+<span class="nc" id="L95">                return operationRecord.getType();</span>
+            }
+        });
+<span class="nc" id="L98">        ListGridField statusField = FieldUtil.getIconGridField(&quot;statusIcon&quot;);</span>
+<span class="nc" id="L99">        statusField.setShowHover(true);</span>
+<span class="nc" id="L100">        statusField.setHoverCustomizer(new HoverCustomizer() {</span>
+            @Override
+            public String hoverHTML(Object value, ListGridRecord record, int rowNum, int colNum) {
+<span class="nc" id="L103">                OperationRecord operationRecord = (OperationRecord) record;</span>
+<span class="nc" id="L104">                return operationRecord.getStatus();</span>
+            }
+        });
+<span class="nc" id="L107">        ListGridField sourceField = new ListGridField(&quot;name&quot;, &quot;Source&quot;);</span>
+<span class="nc" id="L108">        ListGridField destField = new ListGridField(&quot;destination&quot;, &quot;Destination&quot;);</span>
+<span class="nc" id="L109">        ListGridField userField = new ListGridField(&quot;owner&quot;, &quot;User&quot;, 150);</span>
+<span class="nc" id="L110">        ListGridField dateField = FieldUtil.getDateField();</span>
+
+<span class="nc" id="L112">        grid.setFields(iconField, statusField, sourceField, destField, userField, dateField);</span>
+
+<span class="nc" id="L114">        grid.addCellContextClickHandler(new CellContextClickHandler() {</span>
+            @Override
+            public void onCellContextClick(CellContextClickEvent event) {
+<span class="nc" id="L117">                event.cancel();</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                if (event.getColNum() != 0) {</span>
+<span class="nc" id="L119">                    ListGridRecord record = event.getRecord();</span>
+<span class="nc" id="L120">                    new ManageOperationsContextMenu(modal, (OperationRecord) record).showContextMenu();</span>
+                }
+<span class="nc" id="L122">            }</span>
+        });
+<span class="nc" id="L124">    }</span>
+
+    public void loadData() {
+
+<span class="nc" id="L128">        DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L129">        AsyncCallback&lt;List&lt;PoolOperation&gt;&gt; callback = new AsyncCallback&lt;List&lt;PoolOperation&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L132">                modal.hide();</span>
+<span class="nc" id="L133">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of operations:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L134">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;PoolOperation&gt; result) {
+
+<span class="nc" id="L139">                List&lt;OperationRecord&gt; dataList = new ArrayList&lt;OperationRecord&gt;();</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                for (PoolOperation o : result) {</span>
+<span class="nc" id="L141">                    dataList.add(new OperationRecord(o.getId(), o.getType().name(),</span>
+<span class="nc" id="L142">                            o.getStatus().name(), o.getSource(), o.getDest(),</span>
+<span class="nc" id="L143">                            o.getRegistration(), o.getUser()));</span>
+<span class="nc" id="L144">                }</span>
+<span class="nc" id="L145">                grid.setData(dataList.toArray(new OperationRecord[]{}));</span>
+<span class="nc" id="L146">                modal.hide();</span>
+<span class="nc" id="L147">            }</span>
+        };
+<span class="nc" id="L149">        modal.show(&quot;Loading operations...&quot;, true);</span>
+<span class="nc" id="L150">        service.getPoolOperations(callback);</span>
+<span class="nc" id="L151">    }</span>
+
+    public ListGridRecord[] getGridSelection() {
+<span class="nc" id="L154">        return grid.getSelectedRecords();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

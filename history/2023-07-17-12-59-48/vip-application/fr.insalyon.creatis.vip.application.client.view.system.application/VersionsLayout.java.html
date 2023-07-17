@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>VersionsLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.system.application</a> &gt; <span class="el_source">VersionsLayout.java</span></div><h1>VersionsLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.system.application;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.ImgButton;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.common.LabelButton;
+import fr.insalyon.creatis.vip.core.client.view.common.ToolstripLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class VersionsLayout extends VLayout {
+
+    private String applicationName;
+    private Label applicationLabel;
+    private ModalWindow modal;
+    private ListGrid grid;
+    private HLayout rollOverCanvas;
+    private ListGridRecord rollOverRecord;
+
+<span class="nc" id="L78">    public VersionsLayout() {</span>
+
+<span class="nc" id="L80">        this.setWidth100();</span>
+<span class="nc" id="L81">        this.setHeight100();</span>
+<span class="nc" id="L82">        this.setOverflow(Overflow.AUTO);</span>
+
+<span class="nc" id="L84">        configureActions();</span>
+<span class="nc" id="L85">        configureGrid();</span>
+<span class="nc" id="L86">        modal = new ModalWindow(grid);</span>
+<span class="nc" id="L87">    }</span>
+
+    private void configureActions() {
+
+<span class="nc" id="L91">        ToolstripLayout toolstrip = new ToolstripLayout();</span>
+
+<span class="nc" id="L93">        applicationLabel = WidgetUtil.getLabel(&quot;&quot;, 24);</span>
+<span class="nc" id="L94">        applicationLabel.setWidth(250);</span>
+<span class="nc" id="L95">        toolstrip.addMember(applicationLabel);</span>
+<span class="nc" id="L96">        toolstrip.addMember(WidgetUtil.getSpaceLabel(15));</span>
+
+<span class="nc" id="L98">        LabelButton addButton = new LabelButton(&quot;Add Version&quot;, CoreConstants.ICON_ADD);</span>
+<span class="nc" id="L99">        addButton.setWidth(150);</span>
+<span class="nc" id="L100">        addButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L103">                ManageApplicationsTab appsTab = (ManageApplicationsTab) Layout.getInstance().</span>
+<span class="nc" id="L104">                        getTab(ApplicationConstants.TAB_MANAGE_APPLICATION);</span>
+<span class="nc" id="L105">                appsTab.setVersion(null, null, null, null, true, true);</span>
+<span class="nc" id="L106">            }</span>
+        });
+<span class="nc" id="L108">        toolstrip.addMember(addButton);</span>
+
+<span class="nc" id="L110">        LabelButton refreshButton = new LabelButton(&quot;Refresh&quot;, CoreConstants.ICON_REFRESH);</span>
+<span class="nc" id="L111">        refreshButton.setWidth(150);</span>
+<span class="nc" id="L112">        refreshButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L115">                loadData();</span>
+<span class="nc" id="L116">            }</span>
+        });
+<span class="nc" id="L118">        toolstrip.addMember(refreshButton);</span>
+
+<span class="nc" id="L120">        this.addMember(toolstrip);</span>
+<span class="nc" id="L121">    }</span>
+
+    private void configureGrid() {
+
+<span class="nc" id="L125">        grid = new ListGrid() {</span>
+            @Override
+            protected Canvas getRollOverCanvas(Integer rowNum, Integer colNum) {
+<span class="nc" id="L128">                rollOverRecord = this.getRecord(rowNum);</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                if (rollOverCanvas == null) {</span>
+<span class="nc" id="L131">                    rollOverCanvas = new HLayout(3);</span>
+<span class="nc" id="L132">                    rollOverCanvas.setSnapTo(&quot;TR&quot;);</span>
+<span class="nc" id="L133">                    rollOverCanvas.setWidth(50);</span>
+<span class="nc" id="L134">                    rollOverCanvas.setHeight(22);</span>
+
+<span class="nc" id="L136">                    ImgButton loadImg = getImgButton(CoreConstants.ICON_EDIT, &quot;Edit&quot;);</span>
+<span class="nc" id="L137">                    loadImg.addClickHandler(new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L140">                            edit(rollOverRecord.getAttribute(&quot;version&quot;),</span>
+<span class="nc" id="L141">                                    rollOverRecord.getAttribute(&quot;lfn&quot;),</span>
+<span class="nc" id="L142">                                    rollOverRecord.getAttribute(&quot;jsonLfn&quot;),</span>
+<span class="nc" id="L143">                                    rollOverRecord.getAttribute(&quot;doi&quot;),</span>
+<span class="nc" id="L144">                                    rollOverRecord.getAttributeAsBoolean(&quot;visible&quot;),</span>
+<span class="nc" id="L145">                                    rollOverRecord.getAttributeAsBoolean(&quot;boutiquesForm&quot;));</span>
+<span class="nc" id="L146">                        }</span>
+                    });
+<span class="nc" id="L148">                    ImgButton deleteImg = getImgButton(CoreConstants.ICON_DELETE, &quot;Delete&quot;);</span>
+<span class="nc" id="L149">                    deleteImg.addClickHandler(new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L152">                            final String version = rollOverRecord.getAttribute(&quot;version&quot;);</span>
+<span class="nc" id="L153">                            SC.ask(&quot;Do you really want to remove the application version \&quot;&quot;</span>
+<span class="nc" id="L154">                                    + version + &quot;\&quot;?&quot;, new BooleanCallback() {</span>
+                                @Override
+                                public void execute(Boolean value) {
+<span class="nc bnc" id="L157" title="All 2 branches missed.">                                    if (value) {</span>
+<span class="nc" id="L158">                                        remove(version);</span>
+                                    }
+<span class="nc" id="L160">                                }</span>
+                            });
+<span class="nc" id="L162">                        }</span>
+                    });
+<span class="nc" id="L164">                    rollOverCanvas.addMember(loadImg);</span>
+<span class="nc" id="L165">                    rollOverCanvas.addMember(deleteImg);</span>
+                }
+<span class="nc" id="L167">                return rollOverCanvas;</span>
+            }
+
+            private ImgButton getImgButton(String imgSrc, String prompt) {
+<span class="nc" id="L171">                ImgButton button = new ImgButton();</span>
+<span class="nc" id="L172">                button.setShowDown(false);</span>
+<span class="nc" id="L173">                button.setShowRollOver(false);</span>
+<span class="nc" id="L174">                button.setLayoutAlign(Alignment.CENTER);</span>
+<span class="nc" id="L175">                button.setSrc(imgSrc);</span>
+<span class="nc" id="L176">                button.setPrompt(prompt);</span>
+<span class="nc" id="L177">                button.setHeight(16);</span>
+<span class="nc" id="L178">                button.setWidth(16);</span>
+<span class="nc" id="L179">                return button;</span>
+            }
+        };
+<span class="nc" id="L182">        grid.setWidth100();</span>
+<span class="nc" id="L183">        grid.setHeight100();</span>
+<span class="nc" id="L184">        grid.setShowRollOverCanvas(true);</span>
+<span class="nc" id="L185">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L186">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L187">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L188">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+
+<span class="nc" id="L190">        ListGridField isVisibleField = new ListGridField(&quot;visible&quot;, &quot;Visible&quot;);</span>
+<span class="nc" id="L191">        isVisibleField.setType(ListGridFieldType.BOOLEAN);</span>
+
+<span class="nc" id="L193">        ListGridField isBoutiquesFormField = new ListGridField(&quot;boutiquesForm&quot;, &quot;Use Boutiques Form&quot;);</span>
+<span class="nc" id="L194">        isBoutiquesFormField.setType(ListGridFieldType.BOOLEAN);</span>
+
+<span class="nc" id="L196">        grid.setFields(</span>
+                isVisibleField,
+                isBoutiquesFormField,
+                new ListGridField(&quot;version&quot;, &quot;Version&quot;),
+                new ListGridField(&quot;lfn&quot;, &quot;LFN&quot;));
+<span class="nc" id="L201">        grid.setSortField(&quot;version&quot;);</span>
+<span class="nc" id="L202">        grid.setSortDirection(SortDirection.ASCENDING);</span>
+<span class="nc" id="L203">        grid.addCellDoubleClickHandler(new CellDoubleClickHandler() {</span>
+            @Override
+            public void onCellDoubleClick(CellDoubleClickEvent event) {
+<span class="nc" id="L206">                edit(event.getRecord().getAttribute(&quot;version&quot;),</span>
+<span class="nc" id="L207">                        event.getRecord().getAttribute(&quot;lfn&quot;),</span>
+<span class="nc" id="L208">                        event.getRecord().getAttribute(&quot;jsonLfn&quot;),</span>
+<span class="nc" id="L209">                        event.getRecord().getAttribute(&quot;doi&quot;),</span>
+<span class="nc" id="L210">                        event.getRecord().getAttributeAsBoolean(&quot;visible&quot;),</span>
+<span class="nc" id="L211">                        event.getRecord().getAttributeAsBoolean(&quot;boutiquesForm&quot;));</span>
+<span class="nc" id="L212">            }</span>
+        });
+
+<span class="nc" id="L215">        this.addMember(grid);</span>
+<span class="nc" id="L216">    }</span>
+
+    public void loadData() {
+
+<span class="nc" id="L220">        final AsyncCallback&lt;List&lt;AppVersion&gt;&gt; callback = new AsyncCallback&lt;List&lt;AppVersion&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L223">                modal.hide();</span>
+<span class="nc" id="L224">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of applications:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L225">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;AppVersion&gt; result) {
+<span class="nc" id="L229">                modal.hide();</span>
+<span class="nc" id="L230">                List&lt;VersionRecord&gt; dataList = new ArrayList&lt;VersionRecord&gt;();</span>
+
+<span class="nc bnc" id="L232" title="All 2 branches missed.">                for (AppVersion version : result) {</span>
+<span class="nc" id="L233">                    dataList.add(new VersionRecord(version.getVersion(), version.getLfn(), version.getJsonLfn(),</span>
+<span class="nc" id="L234">                            version.getDoi(), version.isVisible(), version.isBoutiquesForm()));</span>
+<span class="nc" id="L235">                }</span>
+<span class="nc" id="L236">                grid.setData(dataList.toArray(new VersionRecord[]{}));</span>
+<span class="nc" id="L237">            }</span>
+        };
+<span class="nc" id="L239">        modal.show(&quot;Loading versions...&quot;, true);</span>
+<span class="nc" id="L240">        ApplicationService.Util.getInstance().getVersions(applicationName, callback);</span>
+<span class="nc" id="L241">    }</span>
+
+    /**
+     * @param applicationName
+     */
+    public void setApplication(String applicationName) {
+
+<span class="nc" id="L248">        this.applicationName = applicationName;</span>
+<span class="nc" id="L249">        this.applicationLabel.setContents(&quot;&lt;b&gt;Application:&lt;/b&gt; &quot; + applicationName);</span>
+<span class="nc" id="L250">        loadData();</span>
+<span class="nc" id="L251">    }</span>
+
+    /**
+     * @param version
+     * @param lfn
+     * @param isVisible
+     */
+    private void edit(String version, String lfn, String jsonLfn, String doi, boolean isVisible, boolean isBoutiquesForm) {
+
+<span class="nc" id="L260">        ManageApplicationsTab appsTab = (ManageApplicationsTab) Layout.getInstance().</span>
+<span class="nc" id="L261">                getTab(ApplicationConstants.TAB_MANAGE_APPLICATION);</span>
+<span class="nc" id="L262">        appsTab.setVersion(version, lfn, jsonLfn, doi, isVisible, isBoutiquesForm);</span>
+<span class="nc" id="L263">    }</span>
+
+    /**
+     * @param version
+     */
+    private void remove(String version) {
+
+<span class="nc" id="L270">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L273">                modal.hide();</span>
+<span class="nc" id="L274">                Layout.getInstance().setWarningMessage(&quot;Unable to remove version:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L275">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L279">                modal.hide();</span>
+<span class="nc" id="L280">                Layout.getInstance().setNoticeMessage(&quot;The version was successfully removed!&quot;);</span>
+<span class="nc" id="L281">                loadData();</span>
+<span class="nc" id="L282">            }</span>
+        };
+<span class="nc" id="L284">        modal.show(&quot;Removing version '&quot; + version + &quot;'...&quot;, true);</span>
+<span class="nc" id="L285">        ApplicationService.Util.getInstance().removeVersion(applicationName, version, callback);</span>
+<span class="nc" id="L286">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

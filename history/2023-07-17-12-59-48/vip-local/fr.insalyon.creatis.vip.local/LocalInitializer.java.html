@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LocalInitializer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-local</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.local</a> &gt; <span class="el_source">LocalInitializer.java</span></div><h1>LocalInitializer.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.local;
+
+import fr.insalyon.creatis.vip.application.client.bean.AppClass;
+import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
+import fr.insalyon.creatis.vip.application.client.bean.Application;
+import fr.insalyon.creatis.vip.application.client.bean.Engine;
+import fr.insalyon.creatis.vip.application.server.business.ApplicationBusiness;
+import fr.insalyon.creatis.vip.application.server.business.ClassBusiness;
+import fr.insalyon.creatis.vip.application.server.business.EngineBusiness;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
+import fr.insalyon.creatis.vip.core.server.business.Server;
+import fr.insalyon.creatis.vip.datamanager.server.business.LFCBusiness;
+import fr.insalyon.creatis.vip.datamanager.server.business.TransferPoolBusiness;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Collections;
+
+/**
+ * Class that initializes necessary stuff for a local vip instance on startup.
+ * If necessary it will create missing folder (admin home folder, support group
+ * folder, application root folder).
+ * &lt;p&gt;
+ * And, if there are some &quot;local.data.xxx&quot; properties in vip-local.conf, it will
+ * initialize some data : an engine, a class, an application and install an
+ * application version.
+ * &lt;p&gt;
+ * The vip-local.conf provided in main/resources includes the necessary to
+ * initialize a working grep application.
+ */
+
+@Component
+@Profile(&quot;local&quot;)
+@Transactional
+public class LocalInitializer {
+
+<span class="nc" id="L56">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+
+    @Value(&quot;${local.data.doInit:false}&quot;)
+    private Boolean initData;
+    @Value(&quot;${local.data.engine.name:localEngine}&quot;)
+    private String engineName;
+    @Value(&quot;${local.data.class.name:localClass}&quot;)
+    private String className;
+    @Value(&quot;${local.data.application.name}&quot;)
+    private String applicationName;
+<span class="nc" id="L66">    private String applicationVersionProperty = &quot;local.data.application.version&quot;;</span>
+<span class="nc" id="L67">    private String applicationVersionGwendiaProperty = &quot;local.data.application.gwendia&quot;;</span>
+<span class="nc" id="L68">    private String applicationVersionScriptProperty = &quot;local.data.application.script&quot;;</span>
+<span class="nc" id="L69">    private String applicationVersionInputProperty = &quot;local.data.application.input&quot;;</span>
+
+    private Environment environment;
+    private ResourceLoader resourceLoader;
+    private ConfigurationBusiness configurationBusiness;
+    private Server server;
+    private LFCBusiness lfcBusiness;
+    private EngineBusiness engineBusiness;
+    private ClassBusiness classBusiness;
+    private ApplicationBusiness applicationBusiness;
+    private TransferPoolBusiness transferPoolBusiness;
+
+    @Autowired
+    public LocalInitializer(
+            Environment environment, ResourceLoader resourceLoader,
+            ConfigurationBusiness configurationBusiness, Server server,
+            LFCBusiness lfcBusiness, EngineBusiness engineBusiness,
+            ClassBusiness classBusiness, ApplicationBusiness applicationBusiness,
+<span class="nc" id="L87">            TransferPoolBusiness transferPoolBusiness) {</span>
+<span class="nc" id="L88">        this.environment = environment;</span>
+<span class="nc" id="L89">        this.resourceLoader = resourceLoader;</span>
+<span class="nc" id="L90">        this.configurationBusiness = configurationBusiness;</span>
+<span class="nc" id="L91">        this.server = server;</span>
+<span class="nc" id="L92">        this.lfcBusiness = lfcBusiness;</span>
+<span class="nc" id="L93">        this.engineBusiness = engineBusiness;</span>
+<span class="nc" id="L94">        this.classBusiness = classBusiness;</span>
+<span class="nc" id="L95">        this.applicationBusiness = applicationBusiness;</span>
+<span class="nc" id="L96">        this.transferPoolBusiness = transferPoolBusiness;</span>
+<span class="nc" id="L97">    }</span>
+
+
+    @EventListener(ContextRefreshedEvent.class)
+    @Order(100) // low priority
+    public void initLocalStuff() throws BusinessException {
+<span class="nc" id="L103">        logger.info(&quot;Initialising VIP for local use&quot;);</span>
+<span class="nc" id="L104">        initFolders();</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (initData) {</span>
+<span class="nc" id="L106">            initData();</span>
+        }
+<span class="nc" id="L108">    }</span>
+
+    private void initFolders() throws BusinessException {
+<span class="nc" id="L111">        User admin = configurationBusiness.getUser(server.getAdminEmail());</span>
+
+<span class="nc" id="L113">        createFolderIfNecessary(admin,</span>
+<span class="nc" id="L114">                server.getDataManagerUsersHome() + &quot;/&quot; + admin.getFolder(),</span>
+                &quot;Admin home folder&quot;);
+
+<span class="nc" id="L117">        createFolderIfNecessary(admin,</span>
+<span class="nc" id="L118">                server.getDataManagerGroupsHome() + &quot;/&quot; + CoreConstants.GROUP_SUPPORT,</span>
+                &quot;Support group folder&quot;);
+
+        // applications root folder parent must exist
+<span class="nc" id="L122">        String appRootFolder = server.getApplicationImporterRootFolder();</span>
+<span class="nc" id="L123">        String appRootFolderParent = Paths.get(appRootFolder).getParent().toString();</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (!lfcBusiness.exists(admin, appRootFolderParent)) {</span>
+<span class="nc" id="L125">            logger.error(&quot;Application importer parent dir [{}] must exist&quot;, appRootFolderParent);</span>
+<span class="nc" id="L126">            throw new IllegalStateException(&quot;Application importer parend dir must exist&quot;);</span>
+        }
+<span class="nc" id="L128">        createFolderIfNecessary(admin,</span>
+                appRootFolder,
+                &quot;Application importer folder&quot;);
+<span class="nc" id="L131">    }</span>
+
+    private void createFolderIfNecessary(User admin, String folderLFN, String folderDescription) throws BusinessException {
+<span class="nc" id="L134">        boolean doFolderExist = lfcBusiness.exists(admin, folderLFN);</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (doFolderExist) {</span>
+<span class="nc" id="L136">            logger.info(&quot;{} [{}] already exist&quot;, folderDescription, folderLFN);</span>
+        } else {
+<span class="nc" id="L138">            logger.info(&quot;Creating {} [{}]&quot;, folderDescription, folderLFN);</span>
+<span class="nc" id="L139">            Path folderPath = Paths.get(folderLFN);</span>
+<span class="nc" id="L140">            lfcBusiness.createDir(admin,</span>
+<span class="nc" id="L141">                    folderPath.getParent().toString(),</span>
+<span class="nc" id="L142">                    folderPath.getFileName().toString());</span>
+        }
+<span class="nc" id="L144">    }</span>
+
+    private void initData() throws BusinessException {
+<span class="nc" id="L147">        initLocalEngine();</span>
+<span class="nc" id="L148">        initLocalClass();</span>
+<span class="nc" id="L149">        initApplication();</span>
+<span class="nc" id="L150">        initAppVersion();</span>
+<span class="nc" id="L151">    }</span>
+
+    private void initLocalEngine() throws BusinessException {
+<span class="nc" id="L154">        boolean engineExist = engineBusiness.get().stream().anyMatch(</span>
+<span class="nc" id="L155">                engine -&gt; engineName.equals(engine.getName())</span>
+        );
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (engineExist) {</span>
+<span class="nc" id="L158">            logger.info(&quot;local engine [{}] already exist&quot;, engineName);</span>
+<span class="nc" id="L159">            return;</span>
+        }
+<span class="nc" id="L161">        logger.info(&quot;adding local engine [{}]&quot;, engineName);</span>
+<span class="nc" id="L162">        Engine newEngine = new Engine(engineName, &quot;localEndpoint&quot;, &quot;enabled&quot;);</span>
+<span class="nc" id="L163">        engineBusiness.add(newEngine);</span>
+<span class="nc" id="L164">    }</span>
+
+    private void initLocalClass() throws BusinessException {
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if (classBusiness.getClass(className) != null) {</span>
+<span class="nc" id="L168">            logger.info(&quot;local class [{}] already exist&quot;, className);</span>
+<span class="nc" id="L169">            return;</span>
+        }
+<span class="nc" id="L171">        logger.info(&quot;adding local class [{}]&quot;, className);</span>
+<span class="nc" id="L172">        AppClass appClass = new AppClass(</span>
+                className,
+<span class="nc" id="L174">                Collections.singletonList(engineName),</span>
+<span class="nc" id="L175">                Collections.singletonList(CoreConstants.GROUP_SUPPORT));</span>
+<span class="nc" id="L176">        classBusiness.addClass(appClass);</span>
+<span class="nc" id="L177">    }</span>
+
+    private void initApplication() throws BusinessException {
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (applicationBusiness.getApplication(applicationName) != null) {</span>
+<span class="nc" id="L181">            logger.info(&quot;local application [{}] already exist&quot;, applicationName);</span>
+<span class="nc" id="L182">            return;</span>
+        }
+<span class="nc" id="L184">        logger.info(&quot;adding application [{}]&quot;, applicationName);</span>
+<span class="nc" id="L185">        Application application = new Application(applicationName, Collections.singletonList(className), &quot;&quot;);</span>
+<span class="nc" id="L186">        applicationBusiness.add(application);</span>
+<span class="nc" id="L187">    }</span>
+
+    private void initAppVersion() throws BusinessException {
+
+<span class="nc" id="L191">        String applicationVersion = environment.getProperty(applicationVersionProperty);</span>
+<span class="nc" id="L192">        String gwendiaLocation = environment.getProperty(applicationVersionGwendiaProperty);</span>
+<span class="nc" id="L193">        String scriptLocation = environment.getProperty(applicationVersionScriptProperty);</span>
+
+        // this is optional, do it only if all the information are provided
+
+<span class="nc bnc" id="L197" title="All 6 branches missed.">        if (applicationVersion == null &amp;&amp; gwendiaLocation == null &amp;&amp; scriptLocation == null) {</span>
+<span class="nc" id="L198">            logger.info(&quot;no application version information provided, not installing any&quot;);</span>
+<span class="nc" id="L199">            return;</span>
+        }
+
+<span class="nc bnc" id="L202" title="All 6 branches missed.">        if (applicationVersion == null || gwendiaLocation == null || scriptLocation == null) {</span>
+<span class="nc" id="L203">            logger.error(&quot;Cannot install an application version : information is missing (version, gwendia or path)&quot;);</span>
+<span class="nc" id="L204">            throw new IllegalStateException(&quot;Cannot install an application version : information is missing&quot;);</span>
+        }
+
+<span class="nc" id="L207">        boolean hasVersion = applicationBusiness.getVersions(applicationName)</span>
+<span class="nc" id="L208">                .stream().anyMatch(version -&gt; applicationVersion.equals(version.getVersion()));</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        if (hasVersion) {</span>
+<span class="nc" id="L210">            logger.info(&quot;Application version [{}/{}] already exist&quot;, applicationName, applicationVersion);</span>
+<span class="nc" id="L211">            return;</span>
+        }
+<span class="nc" id="L213">        logger.info(&quot;installing application version [{}/{}]&quot;, applicationName, applicationVersion);</span>
+
+<span class="nc" id="L215">        User admin = configurationBusiness.getUser(server.getAdminEmail());</span>
+
+        // create app folders
+<span class="nc" id="L218">        String appFolder = server.getApplicationImporterRootFolder() + &quot;/&quot; + applicationName;</span>
+<span class="nc" id="L219">        createFolderIfNecessary(admin, appFolder, applicationName + &quot; application folder&quot;);</span>
+<span class="nc" id="L220">        String versionFolder = appFolder + &quot;/v&quot; + applicationVersion;</span>
+<span class="nc" id="L221">        createFolderIfNecessary(admin, versionFolder, applicationName + &quot; application version folder&quot;);</span>
+
+        // add gwendia and script files
+<span class="nc" id="L224">        transferPoolBusiness.uploadFile(admin, getPathFromLocation(gwendiaLocation), versionFolder);</span>
+<span class="nc" id="L225">        transferPoolBusiness.uploadFile(admin, getPathFromLocation(scriptLocation), versionFolder);</span>
+
+        // create AppVersion
+<span class="nc" id="L228">        String gwendiaLFN = versionFolder + &quot;/&quot; + Paths.get(gwendiaLocation).getFileName().toString();</span>
+<span class="nc" id="L229">        AppVersion appVersion = new AppVersion(applicationName, applicationVersion, gwendiaLFN, null, true, false);</span>
+<span class="nc" id="L230">        applicationBusiness.addVersion(appVersion);</span>
+
+<span class="nc" id="L232">        logger.info(&quot;Application version [{}/{}] installed&quot;, applicationName, applicationVersion);</span>
+
+        // add input file
+<span class="nc" id="L235">        String inputFileLocation = environment.getProperty(applicationVersionInputProperty);</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">        if (inputFileLocation == null) {</span>
+<span class="nc" id="L237">            logger.info(&quot;No input file given for application version&quot;);</span>
+<span class="nc" id="L238">            return;</span>
+        }
+<span class="nc" id="L240">        logger.info(&quot;adding application input file to admin home&quot;);</span>
+<span class="nc" id="L241">        transferPoolBusiness.uploadFile(admin, getPathFromLocation(inputFileLocation), &quot;/vip/Home&quot;);</span>
+<span class="nc" id="L242">    }</span>
+
+    private String getPathFromLocation(String location) throws BusinessException {
+<span class="nc" id="L245">        Resource resource = resourceLoader.getResource(location);</span>
+        try {
+<span class="nc bnc" id="L247" title="All 2 branches missed.">            if (resource.isFile()) {</span>
+<span class="nc" id="L248">                return resource.getFile().toString();</span>
+            } else {
+                // it is probably in a jar, copy it locally before
+<span class="nc" id="L251">                String tmpdir = System.getProperty(&quot;java.io.tmpdir&quot;);</span>
+<span class="nc" id="L252">                Path destination = Paths.get(tmpdir, resource.getFilename());</span>
+<span class="nc" id="L253">                Files.copy(resource.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);</span>
+<span class="nc" id="L254">                return destination.toString();</span>
+            }
+<span class="nc" id="L256">        } catch (IOException e) {</span>
+<span class="nc" id="L257">            logger.error(&quot;cannot get file from [{}] location&quot;, location, e);</span>
+<span class="nc" id="L258">            throw new BusinessException(e);</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JobsLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.job</a> &gt; <span class="el_source">JobsLayout.java</span></div><h1>JobsLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.job;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.googlecode.gflot.client.*;
+import com.googlecode.gflot.client.options.*;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.bean.Job;
+import fr.insalyon.creatis.vip.application.client.rpc.JobService;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class JobsLayout extends VLayout {
+
+    private String simulationID;
+    private HLayout mainLayout;
+    private VLayout chartLayout;
+    private JobInfoLayout infoLayout;
+    private HLayout commandsLayout;
+    private VLayout displayLayout;
+    private SimplePlot plot;
+    private SeriesHandler queuedSeries;
+    private SeriesHandler runningSeries;
+    private SeriesHandler completedSeries;
+    private SeriesHandler failedSeries;
+    private SeriesHandler heldSeries;
+    private Map&lt;String, Command&gt; commandsMap;
+
+<span class="nc" id="L69">    public JobsLayout(String simulationID) {</span>
+
+<span class="nc" id="L71">        this.simulationID = simulationID;</span>
+<span class="nc" id="L72">        this.commandsMap = new HashMap&lt;String, Command&gt;();</span>
+<span class="nc" id="L73">        this.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L74">        this.setMembersMargin(5);</span>
+
+<span class="nc" id="L76">        mainLayout = new HLayout(10);</span>
+<span class="nc" id="L77">        mainLayout.setWidth100();</span>
+<span class="nc" id="L78">        mainLayout.setHeight(220);</span>
+<span class="nc" id="L79">        this.addMember(mainLayout);</span>
+
+<span class="nc" id="L81">        chartLayout = new VLayout();</span>
+<span class="nc" id="L82">        chartLayout.setWidth(420);</span>
+<span class="nc" id="L83">        chartLayout.setHeight(220);</span>
+<span class="nc" id="L84">        buildPlot();</span>
+<span class="nc" id="L85">        mainLayout.addMember(chartLayout);</span>
+
+<span class="nc" id="L87">        infoLayout = new JobInfoLayout();</span>
+<span class="nc" id="L88">        mainLayout.addMember(infoLayout);</span>
+
+<span class="nc" id="L90">        commandsLayout = new HLayout(10);</span>
+<span class="nc" id="L91">        commandsLayout.setWidth100();</span>
+<span class="nc" id="L92">        commandsLayout.setHeight(35);</span>
+<span class="nc" id="L93">        commandsLayout.setBorder(&quot;1px solid #CCCCCC&quot;);</span>
+<span class="nc" id="L94">        commandsLayout.setBackgroundColor(&quot;#F7F7F7&quot;);</span>
+<span class="nc" id="L95">        commandsLayout.setPadding(3);</span>
+<span class="nc" id="L96">        commandsLayout.setVisible(false);</span>
+<span class="nc" id="L97">        this.addMember(commandsLayout);</span>
+
+<span class="nc" id="L99">        displayLayout = new VLayout(5);</span>
+<span class="nc" id="L100">        displayLayout.setWidth100();</span>
+<span class="nc" id="L101">        displayLayout.setHeight100();</span>
+<span class="nc" id="L102">        displayLayout.setVisible(false);</span>
+<span class="nc" id="L103">        this.addMember(displayLayout);</span>
+
+<span class="nc" id="L105">        infoLayout.getInfoButton().addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L108" title="All 2 branches missed.">                if (commandsLayout.isVisible()) {</span>
+<span class="nc" id="L109">                    commandsLayout.setVisible(false);</span>
+<span class="nc" id="L110">                    displayLayout.setVisible(false);</span>
+<span class="nc" id="L111">                    infoLayout.getInfoButton().setSelected(false);</span>
+                } else {
+<span class="nc" id="L113">                    commandsLayout.setVisible(true);</span>
+<span class="nc" id="L114">                    displayLayout.setVisible(true);</span>
+<span class="nc" id="L115">                    infoLayout.getInfoButton().setSelected(true);</span>
+                }
+<span class="nc" id="L117">            }</span>
+        });
+<span class="nc" id="L119">    }</span>
+
+    private void buildPlot() {
+
+<span class="nc" id="L123">        PlotOptions plotOptions = PlotOptions.create();</span>
+<span class="nc" id="L124">        plotOptions.setGlobalSeriesOptions(GlobalSeriesOptions.create()</span>
+<span class="nc" id="L125">                .setBarsSeriesOptions(BarSeriesOptions.create()</span>
+<span class="nc" id="L126">                        .setShow(true).setLineWidth(1).setBarWidth(1)</span>
+<span class="nc" id="L127">                        .setAlignment(BarSeriesOptions.BarAlignment.CENTER))</span>
+<span class="nc" id="L128">                .setMultipleBars(true));</span>
+<span class="nc" id="L129">        plotOptions.setLegendOptions(LegendOptions.create().setShow(true));</span>
+<span class="nc" id="L130">        plotOptions.setMultipleBars(true);</span>
+<span class="nc" id="L131">        plotOptions.addXAxisOptions(AxisOptions.create().setShow(false));</span>
+<span class="nc" id="L132">        plotOptions.addYAxisOptions(AxisOptions.create().setLabel(&quot;Jobs&quot;));</span>
+
+<span class="nc" id="L134">        PlotModel model = new PlotModel();</span>
+<span class="nc" id="L135">        queuedSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + JobStatus.Queued.name() + &quot;&lt;/font&gt;&quot;, JobStatus.Queued.getColor()));</span>
+<span class="nc" id="L136">        runningSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + JobStatus.Running.name() + &quot;&lt;/font&gt;&quot;, JobStatus.Running.getColor()));</span>
+<span class="nc" id="L137">        completedSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + JobStatus.Completed.name() + &quot;&lt;/font&gt;&quot;, JobStatus.Completed.getColor()));</span>
+<span class="nc" id="L138">        failedSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + JobStatus.Failed.name() + &quot;&lt;/font&gt;&quot;, JobStatus.Failed.getColor()));</span>
+<span class="nc" id="L139">        heldSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + JobStatus.Held.name() + &quot;&lt;/font&gt;&quot;, JobStatus.Held.getColor()));</span>
+
+<span class="nc" id="L141">        plot = new SimplePlot(model, plotOptions);</span>
+<span class="nc" id="L142">        plot.setWidth(400);</span>
+<span class="nc" id="L143">        plot.setHeight(200);</span>
+<span class="nc" id="L144">        chartLayout.addMember(plot);</span>
+<span class="nc" id="L145">    }</span>
+
+    private void loadData() {
+
+<span class="nc" id="L149">        AsyncCallback&lt;List&lt;Job&gt;&gt; callback = new AsyncCallback&lt;List&lt;Job&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L152">                Layout.getInstance().setWarningMessage(&quot;Unable to load jobs:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L153">            }</span>
+
+            @Override
+            public void onSuccess(final List&lt;Job&gt; result) {
+
+<span class="nc" id="L158">                int queued = 0;</span>
+<span class="nc" id="L159">                int queuedWE = 0;</span>
+<span class="nc" id="L160">                int running = 0;</span>
+<span class="nc" id="L161">                int runningWE = 0;</span>
+<span class="nc" id="L162">                int completed = 0;</span>
+<span class="nc" id="L163">                int failed = 0;</span>
+<span class="nc" id="L164">                int held = 0;</span>
+
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                for (Job job : result) {</span>
+
+                    Command cl;
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                    if (commandsMap.containsKey(job.getCommand())) {</span>
+<span class="nc" id="L170">                        cl = commandsMap.get(job.getCommand());</span>
+                    } else {
+<span class="nc" id="L172">                        cl = new Command(simulationID, job.getCommand(),</span>
+                                commandsMap, displayLayout);
+<span class="nc" id="L174">                        commandsMap.put(job.getCommand(), cl);</span>
+<span class="nc" id="L175">                        commandsLayout.addMember(cl);</span>
+                    }
+<span class="nc" id="L177">                    cl.addJob(job);</span>
+
+<span class="nc bnc" id="L179" title="All 8 branches missed.">                    switch (job.getStatus()) {</span>
+                        case Queued:
+<span class="nc" id="L181">                            queued++;</span>
+<span class="nc" id="L182">                            break;</span>
+                        case Queued_with_errors:
+<span class="nc" id="L184">                            queuedWE++;</span>
+<span class="nc" id="L185">                            break;</span>
+                        case Running:
+<span class="nc" id="L187">                            running++;</span>
+<span class="nc" id="L188">                            break;</span>
+                        case Running_with_erros:
+<span class="nc" id="L190">                            runningWE++;</span>
+<span class="nc" id="L191">                            break;</span>
+                        case Completed:
+<span class="nc" id="L193">                            completed++;</span>
+<span class="nc" id="L194">                            break;</span>
+                        case Failed:
+<span class="nc" id="L196">                            failed++;</span>
+<span class="nc" id="L197">                            break;</span>
+                        case Held:
+<span class="nc" id="L199">                            held++;</span>
+                    }
+<span class="nc" id="L201">                }</span>
+
+<span class="nc bnc" id="L203" title="All 2 branches missed.">                if (queuedSeries.getData().isEmpty()) {</span>
+<span class="nc" id="L204">                    queuedSeries.add(DataPoint.of(1, queued + queuedWE));</span>
+<span class="nc" id="L205">                    runningSeries.add(DataPoint.of(1, running + runningWE));</span>
+<span class="nc" id="L206">                    completedSeries.add(DataPoint.of(1, completed));</span>
+<span class="nc" id="L207">                    failedSeries.add(DataPoint.of(1, failed));</span>
+<span class="nc" id="L208">                    heldSeries.add(DataPoint.of(1, held));</span>
+                } else {
+<span class="nc" id="L210">                    queuedSeries.getData().get(0).setY(queued + queuedWE);</span>
+<span class="nc" id="L211">                    runningSeries.getData().get(0).setY(running + runningWE);</span>
+<span class="nc" id="L212">                    completedSeries.getData().get(0).setY(completed);</span>
+<span class="nc" id="L213">                    failedSeries.getData().get(0).setY(failed);</span>
+<span class="nc" id="L214">                    heldSeries.getData().get(0).setY(held);</span>
+                }
+<span class="nc" id="L216">                plot.redraw();</span>
+
+<span class="nc bnc" id="L218" title="All 2 branches missed.">                if (failed &gt; 0) {</span>
+<span class="nc" id="L219">                    infoLayout.setStatus(2);</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">                } else if (held &gt; 0) {</span>
+<span class="nc" id="L221">                    infoLayout.setStatus(3);</span>
+<span class="nc bnc" id="L222" title="All 4 branches missed.">                } else if (queuedWE &gt; 0 || runningWE &gt; 0) {</span>
+<span class="nc" id="L223">                    infoLayout.setStatus(1);</span>
+                } else {
+<span class="nc" id="L225">                    infoLayout.setStatus(0);</span>
+                }
+<span class="nc" id="L227">            }</span>
+        };
+<span class="nc" id="L229">        JobService.Util.getInstance().getList(simulationID, callback);</span>
+<span class="nc" id="L230">    }</span>
+
+    public void update() {
+<span class="nc" id="L233">        loadData();</span>
+<span class="nc" id="L234">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
