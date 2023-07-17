@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DataManagerConstants.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client</a> &gt; <span class="el_source">DataManagerConstants.java</span></div><h1>DataManagerConstants.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client;
+
+/**
+ * @author Rafael Silva
+ */
+<span class="nc" id="L37">public class DataManagerConstants {</span>
+
+    // Tabs
+    public final static String TAB_MANAGE_OPERATIONS = &quot;manage_operations_tab&quot;;
+    public final static String TAB_MANAGE_CACHED_FILES = &quot;manage_cached_files_tab&quot;;
+    public final static String TAB_MANAGE_ZOMBIE_FILES = &quot;manage_zombie_files_tab&quot;;
+    public final static String TAB_MANAGE_SSH = &quot;manage_ssh_tab&quot;;
+    // Sections
+    public final static String SECTION_FILE_TRANSFER = &quot;file-transfer-section&quot;;
+    // Layouts
+    public final static String LAYOUT_BROWSER = &quot;browser-layout&quot;;
+    public final static String LAYOUT_OPERATION = &quot;operation-layout&quot;;
+    // Application Names
+    public final static String APP_CACHED_FILES = &quot;Cached Files&quot;;
+    public final static String APP_FILE_TRANSFER = &quot;File Transfer&quot;;
+    public final static String APP_OPERATIONS = &quot;Operations&quot;;
+    public final static String APP_ZOMBIE_FILES = &quot;Zombie Files&quot;;
+    public final static String APP_SSH = &quot;SSH Connections&quot;;
+    // Configuration Constants
+    public static final String ROOT = &quot;/vip&quot;;
+    public static final String USERS_HOME = &quot;Home&quot;;
+    public static final String USERS_FOLDER = &quot;Users&quot;;
+    public static final String TRASH_HOME = &quot;Trash&quot;;
+    public static final String VO_ROOT_FOLDER = &quot;VO root folder&quot;;
+    public static final String GROUP_APPEND = &quot; (group)&quot;;
+    public static final int MAX_OPERATIONS_LIMIT = 10;
+    public static final String DOWNLOAD_FOLDER = &quot;downloads&quot;;
+    // Icons
+    private static final String IMG_FOLDER = &quot;datamanager/&quot;;
+    public static final String ICON_CACHE = IMG_FOLDER + &quot;icon-cache.png&quot;;
+    public static final String ICON_CUT = IMG_FOLDER + &quot;icon-cut.png&quot;;
+    public static final String ICON_DOWNLOAD = IMG_FOLDER + &quot;icon-download.png&quot;;
+    public static final String ICON_EMPTY_TRASH = IMG_FOLDER + &quot;icon-trash-empty.png&quot;;
+    public static final String ICON_FILE_TRANSFER = IMG_FOLDER + &quot;icon-file-transfer.png&quot;;
+    public static final String ICON_FOLDER_UP = IMG_FOLDER + &quot;icon-folderup.png&quot;;
+    public static final String ICON_FOLDER_ADD = IMG_FOLDER + &quot;icon-addfolder.png&quot;;
+    public static final String ICON_JUMPTO = IMG_FOLDER + &quot;icon-jumpto.png&quot;;
+    public static final String ICON_OPERATION = IMG_FOLDER + &quot;icon-operation.png&quot;;
+    public static final String ICON_PASTE = IMG_FOLDER + &quot;icon-paste.png&quot;;
+    public static final String ICON_RELOAD = IMG_FOLDER + &quot;icon-reload.png&quot;;
+    public static final String ICON_TRASH = IMG_FOLDER + &quot;icon-trash.png&quot;;
+    public static final String ICON_UPLOAD = IMG_FOLDER + &quot;icon-upload.png&quot;;
+    public static final String ICON_UPLOAD_MULTIPLE = IMG_FOLDER + &quot;icon-upload-multiple.png&quot;;
+    public static final String ICON_WARNING = IMG_FOLDER + &quot;icon-warning.png&quot;;
+    public static final String ICON_VIEW = IMG_FOLDER + &quot;icon-view.png&quot;;
+    public static final String ICON_SSH = IMG_FOLDER + &quot;icon-ssh.png&quot;;
+    public static final String ICON_ACTIVATE_SSH = IMG_FOLDER + &quot;icon-activate&quot;;
+    public static final String ICON_DEACTIVATE_SSH = IMG_FOLDER + &quot;icon-deactivate&quot;;
+    public static final String ICON_STATUS_OK_SSH = IMG_FOLDER + &quot;icon-ok&quot;;
+    public static final String ICON_STATUS_FAILED_SSH = IMG_FOLDER + &quot;icon-failed&quot;;
+    // Application Images
+    public static final String APP_IMG_CACHED_FILES = IMG_FOLDER + &quot;app-cache.png&quot;;
+    public static final String APP_IMG_FILE_TRANSFER = IMG_FOLDER + &quot;app-file-transfer.png&quot;;
+    public static final String APP_IMG_OPERATIONS = IMG_FOLDER + &quot;app-operation.png&quot;;
+    public static final String APP_IMG_ZOMBIE_FILES = IMG_FOLDER + &quot;app-file-zombie.png&quot;;
+    // Operation
+    private static final String OP_FOLDER = IMG_FOLDER + &quot;operation/&quot;;
+    public static final String OP_DOWNLOAD = OP_FOLDER + &quot;img-download.png&quot;;
+    public static final String OP_UPLOAD = OP_FOLDER + &quot;img-upload.png&quot;;
+    public static final String OP_ICON_DOWNLOAD = OP_FOLDER + &quot;icon-download.png&quot;;
+    public static final String OP_ICON_CLEAR = OP_FOLDER + &quot;icon-clear.png&quot;;
+<span class="nc" id="L98">    public static String APP_IMG_SSH = IMG_FOLDER + &quot;app-ssh.png&quot;;</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

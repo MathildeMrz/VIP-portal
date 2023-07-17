@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MainToolStrip.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.layout.toolstrip</a> &gt; <span class="el_source">MainToolStrip.java</span></div><h1>MainToolStrip.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.layout.toolstrip;
+
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class MainToolStrip extends ToolStrip {
+
+    private static MainToolStrip instance;
+
+<span class="nc" id="L48">    private MainToolStrip() {</span>
+
+<span class="nc" id="L50">        this.setWidth100();</span>
+<span class="nc" id="L51">        this.setPadding(2);</span>
+
+<span class="nc" id="L53">        setUpLogoAndVersion();</span>
+<span class="nc" id="L54">    }</span>
+
+    public static MainToolStrip getInstance() {
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (instance == null) {</span>
+<span class="nc" id="L58">            instance = new MainToolStrip();</span>
+        }
+<span class="nc" id="L60">        return instance;</span>
+    }
+
+    public void reset() {
+
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        for (Canvas c : getMembers()) {</span>
+<span class="nc" id="L66">            this.removeMember(c);</span>
+        }
+<span class="nc" id="L68">        setUpLogoAndVersion();</span>
+<span class="nc" id="L69">    }</span>
+
+    private void setUpLogoAndVersion() {
+<span class="nc" id="L72">        this.addMember(getVipLogo());</span>
+<span class="nc" id="L73">        this.addSeparator();</span>
+<span class="nc" id="L74">        this.addMember(getVipLabel());</span>
+<span class="nc" id="L75">        this.addSeparator();</span>
+<span class="nc" id="L76">    }</span>
+
+    private Img getVipLogo() {
+<span class="nc" id="L79">        Img img = new Img(CoreConstants.ICON_VIP_LOGO_WITHOUT_TEXT);</span>
+<span class="nc" id="L80">        img.setWidth(25);</span>
+<span class="nc" id="L81">        img.setHeight(25);</span>
+<span class="nc" id="L82">        return img;</span>
+    }
+
+    private Label getVipLabel() {
+
+<span class="nc" id="L87">        Label vipLabel = new Label(&quot;VIP &quot; + CoreConstants.VERSION);</span>
+<span class="nc" id="L88">        vipLabel.setAlign(Alignment.CENTER);</span>
+<span class="nc" id="L89">        vipLabel.setWidth(60);</span>
+
+<span class="nc" id="L91">        return vipLabel;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

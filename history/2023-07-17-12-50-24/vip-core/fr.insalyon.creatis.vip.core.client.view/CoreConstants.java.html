@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CoreConstants.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view</a> &gt; <span class="el_source">CoreConstants.java</span></div><h1>CoreConstants.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.util.Date;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+<span class="nc" id="L41">public class CoreConstants implements IsSerializable {</span>
+
+
+    public static final String VERSION = &quot;v2.4.1&quot;;
+    // Configuration Labels
+    public static final String VO_NAME = &quot;vo.name&quot;;
+    public static final String VO_ROOT = &quot;vo.root&quot;;
+    public static final String LAB_DB_HOST = &quot;database.server.host&quot;;
+    public static final String LAB_DB_PORT = &quot;database.server.port&quot;;
+    public static final String LAB_API_CONF_LOCATION = &quot;api.conf-file.location&quot;;
+    public static final String LAB_ADMIN_FIRST_NAME = &quot;admin.first.name&quot;;
+    public static final String LAB_ADMIN_LAST_NAME = &quot;admin.last.name&quot;;
+    public static final String LAB_ADMIN_EMAIL = &quot;admin.email&quot;;
+    public static final String LAB_ADMIN_INSTITUTION = &quot;admin.institution&quot;;
+    public static final String LAB_ADMIN_PASS = &quot;admin.pass&quot;;
+    public static final String LAB_CAS_URL = &quot;cas.url&quot;;
+    public static final String LAB_MYPROXY_HOST = &quot;myproxy.host&quot;;
+    public static final String LAB_MYPROXY_PORT = &quot;myproxy.port&quot;;
+    public static final String LAB_MYPROXY_USER = &quot;myproxy.user&quot;;
+    public static final String LAB_MYPROXY_PASS = &quot;myproxy.pass&quot;;
+    public static final String LAB_MYPROXY_LIFETIME = &quot;myproxy.lifetime&quot;;
+    public static final String LAB_MYPROXY_MIN_HOURS = &quot;myproxy.min.hours&quot;;
+    public static final String LAB_GRIDA_HOST = &quot;grida.server.host&quot;;
+    public static final String LAB_GRIDA_PORT = &quot;grida.server.port&quot;;
+    public static final String LAB_N4U_GRIDA_HOST = &quot;n4u.grida.server.host&quot;;
+    public static final String LAB_N4U_GRIDA_PORT = &quot;n4u.grida.server.port&quot;;
+    public static final String LAB_DATA_USERS_HOME = &quot;datamanager.users.home&quot;;
+    public static final String LAB_DATA_GROUPS_HOME = &quot;datamanager.groups.home&quot;;
+    public static final String LAB_DATA_PATH = &quot;datamanager.path&quot;;
+    public static final String LAB_DATA_LFC_HOST = &quot;datamanager.lfc.host&quot;;
+    public static final String LAB_DATA_LFC_PORT = &quot;datamanager.lfc.port&quot;;
+    public static final String LAB_DATA_ALT_USERS_HOME = &quot;datamanager.users.home.alternative&quot;;
+    public static final String LAB_DATA_ALT_GROUPS_HOME = &quot;datamanager.groups.home.alternative&quot;;
+    public static final String LAB_MOTEUR_HOST = &quot;moteur.host&quot;;
+    public static final String LAB_SMA_HOST = &quot;sma.host&quot;;
+    public static final String LAB_SMA_PORT = &quot;sma.port&quot;;
+    public static final String LAB_TRUSTSTORE_FILE = &quot;truststore.file&quot;;
+    public static final String LAB_TRUSTSTORE_PASS = &quot;truststore.password&quot;;
+    public static final String LAB_SIMULATION_ADVANCED_MAX = &quot;simulation.max.advanced&quot;;
+    public static final String LAB_SIMULATION_PLATFORM_MAX = &quot;simulation.max.platfrom&quot;;
+    public static final String LAB_SIMULATION_BEGINNER_MAX = &quot;simulation.max.beginner&quot;;
+    public static final String LAB_SIMULATION_DB_HOST = &quot;workflows.db.host&quot;;
+    public static final String LAB_SIMULATION_DB_PORT = &quot;workflows.db.port&quot;;
+    public static final String LAB_SIMULATION_FOLDER = &quot;workflows.directory&quot;;
+    public static final String LAB_SIMULATION_EXEC_MODE = &quot;workflows.exec.mode&quot;;
+    public static final String LAB_APACHE_HOST = &quot;apache.host&quot;;
+    public static final String LAB_APACHE_SSL_PORT = &quot;apache.ssl.port&quot;;
+    // Tabs
+    public static final String TAB_ACCOUNT = &quot;account_tab&quot;;
+    public static final String TAB_ACTIVATION = &quot;activation_tab&quot;;
+    public static final String TAB_CONTACT = &quot;contact_tab&quot;;
+    public static final String TAB_HOME = &quot;home_tab&quot;;
+    public static final String TAB_RECOVERY = &quot;recovery_tab&quot;;
+    public static final String TAB_SIGNIN = &quot;signin_tab&quot;;
+    public static final String TAB_SIGNUP = &quot;signup_tab&quot;;
+    public static final String TAB_SYSTEM = &quot;system_tab&quot;;
+    public static final String TAB_MANAGE_GROUPS = &quot;manage_groups_tab&quot;;
+    public static final String TAB_MANAGE_TIPS = &quot;manage_tips_tab&quot;;
+    public static final String TAB_MANAGE_USERS = &quot;manage_users_tab&quot;;
+    public static final String TAB_MANAGE_SETTING = &quot;manage_setting_tab&quot;;
+    // home actions
+    public static final String HOME_ACTION_SHOW_APPLICATIONS = &quot;SHOW_APPLICATIONS&quot;;
+    public static final String HOME_ACTION_SHOW_PUBLICATIONS = &quot;SHOW_PUBLICATIONS&quot;;
+    public static final String ICON_SEARCH = &quot;icon-search.png&quot;;
+    // Folders
+    public static final String FOLDER_TRASH = &quot;Trash&quot;;
+    // Application Names
+    public static final String APP_ACCOUNT = &quot;My Account&quot;;
+    public static final String APP_GROUP = &quot;Groups&quot;;
+    public static final String APP_TIP = &quot;Tips&quot;;
+    public static final String APP_USER = &quot;Users&quot;;
+    public static final String APP_SETTING = &quot;Settings&quot;;
+    // Session Attributes
+    public static final String COOKIES_USER = &quot;vip-cookie-user&quot;;
+    public static final String COOKIES_SESSION = &quot;vip-cookie-session&quot;;
+    public static final String SESSION_USER = &quot;vip-user&quot;;
+    public static final String SESSION_GROUPS = &quot;vip-groups&quot;;
+<span class="nc" id="L118">    public static final Date COOKIES_EXPIRATION_DATE = new Date(new Date().getTime() + (1000l * 60 * 60 * 24 * 7)); //cookies are valid for a week</span>
+    // Roles and Groups
+    public static final String GROUP_SUPPORT = &quot;Support&quot;;
+    // ssh
+    public static final String SSH_PUBLIC_KEY = &quot;ssh.publickey&quot;;
+    //application,Gatelab
+    public static final String RESULTS_DIRECTORY_PARAM_NAME = &quot;results-directory&quot;;
+    public static final String APPLET_GATELAB_CLASSES = &quot;appletGatelab.classes&quot;;
+    public static final String APPLET_GATELABTEST_CLASSES = &quot;appletGatelabTest.classes&quot;;
+    public static final String UNDESIRED_MAIL_DOMAINS = &quot;account.undesiredEmailDomains&quot;;
+    public static final String UNDESIRED_COUNTRIES = &quot;account.undesiredCountries&quot;;
+    public static final String SAML_TRUSTED_CERTIFICATE = &quot;saml.trustedcertificate&quot;;
+    public static final String SAML_DEFAULT_GROUP = &quot;saml.defaultgroup&quot;;
+    //Boutiques
+    public static final String APP_CLASS = &quot;boutiques.application.class&quot;;
+    public static final String APPLICATION_FILES_REPOSITORY = &quot;boutiques.upload.repository&quot;;
+    public static final String APP_DELETE_FILES_AFTER_UPLOAD = &quot;boutiques.upload.deleteFile&quot;;
+    public static final String APP_IMPORTER_ROOT_FOLDER = &quot;boutiques.application.rootFolder&quot;;
+    public static final String APP_REQUIREMENTS = &quot;boutiques.application.requirements&quot;;
+    //Publication
+    public static final String PUB_MONTHS_UPDATES = &quot;last.publication.update&quot;;
+    //Zenodo publication
+    public static final String PUBLICATION_SYSTEM_COMMAND = &quot;publication.system-command&quot;;
+    // External storage, girder.
+    public static final String GIRDER_TOKEN_DURATION_IN_DAYS = &quot;girder.token.duration-in-days&quot;;
+    // Local config
+    public static final String USE_LOCAL_FILES_AS_INPUTS = &quot;execution.input.local-files&quot;;
+    // Icons
+    private static final String IMG_FOLDER = &quot;core/&quot;;
+    public static final String ICON_ACCOUNT = IMG_FOLDER + &quot;icon-account.png&quot;;
+    public static final String ICON_ACCOUNT_REMOVE = IMG_FOLDER + &quot;icon-account-remove.png&quot;;
+    public static final String ICON_ACTIVE = IMG_FOLDER + &quot;icon-select.png&quot;;
+    public static final String ICON_ADD = IMG_FOLDER + &quot;icon-add.png&quot;;
+    public static final String ICON_CLEAR = IMG_FOLDER + &quot;icon-clear.png&quot;;
+    public static final String ICON_CLOSE = IMG_FOLDER + &quot;icon-close.png&quot;;
+    public static final String ICON_DELETE = IMG_FOLDER + &quot;icon-delete.png&quot;;
+    public static final String ICON_EDIT = IMG_FOLDER + &quot;icon-edit.png&quot;;
+    public static final String ICON_EXAMPLE = IMG_FOLDER + &quot;icon-example.png&quot;;
+    public static final String ICON_GROUP = IMG_FOLDER + &quot;system/icon-group.png&quot;;
+    public static final String ICON_HELP = IMG_FOLDER + &quot;icon-help.png&quot;;
+    public static final String ICON_HOME = IMG_FOLDER + &quot;icon-home.png&quot;;
+    public static final String ICON_INFORMATION = IMG_FOLDER + &quot;icon-information.png&quot;;
+    public static final String ICON_LOADING = IMG_FOLDER + &quot;icon-loading.gif&quot;;
+    public static final String ICON_LOCK = IMG_FOLDER + &quot;icon-lock.png&quot;;
+    public static final String ICON_PASSWORD = IMG_FOLDER + &quot;icon-password.png&quot;;
+    public static final String ICON_INFO = IMG_FOLDER + &quot;icon-info.png&quot;;
+    public static final String ICON_PERSONAL = IMG_FOLDER + &quot;icon-personal.png&quot;;
+    public static final String ICON_PICKER_QUESTION = IMG_FOLDER + &quot;icon-picker-question.png&quot;;
+    public static final String ICON_REFRESH = IMG_FOLDER + &quot;icon-refresh.png&quot;;
+    public static final String ICON_RESET = IMG_FOLDER + &quot;icon-reset.png&quot;;
+    public static final String ICON_SAVE = IMG_FOLDER + &quot;icon-save.png&quot;;
+    public static final String ICON_SAVED = IMG_FOLDER + &quot;icon-saved.png&quot;;
+    public static final String ICON_SIGNOUT = IMG_FOLDER + &quot;icon-signout.png&quot;;
+    public static final String ICON_SUCCESS = IMG_FOLDER + &quot;icon-success.png&quot;;
+    public static final String ICON_SYSTEM = IMG_FOLDER + &quot;system/icon-system.png&quot;;
+    public static final String ICON_TIP = IMG_FOLDER + &quot;icon-tip.png&quot;;
+    public static final String ICON_USER = IMG_FOLDER + &quot;system/icon-user.png&quot;;
+    public static final String ICON_SETTING = IMG_FOLDER + &quot;system/icon-setting.png&quot;;
+    public static final String ICON_USER_INFO = IMG_FOLDER + &quot;system/icon-user-info.png&quot;;
+    public static final String ICON_WARNING = IMG_FOLDER + &quot;icon-warning.png&quot;;
+    public static final String ICON_WORLD = IMG_FOLDER + &quot;flags/_world.png&quot;;
+    public static final String ICON_TERMS_USE = IMG_FOLDER + &quot;icon-terms_of_use.png&quot;;
+    public static final String ICON_RUNNING_SIMULATIONS = IMG_FOLDER + &quot;icon-runningSimulation.png&quot;;
+    public static final String ICON_VIP_LOGO = IMG_FOLDER + &quot;vip-logo.png&quot;;
+    public static final String ICON_VIP_LOGO_WITHOUT_TEXT = IMG_FOLDER + &quot;vip-logo-without-text.png&quot;;
+    public static final String EGI_CHECK_IN_LOGO = IMG_FOLDER + &quot;egi-check-in-color.svg&quot;;
+    public static final String FOLDER_FLAGS = IMG_FOLDER + &quot;flags/&quot;;
+    // Application Images
+    public static final String APP_IMG_ACCOUNT = IMG_FOLDER + &quot;app-account.png&quot;;
+    public static final String APP_IMG_GROUP = IMG_FOLDER + &quot;system/app-group.png&quot;;
+    public static final String APP_IMG_TIP = IMG_FOLDER + &quot;system/app-tip.png&quot;;
+    public static final String APP_IMG_USER = IMG_FOLDER + &quot;system/app-user.png&quot;;
+    public static final String APP_IMG_SETTING = IMG_FOLDER + &quot;system/app-setting.png&quot;;
+
+    public static String getTileGridId(String tileName) {
+<span class="nc" id="L193">        return &quot;application_&quot;</span>
+<span class="nc" id="L194">                + replaceSpacesInIds(tileName)</span>
+                + &quot;_tilegrid&quot;;
+    }
+
+    ;
+
+    public static String replaceSpacesInIds(String baseName) {
+<span class="nc" id="L201">        return baseName.replaceAll(&quot;[ -]&quot;, &quot;_&quot;).toLowerCase();</span>
+    }
+
+<span class="fc" id="L204">    public static enum GROUP_ROLE implements IsSerializable {</span>
+
+<span class="fc" id="L206">        Admin, User, None</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

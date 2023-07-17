@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CoreModule.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client</a> &gt; <span class="el_source">CoreModule.java</span></div><h1>CoreModule.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Frame;
+import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.Dialog;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.CloseClickEvent;
+import com.smartgwt.client.widgets.events.CloseClickHandler;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.application.ApplicationParser;
+import fr.insalyon.creatis.vip.core.client.view.application.ApplicationsTileGrid;
+import fr.insalyon.creatis.vip.core.client.view.contact.ContactTab;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.layout.toolstrip.MainToolStrip;
+import fr.insalyon.creatis.vip.core.client.view.main.GeneralTileGrid;
+import fr.insalyon.creatis.vip.core.client.view.main.HomeTab;
+import fr.insalyon.creatis.vip.core.client.view.main.SystemParser;
+import fr.insalyon.creatis.vip.core.client.view.main.SystemTileGrid;
+import fr.insalyon.creatis.vip.core.client.view.user.AccountTab;
+import fr.insalyon.creatis.vip.core.client.view.user.UserMenuButton;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class CoreModule extends Module {
+
+    public static User user;
+    public static List&lt;String&gt; accountTypes;
+    private static GeneralTileGrid generalTileGrid;
+    private static SystemTileGrid systemTileGrid;
+    private static HomeTab homeTab;
+    private static Map&lt;String, Runnable&gt; homePageActions;
+
+<span class="nc" id="L79">    public CoreModule() {</span>
+
+<span class="nc" id="L81">        init();</span>
+<span class="nc" id="L82">    }</span>
+
+    /**
+     * Adds an application parser to the general tile grid.
+     *
+     * @param parser Application parser
+     */
+    public static void addGeneralApplicationParser(ApplicationParser parser) {
+
+<span class="nc" id="L91">        generalTileGrid.addParser(parser);</span>
+<span class="nc" id="L92">    }</span>
+
+    /**
+     * Adds an application parser to the system tile grid.
+     *
+     * @param parser Application parser
+     */
+    public static void addSystemApplicationParser(ApplicationParser parser) {
+
+<span class="nc" id="L101">        systemTileGrid.addParser(parser);</span>
+<span class="nc" id="L102">    }</span>
+
+    /**
+     * Adds a new applications tile grid to the home tab.
+     *
+     * @param tileGrid
+     */
+    public static void addApplicationsTileGrid(ApplicationsTileGrid tileGrid) {
+
+<span class="nc" id="L111">        homeTab.addTileGrid(tileGrid);</span>
+
+<span class="nc" id="L113">    }</span>
+
+    /**
+     * Adds a layout to the home tab.
+     *
+     * @param layout
+     */
+    public static void addLayoutToHomeTab(VLayout layout) {
+
+<span class="nc" id="L122">        homeTab.addToRightLayout(layout);</span>
+<span class="nc" id="L123">    }</span>
+
+    public static Map&lt;String, Runnable&gt; getHomePageActions() {
+<span class="nc" id="L126">        return homePageActions;</span>
+    }
+
+    @Override
+    public void load() {
+
+        // Add tile grids
+<span class="nc" id="L133">        homeTab.addTileGrid(generalTileGrid);</span>
+<span class="nc bnc" id="L134" title="All 6 branches missed.">        if (user.isSystemAdministrator() || user.isGroupAdmin() || user.isDeveloper()) {</span>
+<span class="nc" id="L135">            systemTileGrid.addParser(new SystemParser());</span>
+<span class="nc" id="L136">            homeTab.addTileGrid(systemTileGrid);</span>
+        }
+
+        // Configure User's toolstrip
+<span class="nc" id="L140">        MainToolStrip.getInstance().addMenuButton(new UserMenuButton(user));</span>
+
+        // Home Tab
+<span class="nc" id="L143">        Layout.getInstance().addTab(CoreConstants.TAB_HOME, () -&gt; homeTab);</span>
+
+        // open account tab to accept the terms of use if necessary
+        // Also open the tab for users with no group :
+        // It was possible with former Mozilla Persona but keep it just in case
+
+<span class="nc bnc" id="L149" title="All 4 branches missed.">        if (!user.hasGroups() || !user.hasAcceptTermsOfUse()) {</span>
+            final AccountTab accountTab =
+<span class="nc" id="L151">                    (AccountTab) Layout.getInstance().addTab(</span>
+                            CoreConstants.TAB_ACCOUNT, AccountTab::new);
+<span class="nc bnc" id="L153" title="All 2 branches missed.">            if (!user.hasAcceptTermsOfUse()) {</span>
+<span class="nc" id="L154">                showDialog(&quot;Please accept our Terms of Use&quot;, accountTab);</span>
+            }
+        }
+
+        // check if the user has requested an email change
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (user.getNextEmail() != null) {</span>
+<span class="nc" id="L160">            Layout.getInstance().setNoticeMessage(&quot;You have requested an email address change. Please validate it in your account page&quot;, 10);</span>
+        }
+
+        //call to terms of use
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (user.hasAcceptTermsOfUse()) {</span>
+<span class="nc" id="L165">            final AsyncCallback&lt;Boolean&gt; callback = new AsyncCallback&lt;Boolean&gt;() {</span>
+                @Override
+                public void onFailure(Throwable caught) {
+
+<span class="nc" id="L169">                    Layout.getInstance().setWarningMessage(&quot;Cannot get last update of Terms of Use&quot; + caught.getMessage(), 10);</span>
+
+<span class="nc" id="L171">                }</span>
+
+                @Override
+                public void onSuccess(Boolean result) {
+<span class="nc bnc" id="L175" title="All 2 branches missed.">                    if (result) {</span>
+                        final AccountTab accountTab =
+<span class="nc" id="L177">                                (AccountTab) Layout.getInstance().addTab(</span>
+                                        CoreConstants.TAB_ACCOUNT, AccountTab::new);
+<span class="nc" id="L179">                        showDialog(&quot;Our Terms of Use have changed. Please accept them again.&quot;, accountTab);</span>
+
+                    }
+<span class="nc" id="L182">                }</span>
+            };
+<span class="nc" id="L184">            ConfigurationService.Util.getInstance().compare(callback);</span>
+        }
+
+<span class="nc" id="L187">    }</span>
+
+    @Override
+    public void postLoading() {
+
+        // Experiencing problems button
+<span class="nc" id="L193">        ToolStripButton helpButton = new ToolStripButton(&quot;Experiencing problems?&quot;);</span>
+<span class="nc" id="L194">        helpButton.setIcon(CoreConstants.ICON_HELP);</span>
+<span class="nc" id="L195">        helpButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L198">                Layout.getInstance().addTab(</span>
+                        CoreConstants.TAB_CONTACT, ContactTab::new);
+<span class="nc" id="L200">            }</span>
+        });
+
+<span class="nc" id="L203">        MainToolStrip.getInstance().addFill();</span>
+<span class="nc" id="L204">        MainToolStrip.getInstance().addMember(helpButton);</span>
+<span class="nc" id="L205">    }</span>
+
+    @Override
+    public void terminate(Set&lt;Tab&gt; removedTabs) {
+<span class="nc" id="L209">        init();</span>
+<span class="nc" id="L210">    }</span>
+
+    private void init() {
+
+<span class="nc" id="L214">        user = null;</span>
+<span class="nc" id="L215">        generalTileGrid = new GeneralTileGrid();</span>
+<span class="nc" id="L216">        systemTileGrid = new SystemTileGrid();</span>
+<span class="nc" id="L217">        homeTab = new HomeTab();</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        if (homePageActions == null) {</span>
+            // it must not be removed after a logout
+<span class="nc" id="L220">            homePageActions = new HashMap&lt;&gt;();</span>
+        }
+<span class="nc" id="L222">    }</span>
+
+    private void showDialog(String message, final AccountTab tab) {
+<span class="nc" id="L225">        final Dialog dialog = new Dialog();</span>
+<span class="nc" id="L226">        dialog.setHeight(&quot;40%&quot;);</span>
+<span class="nc" id="L227">        dialog.setWidth(500);</span>
+<span class="nc" id="L228">        dialog.setTitle(&quot;Terms Of Use&quot;);</span>
+<span class="nc" id="L229">        dialog.addCloseClickHandler(new CloseClickHandler() {</span>
+            @Override
+            public void onCloseClick(CloseClickEvent event) {
+<span class="nc" id="L232">                dialog.destroy();</span>
+<span class="nc" id="L233">                Layout.getInstance().signout();</span>
+<span class="nc" id="L234">            }</span>
+        });
+<span class="nc" id="L236">        Button ok = new Button(&quot;OK&quot;);</span>
+<span class="nc" id="L237">        Button cancel = new Button(&quot;Cancel&quot;);</span>
+<span class="nc" id="L238">        Frame frame = new Frame(&quot;documentation/terms.html&quot;);</span>
+<span class="nc" id="L239">        frame.setWidth(&quot;420&quot;);</span>
+<span class="nc" id="L240">        Label l = new Label(message);</span>
+<span class="nc" id="L241">        l.setHeight(100);</span>
+<span class="nc" id="L242">        l.setWidth100();</span>
+<span class="nc" id="L243">        dialog.setMembersMargin(2);</span>
+<span class="nc" id="L244">        dialog.addItem(l);</span>
+<span class="nc" id="L245">        dialog.addItem(frame);</span>
+<span class="nc" id="L246">        dialog.setButtons(ok, cancel);</span>
+<span class="nc" id="L247">        dialog.setIsModal(Boolean.TRUE);</span>
+<span class="nc" id="L248">        cancel.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L251">                dialog.destroy();</span>
+<span class="nc" id="L252">                Layout.getInstance().signout();</span>
+<span class="nc" id="L253">            }</span>
+        });
+<span class="nc" id="L255">        ok.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+                //mettre a jour le champs de la base de donner
+<span class="nc" id="L259">                ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L260">                final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                    @Override
+                    public void onFailure(Throwable caught) {
+
+<span class="nc" id="L264">                        Layout.getInstance().setWarningMessage(&quot;can't update field terms of use&quot; + caught.getMessage(), 10);</span>
+<span class="nc" id="L265">                    }</span>
+
+                    @Override
+                    public void onSuccess(Void result) {
+<span class="nc" id="L269">                        tab.getLayouttermsOfUse().load();</span>
+<span class="nc" id="L270">                        dialog.destroy();</span>
+<span class="nc" id="L271">                    }</span>
+                };
+<span class="nc" id="L273">                service.updateTermsOfUse(callback);</span>
+<span class="nc" id="L274">            }</span>
+        });
+
+<span class="nc" id="L277">        dialog.draw();</span>
+<span class="nc" id="L278">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
