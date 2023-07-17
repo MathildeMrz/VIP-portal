@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BoutiquesImportLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application-importer</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.applicationimporter.client.view</a> &gt; <span class="el_source">BoutiquesImportLayout.java</span></div><h1>BoutiquesImportLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.applicationimporter.client.view;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.PickerIcon;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
+import fr.insalyon.creatis.vip.applicationimporter.client.ApplicationImporterException;
+import fr.insalyon.creatis.vip.applicationimporter.client.rpc.ApplicationImporterService;
+import fr.insalyon.creatis.vip.applicationimporter.client.view.applicationdisplay.DisplayTab;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.ValidatorUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.datamanager.client.view.selection.PathSelectionWindow;
+
+/**
+ * @author Nouha Boujelben
+ */
+public class BoutiquesImportLayout extends AbstractFormLayout {
+
+    private Label jsonFileLabel;
+    private TextItem jsonFileItem;
+    private DynamicForm jsonFileForm;
+    private IButton importButton;
+    private ModalWindow modal;
+
+    public BoutiquesImportLayout(int width, String height) {
+<span class="nc" id="L68">        super(width, height);</span>
+<span class="nc" id="L69">        configure();</span>
+<span class="nc" id="L70">    }</span>
+
+    public BoutiquesImportLayout(String width, String height) {
+<span class="nc" id="L73">        super(width, height);</span>
+<span class="nc" id="L74">        configure();</span>
+<span class="nc" id="L75">    }</span>
+
+    private void configure() {
+<span class="nc" id="L78">        jsonFileLabel = new Label(&quot;&lt;strong&gt;JSON File &lt;/strong&gt;&lt;font color=red&gt;(*)&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L79">        jsonFileLabel.setHeight(20);</span>
+<span class="nc" id="L80">        PickerIcon browsePicker = new PickerIcon(PickerIcon.SEARCH, new FormItemClickHandler() {</span>
+            @Override
+            public void onFormItemClick(FormItemIconClickEvent event) {
+<span class="nc" id="L83">                event.getItem().setValue(&quot;&quot;);</span>
+<span class="nc" id="L84">                new PathSelectionWindow((TextItem) event.getItem()).show();</span>
+<span class="nc" id="L85">            }</span>
+        });
+
+<span class="nc" id="L88">        browsePicker.setPrompt(&quot;Browse&quot;);</span>
+
+<span class="nc" id="L90">        jsonFileItem = FieldUtil.getTextItem(400, false, &quot;&quot;, &quot;[0-9.,A-Za-z-+/_(): ]&quot;);</span>
+<span class="nc" id="L91">        jsonFileItem.setValidators(ValidatorUtil.getStringValidator());</span>
+<span class="nc" id="L92">        jsonFileItem.setIcons(browsePicker);</span>
+<span class="nc" id="L93">        jsonFileItem.setRequired(Boolean.TRUE);</span>
+
+<span class="nc" id="L95">        jsonFileForm = new DynamicForm();</span>
+<span class="nc" id="L96">        jsonFileForm.setFields(jsonFileItem);</span>
+
+<span class="nc" id="L98">        importButton = new IButton();</span>
+<span class="nc" id="L99">        importButton = WidgetUtil.getIButton(&quot;Import&quot;, Constants.ICON_IMPORT,</span>
+<span class="nc" id="L100">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L103" title="All 2 branches missed.">                        if (!jsonFileItem.validate()) {</span>
+<span class="nc" id="L104">                            Layout.getInstance().setWarningMessage(&quot;There is an invalid input&quot;);</span>
+<span class="nc" id="L105">                            return;</span>
+                        }
+<span class="nc" id="L107">                        loadJSONFile(jsonFileItem.getValueAsString());</span>
+<span class="nc" id="L108">                    }</span>
+                });
+
+<span class="nc" id="L111">        modal = new ModalWindow(this);</span>
+
+<span class="nc" id="L113">        this.addMember(jsonFileLabel);</span>
+<span class="nc" id="L114">        this.addMember(jsonFileForm);</span>
+<span class="nc" id="L115">        this.addMember(importButton);</span>
+
+<span class="nc" id="L117">    }</span>
+
+    /**
+     * Calls the service method to read the content of a file, and sets it in
+     * the application import tab.
+     *
+     * @param fileLFN the LFN of the JSON file to parse.
+     */
+    private void loadJSONFile(String fileLFN) {
+<span class="nc" id="L126">        final AsyncCallback&lt;String&gt; callback = new AsyncCallback&lt;String&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L129">                modal.hide();</span>
+<span class="nc" id="L130">                Layout.getInstance().setWarningMessage(&quot;Unable to read JSON file :&quot; + caught.getMessage());</span>
+<span class="nc" id="L131">            }</span>
+
+            @Override
+            public void onSuccess(String jsonFileContent) {
+<span class="nc" id="L135">                modal.hide();</span>
+                try {
+<span class="nc" id="L137">                    BoutiquesApplication boutiquesTool = DisplayTab.parseJSON(jsonFileContent);</span>
+                    DisplayTab displayTab =
+<span class="nc" id="L139">                            (DisplayTab) Layout.getInstance().addTab(</span>
+                                    Constants.TAB_ID_BOUTIQUES_APPLICATION,
+<span class="nc" id="L141">                                    () -&gt; new DisplayTab(</span>
+                                            Constants.ICON_BOUTIQUES,
+                                            Constants.TAB_ID_BOUTIQUES_APPLICATION,
+                                            Constants.TAB_NAME_BOUTIQUES));
+<span class="nc" id="L145">                    displayTab.setBoutiqueTool(boutiquesTool);</span>
+<span class="nc" id="L146">                } catch (ApplicationImporterException ex) {</span>
+<span class="nc" id="L147">                    Layout.getInstance().setWarningMessage(</span>
+<span class="nc" id="L148">                            &quot;Unable to parse JSON file :&quot; + ex.getMessage());</span>
+<span class="nc" id="L149">                }</span>
+<span class="nc" id="L150">            }</span>
+        };
+<span class="nc" id="L152">        modal.show(&quot;Getting JSON file...&quot;, true);</span>
+<span class="nc" id="L153">        ApplicationImporterService.Util.getInstance().readAndValidateBoutiquesFile(fileLFN, callback);</span>
+<span class="nc" id="L154">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

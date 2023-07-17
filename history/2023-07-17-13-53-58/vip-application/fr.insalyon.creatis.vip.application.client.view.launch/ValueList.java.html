@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ValueList.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.launch</a> &gt; <span class="el_source">ValueList.java</span></div><h1>ValueList.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.launch;
+
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.CheckboxItem;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+
+import java.util.ArrayList;
+
+/**
+ * Helper class to handle a list of values entered by user for one input
+ *
+ * @author Guillaume Vanel
+ * @version %I%, %G%
+ */
+public class ValueList extends ValueSet {
+    /**
+     * Populate represented list of values with values from masterFrom and additionalForms
+     *
+     * @param masterForm      DynamicForm containing main input value
+     * @param additionalForms ArrayList of DynamicForms containing additional input value
+     * @throws IllegalArgumentException if at least one form has no field named InputLayout.MAIN_FIELD_NAME
+     * @see #formValue(DynamicForm)
+     * @see InputLayout#MAIN_FIELD_NAME
+     */
+    public ValueList(DynamicForm masterForm, ArrayList&lt;DynamicForm&gt; additionalForms)
+<span class="nc" id="L26">            throws IllegalArgumentException {</span>
+<span class="nc" id="L27">        Object masterValue = formValue(masterForm);</span>
+<span class="nc" id="L28">        this.values.add(masterValue);</span>
+<span class="nc" id="L29">        this.valuesAsStrings.add(valueAsString(masterValue));</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        for (DynamicForm iForm : additionalForms) {</span>
+<span class="nc" id="L31">            Object iValue = formValue(iForm);</span>
+<span class="nc" id="L32">            this.values.add(iValue);</span>
+<span class="nc" id="L33">            this.valuesAsStrings.add(valueAsString(iValue));</span>
+<span class="nc" id="L34">        }</span>
+<span class="nc" id="L35">    }</span>
+
+    /**
+     * Initializes this from a String with values separated with given separator
+     *
+     * @param stringValues String to initialize this from
+     * @param separator    String
+     */
+<span class="nc" id="L43">    public ValueList(String stringValues, String separator) {</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (stringValues == null) {</span>
+<span class="nc" id="L45">            this.values.add(null);</span>
+<span class="nc" id="L46">            this.valuesAsStrings.add(valueAsString(null));</span>
+<span class="nc" id="L47">            return;</span>
+        }
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        for (String value : stringValues.split(separator)) {</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            this.values.add(value.equals(valueAsString(null)) ? null : value.trim());</span>
+<span class="nc" id="L51">            this.valuesAsStrings.add(value.trim());</span>
+        }
+<span class="nc" id="L53">    }</span>
+
+    /**
+     * Return the value of form's field named InputLayout.MAIN_FIELD_NAME
+     *
+     * @param form DynamicForm of interest
+     * @return Object value of form's value field
+     * @throws IllegalArgumentException if form has no field named InputLayout.MAIN_FIELD_NAME
+     * @see InputLayout#MAIN_FIELD_NAME
+     */
+    public static Object formValue(DynamicForm form) throws IllegalArgumentException {
+<span class="nc" id="L64">        FormItem valueField = form.getField(InputLayout.MAIN_FIELD_NAME);</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (valueField == null) {</span>
+<span class="nc" id="L66">            throw new IllegalArgumentException(&quot;Provided form has no field with name &quot; + InputLayout.MAIN_FIELD_NAME);</span>
+        }
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (valueField.isDisabled()) {</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            if (valueField.getAttributeAsBoolean(InputLayout.UNMODIFIABLE_ATTR)) {</span>
+<span class="nc" id="L70">                return valueField.getValue();</span>
+            }
+            // Disable field is considered empty
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            if (valueField instanceof CheckboxItem) {</span>
+<span class="nc" id="L74">                return false;</span>
+            }
+<span class="nc" id="L76">            return null;</span>
+        }
+<span class="nc" id="L78">        return valueField.getValue();</span>
+    }
+
+    /**
+     * @param comparedValueSet ValueSet to compare this to
+     * @return boolean: true if comparedValueSet represents the same input values as this. Comparison
+     * is based on String representation of values. Return value is always false if
+     * comparedValueSet is not a non-null ValueList
+     * @see #valuesAsStrings
+     */
+    @Override
+    public boolean isEqualTo(ValueSet comparedValueSet) {
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (comparedValueSet instanceof ValueList) {</span>
+<span class="nc" id="L91">            int nValues = this.getNValues();</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            if (comparedValueSet.getNValues() == nValues) {</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                for (int valueNo = 0; valueNo &lt; nValues; valueNo++) {</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                    if (!comparedValueSet.getStringValueNo(valueNo).equals(this.getStringValueNo(valueNo))) {</span>
+<span class="nc" id="L95">                        return false;</span>
+                    }
+                }
+                // Same number of values and all values are equal
+<span class="nc" id="L99">                return true;</span>
+            }
+        }
+        // Not a non-null ValueList of same size
+<span class="nc" id="L103">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BrowserUtil.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client.view.common</a> &gt; <span class="el_source">BrowserUtil.java</span></div><h1>BrowserUtil.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client.view.common;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.bean.Data;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
+import fr.insalyon.creatis.vip.datamanager.client.view.browser.DataRecord;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+<span class="nc" id="L57">public class BrowserUtil {</span>
+
+    /**
+     * Creates an elementary browser list grid.
+     *
+     * @return Elementary browser list grid
+     */
+    public static ListGrid getListGrid() {
+
+<span class="nc" id="L66">        ListGrid grid = new ListGrid();</span>
+<span class="nc" id="L67">        grid.setWidth100();</span>
+<span class="nc" id="L68">        grid.setHeight100();</span>
+<span class="nc" id="L69">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L70">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L71">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+
+<span class="nc" id="L73">        ListGridField icoField = FieldUtil.getIconGridField(&quot;icon&quot;);</span>
+<span class="nc" id="L74">        ListGridField nameField = new ListGridField(&quot;name&quot;, &quot;Name&quot;);</span>
+<span class="nc" id="L75">        ListGridField sizeField = new ListGridField(&quot;length&quot;, &quot;Size&quot;, 100);</span>
+<span class="nc" id="L76">        sizeField.setType(ListGridFieldType.INTEGER);</span>
+<span class="nc" id="L77">        sizeField.setCellFormatter(FieldUtil.getSizeCellFormatter());</span>
+<span class="nc" id="L78">        ListGridField dateField = new ListGridField(&quot;modificationDate&quot;, &quot;Modification Date&quot;, 160);</span>
+
+<span class="nc" id="L80">        grid.setFields(icoField, nameField, sizeField, dateField);</span>
+<span class="nc" id="L81">        grid.setSortField(&quot;icon&quot;);</span>
+<span class="nc" id="L82">        grid.setSortDirection(SortDirection.DESCENDING);</span>
+
+<span class="nc" id="L84">        return grid;</span>
+    }
+
+    /**
+     * Loads the data from a path to the grid and updates the tool strip.
+     *
+     * @param modal     Modal window object
+     * @param grid      List grid
+     * @param toolStrip Browser tool strip
+     * @param path      Grid path
+     * @param refresh   Not to use cached data
+     */
+    public static void loadData(final ModalWindow modal, final ListGrid grid,
+                                final BasicBrowserToolStrip toolStrip, final String path, boolean refresh) {
+
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (!path.equals(DataManagerConstants.ROOT)) {</span>
+
+<span class="nc" id="L101">            DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L102">            AsyncCallback&lt;List&lt;Data&gt;&gt; callback = new AsyncCallback&lt;List&lt;Data&gt;&gt;() {</span>
+
+                @Override
+                public void onFailure(Throwable caught) {
+<span class="nc" id="L106">                    modal.hide();</span>
+<span class="nc" id="L107">                    Layout.getInstance().setWarningMessage(&quot;Unable to list folder:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L108">                }</span>
+
+                @Override
+                public void onSuccess(List&lt;Data&gt; result) {
+<span class="nc" id="L112">                    List&lt;DataRecord&gt; dataList = new ArrayList&lt;DataRecord&gt;();</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                    for (Data data : result) {</span>
+<span class="nc" id="L114">                        String replicas = &quot;&quot;;</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                        for (String replica : data.getReplicas()) {</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                            if (!replicas.isEmpty()) {</span>
+<span class="nc" id="L117">                                replicas += &quot;, &quot;;</span>
+                            }
+<span class="nc" id="L119">                            replicas += replica;</span>
+<span class="nc" id="L120">                        }</span>
+<span class="nc" id="L121">                        dataList.add(new DataRecord(</span>
+<span class="nc" id="L122">                                data.getType(),</span>
+<span class="nc" id="L123">                                data.getName(),</span>
+<span class="nc" id="L124">                                (long) data.getLength(),</span>
+<span class="nc" id="L125">                                data.getModificationDate(),</span>
+                                replicas,
+<span class="nc" id="L127">                                data.getPermissions()));</span>
+<span class="nc" id="L128">                    }</span>
+<span class="nc" id="L129">                    toolStrip.setPath(path);</span>
+<span class="nc" id="L130">                    grid.setData(dataList.toArray(new DataRecord[]{}));</span>
+<span class="nc" id="L131">                    modal.hide();</span>
+<span class="nc" id="L132">                }</span>
+            };
+<span class="nc" id="L134">            modal.show(&quot;Loading folder &quot; + path + &quot;...&quot;, true);</span>
+<span class="nc" id="L135">            service.listDir(path, refresh, callback);</span>
+
+<span class="nc" id="L137">        } else {</span>
+
+<span class="nc" id="L139">            ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L140">            AsyncCallback&lt;List&lt;String&gt;&gt; callback = new AsyncCallback&lt;List&lt;String&gt;&gt;() {</span>
+
+                @Override
+                public void onFailure(Throwable caught) {
+<span class="nc" id="L144">                    modal.hide();</span>
+<span class="nc" id="L145">                    Layout.getInstance().setWarningMessage(&quot;Unable to list folder:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L146">                }</span>
+
+                @Override
+                public void onSuccess(List&lt;String&gt; result) {
+<span class="nc" id="L150">                    toolStrip.setPath(path);</span>
+
+<span class="nc" id="L152">                    List&lt;DataRecord&gt; records = new ArrayList&lt;DataRecord&gt;();</span>
+<span class="nc" id="L153">                    records.add(new DataRecord(Data.Type.folder, DataManagerConstants.USERS_HOME));</span>
+<span class="nc" id="L154">                    records.add(new DataRecord(Data.Type.folder, DataManagerConstants.TRASH_HOME));</span>
+
+<span class="nc bnc" id="L156" title="All 2 branches missed.">                    for (String groupName : result) {</span>
+<span class="nc" id="L157">                        records.add(new DataRecord(Data.Type.folder, groupName</span>
+                                + DataManagerConstants.GROUP_APPEND));
+<span class="nc" id="L159">                    }</span>
+
+<span class="nc bnc" id="L161" title="All 2 branches missed.">                    if (CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L162">                        records.add(new DataRecord(Data.Type.folder, DataManagerConstants.USERS_FOLDER));</span>
+<span class="nc" id="L163">                        records.add(new DataRecord(Data.Type.folder, DataManagerConstants.VO_ROOT_FOLDER));</span>
+                    }
+
+<span class="nc" id="L166">                    grid.setData(records.toArray(new DataRecord[]{}));</span>
+<span class="nc" id="L167">                    modal.hide();</span>
+<span class="nc" id="L168">                }</span>
+            };
+<span class="nc" id="L170">            modal.show(&quot;Loading &quot; + DataManagerConstants.ROOT + &quot;...&quot;, true);</span>
+<span class="nc" id="L171">            service.getUserGroups(callback);</span>
+        }
+<span class="nc" id="L173">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

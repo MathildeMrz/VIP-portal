@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BoutiquesParser.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.boutiquesParsing</a> &gt; <span class="el_source">BoutiquesParser.java</span></div><h1>BoutiquesParser.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.boutiquesParsing;
+
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.*;
+
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Helper class for parsing JSON objects
+ *
+ * @author Guillaume Vanel
+ * @version %I%, %G%
+ */
+<span class="nc" id="L17">public class BoutiquesParser extends AbstractJsonParser {</span>
+
+    /**
+     * Parse JSON Boutiques descriptor
+     *
+     * @param descriptor String representing application JSON descriptor
+     * @throws InvalidBoutiquesDescriptorException if descriptor is invalid
+     */
+    public BoutiquesApplication parseApplication(String descriptor) throws InvalidBoutiquesDescriptorException {
+<span class="nc" id="L26">        JSONObject parsedDescriptor = JSONParser.parseStrict(descriptor).isObject();</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if (parsedDescriptor == null) {</span>
+<span class="nc" id="L28">            throw new InvalidBoutiquesDescriptorException(&quot;Invalid Boutiques descriptor: not a JSON object.&quot;);</span>
+        }
+<span class="nc" id="L30">        String name = getStringValue(parsedDescriptor, &quot;name&quot;);</span>
+<span class="nc" id="L31">        String description = getStringValue(parsedDescriptor, &quot;description&quot;);</span>
+<span class="nc" id="L32">        String version = getStringValue(parsedDescriptor, &quot;tool-version&quot;);</span>
+<span class="nc" id="L33">        BoutiquesApplication application = new BoutiquesApplication(name, description, version);</span>
+        // Inputs
+<span class="nc" id="L35">        JSONArray inputsArray = getArrayValue(parsedDescriptor, &quot;inputs&quot;, false);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        for (int inputNo = 0; inputNo &lt; inputsArray.size(); inputNo++) {</span>
+            BoutiquesInput input;
+            try {
+<span class="nc" id="L39">                input = parseInput(inputsArray.get(inputNo).isObject());</span>
+<span class="nc" id="L40">            } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L41">                throw new InvalidBoutiquesDescriptorException(&quot;Invalid Boutiques descriptor: input &quot; + inputNo</span>
+                        + &quot; is invalid.&quot;, exception);
+<span class="nc" id="L43">            }</span>
+<span class="nc" id="L44">            application.addInput(input);</span>
+        }
+        // Groups
+<span class="nc" id="L47">        JSONArray groupsArray = getArrayValue(parsedDescriptor, &quot;groups&quot;, true);</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (groupsArray != null) {</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">            for (int groupNo = 0; groupNo &lt; groupsArray.size(); groupNo++) {</span>
+<span class="nc" id="L50">                JSONObject currentGroupDescriptor = groupsArray.get(groupNo).isObject();</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">                if (currentGroupDescriptor == null) {</span>
+<span class="nc" id="L52">                    throw new InvalidBoutiquesDescriptorException(&quot;Invalid Boutiques descriptor: group &quot; + groupNo</span>
+                            + &quot; is not a JSON object&quot;);
+                }
+                try {
+<span class="nc" id="L56">                    application.addGroup(parseGroup(currentGroupDescriptor));</span>
+<span class="nc" id="L57">                } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L58">                    throw new InvalidBoutiquesDescriptorException(&quot;Invalid Boutiques descriptor: group &quot; + groupNo</span>
+                            + &quot; is invalid.&quot;, exception);
+<span class="nc" id="L60">                }</span>
+            }
+        }
+        // Other properties
+<span class="nc" id="L64">        application.setAuthor(getStringValue(parsedDescriptor, &quot;author&quot;, true));</span>
+<span class="nc" id="L65">        application.setCommandLine(getStringValue(parsedDescriptor, &quot;command-line&quot;));</span>
+<span class="nc" id="L66">        application.setSchemaVersion(getStringValue(parsedDescriptor, &quot;schema-version&quot;));</span>
+<span class="nc" id="L67">        application.setChallengerEmail(getStringValue(parsedDescriptor, &quot;vip:miccai-challenger-email&quot;, true));</span>
+<span class="nc" id="L68">        application.setChallengerTeam(getStringValue(parsedDescriptor, &quot;vip:miccai-challenge-team-name&quot;, true));</span>
+        // Output files
+<span class="nc" id="L70">        JSONArray outputJSONArray = getArrayValue(parsedDescriptor, &quot;output-files&quot;, true);</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (outputJSONArray != null) {</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">            for (int i = 0; i &lt; outputJSONArray.size(); i++) {</span>
+                try {
+<span class="nc" id="L74">                    application.getOutputFiles().add(parseBoutiquesOutputFile(outputJSONArray.get(i).isObject()));</span>
+<span class="nc" id="L75">                } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L76">                    throw new InvalidBoutiquesDescriptorException(&quot;Invalid Boutiques descriptor: output file &quot; + i</span>
+                            + &quot; is invalid.&quot;, exception);
+<span class="nc" id="L78">                }</span>
+            }
+        }
+        // Tags
+<span class="nc" id="L82">        JSONObject tagsJSONObject = getObjectValue(parsedDescriptor, &quot;tags&quot;, true);</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (tagsJSONObject != null) {</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            for (String key : tagsJSONObject.keySet()) {</span>
+                String value;
+                try {
+<span class="nc" id="L87">                    value = getStringValue(tagsJSONObject, key);</span>
+<span class="nc" id="L88">                } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L89">                    throw new InvalidBoutiquesDescriptorException(&quot;Invalid Boutiques descriptor: tag with key '&quot; + key</span>
+                            + &quot;' is not a valid String.&quot;, exception);
+<span class="nc" id="L91">                }</span>
+<span class="nc" id="L92">                application.addTag(key, value);</span>
+<span class="nc" id="L93">            }</span>
+        }
+        // Container image
+<span class="nc" id="L96">        JSONObject containerObject = getObjectValue(parsedDescriptor, &quot;container-image&quot;, true);</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (containerObject != null) {</span>
+            try {
+<span class="nc" id="L99">                application.setContainerType(getStringValue(containerObject, &quot;type&quot;));</span>
+<span class="nc" id="L100">                application.setContainerImage(getStringValue(containerObject, &quot;image&quot;));</span>
+<span class="nc" id="L101">                application.setContainerIndex(getStringValue(containerObject, &quot;index&quot;, true));</span>
+<span class="nc" id="L102">            } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L103">                throw new InvalidBoutiquesDescriptorException(&quot;Invalid Boutiques descriptor: invalid container-image.&quot;,</span>
+                        exception);
+<span class="nc" id="L105">            }</span>
+        }
+        // Json descriptor
+<span class="nc" id="L108">        application.setJsonFile(parsedDescriptor.toString());</span>
+<span class="nc" id="L109">        return application;</span>
+    }
+
+    /**
+     * Parse a JSONObject corresponding to an input inside a Boutiques descriptor and return corresponding BoutiquesInput
+     *
+     * @param inputJson JSONObject containing input information
+     * @return Parsed BoutiquesInput
+     * @throws InvalidBoutiquesDescriptorException if the JSONObject is not a valid representation of a Boutiques input
+     */
+    public BoutiquesInput parseInput(JSONObject inputJson) throws InvalidBoutiquesDescriptorException {
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (inputJson == null) {</span>
+<span class="nc" id="L121">            throw new InvalidBoutiquesDescriptorException(&quot;Invalid input descriptor: not a JSON object&quot;);</span>
+        }
+        // General attributes
+<span class="nc" id="L124">        String id = getStringValue(inputJson, &quot;id&quot;);</span>
+<span class="nc" id="L125">        String name = getStringValue(inputJson, &quot;name&quot;);</span>
+<span class="nc" id="L126">        String description = getStringValue(inputJson, &quot;description&quot;, true);</span>
+<span class="nc" id="L127">        boolean isOptional = getBooleanValue(inputJson, &quot;optional&quot;, true);</span>
+<span class="nc" id="L128">        Set&lt;String&gt; disablesInputsId = getArrayValueAsStringSet(inputJson, &quot;disables-inputs&quot;, true);</span>
+<span class="nc" id="L129">        Set&lt;String&gt; requiresInputsId = getArrayValueAsStringSet(inputJson, &quot;requires-inputs&quot;, true);</span>
+<span class="nc" id="L130">        String typeString = getStringValue(inputJson, &quot;type&quot;);</span>
+<span class="nc" id="L131">        BoutiquesInput.InputType inputType = BoutiquesInput.InputType.valueOf(typeString.toUpperCase());</span>
+        BoutiquesInput input;
+        // Flag is treated separately as it does not accept value-disables, value-requires or value-choice properties
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (inputType == BoutiquesInput.InputType.FLAG) {</span>
+<span class="nc" id="L135">            boolean defaultValue = getBooleanValue(inputJson, &quot;default-value&quot;, true);</span>
+<span class="nc" id="L136">            input = new BoutiquesFlagInput(id, name, description, isOptional, disablesInputsId, requiresInputsId,</span>
+                    defaultValue);
+<span class="nc" id="L138">        } else {</span>
+            // Non flag inputs (Number, String or File)
+<span class="nc" id="L140">            Map&lt;String, Set&lt;String&gt;&gt; valueDisablesInputsId = getStringSetMapValue(inputJson, &quot;value-disables&quot;,</span>
+                    true);
+<span class="nc" id="L142">            Map&lt;String, Set&lt;String&gt;&gt; valueRequiresInputsId = getStringSetMapValue(inputJson, &quot;value-requires&quot;,</span>
+                    true);
+<span class="nc" id="L144">            JSONArray possibleValuesArray = getArrayValue(inputJson, &quot;value-choices&quot;, true);</span>
+            Set&lt;String&gt; possibleValues;
+<span class="nc bnc" id="L146" title="All 3 branches missed.">            switch (inputType) {</span>
+                case NUMBER:
+                    try {
+<span class="nc" id="L149">                        possibleValues = jsonArrayToStringSet(isOptional, possibleValuesArray, this::jsonValueToDouble);</span>
+<span class="nc" id="L150">                    } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L151">                        throw new InvalidBoutiquesDescriptorException(&quot;Invalid input descriptor: &quot;</span>
+                                + &quot;input of type 'Number' but value-choice contains non-double value(s).&quot;,
+                                exception);
+<span class="nc" id="L154">                    }</span>
+<span class="nc" id="L155">                    Double defaultValueDouble = getDoubleValue(inputJson, &quot;default-value&quot;, true);</span>
+<span class="nc" id="L156">                    boolean isInteger = getBooleanValue(inputJson, &quot;integer&quot;, true);</span>
+<span class="nc" id="L157">                    Double maximum = getDoubleValue(inputJson, &quot;maximum&quot;, true);</span>
+<span class="nc" id="L158">                    Double minimum = getDoubleValue(inputJson, &quot;minimum&quot;, true);</span>
+<span class="nc" id="L159">                    boolean isExclusiveMaximum = getBooleanValue(inputJson, &quot;exclusive-maximum&quot;, true);</span>
+<span class="nc" id="L160">                    boolean isExclusiveMinimum = getBooleanValue(inputJson, &quot;exclusive-minimum&quot;, true);</span>
+<span class="nc" id="L161">                    input = new BoutiquesNumberInput(id, name, description, isOptional, disablesInputsId,</span>
+                            requiresInputsId, possibleValues, valueDisablesInputsId, valueRequiresInputsId,
+                            defaultValueDouble, isInteger, isExclusiveMaximum, isExclusiveMinimum, maximum, minimum);
+<span class="nc" id="L164">                    break;</span>
+                case STRING:
+                case FILE:
+                    try {
+<span class="nc" id="L168">                        possibleValues = jsonArrayToStringSet(isOptional, possibleValuesArray, this::jsonValueToString);</span>
+<span class="nc" id="L169">                    } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L170">                        throw new InvalidBoutiquesDescriptorException(&quot;Invalid input descriptor: input of type '&quot;</span>
+<span class="nc" id="L171">                                + inputType.getCamelName() + &quot;'but value-choice contains non-String value(s).&quot;,</span>
+                                exception);
+<span class="nc" id="L173">                    }</span>
+<span class="nc" id="L174">                    String defaultValueString = getStringValue(inputJson, &quot;default-value&quot;, true);</span>
+<span class="nc" id="L175">                    input = new BoutiquesStringInput(id, name, description, inputType, isOptional, disablesInputsId,</span>
+                            requiresInputsId, possibleValues, valueDisablesInputsId, valueRequiresInputsId,
+                            defaultValueString);
+<span class="nc" id="L178">                    break;</span>
+                default:
+<span class="nc" id="L180">                    throw new InvalidBoutiquesDescriptorException(&quot;Invalid input descriptor: invalid type '&quot;</span>
+                            + inputType + &quot;'. Only allowed types are 'String', 'File', 'Number' and 'Flag'.&quot;);
+            }
+        }
+<span class="nc" id="L184">        input.setValueKey(getStringValue(inputJson, &quot;value-key&quot;, true));</span>
+<span class="nc" id="L185">        input.setList(getBooleanValue(inputJson, &quot;list&quot;, true));</span>
+<span class="nc" id="L186">        String commandLineFlag = getStringValue(inputJson, &quot;command-line-flag&quot;, true);</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        input.setCommandLineFlag(commandLineFlag == null ? &quot;&quot; : commandLineFlag);</span>
+<span class="nc" id="L188">        return input;</span>
+    }
+
+    /**
+     * Parse a JSONObject representing an input group.
+     *
+     * @param groupJson JSONObject to parse
+     * @return BoutiquesGroup representing parsed group
+     * @throws InvalidBoutiquesDescriptorException if JSON Object is not a valid representation of a group
+     */
+    public BoutiquesGroup parseGroup(JSONObject groupJson) throws InvalidBoutiquesDescriptorException {
+<span class="nc" id="L199">        String id = getStringValue(groupJson, &quot;id&quot;);</span>
+<span class="nc" id="L200">        Set&lt;String&gt; members = getArrayValueAsStringSet(groupJson, &quot;members&quot;, false);</span>
+<span class="nc" id="L201">        boolean allOrNone = getBooleanValue(groupJson, &quot;all-or-none&quot;, true);</span>
+<span class="nc" id="L202">        boolean mutuallyExclusive = getBooleanValue(groupJson, &quot;mutually-exclusive&quot;, true);</span>
+<span class="nc" id="L203">        boolean oneIsRequired = getBooleanValue(groupJson, &quot;one-is-required&quot;, true);</span>
+<span class="nc" id="L204">        return new BoutiquesGroup(id, allOrNone, mutuallyExclusive, oneIsRequired, members);</span>
+    }
+
+    /**
+     * Parse a JSONObject representing an output file
+     *
+     * @param outputFile JSONObject to parse
+     * @return BoutiquesOutputFile representing parsed output file
+     * @throws InvalidBoutiquesDescriptorException if outputFile is not a valid representation of an output file
+     */
+    private BoutiquesOutputFile parseBoutiquesOutputFile(JSONObject outputFile)
+            throws InvalidBoutiquesDescriptorException {
+<span class="nc" id="L216">        BoutiquesOutputFile bof = new BoutiquesOutputFile();</span>
+<span class="nc" id="L217">        bof.setId(getStringValue(outputFile, &quot;id&quot;));</span>
+<span class="nc" id="L218">        bof.setName(getStringValue(outputFile, &quot;name&quot;));</span>
+<span class="nc" id="L219">        bof.setDescription(getStringValue(outputFile, &quot;description&quot;, true));</span>
+<span class="nc" id="L220">        bof.setValueKey(getStringValue(outputFile, &quot;value-key&quot;, true));</span>
+<span class="nc" id="L221">        bof.setPathTemplate(getStringValue(outputFile, &quot;path-template&quot;, true));</span>
+<span class="nc" id="L222">        bof.setList(getBooleanValue(outputFile, &quot;list&quot;, true));</span>
+<span class="nc" id="L223">        bof.setOptional(getBooleanValue(outputFile, &quot;optional&quot;, true));</span>
+<span class="nc" id="L224">        String commandLineFlag = getStringValue(outputFile, &quot;command-line-flag&quot;, true);</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        commandLineFlag = commandLineFlag == null ? &quot;&quot; : commandLineFlag;</span>
+<span class="nc" id="L226">        bof.setCommandLineFlag(commandLineFlag);</span>
+<span class="nc" id="L227">        return bof;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
