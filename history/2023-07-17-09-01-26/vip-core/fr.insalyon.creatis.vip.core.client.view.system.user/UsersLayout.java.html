@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>UsersLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.system.user</a> &gt; <span class="el_source">UsersLayout.java</span></div><h1>UsersLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.system.user;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.DateDisplayFormat;
+import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
+import com.smartgwt.client.widgets.grid.events.RowContextClickEvent;
+import com.smartgwt.client.widgets.grid.events.RowContextClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.viewer.DetailViewer;
+import com.smartgwt.client.widgets.viewer.DetailViewerField;
+import fr.insalyon.creatis.vip.core.client.Modules;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class UsersLayout extends VLayout {
+
+    DataSource ds;
+<span class="nc" id="L76">    boolean state = true;</span>
+    private ModalWindow modal;
+    private ListGrid grid;
+    private HLayout rollOverCanvas;
+    private ListGridRecord rollOverRecord;
+    private DetailViewer detailViewer;
+
+<span class="nc" id="L83">    public UsersLayout() {</span>
+
+<span class="nc" id="L85">        this.setWidth100();</span>
+<span class="nc" id="L86">        this.setHeight100();</span>
+<span class="nc" id="L87">        this.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L88">        ds = new DataUsersLayout();</span>
+<span class="nc" id="L89">        configureGrid();</span>
+<span class="nc" id="L90">        modal = new ModalWindow(grid);</span>
+
+<span class="nc" id="L92">        this.addMember(new UsersToolStrip());</span>
+<span class="nc" id="L93">        this.addMember(grid);</span>
+
+<span class="nc" id="L95">        loadData();</span>
+<span class="nc" id="L96">    }</span>
+
+    private void configureGrid() {
+
+<span class="nc" id="L100">        grid = new ListGrid() {</span>
+
+            @Override
+            protected String getCellCSSText(ListGridRecord record, int rowNum, int colNum) {
+
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                if (getFieldName(colNum).equals(&quot;lastLogin&quot;)) {</span>
+<span class="nc" id="L106">                    UserRecord userRecord = (UserRecord) record;</span>
+<span class="nc" id="L107">                    long now = new Date().getTime();</span>
+<span class="nc" id="L108">                    long halfMonthDate = now - ((long) 15 * 24 * 3600000);</span>
+<span class="nc" id="L109">                    long oneMonthDate = now - ((long) 30 * 24 * 3600000);</span>
+<span class="nc" id="L110">                    long threeMonthsDate = now - ((long) 90 * 24 * 3600000);</span>
+
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                    if (userRecord.getDate().getTime() &lt; threeMonthsDate) {</span>
+<span class="nc" id="L113">                        return &quot;color:#D64949;&quot;;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                    } else if (userRecord.getDate().getTime() &lt; oneMonthDate) {</span>
+<span class="nc" id="L115">                        return &quot;color:#D68E63;&quot;;</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                    } else if (userRecord.getDate().getTime() &lt; halfMonthDate) {</span>
+<span class="nc" id="L117">                        return &quot;color:#66CC66;&quot;;</span>
+                    } else {
+<span class="nc" id="L119">                        return &quot;color:#339900;&quot;;</span>
+                    }
+                }
+<span class="nc" id="L122">                return super.getCellCSSText(record, rowNum, colNum);</span>
+            }
+
+            @Override
+            protected Canvas getRollOverCanvas(Integer rowNum, Integer colNum) {
+
+<span class="nc" id="L128">                rollOverRecord = this.getRecord(rowNum);</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                if (rollOverCanvas == null) {</span>
+<span class="nc" id="L131">                    rollOverCanvas = new HLayout(3);</span>
+<span class="nc" id="L132">                    rollOverCanvas.setSnapTo(&quot;TR&quot;);</span>
+<span class="nc" id="L133">                    rollOverCanvas.setWidth(50);</span>
+<span class="nc" id="L134">                    rollOverCanvas.setHeight(22);</span>
+<span class="nc" id="L135">                    rollOverCanvas.addMember(FieldUtil.getImgButton(</span>
+<span class="nc" id="L136">                            CoreConstants.ICON_EDIT, &quot;Edit User&quot;, new ClickHandler() {</span>
+
+                                @Override
+                                public void onClick(ClickEvent event) {
+<span class="nc" id="L140">                                    edit(rollOverRecord.getAttribute(&quot;username&quot;),</span>
+<span class="nc" id="L141">                                            rollOverRecord.getAttribute(&quot;email&quot;),</span>
+<span class="nc" id="L142">                                            rollOverRecord.getAttributeAsBoolean(&quot;confirmed&quot;),</span>
+<span class="nc" id="L143">                                            rollOverRecord.getAttribute(&quot;level&quot;),</span>
+<span class="nc" id="L144">                                            rollOverRecord.getAttribute(&quot;countryCode&quot;),</span>
+<span class="nc" id="L145">                                            rollOverRecord.getAttributeAsInt(&quot;maxRunningSimulations&quot;),</span>
+<span class="nc" id="L146">                                            rollOverRecord.getAttributeAsBoolean(&quot;accountLocked&quot;));</span>
+<span class="nc" id="L147">                                }</span>
+                            }));
+
+<span class="nc" id="L150">                    rollOverCanvas.addMember(FieldUtil.getImgButton(</span>
+<span class="nc" id="L151">                            CoreConstants.ICON_DELETE, &quot;Delete User&quot;, new ClickHandler() {</span>
+
+                                @Override
+                                public void onClick(ClickEvent event) {
+<span class="nc" id="L155">                                    final String email = rollOverRecord.getAttribute(&quot;email&quot;);</span>
+<span class="nc" id="L156">                                    SC.ask(&quot;Do you really want to remove the user \&quot;&quot;</span>
+<span class="nc" id="L157">                                            + email + &quot;\&quot;?&quot;, new BooleanCallback() {</span>
+
+                                        @Override
+                                        public void execute(Boolean value) {
+<span class="nc bnc" id="L161" title="All 2 branches missed.">                                            if (value) {</span>
+<span class="nc" id="L162">                                                remove(email);</span>
+                                            }
+<span class="nc" id="L164">                                        }</span>
+                                    });
+<span class="nc" id="L166">                                }</span>
+                            }));
+                }
+<span class="nc" id="L169">                return rollOverCanvas;</span>
+            }
+
+            @Override
+            protected Canvas getCellHoverComponent(Record record, Integer rowNum, Integer colNum) {
+
+<span class="nc" id="L175">                DetailViewerField registrationField = new DetailViewerField(&quot;registration&quot;, &quot;Registration&quot;);</span>
+<span class="nc" id="L176">                registrationField.setDateFormatter(DateDisplayFormat.TOUSSHORTDATETIME);</span>
+
+<span class="nc" id="L178">                DetailViewerField lastLoginField = new DetailViewerField(&quot;lastLogin&quot;, &quot;Last Login&quot;);</span>
+<span class="nc" id="L179">                lastLoginField.setDateFormatter(DateDisplayFormat.TOUSSHORTDATETIME);</span>
+
+<span class="nc" id="L181">                detailViewer = new DetailViewer();</span>
+<span class="nc" id="L182">                detailViewer.setWidth(400);</span>
+<span class="nc" id="L183">                detailViewer.setFields(</span>
+                        new DetailViewerField(&quot;level&quot;, &quot;Level&quot;),
+                        new DetailViewerField(&quot;email&quot;, &quot;Email&quot;),
+                        new DetailViewerField(&quot;username&quot;, &quot;Name&quot;),
+                        new DetailViewerField(&quot;institution&quot;, &quot;Institution&quot;),
+                        new DetailViewerField(&quot;countryName&quot;, &quot;Country&quot;),
+                        registrationField, lastLoginField);
+<span class="nc" id="L190">                detailViewer.setData(new Record[]{record});</span>
+
+<span class="nc" id="L192">                return detailViewer;</span>
+            }
+        };
+<span class="nc" id="L195">        grid.setWidth100();</span>
+<span class="nc" id="L196">        grid.setHeight100();</span>
+<span class="nc" id="L197">        grid.setShowRollOverCanvas(true);</span>
+<span class="nc" id="L198">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L199">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L200">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L201">        grid.setCanHover(true);</span>
+<span class="nc" id="L202">        grid.setShowHover(true);</span>
+<span class="nc" id="L203">        grid.setShowHoverComponents(true);</span>
+<span class="nc" id="L204">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+<span class="nc" id="L205">        grid.setFilterOnKeypress(true);</span>
+<span class="nc" id="L206">        grid.setDataSource(ds);</span>
+<span class="nc" id="L207">        grid.setAutoFetchData(Boolean.TRUE);</span>
+
+<span class="nc" id="L209">        ListGridField confirmedField = new ListGridField(&quot;confirmed&quot;, &quot;Confirmed&quot;);</span>
+<span class="nc" id="L210">        confirmedField.setType(ListGridFieldType.BOOLEAN);</span>
+
+<span class="nc" id="L212">        ListGridField lockedField = new ListGridField(&quot;accountLocked&quot;, &quot;Locked&quot;);</span>
+<span class="nc" id="L213">        lockedField.setType(ListGridFieldType.BOOLEAN);</span>
+
+
+<span class="nc" id="L216">        grid.setFields(confirmedField,</span>
+                lockedField,
+<span class="nc" id="L218">                FieldUtil.getIconGridField(&quot;countryCodeIcon&quot;),</span>
+                new ListGridField(&quot;username&quot;, &quot;Name&quot;),
+<span class="nc" id="L220">                FieldUtil.getDateField(&quot;lastLogin&quot;, &quot;Last Login&quot;),</span>
+                new ListGridField(&quot;email&quot;, &quot;Email&quot;)
+        );
+<span class="nc" id="L223">        grid.setSortField(&quot;firstName&quot;);</span>
+<span class="nc" id="L224">        grid.setSortDirection(SortDirection.ASCENDING);</span>
+
+<span class="nc" id="L226">        grid.addCellDoubleClickHandler(new CellDoubleClickHandler() {</span>
+
+            @Override
+            public void onCellDoubleClick(CellDoubleClickEvent event) {
+
+<span class="nc" id="L231">                ListGridRecord record = event.getRecord();</span>
+<span class="nc" id="L232">                edit(record.getAttribute(&quot;username&quot;),</span>
+<span class="nc" id="L233">                        record.getAttribute(&quot;email&quot;),</span>
+<span class="nc" id="L234">                        record.getAttributeAsBoolean(&quot;confirmed&quot;),</span>
+<span class="nc" id="L235">                        record.getAttribute(&quot;level&quot;),</span>
+<span class="nc" id="L236">                        record.getAttribute(&quot;countryCode&quot;),</span>
+<span class="nc" id="L237">                        record.getAttributeAsInt(&quot;maxRunningSimulations&quot;),</span>
+<span class="nc" id="L238">                        record.getAttributeAsBoolean(&quot;accountLocked&quot;));</span>
+<span class="nc" id="L239">            }</span>
+        });
+
+<span class="nc" id="L242">        grid.addRowContextClickHandler(new RowContextClickHandler() {</span>
+
+            @Override
+            public void onRowContextClick(RowContextClickEvent event) {
+<span class="nc" id="L246">                event.cancel();</span>
+<span class="nc" id="L247">                new UsersContextMenu(modal, event.getRecord().getAttribute(&quot;email&quot;),</span>
+<span class="nc" id="L248">                        event.getRecord().getAttributeAsBoolean(&quot;confirmed&quot;)).showContextMenu();</span>
+<span class="nc" id="L249">            }</span>
+        });
+<span class="nc" id="L251">    }</span>
+
+    public void loadData() {
+
+<span class="nc" id="L255">        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L256">        final AsyncCallback&lt;List&lt;User&gt;&gt; callback = new AsyncCallback&lt;List&lt;User&gt;&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L260">                modal.hide();</span>
+<span class="nc" id="L261">                SC.warn(&quot;Unable to get users list:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L262">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;User&gt; result) {
+<span class="nc" id="L266">                modal.hide();</span>
+<span class="nc" id="L267">                List&lt;UserRecord&gt; dataList = new ArrayList&lt;UserRecord&gt;();</span>
+
+<span class="nc bnc" id="L269" title="All 2 branches missed.">                for (User user : result) {</span>
+<span class="nc" id="L270">                    dataList.add(new UserRecord(user));</span>
+<span class="nc" id="L271">                }</span>
+<span class="nc" id="L272">                grid.setData(dataList.toArray(new UserRecord[]{}));</span>
+<span class="nc" id="L273">                ds.setTestData(dataList.toArray(new UserRecord[]{}));</span>
+<span class="nc" id="L274">            }</span>
+        };
+<span class="nc" id="L276">        modal.show(&quot;Loading Users...&quot;, true);</span>
+<span class="nc" id="L277">        service.getUsers(callback);</span>
+<span class="nc" id="L278">    }</span>
+
+    private void remove(String email) {
+
+<span class="nc" id="L282">        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L283">        final AsyncCallback&lt;User&gt; callback = new AsyncCallback&lt;User&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L287">                modal.hide();</span>
+<span class="nc" id="L288">                SC.warn(&quot;Unable to remove user:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L289">            }</span>
+
+            @Override
+            public void onSuccess(User result) {
+<span class="nc" id="L293">                Modules.getInstance().userRemoved(result);</span>
+<span class="nc" id="L294">                modal.hide();</span>
+<span class="nc" id="L295">                SC.say(&quot;The user was successfully removed!&quot;);</span>
+<span class="nc" id="L296">                loadData();</span>
+<span class="nc" id="L297">            }</span>
+        };
+<span class="nc" id="L299">        modal.show(&quot;Deleting user '&quot; + email + &quot;'...&quot;, true);</span>
+<span class="nc" id="L300">        service.removeUser(email, callback);</span>
+<span class="nc" id="L301">    }</span>
+
+    /**
+     * @param name
+     * @param email
+     * @param confirmed
+     * @param level
+     * @param countryCode
+     */
+    private void edit(String userName, String email, boolean confirmed,
+                      String level, String countryCode, int maxRunningSimulations, boolean locked) {
+
+<span class="nc" id="L313">        ManageUsersTab usersTab = (ManageUsersTab) Layout.getInstance().</span>
+<span class="nc" id="L314">                getTab(CoreConstants.TAB_MANAGE_USERS);</span>
+<span class="nc" id="L315">        usersTab.setUser(userName, email, confirmed, level, countryCode, maxRunningSimulations, locked);</span>
+<span class="nc" id="L316">    }</span>
+
+
+    public void setFilter() {
+
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (state == false) {</span>
+<span class="nc" id="L322">            grid.setShowFilterEditor(false);</span>
+<span class="nc" id="L323">            state = true;</span>
+        } else {
+<span class="nc" id="L325">            grid.setShowFilterEditor(true);</span>
+<span class="nc" id="L326">            state = false;</span>
+        }
+
+<span class="nc" id="L329">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

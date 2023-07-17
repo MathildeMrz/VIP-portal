@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SearchStackSection.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor</a> &gt; <span class="el_source">SearchStackSection.java</span></div><h1>SearchStackSection.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.DateItem;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.SectionStackSection;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.ApplicationModule;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class SearchStackSection extends SectionStackSection {
+
+    private DynamicForm form;
+    private SelectItem userItem;
+    private SelectItem simulationItem;
+    private SelectItem statusItem;
+    private SelectItem appClassItem;
+    private DateItem startDateItem;
+    private DateItem endDateItem;
+    private IButton searchButton;
+    private IButton resetButton;
+
+<span class="nc" id="L73">    public SearchStackSection() {</span>
+
+<span class="nc" id="L75">        this.setTitle(Canvas.imgHTML(ApplicationConstants.ICON_SEARCH) + &quot; Search&quot;);</span>
+<span class="nc" id="L76">        this.setExpanded(false);</span>
+
+<span class="nc" id="L78">        configureForm();</span>
+
+<span class="nc" id="L80">        HLayout hLayout = new HLayout(5);</span>
+<span class="nc" id="L81">        hLayout.setMargin(5);</span>
+<span class="nc" id="L82">        hLayout.addMember(searchButton);</span>
+<span class="nc" id="L83">        hLayout.addMember(resetButton);</span>
+
+<span class="nc" id="L85">        VLayout vLayout = new VLayout(5);</span>
+<span class="nc" id="L86">        vLayout.addMember(form);</span>
+<span class="nc" id="L87">        vLayout.addMember(hLayout);</span>
+<span class="nc" id="L88">        this.addItem(vLayout);</span>
+
+<span class="nc" id="L90">        loadData();</span>
+<span class="nc" id="L91">    }</span>
+
+    private void configureForm() {
+
+<span class="nc" id="L95">        form = new DynamicForm();</span>
+<span class="nc" id="L96">        form.setMargin(5);</span>
+<span class="nc" id="L97">        form.setWidth(500);</span>
+<span class="nc" id="L98">        form.setNumCols(4);</span>
+
+<span class="nc" id="L100">        userItem = new SelectItem(&quot;userFilter&quot;, &quot;User&quot;);</span>
+<span class="nc" id="L101">        simulationItem = new SelectItem(&quot;simualtionFilter&quot;, &quot;Application&quot;);</span>
+<span class="nc" id="L102">        statusItem = new SelectItem(&quot;statusFilter&quot;, &quot;Status&quot;);</span>
+<span class="nc" id="L103">        appClassItem = new SelectItem(&quot;classFilter&quot;, &quot;Class&quot;);</span>
+
+<span class="nc" id="L105">        startDateItem = new DateItem(&quot;startDateFilter&quot;, &quot;Start Date&quot;);</span>
+<span class="nc" id="L106">        startDateItem.setUseTextField(true);</span>
+
+<span class="nc" id="L108">        endDateItem = new DateItem(&quot;endDateFilter&quot;, &quot;End Date&quot;);</span>
+<span class="nc" id="L109">        endDateItem.setUseTextField(true);</span>
+
+<span class="nc" id="L111">        searchButton = WidgetUtil.getIButton(&quot;Search&quot;, null, new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+
+<span class="nc" id="L115">                SimulationsTab simulationsTab = (SimulationsTab) Layout.getInstance().getTab(ApplicationConstants.TAB_MONITOR);</span>
+
+<span class="nc" id="L117">                String userText = userItem.getValueAsString();</span>
+<span class="nc bnc" id="L118" title="All 6 branches missed.">                simulationsTab.setUser(userText == null || userText.isEmpty() || userText.equals(&quot;All&quot;) ? null : userText);</span>
+
+<span class="nc" id="L120">                String simuText = simulationItem.getValueAsString();</span>
+<span class="nc bnc" id="L121" title="All 6 branches missed.">                simulationsTab.setApp(simuText == null || simuText.isEmpty() || simuText.equals(&quot;All&quot;) ? null : simuText);</span>
+
+<span class="nc" id="L123">                String statusText = statusItem.getValueAsString();</span>
+<span class="nc bnc" id="L124" title="All 6 branches missed.">                simulationsTab.setStatus(statusText == null || statusText.isEmpty() || statusText.equals(&quot;All&quot;) ? null : statusText);</span>
+
+<span class="nc" id="L126">                String appClassText = appClassItem.getValueAsString();</span>
+<span class="nc bnc" id="L127" title="All 6 branches missed.">                simulationsTab.setAppClass(appClassText == null || appClassText.isEmpty() || appClassText.equals(&quot;All&quot;) ? null : appClassText);</span>
+
+<span class="nc" id="L129">                Date startDateValue = startDateItem.getValueAsDate();</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                simulationsTab.setStartDate(startDateValue == null ? null : startDateValue);</span>
+
+<span class="nc" id="L132">                Date endDateValue = endDateItem.getValueAsDate();</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                simulationsTab.setEndDate(endDateValue == null ? null : endDateValue);</span>
+
+<span class="nc" id="L135">                simulationsTab.loadData();</span>
+<span class="nc" id="L136">            }</span>
+        });
+
+<span class="nc" id="L139">        resetButton = WidgetUtil.getIButton(&quot;Reset&quot;, null, new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L142">                userItem.setValue(&quot;All&quot;);</span>
+<span class="nc" id="L143">                simulationItem.setValue(&quot;All&quot;);</span>
+<span class="nc" id="L144">                statusItem.setValue(&quot;All&quot;);</span>
+<span class="nc" id="L145">                appClassItem.setValue(&quot;All&quot;);</span>
+<span class="nc" id="L146">                startDateItem.setValue(&quot;&quot;);</span>
+<span class="nc" id="L147">                endDateItem.setValue(&quot;&quot;);</span>
+<span class="nc" id="L148">            }</span>
+        });
+
+<span class="nc" id="L151">        form.setFields(userItem, startDateItem, simulationItem,</span>
+                endDateItem, statusItem, appClassItem);
+<span class="nc" id="L153">    }</span>
+
+    private void loadData() {
+
+<span class="nc" id="L157">        ApplicationServiceAsync service = ApplicationService.Util.getInstance();</span>
+<span class="nc" id="L158">        final AsyncCallback&lt;List&lt;String&gt;[]&gt; callback = new AsyncCallback&lt;List&lt;String&gt;[]&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L161">                WidgetUtil.resetIButton(searchButton, &quot;Search&quot;, null);</span>
+<span class="nc" id="L162">                Layout.getInstance().setWarningMessage(&quot;Unable to get users and applications lists:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L163">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;String&gt;[] result) {
+<span class="nc" id="L167">                WidgetUtil.resetIButton(searchButton, &quot;Search&quot;, null);</span>
+<span class="nc" id="L168">                LinkedHashMap&lt;String, String&gt; usersMap = new LinkedHashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L169">                usersMap.put(&quot;All&quot;, &quot;All&quot;);</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                for (String s : result[0]) {</span>
+<span class="nc" id="L171">                    usersMap.put(s, s);</span>
+<span class="nc" id="L172">                }</span>
+<span class="nc" id="L173">                userItem.setValueMap(usersMap);</span>
+<span class="nc" id="L174">                userItem.setValue(&quot;All&quot;);</span>
+
+<span class="nc" id="L176">                LinkedHashMap&lt;String, String&gt; simulationMap = new LinkedHashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L177">                simulationMap.put(&quot;All&quot;, &quot;All&quot;);</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">                for (String s : result[1]) {</span>
+<span class="nc" id="L179">                    simulationMap.put(s, s);</span>
+<span class="nc" id="L180">                }</span>
+<span class="nc" id="L181">                simulationItem.setValueMap(simulationMap);</span>
+<span class="nc" id="L182">                simulationItem.setValue(&quot;All&quot;);</span>
+
+<span class="nc" id="L184">                LinkedHashMap&lt;String, String&gt; statusMap = new LinkedHashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L185">                statusMap.put(&quot;All&quot;, &quot;All&quot;);</span>
+<span class="nc" id="L186">                statusMap.put(SimulationStatus.Completed.name(), SimulationStatus.Completed.name());</span>
+<span class="nc" id="L187">                statusMap.put(SimulationStatus.Running.name(), SimulationStatus.Running.name());</span>
+<span class="nc" id="L188">                statusMap.put(SimulationStatus.Killed.name(), SimulationStatus.Killed.name());</span>
+<span class="nc" id="L189">                statusMap.put(SimulationStatus.Failed.name(), SimulationStatus.Failed.name());</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                if (CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L191">                    statusMap.put(SimulationStatus.Cleaned.name(), SimulationStatus.Cleaned.name());</span>
+                }
+<span class="nc" id="L193">                statusItem.setValueMap(statusMap);</span>
+<span class="nc" id="L194">                statusItem.setValue(&quot;All&quot;);</span>
+
+<span class="nc" id="L196">                LinkedHashMap&lt;String, String&gt; appClassMap = new LinkedHashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L197">                appClassMap.put(&quot;All&quot;, &quot;All&quot;);</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">                for (String s : result[2]) {</span>
+<span class="nc" id="L199">                    appClassMap.put(s, s);</span>
+<span class="nc" id="L200">                }</span>
+<span class="nc" id="L201">                appClassItem.setValueMap(appClassMap);</span>
+<span class="nc" id="L202">                appClassItem.setValue(&quot;All&quot;);</span>
+
+<span class="nc" id="L204">            }</span>
+        };
+<span class="nc" id="L206">        WidgetUtil.setLoadingIButton(searchButton, &quot;Searching...&quot;);</span>
+<span class="nc" id="L207">        service.getApplicationsAndUsers(new ArrayList&lt;String&gt;(ApplicationModule.reservedClasses.keySet()), callback);</span>
+<span class="nc" id="L208">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ModalWindow.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view</a> &gt; <span class="el_source">ModalWindow.java</span></div><h1>ModalWindow.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view;
+
+import com.google.gwt.user.client.Timer;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.util.Page;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.DrawEvent;
+import com.smartgwt.client.widgets.events.DrawHandler;
+import com.smartgwt.client.widgets.events.ResizedEvent;
+import com.smartgwt.client.widgets.events.ResizedHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+
+/**
+ * Class that supports masking an entire {@link Canvas} and adds the possibility
+ * to display a message during masking and a loading image
+ *
+ * @author Mihai Ile (mihai007)
+ */
+public class ModalWindow {
+
+    /**
+     * The canvas to be masked
+     */
+    private final Canvas canvas;
+    /**
+     * Parent for modal layer
+     */
+    private HLayout parent;
+    /**
+     * The modal layer
+     */
+    private VLayout modal;
+    /**
+     * The reference to the transparent layer inside the modal HStack
+     */
+    private Canvas transparent;
+    /**
+     * The exact time when show was called on this modal
+     */
+    private long showStartedTime;
+    /**
+     * The loading icon, by default &quot;{@link Page#getSkinImgDir()}/loading.gif&quot;
+     */
+<span class="nc" id="L78">    private String loadingIcon = null;</span>
+    /**
+     * The color, by default white
+     */
+<span class="nc" id="L82">    private String messageBoxBgColor = &quot;#fff&quot;;</span>
+    /**
+     * Holds the default opacity for the background masking color
+     */
+<span class="nc" id="L86">    private int opacity = 40;</span>
+    /**
+     * Holds the default color for the masking
+     */
+<span class="nc" id="L90">    private String maskingColor = &quot;#fff&quot;;</span>
+
+    /**
+     * Creates a new {@link ModalWindow} given the canvas to be masked (an
+     * {@link Canvas#addChild(Canvas)} will be called to add the masking layer
+     * above the given canvas)
+     *
+     * @param canvas the canvas to be masked
+     */
+<span class="nc" id="L99">    public ModalWindow(Canvas canvas) {</span>
+<span class="nc" id="L100">        this.canvas = canvas;</span>
+<span class="nc" id="L101">        createModalPanel();</span>
+<span class="nc" id="L102">    }</span>
+
+    /**
+     * Creates a new {@link ModalWindow} given the canvas to be masked (an
+     * {@link Canvas#addChild(Canvas)} will be called to add the masking layer
+     * above the given canvas)
+     *
+     * @param canvas       the canvas to be masked
+     * @param opacity      the opacity used for modal
+     * @param maskingColor the color used for modal
+     */
+<span class="nc" id="L113">    public ModalWindow(Canvas canvas, int opacity, String maskingColor) {</span>
+<span class="nc" id="L114">        this.canvas = canvas;</span>
+<span class="nc" id="L115">        this.opacity = opacity;</span>
+<span class="nc" id="L116">        this.maskingColor = maskingColor;</span>
+<span class="nc" id="L117">        createModalPanel();</span>
+<span class="nc" id="L118">    }</span>
+
+    /**
+     * Mask the {@link Canvas} with a transparent color
+     *
+     * @param showLoading whether to show a box with a loading indicator above the
+     *                    background
+     */
+    public void show(boolean showLoading) {
+<span class="nc" id="L127">        showStartedTime = System.currentTimeMillis();</span>
+<span class="nc" id="L128">        insertModalIntoCanvas();</span>
+<span class="nc" id="L129">        clearLabel();</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (showLoading) {</span>
+<span class="nc" id="L131">            modal.addMember(createLabel(&quot;&quot;, showLoading));</span>
+        }
+<span class="nc" id="L133">        parent.show();</span>
+<span class="nc" id="L134">    }</span>
+
+    /**
+     * Mask the {@link Canvas} with a transparent color and display a message
+     * above it
+     *
+     * @param message     the message to display above the background
+     * @param showLoading whether to show a box with a loading indicator above the
+     *                    background
+     */
+    public void show(String message, boolean showLoading) {
+<span class="nc" id="L145">        showStartedTime = System.currentTimeMillis();</span>
+<span class="nc" id="L146">        insertModalIntoCanvas();</span>
+<span class="nc" id="L147">        clearLabel();</span>
+<span class="nc bnc" id="L148" title="All 4 branches missed.">        if (showLoading || !message.equals(&quot;&quot;)) {</span>
+<span class="nc" id="L149">            modal.addMember(createLabel(message, showLoading));</span>
+        }
+<span class="nc" id="L151">        parent.show();</span>
+<span class="nc" id="L152">    }</span>
+
+    /**
+     * Hide the masking layer from the {@link Canvas}
+     */
+    public void hide() {
+<span class="nc" id="L158">        long showEndTime = System.currentTimeMillis();</span>
+        // don't hide if is showed for less than 1s, avoid flickering
+<span class="nc" id="L160">        int delay = 500;</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (showEndTime - showStartedTime &lt; delay) {</span>
+<span class="nc" id="L162">            new Timer() {</span>
+
+                @Override
+                public void run() {
+<span class="nc" id="L166">                    _hide();</span>
+<span class="nc" id="L167">                }</span>
+<span class="nc" id="L168">            }.schedule((int) (delay - (showEndTime - showStartedTime)));</span>
+        } else {
+<span class="nc" id="L170">            _hide();</span>
+        }
+<span class="nc" id="L172">    }</span>
+
+    private void _hide() {
+<span class="nc" id="L175">        parent.hide();</span>
+<span class="nc" id="L176">    }</span>
+
+    private void insertModalIntoCanvas() {
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (!canvas.contains(parent)) {</span>
+<span class="nc" id="L180">            canvas.addChild(parent);</span>
+<span class="nc" id="L181">            canvas.addResizedHandler(new ResizedHandler() {</span>
+
+                @Override
+                public void onResized(ResizedEvent event) {
+<span class="nc" id="L185">                    parent.setWidth(canvas.getWidth());</span>
+<span class="nc" id="L186">                    parent.setHeight(canvas.getHeight());</span>
+<span class="nc" id="L187">                }</span>
+            });
+        }
+<span class="nc" id="L190">    }</span>
+
+    private void clearLabel() {
+<span class="nc" id="L193">        Canvas[] children = modal.getChildren();</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        for (Canvas canvas : children) {</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            if (canvas instanceof Label) {</span>
+<span class="nc" id="L196">                Label label = (Label) canvas;</span>
+<span class="nc" id="L197">                modal.removeChild(label);</span>
+<span class="nc" id="L198">                label.destroy();</span>
+            }
+        }
+<span class="nc" id="L201">    }</span>
+
+    private void createModalPanel() {
+<span class="nc" id="L204">        parent = new HLayout();</span>
+<span class="nc" id="L205">        parent.setDefaultLayoutAlign(VerticalAlignment.CENTER);</span>
+<span class="nc" id="L206">        parent.hide();</span>
+        // we need a handler to ensure we always cover the entire canvas
+<span class="nc" id="L208">        parent.addDrawHandler(new DrawHandler() {</span>
+
+            @Override
+            public void onDraw(DrawEvent event) {
+<span class="nc" id="L212">                parent.setWidth(canvas.getVisibleWidth());</span>
+<span class="nc" id="L213">                parent.setHeight(canvas.getVisibleHeight());</span>
+<span class="nc" id="L214">            }</span>
+        });
+
+<span class="nc" id="L217">        transparent = new Canvas();</span>
+<span class="nc" id="L218">        transparent.setWidth100();</span>
+<span class="nc" id="L219">        transparent.setHeight100();</span>
+<span class="nc" id="L220">        transparent.setBackgroundColor(maskingColor);</span>
+<span class="nc" id="L221">        transparent.setOpacity(opacity);</span>
+<span class="nc" id="L222">        parent.addChild(transparent);</span>
+
+<span class="nc" id="L224">        modal = new VLayout();</span>
+<span class="nc" id="L225">        modal.setDefaultLayoutAlign(Alignment.CENTER);</span>
+<span class="nc" id="L226">        modal.setHeight(25); // this is for label height</span>
+<span class="nc" id="L227">        modal.setZIndex(transparent.getZIndex() + 2);</span>
+<span class="nc" id="L228">        parent.addMember(modal);</span>
+
+<span class="nc" id="L230">        insertModalIntoCanvas();</span>
+<span class="nc" id="L231">    }</span>
+
+    private Label createLabel(String message, boolean showLoading) {
+<span class="nc" id="L234">        final Label label = new Label();</span>
+<span class="nc" id="L235">        label.setWrap(false);</span>
+<span class="nc" id="L236">        label.setPadding(5);</span>
+<span class="nc" id="L237">        label.setWidth(1);</span>
+<span class="nc" id="L238">        label.setHeight(1);</span>
+<span class="nc" id="L239">        label.setContents(message);</span>
+<span class="nc" id="L240">        label.setBackgroundColor(messageBoxBgColor);</span>
+<span class="nc" id="L241">        label.setBorder(&quot;1px solid #999&quot;);</span>
+<span class="nc" id="L242">        label.setShowShadow(true);</span>
+<span class="nc" id="L243">        label.setShadowSoftness(0);</span>
+<span class="nc" id="L244">        label.setShadowOffset(10);</span>
+<span class="nc" id="L245">        label.addDrawHandler(new DrawHandler() {</span>
+
+            @Override
+            public void onDraw(DrawEvent event) {
+<span class="nc" id="L249">                int visibleWidth = label.getVisibleWidth();</span>
+<span class="nc" id="L250">                label.setWidth(visibleWidth);</span>
+<span class="nc" id="L251">                label.setMargin(10);</span>
+<span class="nc" id="L252">            }</span>
+        });
+<span class="nc" id="L254">        label.setAlign(Alignment.CENTER);</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">        if (showLoading) {</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">            if (loadingIcon != null) { // icon provided by user</span>
+<span class="nc" id="L257">                label.setIcon(loadingIcon);</span>
+            } else { // show default icon from used skin
+<span class="nc" id="L259">                label.setIcon(CoreConstants.ICON_LOADING);</span>
+            }
+<span class="nc bnc" id="L261" title="All 2 branches missed.">            if (message.equals(&quot;&quot;)) { // no spacing, just show the loading icon</span>
+                // centered
+<span class="nc" id="L263">                label.setIconSpacing(0);</span>
+            }
+        }
+<span class="nc" id="L266">        label.setZIndex(modal.getZIndex() + 2);</span>
+<span class="nc" id="L267">        return label;</span>
+    }
+
+    /**
+     * Destroy the {@link ModalWindow} freeing up resources
+     */
+    public void destroy() {
+<span class="nc" id="L274">        parent.destroy();</span>
+<span class="nc" id="L275">    }</span>
+
+    /**
+     * Optional icon to be used instead of the default one.
+     * &lt;p&gt;
+     * Specify as the partial URL to an image, relative to the imgDir (by
+     * default &quot;public/images/&quot;) of this component
+     *
+     * @param loadingIcon icon URL of new image icon. Default value is &lt;blockquote&gt; &quot;
+     *                    {@link Page#getSkinImgDir()}/loading.gif &quot;
+     */
+    public void setLoadingIcon(String loadingIcon) {
+<span class="nc" id="L287">        this.loadingIcon = loadingIcon;</span>
+<span class="nc" id="L288">    }</span>
+
+    /**
+     * The background color for the message/loading box. You can set this
+     * property to an RGB value (e.g. #22AAFF) or a named color (e.g. red) from
+     * a list of browser supported color names.
+     *
+     * @param backgroundColor new background color to set to the message/loading box.
+     *                        Default value is &quot;#fff&quot;
+     */
+    public void setBackgroundColor(String backgroundColor) {
+<span class="nc" id="L299">        this.messageBoxBgColor = backgroundColor;</span>
+<span class="nc" id="L300">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

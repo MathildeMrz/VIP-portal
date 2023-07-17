@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DebugLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.job</a> &gt; <span class="el_source">DebugLayout.java</span></div><h1>DebugLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.job;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.Task;
+import fr.insalyon.creatis.vip.application.client.rpc.JobService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.common.LabelButton;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class DebugLayout extends VLayout {
+
+    private DebugLayout instance;
+    private String simulationID;
+    private int jobID;
+    private VLayout tasksLayout;
+    private VLayout inputsLayout;
+    private HLayout menuLayout;
+    private LabelButton outputLabel;
+    private LabelButton errorLabel;
+    private LabelButton appOutputLabel;
+    private LabelButton appErrorLabel;
+    private LabelButton scriptLabel;
+    private Label infoLabel;
+    private HLayout bottomLayout;
+    private LabelButton downloadLabel;
+    private String selectedTaskID;
+    private Timer refresher;
+    private String loadedFile;
+
+<span class="nc" id="L80">    public DebugLayout(String simulationID, int jobID) {</span>
+
+<span class="nc" id="L82">        this.instance = this;</span>
+<span class="nc" id="L83">        this.simulationID = simulationID;</span>
+<span class="nc" id="L84">        this.jobID = jobID;</span>
+
+<span class="nc" id="L86">        this.setWidth(800);</span>
+<span class="nc" id="L87">        this.setHeight((int) (Layout.getInstance().getLayoutCanvas().getVisibleHeight() * 0.8));</span>
+<span class="nc" id="L88">        this.setPadding(5);</span>
+<span class="nc" id="L89">        this.setMembersMargin(3);</span>
+<span class="nc" id="L90">        this.setBorder(&quot;1px solid #E0E0E0&quot;);</span>
+<span class="nc" id="L91">        this.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+<span class="nc" id="L92">        this.setOverflow(Overflow.AUTO);</span>
+
+<span class="nc" id="L94">        HLayout titleLayout = new HLayout(5);</span>
+<span class="nc" id="L95">        titleLayout.setWidth100();</span>
+<span class="nc" id="L96">        titleLayout.setHeight(20);</span>
+
+<span class="nc" id="L98">        Label titleLabel = WidgetUtil.getLabel(&quot;&lt;b&gt;Debugging #&quot; + jobID + &quot;&lt;/b&gt;&quot;,</span>
+                ApplicationConstants.ICON_MONITOR_DEBUG, 30);
+<span class="nc" id="L100">        titleLabel.setWidth100();</span>
+<span class="nc" id="L101">        titleLayout.addMember(titleLabel);</span>
+<span class="nc" id="L102">        titleLayout.addMember(WidgetUtil.getSpaceLabel(16));</span>
+<span class="nc" id="L103">        titleLayout.addMember(WidgetUtil.getIconLabel(CoreConstants.ICON_CLOSE, &quot;Close&quot;, 16, new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L106">                destroy();</span>
+<span class="nc" id="L107">            }</span>
+        }));
+<span class="nc" id="L109">        this.addMember(titleLayout);</span>
+
+<span class="nc" id="L111">        Label inputsLabel = WidgetUtil.getLabel(&quot;&lt;font color=\&quot;#666666\&quot;&gt;Job Input and Output Parameters&lt;/font&gt;&quot;,</span>
+                null, 16);
+<span class="nc" id="L113">        inputsLabel.setBorder(&quot;1px solid #E2E2E2&quot;);</span>
+<span class="nc" id="L114">        inputsLabel.setBackgroundColor(&quot;#F2F2F2&quot;);</span>
+<span class="nc" id="L115">        inputsLabel.setPadding(3);</span>
+<span class="nc" id="L116">        inputsLabel.setAlign(Alignment.CENTER);</span>
+<span class="nc" id="L117">        this.addMember(inputsLabel);</span>
+
+<span class="nc" id="L119">        configureInputsLayout();</span>
+
+<span class="nc" id="L121">        Label tasksLabel = WidgetUtil.getLabel(&quot;&lt;font color=\&quot;#666666\&quot;&gt;List of Tasks&lt;/font&gt;&quot;,</span>
+                ApplicationConstants.ICON_MONITOR_TASKS, 16);
+<span class="nc" id="L123">        tasksLabel.setBorder(&quot;1px solid #E2E2E2&quot;);</span>
+<span class="nc" id="L124">        tasksLabel.setBackgroundColor(&quot;#F2F2F2&quot;);</span>
+<span class="nc" id="L125">        tasksLabel.setPadding(3);</span>
+<span class="nc" id="L126">        tasksLabel.setAlign(Alignment.CENTER);</span>
+<span class="nc" id="L127">        this.addMember(tasksLabel);</span>
+
+<span class="nc" id="L129">        configureTasksLayout();</span>
+<span class="nc" id="L130">        configureMenuLayout();</span>
+<span class="nc" id="L131">        configureInfoLabel();</span>
+<span class="nc" id="L132">        configureBottomLayout();</span>
+
+<span class="nc" id="L134">        loadTasks();</span>
+<span class="nc" id="L135">    }</span>
+
+    @Override
+    protected void onDraw() {
+<span class="nc" id="L139">        moveTo(Layout.getInstance().getLayoutCanvas().getVisibleWidth() / 2 - 400, 35);</span>
+<span class="nc" id="L140">    }</span>
+
+    private void configureInputsLayout() {
+<span class="nc" id="L143">        inputsLayout = new VLayout(3);</span>
+<span class="nc" id="L144">        inputsLayout.setWidth100();</span>
+<span class="nc" id="L145">        inputsLayout.setHeight(120);</span>
+<span class="nc" id="L146">        inputsLayout.setOverflow(Overflow.AUTO);</span>
+
+<span class="nc" id="L148">        this.addMember(inputsLayout);</span>
+<span class="nc" id="L149">    }</span>
+
+    private void configureTasksLayout() {
+
+<span class="nc" id="L153">        tasksLayout = new VLayout(3);</span>
+<span class="nc" id="L154">        tasksLayout.setWidth100();</span>
+<span class="nc" id="L155">        tasksLayout.setHeight(120);</span>
+<span class="nc" id="L156">        tasksLayout.setOverflow(Overflow.AUTO);</span>
+
+<span class="nc" id="L158">        this.addMember(tasksLayout);</span>
+<span class="nc" id="L159">    }</span>
+
+    private void configureMenuLayout() {
+
+<span class="nc" id="L163">        menuLayout = new HLayout(10);</span>
+<span class="nc" id="L164">        menuLayout.setWidth100();</span>
+<span class="nc" id="L165">        menuLayout.setHeight(25);</span>
+
+<span class="nc" id="L167">        appOutputLabel = new LabelButton(&quot;Application Output File&quot;, ApplicationConstants.ICON_MONITOR_OUTPUT_FILE);</span>
+<span class="nc" id="L168">        appOutputLabel.setWidth(170);</span>
+<span class="nc" id="L169">        appOutputLabel.setDisabled(true);</span>
+<span class="nc" id="L170">        appOutputLabel.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L173">                loadFile(SimulationFileType.ApplicationOutputFile);</span>
+<span class="nc" id="L174">                appOutputLabel.setSelected(true);</span>
+<span class="nc" id="L175">                appErrorLabel.setSelected(false);</span>
+<span class="nc" id="L176">                outputLabel.setSelected(false);</span>
+<span class="nc" id="L177">                errorLabel.setSelected(false);</span>
+<span class="nc" id="L178">                scriptLabel.setSelected(false);</span>
+<span class="nc" id="L179">            }</span>
+        });
+<span class="nc" id="L181">        menuLayout.addMember(appOutputLabel);</span>
+
+<span class="nc" id="L183">        appErrorLabel = new LabelButton(&quot;Application Error File&quot;, ApplicationConstants.ICON_MONITOR_ERROR_FILE);</span>
+<span class="nc" id="L184">        appErrorLabel.setWidth(170);</span>
+<span class="nc" id="L185">        appErrorLabel.setDisabled(true);</span>
+<span class="nc" id="L186">        appErrorLabel.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L189">                loadFile(SimulationFileType.ApplicationErrorFile);</span>
+<span class="nc" id="L190">                appOutputLabel.setSelected(false);</span>
+<span class="nc" id="L191">                appErrorLabel.setSelected(true);</span>
+<span class="nc" id="L192">                outputLabel.setSelected(false);</span>
+<span class="nc" id="L193">                errorLabel.setSelected(false);</span>
+<span class="nc" id="L194">                scriptLabel.setSelected(false);</span>
+<span class="nc" id="L195">            }</span>
+        });
+<span class="nc" id="L197">        menuLayout.addMember(appErrorLabel);</span>
+
+<span class="nc" id="L199">        outputLabel = new LabelButton(&quot;Output File&quot;, ApplicationConstants.ICON_MONITOR_OUTPUT_FILE);</span>
+<span class="nc" id="L200">        outputLabel.setDisabled(true);</span>
+<span class="nc" id="L201">        outputLabel.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L204">                loadFile(SimulationFileType.OutputFile);</span>
+<span class="nc" id="L205">                appOutputLabel.setSelected(false);</span>
+<span class="nc" id="L206">                appErrorLabel.setSelected(false);</span>
+<span class="nc" id="L207">                outputLabel.setSelected(true);</span>
+<span class="nc" id="L208">                errorLabel.setSelected(false);</span>
+<span class="nc" id="L209">                scriptLabel.setSelected(false);</span>
+<span class="nc" id="L210">            }</span>
+        });
+<span class="nc" id="L212">        menuLayout.addMember(outputLabel);</span>
+
+<span class="nc" id="L214">        errorLabel = new LabelButton(&quot;Error File&quot;, ApplicationConstants.ICON_MONITOR_ERROR_FILE);</span>
+<span class="nc" id="L215">        errorLabel.setDisabled(true);</span>
+<span class="nc" id="L216">        errorLabel.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L219">                loadFile(SimulationFileType.ErrorFile);</span>
+<span class="nc" id="L220">                appOutputLabel.setSelected(false);</span>
+<span class="nc" id="L221">                appErrorLabel.setSelected(false);</span>
+<span class="nc" id="L222">                outputLabel.setSelected(false);</span>
+<span class="nc" id="L223">                errorLabel.setSelected(true);</span>
+<span class="nc" id="L224">                scriptLabel.setSelected(false);</span>
+<span class="nc" id="L225">            }</span>
+        });
+<span class="nc" id="L227">        menuLayout.addMember(errorLabel);</span>
+
+<span class="nc" id="L229">        scriptLabel = new LabelButton(&quot;Script File&quot;, ApplicationConstants.ICON_MONITOR_OUTPUT_FILE);</span>
+<span class="nc" id="L230">        scriptLabel.setDisabled(true);</span>
+<span class="nc" id="L231">        scriptLabel.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L234">                loadFile(SimulationFileType.ScriptFile);</span>
+<span class="nc" id="L235">                appOutputLabel.setSelected(false);</span>
+<span class="nc" id="L236">                appErrorLabel.setSelected(false);</span>
+<span class="nc" id="L237">                outputLabel.setSelected(false);</span>
+<span class="nc" id="L238">                errorLabel.setSelected(false);</span>
+<span class="nc" id="L239">                scriptLabel.setSelected(true);</span>
+<span class="nc" id="L240">            }</span>
+        });
+<span class="nc" id="L242">        menuLayout.addMember(scriptLabel);</span>
+
+<span class="nc" id="L244">        this.addMember(menuLayout);</span>
+<span class="nc" id="L245">    }</span>
+
+    private void configureInfoLabel() {
+
+<span class="nc" id="L249">        infoLabel = new Label();</span>
+<span class="nc" id="L250">        infoLabel.setWidth100();</span>
+<span class="nc" id="L251">        infoLabel.setHeight100();</span>
+<span class="nc" id="L252">        infoLabel.setPadding(5);</span>
+<span class="nc" id="L253">        infoLabel.setBorder(&quot;1px solid #E2E2E2&quot;);</span>
+<span class="nc" id="L254">        infoLabel.setCanSelectText(true);</span>
+<span class="nc" id="L255">        infoLabel.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;No data available.&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L256">        infoLabel.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L257">        infoLabel.setValign(VerticalAlignment.TOP);</span>
+
+<span class="nc" id="L259">        this.addMember(infoLabel);</span>
+<span class="nc" id="L260">    }</span>
+
+    private void configureBottomLayout() {
+
+<span class="nc" id="L264">        bottomLayout = new HLayout(10);</span>
+<span class="nc" id="L265">        bottomLayout.setWidth100();</span>
+<span class="nc" id="L266">        bottomLayout.setHeight(25);</span>
+
+<span class="nc" id="L268">        LabelButton closeLabel = new LabelButton(&quot;Close&quot;, CoreConstants.ICON_CLOSE);</span>
+<span class="nc" id="L269">        closeLabel.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L272">                destroy();</span>
+<span class="nc" id="L273">            }</span>
+        });
+<span class="nc" id="L275">        bottomLayout.addMember(closeLabel);</span>
+
+<span class="nc" id="L277">        downloadLabel = new LabelButton(&quot;Download File&quot;, ApplicationConstants.ICON_MONITOR_DOWNLOAD);</span>
+<span class="nc" id="L278">        downloadLabel.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L281">                com.google.gwt.user.client.Window.open(</span>
+<span class="nc" id="L282">                        GWT.getModuleBaseURL()</span>
+                                + &quot;/getfileservice?filepath=&quot; + loadedFile
+                                + &quot;&amp;&quot; + CoreConstants.COOKIES_SESSION
+<span class="nc" id="L285">                                + &quot;=&quot; + Cookies.getCookie(CoreConstants.COOKIES_SESSION),</span>
+                        &quot;&quot;, &quot;&quot;);
+<span class="nc" id="L287">            }</span>
+        });
+<span class="nc" id="L289">        downloadLabel.setDisabled(true);</span>
+<span class="nc" id="L290">        bottomLayout.addMember(downloadLabel);</span>
+
+<span class="nc" id="L292">        this.addMember(bottomLayout);</span>
+<span class="nc" id="L293">    }</span>
+
+    private void loadTasks() {
+
+<span class="nc" id="L297">        AsyncCallback&lt;List&lt;Task&gt;&gt; callback = new AsyncCallback&lt;List&lt;Task&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L300">                Layout.getInstance().setWarningMessage(&quot;Unable to load tasks:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L301">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Task&gt; result) {
+<span class="nc" id="L305">                Task t = null;</span>
+<span class="nc bnc" id="L306" title="All 2 branches missed.">                for (Task task : result) {</span>
+<span class="nc bnc" id="L307" title="All 2 branches missed.">                    if (t == null) {</span>
+<span class="nc" id="L308">                        t = task;</span>
+                    }
+<span class="nc" id="L310">                    tasksLayout.addMember(new TaskLayout(instance, simulationID, task));</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">                    if (inputsLayout.getMembers().length == 0) {</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">                        for (String param : task.getParameters()) {</span>
+<span class="nc" id="L313">                            inputsLayout.addMember(new TaskInputsLayout(param));</span>
+                        }
+                    }
+<span class="nc" id="L316">                }</span>
+<span class="nc" id="L317">                refresh();</span>
+<span class="nc" id="L318">                selectTask(t.getId(), t.getStatus());</span>
+<span class="nc" id="L319">            }</span>
+        };
+<span class="nc" id="L321">        JobService.Util.getInstance().getTasks(simulationID, jobID, callback);</span>
+<span class="nc" id="L322">    }</span>
+
+    /**
+     * Loads a file and displays it in the panel.
+     *
+     * @param folder    File's folder
+     * @param fileName  File's name
+     * @param extension File's extension
+     */
+    private void loadFile(SimulationFileType fileType) {
+
+<span class="nc" id="L333">        AsyncCallback&lt;String[]&gt; callback = new AsyncCallback&lt;String[]&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L336">                Layout.getInstance().setWarningMessage(&quot;Unable to load file:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L337">                infoLabel.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;No data available.&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L338">                infoLabel.setIcon(null);</span>
+<span class="nc" id="L339">            }</span>
+
+            @Override
+            public void onSuccess(String[] result) {
+<span class="nc" id="L343">                loadedFile = result[0];</span>
+<span class="nc" id="L344">                downloadLabel.setDisabled(false);</span>
+<span class="nc" id="L345">                infoLabel.setContents(result[1].replaceAll(&quot;&lt;&quot;, &quot;&amp;lt;&quot;).replaceAll(&quot;&gt;&quot;, &quot;&amp;gt;&quot;).replaceAll(&quot;\n&quot;, &quot;&lt;br /&gt;&quot;));</span>
+<span class="nc" id="L346">                infoLabel.setIcon(null);</span>
+<span class="nc" id="L347">            }</span>
+        };
+<span class="nc" id="L349">        infoLabel.setContents(&quot;Loading file contents...&quot;);</span>
+<span class="nc" id="L350">        infoLabel.setIcon(CoreConstants.ICON_LOADING);</span>
+<span class="nc" id="L351">        JobService.Util.getInstance().readSimulationFile(simulationID, selectedTaskID, fileType, callback);</span>
+<span class="nc" id="L352">    }</span>
+
+    /**
+     * @param taskID
+     * @param status
+     */
+    public void selectTask(String taskID, TaskStatus status) {
+
+<span class="nc bnc" id="L360" title="All 2 branches missed.">        for (Canvas canvas : tasksLayout.getMembers()) {</span>
+<span class="nc bnc" id="L361" title="All 2 branches missed.">            if (canvas instanceof TaskLayout) {</span>
+<span class="nc" id="L362">                TaskLayout taskLayout = (TaskLayout) canvas;</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">                if (taskLayout.getTaskID().equals(taskID)) {</span>
+<span class="nc" id="L364">                    taskLayout.setSelected(true);</span>
+<span class="nc" id="L365">                    selectedTaskID = taskID;</span>
+<span class="nc bnc" id="L366" title="All 4 branches missed.">                    if (status == TaskStatus.COMPLETED || status == TaskStatus.ERROR) {</span>
+<span class="nc" id="L367">                        outputLabel.setDisabled(false);</span>
+<span class="nc" id="L368">                        errorLabel.setDisabled(false);</span>
+<span class="nc" id="L369">                        appOutputLabel.setDisabled(false);</span>
+<span class="nc" id="L370">                        appOutputLabel.setSelected(true);</span>
+<span class="nc" id="L371">                        appErrorLabel.setDisabled(false);</span>
+<span class="nc" id="L372">                        loadFile(SimulationFileType.ApplicationOutputFile);</span>
+                    } else {
+<span class="nc" id="L374">                        outputLabel.setDisabled(true);</span>
+<span class="nc" id="L375">                        errorLabel.setDisabled(true);</span>
+<span class="nc" id="L376">                        appOutputLabel.setDisabled(true);</span>
+<span class="nc" id="L377">                        appErrorLabel.setDisabled(true);</span>
+<span class="nc" id="L378">                        scriptLabel.setSelected(true);</span>
+<span class="nc" id="L379">                        loadFile(SimulationFileType.ScriptFile);</span>
+                    }
+<span class="nc" id="L381">                    scriptLabel.setDisabled(false);</span>
+<span class="nc" id="L382">                    infoLabel.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;No data available.&lt;/font&gt;&quot;);</span>
+                } else {
+<span class="nc" id="L384">                    taskLayout.setSelected(false);</span>
+                }
+            }
+        }
+<span class="nc" id="L388">    }</span>
+
+    private void refresh() {
+
+<span class="nc" id="L392">        refresher = new Timer() {</span>
+            @Override
+            public void run() {
+<span class="nc" id="L395">                AsyncCallback&lt;List&lt;Task&gt;&gt; callback = new AsyncCallback&lt;List&lt;Task&gt;&gt;() {</span>
+                    @Override
+                    public void onFailure(Throwable caught) {
+<span class="nc" id="L398">                        Layout.getInstance().setWarningMessage(&quot;Unable to load tasks:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L399">                    }</span>
+
+                    @Override
+                    public void onSuccess(List&lt;Task&gt; result) {
+<span class="nc bnc" id="L403" title="All 2 branches missed.">                        for (Task task : result) {</span>
+<span class="nc" id="L404">                            boolean contains = false;</span>
+<span class="nc bnc" id="L405" title="All 2 branches missed.">                            for (Canvas canvas : tasksLayout.getMembers()) {</span>
+<span class="nc bnc" id="L406" title="All 2 branches missed.">                                if (canvas instanceof TaskLayout) {</span>
+<span class="nc" id="L407">                                    TaskLayout taskLayout = (TaskLayout) canvas;</span>
+<span class="nc bnc" id="L408" title="All 2 branches missed.">                                    if (taskLayout.getTaskID().equals(task.getId())) {</span>
+<span class="nc" id="L409">                                        contains = true;</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">                                        if (task.getStatus() != taskLayout.getStatus()) {</span>
+<span class="nc" id="L411">                                            taskLayout.setStatus(task.getStatus(), task.getExitCode(), task.getMinorStatus());</span>
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+<span class="nc bnc" id="L417" title="All 2 branches missed.">                            if (!contains) {</span>
+<span class="nc" id="L418">                                tasksLayout.addMember(new TaskLayout(instance, simulationID, task));</span>
+                            }
+<span class="nc" id="L420">                        }</span>
+<span class="nc" id="L421">                    }</span>
+                };
+<span class="nc" id="L423">                JobService.Util.getInstance().getTasks(simulationID, jobID, callback);</span>
+<span class="nc" id="L424">            }</span>
+        };
+<span class="nc" id="L426">        refresher.scheduleRepeating(20000);</span>
+<span class="nc" id="L427">    }</span>
+
+    @Override
+    protected void onDestroy() {
+<span class="nc" id="L431">        super.onDestroy();</span>
+<span class="nc" id="L432">        refresher.cancel();</span>
+<span class="nc" id="L433">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

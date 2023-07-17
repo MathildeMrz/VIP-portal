@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>WorkflowService.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.rpc</a> &gt; <span class="el_source">WorkflowService.java</span></div><h1>WorkflowService.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.rpc;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import fr.insalyon.creatis.vip.application.client.bean.*;
+import fr.insalyon.creatis.vip.application.client.view.ApplicationException;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public interface WorkflowService extends RemoteService {
+
+    public static final String SERVICE_URI = &quot;/workflowservice&quot;;
+
+    public List&lt;Simulation&gt; getSimulations() throws ApplicationException;
+
+    public List&lt;Simulation&gt; getSimulations(Date lastDate) throws ApplicationException;
+
+    //
+    public Descriptor getApplicationDescriptor(String applicationName, String applicationVersion) throws ApplicationException;
+
+    public String getApplicationDescriptorString(String applicationName, String applicationVersion) throws ApplicationException;
+
+    public void launchSimulation(Map&lt;String, String&gt; parameters, String applicationName, String applicationVersion, String applicationClass, String simulationName) throws ApplicationException;
+
+    public SimulationInput getInputByNameUserApp(String inputName, String appName) throws ApplicationException;
+
+    public void addSimulationInput(SimulationInput simulationInput) throws ApplicationException;
+
+    public void updateSimulationInput(SimulationInput simulationInput) throws ApplicationException;
+
+    public String loadSimulationInput(String fileName) throws ApplicationException;
+
+    public void removeSimulationInput(String inputName, String applicationName) throws ApplicationException;
+
+    public List&lt;SimulationInput&gt; getSimulationInputByUser() throws ApplicationException;
+
+    public void saveInputsAsExamples(SimulationInput simulationInput) throws ApplicationException;
+
+    public List&lt;SimulationInput&gt; getSimulationInputExamples(String applicationName) throws ApplicationException;
+
+    public void removeSimulationInputExample(String inputName, String applicationName) throws ApplicationException;
+
+    public void killSimulations(List&lt;String&gt; simulationIDs) throws ApplicationException;
+
+    public void cleanSimulations(List&lt;String&gt; simulationIDs) throws ApplicationException;
+
+    public void purgeSimulations(List&lt;String&gt; simulationIDs) throws ApplicationException;
+
+    public void markSimulationsCompleted(List&lt;String&gt; simulationIDs) throws ApplicationException;
+
+    public void killWorkflow(String simulationID) throws ApplicationException;
+
+    public void cleanWorkflow(String simulationID) throws ApplicationException;
+
+    public void purgeWorkflow(String simulationID) throws ApplicationException;
+
+    public void markWorkflowCompleted(String simulationID) throws ApplicationException;
+
+    public Map&lt;String, String&gt; relaunchSimulation(String simulationID) throws ApplicationException;
+
+    public List&lt;Simulation&gt; getSimulations(String user, String application, String status, String appClass, Date startDate, Date endDate) throws ApplicationException;
+
+    public Simulation getSimulation(String simulationID) throws ApplicationException;
+
+    public String getFile(String baseDir, String fileName);
+
+    public String getFileURL(String baseDir, String fileName);
+
+    public List&lt;String&gt; getLogs(String baseDir);
+
+    public void deleteLogData(String path) throws ApplicationException;
+
+    public List&lt;SimulationInput&gt; getWorkflowsInputByUserAndAppName(String user, String appName);
+
+    public List&lt;String&gt; getPerformanceStats(List&lt;Simulation&gt; simulationList, int type) throws ApplicationException;
+
+    public List&lt;InOutData&gt; getOutputData(String simulationID) throws ApplicationException;
+
+    public List&lt;InOutData&gt; getInputData(String simulationID) throws ApplicationException;
+
+    public List&lt;Activity&gt; getProcessors(String simulationID) throws ApplicationException;
+
+    public void validateInputs(List&lt;String&gt; inputs) throws ApplicationException;
+
+    public void updateUser(String currentUser, String newUser) throws ApplicationException;
+
+    public void changeSimulationUser(String simulationId, String user) throws ApplicationException;
+
+<span class="nc" id="L126">    public static class Util {</span>
+
+        public static WorkflowServiceAsync getInstance() {
+
+<span class="nc" id="L130">            WorkflowServiceAsync instance = (WorkflowServiceAsync) GWT.create(WorkflowService.class);</span>
+<span class="nc" id="L131">            ServiceDefTarget target = (ServiceDefTarget) instance;</span>
+<span class="nc" id="L132">            target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);</span>
+<span class="nc" id="L133">            return instance;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

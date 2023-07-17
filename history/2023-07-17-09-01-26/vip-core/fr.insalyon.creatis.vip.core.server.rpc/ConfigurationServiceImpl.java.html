@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ConfigurationServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.rpc</a> &gt; <span class="el_source">ConfigurationServiceImpl.java</span></div><h1>ConfigurationServiceImpl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.server.rpc;
+
+import fr.insalyon.creatis.grida.client.GRIDAClient;
+import fr.insalyon.creatis.vip.core.client.bean.Group;
+import fr.insalyon.creatis.vip.core.client.bean.UsageStats;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants.GROUP_ROLE;
+import fr.insalyon.creatis.vip.core.client.view.CoreException;
+import fr.insalyon.creatis.vip.core.client.view.user.UserLevel;
+import fr.insalyon.creatis.vip.core.client.view.util.CountryCode;
+import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author Rafael Ferreira da Silva,Nouha boujelben
+ */
+<span class="nc" id="L63">public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet implements ConfigurationService {</span>
+
+<span class="nc" id="L65">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+
+    private ConfigurationBusiness configurationBusiness;
+    private UserDAO userDAO;
+    private GRIDAClient gridaClient;
+
+    @Override
+    public void init() throws ServletException {
+<span class="nc" id="L73">        super.init();</span>
+<span class="nc" id="L74">        configurationBusiness = getBean(ConfigurationBusiness.class);</span>
+<span class="nc" id="L75">        userDAO = getBean(UserDAO.class);</span>
+<span class="nc" id="L76">        gridaClient = getBean(GRIDAClient.class);</span>
+<span class="nc" id="L77">    }</span>
+
+    @Override
+    public User configure(String email, String session) throws CoreException {
+        try {
+<span class="nc" id="L82">            logger.debug(&quot;Initializing VIP configuration.&quot;);</span>
+<span class="nc" id="L83">            configurationBusiness.configure();</span>
+<span class="nc" id="L84">            logger.debug(&quot;VIP successfully configured.&quot;);</span>
+
+
+<span class="nc bnc" id="L87" title="All 2 branches missed.">            if (configurationBusiness.validateSession(email, session)) {</span>
+
+<span class="nc" id="L89">                User user = configurationBusiness.getUser(email);</span>
+<span class="nc" id="L90">                user = setUserInSession(user);</span>
+<span class="nc" id="L91">                configurationBusiness.updateUserLastLogin(email);</span>
+<span class="nc" id="L92">                trace(logger, &quot;Connected.&quot;);</span>
+
+<span class="nc" id="L94">                return user;</span>
+            }
+<span class="nc" id="L96">            return null;</span>
+<span class="nc" id="L97">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L98">            throw new CoreException(ex);</span>
+        }
+    }
+
+    /**
+     * @param user     User bean object
+     * @param comments User's comments
+     */
+    @Override
+    public void signup(User user, String comments)
+            throws CoreException {
+        try {
+<span class="nc" id="L110">            logger.info(&quot;Sign up request from '&quot; + user.getEmail() + &quot;'.&quot;);</span>
+<span class="nc" id="L111">            configurationBusiness.signup(user, comments, (Group) null);</span>
+<span class="nc" id="L112">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L113">            throw new CoreException(ex);</span>
+<span class="nc" id="L114">        }</span>
+<span class="nc" id="L115">    }</span>
+
+    @Override
+    public User signin(String email, String password) throws CoreException {
+        try {
+<span class="nc" id="L120">            logger.info(&quot;Authenticating '&quot; + email + &quot;'.&quot;);</span>
+<span class="nc" id="L121">            User user = configurationBusiness.signin(email, password);</span>
+<span class="nc" id="L122">            user = setUserInSession(user);</span>
+<span class="nc" id="L123">            configurationBusiness.updateUserLastLogin(email);</span>
+<span class="nc" id="L124">            logger.info(&quot;Connected.&quot;);</span>
+
+<span class="nc" id="L126">            return user;</span>
+<span class="nc" id="L127">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L128">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public void signout() throws CoreException {
+        try {
+<span class="nc" id="L135">            configurationBusiness.signout(getSessionUser().getEmail());</span>
+<span class="nc" id="L136">            trace(logger, &quot;Signed out.&quot;);</span>
+<span class="nc" id="L137">            getSession().removeAttribute(CoreConstants.SESSION_USER);</span>
+<span class="nc" id="L138">            getSession().removeAttribute(CoreConstants.SESSION_GROUPS);</span>
+<span class="nc" id="L139">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L140">            throw new CoreException(ex);</span>
+<span class="nc" id="L141">        }</span>
+<span class="nc" id="L142">    }</span>
+
+    @Override
+    public User activate(String code) throws CoreException {
+        try {
+<span class="nc" id="L147">            User user = getSessionUser();</span>
+<span class="nc" id="L148">            logger.info(&quot;Activating '&quot; + user.getEmail() + &quot;'.&quot;);</span>
+<span class="nc" id="L149">            user = configurationBusiness.activate(user.getEmail(), code);</span>
+
+<span class="nc" id="L151">            return setUserInSession(user);</span>
+<span class="nc" id="L152">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L153">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public String sendActivationCode() throws CoreException {
+        try {
+<span class="nc" id="L160">            User user = getSessionUser();</span>
+<span class="nc" id="L161">            logger.info(&quot;Sending activation code to: &quot; + user.getEmail() + &quot;.&quot;);</span>
+<span class="nc" id="L162">            configurationBusiness.sendActivationCode(user.getEmail());</span>
+
+<span class="nc" id="L164">            return user.getEmail();</span>
+<span class="nc" id="L165">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L166">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public void sendResetCode(String email) throws CoreException {
+        try {
+            //do not add a trace here: it should be reachable without authentication (#2632)
+<span class="nc" id="L174">            configurationBusiness.sendResetCode(email);</span>
+<span class="nc" id="L175">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L176">            throw new CoreException(ex);</span>
+<span class="nc" id="L177">        }</span>
+<span class="nc" id="L178">    }</span>
+
+    /**
+     * Get list of users.
+     */
+    @Override
+    public List&lt;User&gt; getUsers() throws CoreException {
+        try {
+<span class="nc" id="L186">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L187">            return configurationBusiness.getUsers();</span>
+<span class="nc" id="L188">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L189">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public void addGroup(Group group) throws CoreException {
+        try {
+<span class="nc" id="L196">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L197">            trace(logger, &quot;Adding group '&quot; + group + &quot;'.&quot;);</span>
+<span class="nc" id="L198">            configurationBusiness.addGroup(group);</span>
+<span class="nc" id="L199">        } catch (BusinessException | DAOException ex) {</span>
+<span class="nc" id="L200">            throw new CoreException(ex);</span>
+<span class="nc" id="L201">        }</span>
+<span class="nc" id="L202">    }</span>
+
+    @Override
+    public void updateGroup(String name, Group group) throws CoreException {
+        try {
+<span class="nc" id="L207">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L208">            trace(logger, &quot;Updating group '&quot; + name + &quot;' to '&quot; + group.getName() + &quot;'.&quot;);</span>
+<span class="nc" id="L209">            configurationBusiness.updateGroup(name, group);</span>
+<span class="nc" id="L210">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L211">            throw new CoreException(ex);</span>
+<span class="nc" id="L212">        }</span>
+<span class="nc" id="L213">    }</span>
+
+    @Override
+    public void removeGroup(String groupName) throws CoreException {
+        try {
+<span class="nc" id="L218">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L219">            trace(logger, &quot;Removing group '&quot; + groupName + &quot;'.&quot;);</span>
+<span class="nc" id="L220">            configurationBusiness.removeGroup(</span>
+<span class="nc" id="L221">                    getSessionUser().getEmail(), groupName);</span>
+<span class="nc" id="L222">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L223">            throw new CoreException(ex);</span>
+<span class="nc" id="L224">        }</span>
+<span class="nc" id="L225">    }</span>
+
+    @Override
+    public List&lt;Group&gt; getGroups() throws CoreException {
+        try {
+<span class="nc" id="L230">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L231">            return configurationBusiness.getGroups();</span>
+<span class="nc" id="L232">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L233">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public List&lt;Group&gt; getPublicGroups() throws CoreException {
+        try {
+<span class="nc" id="L240">            return configurationBusiness.getPublicGroups();</span>
+<span class="nc" id="L241">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L242">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public User removeUser(String email) throws CoreException {
+        try {
+<span class="nc bnc" id="L249" title="All 2 branches missed.">            User user = email != null</span>
+<span class="nc" id="L250">                    ? configurationBusiness.getUser(email)</span>
+<span class="nc" id="L251">                    : getSessionUser();</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">            if (email != null) {</span>
+<span class="nc" id="L253">                authenticateSystemAdministrator(logger);</span>
+            }
+<span class="nc" id="L255">            trace(logger, &quot;Removing user '&quot; + user.getEmail() + &quot;'.&quot;);</span>
+<span class="nc" id="L256">            configurationBusiness.removeUser(user.getEmail(), true);</span>
+
+<span class="nc" id="L258">            return user;</span>
+<span class="nc" id="L259">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L260">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public Map&lt;Group, GROUP_ROLE&gt; getUserGroups(String email)
+            throws CoreException {
+        try {
+<span class="nc bnc" id="L268" title="All 2 branches missed.">            if (email != null) {</span>
+<span class="nc" id="L269">                authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L270">                return configurationBusiness.getUserGroups(email);</span>
+            } else {
+<span class="nc" id="L272">                return configurationBusiness.getUserGroups(</span>
+<span class="nc" id="L273">                        getSessionUser().getEmail());</span>
+            }
+<span class="nc" id="L275">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L276">            throw new CoreException(ex);</span>
+        }
+    }
+
+    /**
+     * Throws an exception if the user is not a group or system administrator.
+     */
+    private void authenticateGroupAdministrator(Logger logger, String groupName) throws CoreException {
+
+        try {
+<span class="nc" id="L286">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L287">            return;</span>
+<span class="nc" id="L288">        } catch (CoreException ignored) {</span>
+        } // The user is not a system administrator. Ignore the exception.
+
+<span class="nc" id="L291">        User user = getSessionUser();</span>
+<span class="nc" id="L292">        Map&lt;Group, GROUP_ROLE&gt; userGroups = getUserGroups(null);</span>
+
+<span class="nc bnc" id="L294" title="All 2 branches missed.">        for (Group g : userGroups.keySet()) {</span>
+<span class="nc bnc" id="L295" title="All 4 branches missed.">            if (g.getName().equals(groupName) &amp;&amp; userGroups.get(g) == GROUP_ROLE.Admin) {</span>
+<span class="nc" id="L296">                return;</span>
+            }
+<span class="nc" id="L298">        }</span>
+
+<span class="nc" id="L300">        logger.error(&quot;The user {} has no admin rights for group {}&quot;, user.getEmail(), groupName);</span>
+<span class="nc" id="L301">        throw new CoreException(&quot;The user has no group administrator rights.&quot;);</span>
+    }
+
+    @Override
+    public List&lt;Boolean&gt; getUserPropertiesGroups() throws CoreException {
+        try {
+<span class="nc" id="L307">            String email = getSessionUser().getEmail();</span>
+<span class="nc" id="L308">            return configurationBusiness.getUserPropertiesGroups(email);</span>
+<span class="nc" id="L309">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L310">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public List&lt;String&gt; getUserGroups() throws CoreException {
+        try {
+<span class="nc" id="L317">            List&lt;String&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">            if (getSessionUser().isSystemAdministrator()) {</span>
+<span class="nc bnc" id="L319" title="All 2 branches missed.">                for (Group group : configurationBusiness.getGroups()) {</span>
+<span class="nc" id="L320">                    list.add(group.getName());</span>
+<span class="nc" id="L321">                }</span>
+            } else {
+<span class="nc" id="L323">                Map&lt;Group, GROUP_ROLE&gt; groups = getUserGroupsFromSession();</span>
+<span class="nc bnc" id="L324" title="All 2 branches missed.">                for (Group group : groups.keySet()) {</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">                    if (groups.get(group) != GROUP_ROLE.None) {</span>
+<span class="nc" id="L326">                        list.add(group.getName());</span>
+                    }
+<span class="nc" id="L328">                }</span>
+            }
+<span class="nc" id="L330">            return list;</span>
+<span class="nc" id="L331">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L332">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public void updateUser(
+            String email, UserLevel level, CountryCode countryCode,
+            int maxRunningSimulations, Map&lt;String, GROUP_ROLE&gt; groups,
+            boolean locked)
+            throws CoreException {
+        try {
+<span class="nc" id="L343">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L344">            trace(logger, &quot;Updating user '&quot; + email + &quot;'.&quot;);</span>
+<span class="nc" id="L345">            configurationBusiness.updateUser(</span>
+                    email,
+                    level,
+                    countryCode,
+                    maxRunningSimulations,
+                    locked);
+<span class="nc" id="L351">            configurationBusiness.setUserGroups(email, groups);</span>
+<span class="nc" id="L352">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L353">            throw new CoreException(ex);</span>
+<span class="nc" id="L354">        }</span>
+<span class="nc" id="L355">    }</span>
+
+    @Override
+    public User getUserData() throws CoreException {
+        try {
+<span class="nc" id="L360">            return configurationBusiness.getUserData(getSessionUser().getEmail());</span>
+<span class="nc" id="L361">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L362">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public User updateUser(User user) throws CoreException {
+        try {
+<span class="nc" id="L369">            trace(logger, &quot;Updating user data '&quot; + user.getEmail() + &quot;'.&quot;);</span>
+<span class="nc" id="L370">            user = configurationBusiness.updateUser(user);</span>
+<span class="nc" id="L371">            return setUserInSession(user);</span>
+<span class="nc" id="L372">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L373">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public void updateUserPassword(String currentPassword, String newPassword)
+            throws CoreException {
+        try {
+<span class="nc" id="L381">            trace(logger, &quot;Updating user password.&quot;);</span>
+<span class="nc" id="L382">            configurationBusiness.updateUserPassword(</span>
+<span class="nc" id="L383">                    getSessionUser().getEmail(),</span>
+                    currentPassword,
+                    newPassword);
+<span class="nc" id="L386">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L387">            throw new CoreException(ex);</span>
+<span class="nc" id="L388">        }</span>
+<span class="nc" id="L389">    }</span>
+
+    @Override
+    public User requestNewEmail(String newEmail) throws CoreException {
+        try {
+<span class="nc" id="L394">            User currentUser = getSessionUser();</span>
+<span class="nc" id="L395">            String currentEmail = currentUser.getEmail();</span>
+<span class="nc" id="L396">            trace(logger, &quot;Requesting email change from &quot; + currentEmail + &quot; to &quot; + newEmail);</span>
+
+<span class="nc" id="L398">            configurationBusiness.requestNewEmail(currentUser, newEmail);</span>
+
+<span class="nc" id="L400">            currentUser = configurationBusiness.getUserData(currentUser.getEmail());</span>
+<span class="nc" id="L401">            return setUserInSession(currentUser);</span>
+<span class="nc" id="L402">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L403">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public User confirmNewEmail(String code) throws CoreException {
+        try {
+<span class="nc" id="L410">            User currentUser = getSessionUser();</span>
+<span class="nc" id="L411">            String currentEmail = currentUser.getEmail();</span>
+<span class="nc" id="L412">            String newEmail = currentUser.getNextEmail();</span>
+<span class="nc" id="L413">            trace(logger, &quot;Confirming email change from &quot; + currentEmail + &quot; to &quot; + newEmail);</span>
+<span class="nc bnc" id="L414" title="All 4 branches missed.">            if (code == null || !code.equals(currentUser.getCode())) {</span>
+<span class="nc" id="L415">                logger.error(&quot;Wrong validation code for {} : {} vs {}&quot;,</span>
+<span class="nc" id="L416">                        currentEmail, code, currentUser.getCode());</span>
+<span class="nc" id="L417">                throw new CoreException(&quot;Wrong validation code&quot;);</span>
+            }
+<span class="nc" id="L419">            configurationBusiness.updateUserEmail(currentEmail, newEmail);</span>
+<span class="nc" id="L420">            configurationBusiness.resetNextEmail(newEmail);</span>
+
+<span class="nc" id="L422">            currentUser = configurationBusiness.getUserData(newEmail);</span>
+<span class="nc" id="L423">            return setUserInSession(currentUser);</span>
+<span class="nc" id="L424">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L425">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public User cancelNewEmail() throws CoreException {
+        try {
+<span class="nc" id="L432">            User currentUser = getSessionUser();</span>
+<span class="nc" id="L433">            String currentEmail = currentUser.getEmail();</span>
+<span class="nc" id="L434">            String newEmail = currentUser.getNextEmail();</span>
+<span class="nc" id="L435">            trace(logger, &quot;Canceling email change from &quot; + currentEmail + &quot; to &quot; + newEmail);</span>
+<span class="nc" id="L436">            configurationBusiness.resetNextEmail(currentEmail);</span>
+
+<span class="nc" id="L438">            currentUser = configurationBusiness.getUserData(currentEmail);</span>
+<span class="nc" id="L439">            return setUserInSession(currentUser);</span>
+<span class="nc" id="L440">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L441">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public void sendContactMail(String category, String subject, String comment)
+            throws CoreException {
+        try {
+<span class="nc" id="L449">            configurationBusiness.sendContactMail(</span>
+<span class="nc" id="L450">                    getSessionUser(), category, subject, comment);</span>
+
+<span class="nc" id="L452">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L453">            throw new CoreException(ex);</span>
+<span class="nc" id="L454">        }</span>
+<span class="nc" id="L455">    }</span>
+
+    @Override
+    public void activateUser(String email) throws CoreException {
+        try {
+<span class="nc" id="L460">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L461">            trace(logger, &quot;Activating user: &quot; + email);</span>
+<span class="nc" id="L462">            configurationBusiness.activateUser(email);</span>
+<span class="nc" id="L463">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L464">            throw new CoreException(ex);</span>
+<span class="nc" id="L465">        }</span>
+<span class="nc" id="L466">    }</span>
+
+    @Override
+    public void addUserToGroup(String groupName) throws CoreException {
+        try {
+<span class="nc" id="L471">            trace(logger, &quot;Adding user to group '&quot; + groupName + &quot;'.&quot;);</span>
+<span class="nc" id="L472">            configurationBusiness.addUserToGroup(</span>
+<span class="nc" id="L473">                    getSessionUser().getEmail(), groupName);</span>
+<span class="nc" id="L474">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L475">            throw new CoreException(ex);</span>
+<span class="nc" id="L476">        }</span>
+<span class="nc" id="L477">    }</span>
+
+    @Override
+    public List&lt;User&gt; getUsersFromGroup(String groupName) throws CoreException {
+        try {
+<span class="nc" id="L482">            authenticateGroupAdministrator(logger, groupName);</span>
+<span class="nc" id="L483">            return configurationBusiness.getUsersFromGroup(groupName);</span>
+<span class="nc" id="L484">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L485">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public void removeUserFromGroup(String email, String groupName)
+            throws CoreException {
+        try {
+<span class="nc bnc" id="L493" title="All 2 branches missed.">            if (email != null) {</span>
+<span class="nc" id="L494">                authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L495">                trace(logger, &quot;Removing '&quot; + email + &quot;' from '&quot; + groupName + &quot;' group.&quot;);</span>
+<span class="nc" id="L496">                configurationBusiness.removeUserFromGroup(email, groupName);</span>
+            } else {
+<span class="nc" id="L498">                trace(logger, &quot;Removing user from '&quot; + groupName + &quot;' group.&quot;);</span>
+<span class="nc" id="L499">                configurationBusiness.removeUserFromGroup(</span>
+<span class="nc" id="L500">                        getSessionUser().getEmail(), groupName);</span>
+            }
+<span class="nc" id="L502">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L503">            throw new CoreException(ex);</span>
+<span class="nc" id="L504">        }</span>
+<span class="nc" id="L505">    }</span>
+
+    @Override
+    public void resetPassword(String email, String code, String password)
+            throws CoreException {
+        try {
+<span class="nc" id="L511">            logger.info(&quot;(&quot; + email + &quot;) Reseting password.&quot;);</span>
+<span class="nc" id="L512">            configurationBusiness.resetPassword(email, code, password);</span>
+<span class="nc" id="L513">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L514">            throw new CoreException(ex);</span>
+<span class="nc" id="L515">        }</span>
+<span class="nc" id="L516">    }</span>
+
+    @Override
+    public String getCASLoginPageUrl() throws CoreException {
+        URL url;
+        try {
+<span class="nc" id="L522">            url = getBaseURL();</span>
+<span class="nc" id="L523">        } catch (MalformedURLException e) {</span>
+<span class="nc" id="L524">            throw new CoreException(e);</span>
+<span class="nc" id="L525">        }</span>
+<span class="nc" id="L526">        return configurationBusiness.getLoginUrlCas(url);</span>
+    }
+
+    private URL getBaseURL() throws MalformedURLException {
+        URL url;
+<span class="nc" id="L531">        HttpServletRequest request = this.getThreadLocalRequest();</span>
+<span class="nc bnc" id="L532" title="All 2 branches missed.">        if ((request.getServerPort() == 80)</span>
+<span class="nc bnc" id="L533" title="All 2 branches missed.">                || (request.getServerPort() == 443)) {</span>
+<span class="nc" id="L534">            url = new URL(request.getScheme() + &quot;://&quot;</span>
+<span class="nc" id="L535">                    + request.getServerName()</span>
+<span class="nc" id="L536">                    + request.getContextPath());</span>
+        } else {
+<span class="nc" id="L538">            url = new URL(request.getScheme() + &quot;://&quot;</span>
+<span class="nc" id="L539">                    + request.getServerName() + &quot;:&quot; + request.getServerPort()</span>
+<span class="nc" id="L540">                    + request.getContextPath());</span>
+        }
+<span class="nc" id="L542">        return url;</span>
+    }
+
+    @Override
+    public UsageStats getUsageStats() throws CoreException {
+        try {
+<span class="nc" id="L548">            Integer users = userDAO.getNUsers();</span>
+<span class="nc" id="L549">            Integer countries = userDAO.getNCountries();</span>
+<span class="nc" id="L550">            return new UsageStats(users, countries);</span>
+<span class="nc" id="L551">        } catch (DAOException e) {</span>
+<span class="nc" id="L552">            throw new CoreException(e);</span>
+        }
+
+    }
+
+    @Override
+    public void updateTermsOfUse() throws CoreException {
+<span class="nc" id="L559">        trace(logger, &quot;Updating terms of use.&quot;);</span>
+<span class="nc" id="L560">        User user = getSessionUser();</span>
+        try {
+<span class="nc" id="L562">            configurationBusiness.updateTermsOfUse(user.getEmail());</span>
+<span class="nc" id="L563">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L564">            throw new CoreException(ex);</span>
+<span class="nc" id="L565">        }</span>
+<span class="nc" id="L566">    }</span>
+
+    @Override
+    public void addTermsUse() throws CoreException {
+<span class="nc" id="L570">        trace(logger, &quot;adding new terms of Use.&quot;);</span>
+        try {
+<span class="nc" id="L572">            authenticateSystemAdministrator(logger);</span>
+<span class="nc" id="L573">            configurationBusiness.addTermsUse();</span>
+<span class="nc" id="L574">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L575">            throw new CoreException(ex);</span>
+<span class="nc" id="L576">        }</span>
+<span class="nc" id="L577">    }</span>
+
+    @Override
+    public Timestamp getLastUpdateTermsOfUse() throws CoreException {
+        try {
+<span class="nc" id="L582">            return configurationBusiness.getLastUpdateTermsOfUse();</span>
+<span class="nc" id="L583">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L584">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public boolean compare() throws CoreException {
+<span class="nc" id="L590">        return getLastUpdateTermsOfUse().after(getSessionUser().getTermsOfUse());</span>
+    }
+
+    @Override
+    public boolean testLastUpdatePublication() throws CoreException {
+        try {
+<span class="nc" id="L596">            return configurationBusiness.testLastUpdatePublication(</span>
+<span class="nc" id="L597">                    getSessionUser().getEmail());</span>
+<span class="nc" id="L598">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L599">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public void updateLastUpdatePublication() throws CoreException {
+<span class="nc" id="L605">        trace(logger, &quot;Updating Last Update Publication.&quot;);</span>
+<span class="nc" id="L606">        User user = getSessionUser();</span>
+        try {
+<span class="nc" id="L608">            configurationBusiness.updateLastUpdatePublication(user.getEmail());</span>
+<span class="nc" id="L609">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L610">            throw new CoreException(ex);</span>
+<span class="nc" id="L611">        }</span>
+<span class="nc" id="L612">    }</span>
+
+    // api key management
+
+
+    @Override
+    public String getUserApikey(String email) throws CoreException {
+        try {
+<span class="nc" id="L620">            return configurationBusiness</span>
+<span class="nc" id="L621">                    .getUserApikey(getSessionUser().getEmail());</span>
+<span class="nc" id="L622">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L623">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public void deleteUserApikey(String email) throws CoreException {
+        try {
+<span class="nc" id="L630">            configurationBusiness</span>
+<span class="nc" id="L631">                    .deleteUserApikey(getSessionUser().getEmail());</span>
+<span class="nc" id="L632">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L633">            throw new CoreException(ex);</span>
+<span class="nc" id="L634">        }</span>
+<span class="nc" id="L635">    }</span>
+
+    @Override
+    public String generateNewUserApikey(String email) throws CoreException {
+        try {
+<span class="nc" id="L640">            return configurationBusiness</span>
+<span class="nc" id="L641">                    .generateNewUserApikey(getSessionUser().getEmail());</span>
+<span class="nc" id="L642">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L643">            throw new CoreException(ex);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

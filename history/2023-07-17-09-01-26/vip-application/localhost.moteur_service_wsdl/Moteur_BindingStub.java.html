@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Moteur_BindingStub.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">localhost.moteur_service_wsdl</a> &gt; <span class="el_source">Moteur_BindingStub.java</span></div><h1>Moteur_BindingStub.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package localhost.moteur_service_wsdl;
+
+import java.rmi.RemoteException;
+
+public class Moteur_BindingStub extends org.apache.axis.client.Stub implements localhost.moteur_service_wsdl.Moteur_servicePortType {
+
+    static org.apache.axis.description.OperationDesc[] _operations;
+
+    static {
+<span class="nc" id="L41">        _operations = new org.apache.axis.description.OperationDesc[4];</span>
+<span class="nc" id="L42">        _initOperationDesc1();</span>
+<span class="nc" id="L43">    }</span>
+
+<span class="nc" id="L45">    private java.util.Vector cachedSerClasses = new java.util.Vector();</span>
+<span class="nc" id="L46">    private java.util.Vector cachedSerQNames = new java.util.Vector();</span>
+<span class="nc" id="L47">    private java.util.Vector cachedSerFactories = new java.util.Vector();</span>
+<span class="nc" id="L48">    private java.util.Vector cachedDeserFactories = new java.util.Vector();</span>
+
+    public Moteur_BindingStub() throws org.apache.axis.AxisFault {
+<span class="nc" id="L51">        this(null);</span>
+<span class="nc" id="L52">    }</span>
+
+    public Moteur_BindingStub(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
+<span class="nc" id="L55">        this(service);</span>
+<span class="nc" id="L56">        super.cachedEndpoint = endpointURL;</span>
+<span class="nc" id="L57">    }</span>
+
+<span class="nc" id="L59">    public Moteur_BindingStub(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (service == null) {</span>
+<span class="nc" id="L61">            super.service = new org.apache.axis.client.Service();</span>
+        } else {
+<span class="nc" id="L63">            super.service = service;</span>
+        }
+<span class="nc" id="L65">        ((org.apache.axis.client.Service) super.service).setTypeMappingVersion(&quot;1.2&quot;);</span>
+<span class="nc" id="L66">    }</span>
+
+    private static void _initOperationDesc1() {
+        org.apache.axis.description.OperationDesc oper;
+        org.apache.axis.description.ParameterDesc param;
+<span class="nc" id="L71">        oper = new org.apache.axis.description.OperationDesc();</span>
+<span class="nc" id="L72">        oper.setName(&quot;workflowSubmit&quot;);</span>
+<span class="nc" id="L73">        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;scuflDocument&quot;), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName(&quot;http://www.w3.org/2001/XMLSchema&quot;, &quot;string&quot;), java.lang.String.class, false, false);</span>
+<span class="nc" id="L74">        oper.addParameter(param);</span>
+<span class="nc" id="L75">        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;inputDocument&quot;), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName(&quot;http://www.w3.org/2001/XMLSchema&quot;, &quot;string&quot;), java.lang.String.class, false, false);</span>
+<span class="nc" id="L76">        oper.addParameter(param);</span>
+<span class="nc" id="L77">        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;proxy&quot;), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName(&quot;http://www.w3.org/2001/XMLSchema&quot;, &quot;string&quot;), java.lang.String.class, false, false);</span>
+<span class="nc" id="L78">        oper.addParameter(param);</span>
+<span class="nc" id="L79">        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;settings&quot;), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName(&quot;http://www.w3.org/2001/XMLSchema&quot;, &quot;string&quot;), java.lang.String.class, false, false);</span>
+<span class="nc" id="L80">        oper.addParameter(param);</span>
+<span class="nc" id="L81">        oper.setReturnType(new javax.xml.namespace.QName(&quot;http://www.w3.org/2001/XMLSchema&quot;, &quot;string&quot;));</span>
+<span class="nc" id="L82">        oper.setReturnClass(java.lang.String.class);</span>
+<span class="nc" id="L83">        oper.setReturnQName(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;workflowID&quot;));</span>
+<span class="nc" id="L84">        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);</span>
+<span class="nc" id="L85">        oper.setUse(org.apache.axis.constants.Use.LITERAL);</span>
+<span class="nc" id="L86">        _operations[0] = oper;</span>
+
+<span class="nc" id="L88">        oper = new org.apache.axis.description.OperationDesc();</span>
+<span class="nc" id="L89">        oper.setName(&quot;killWorkflow&quot;);</span>
+<span class="nc" id="L90">        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;workflowID&quot;), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName(&quot;http://www.w3.org/2001/XMLSchema&quot;, &quot;string&quot;), java.lang.String.class, false, false);</span>
+<span class="nc" id="L91">        oper.addParameter(param);</span>
+<span class="nc" id="L92">        oper.setReturnType(new javax.xml.namespace.QName(&quot;http://www.w3.org/2001/XMLSchema&quot;, &quot;none&quot;));</span>
+<span class="nc" id="L93">        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);</span>
+<span class="nc" id="L94">        oper.setUse(org.apache.axis.constants.Use.LITERAL);</span>
+<span class="nc" id="L95">        _operations[1] = oper;</span>
+
+<span class="nc" id="L97">        oper = new org.apache.axis.description.OperationDesc();</span>
+<span class="nc" id="L98">        oper.setName(&quot;getWorkflowStatus&quot;);</span>
+<span class="nc" id="L99">        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;workflowID&quot;), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName(&quot;http://www.w3.org/2001/XMLSchema&quot;, &quot;string&quot;), java.lang.String.class, false, false);</span>
+<span class="nc" id="L100">        oper.addParameter(param);</span>
+<span class="nc" id="L101">        oper.setReturnType(new javax.xml.namespace.QName(&quot;http://www.w3.org/2001/XMLSchema&quot;, &quot;string&quot;));</span>
+<span class="nc" id="L102">        oper.setReturnClass(java.lang.String.class);</span>
+<span class="nc" id="L103">        oper.setReturnQName(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;workflowStatus&quot;));</span>
+<span class="nc" id="L104">        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);</span>
+<span class="nc" id="L105">        oper.setUse(org.apache.axis.constants.Use.LITERAL);</span>
+<span class="nc" id="L106">        _operations[2] = oper;</span>
+
+<span class="nc" id="L108">        oper = new org.apache.axis.description.OperationDesc();</span>
+<span class="nc" id="L109">        oper.setName(&quot;getVersion&quot;);</span>
+<span class="nc" id="L110">        oper.setReturnType(new javax.xml.namespace.QName(&quot;http://www.w3.org/2001/XMLSchema&quot;, &quot;string&quot;));</span>
+<span class="nc" id="L111">        oper.setReturnClass(java.lang.String.class);</span>
+<span class="nc" id="L112">        oper.setReturnQName(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;versionID&quot;));</span>
+<span class="nc" id="L113">        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);</span>
+<span class="nc" id="L114">        oper.setUse(org.apache.axis.constants.Use.LITERAL);</span>
+<span class="nc" id="L115">        _operations[3] = oper;</span>
+
+<span class="nc" id="L117">    }</span>
+
+    protected org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {
+        try {
+<span class="nc" id="L121">            org.apache.axis.client.Call _call = super._createCall();</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            if (super.maintainSessionSet) {</span>
+<span class="nc" id="L123">                _call.setMaintainSession(super.maintainSession);</span>
+            }
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            if (super.cachedUsername != null) {</span>
+<span class="nc" id="L126">                _call.setUsername(super.cachedUsername);</span>
+            }
+<span class="nc bnc" id="L128" title="All 2 branches missed.">            if (super.cachedPassword != null) {</span>
+<span class="nc" id="L129">                _call.setPassword(super.cachedPassword);</span>
+            }
+<span class="nc bnc" id="L131" title="All 2 branches missed.">            if (super.cachedEndpoint != null) {</span>
+<span class="nc" id="L132">                _call.setTargetEndpointAddress(super.cachedEndpoint);</span>
+            }
+<span class="nc bnc" id="L134" title="All 2 branches missed.">            if (super.cachedTimeout != null) {</span>
+<span class="nc" id="L135">                _call.setTimeout(super.cachedTimeout);</span>
+            }
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            if (super.cachedPortName != null) {</span>
+<span class="nc" id="L138">                _call.setPortName(super.cachedPortName);</span>
+            }
+<span class="nc" id="L140">            java.util.Enumeration keys = super.cachedProperties.keys();</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            while (keys.hasMoreElements()) {</span>
+<span class="nc" id="L142">                java.lang.String key = (java.lang.String) keys.nextElement();</span>
+<span class="nc" id="L143">                _call.setProperty(key, super.cachedProperties.get(key));</span>
+<span class="nc" id="L144">            }</span>
+<span class="nc" id="L145">            return _call;</span>
+<span class="nc" id="L146">        } catch (java.lang.Throwable _t) {</span>
+<span class="nc" id="L147">            throw new org.apache.axis.AxisFault(&quot;Failure trying to get the Call object&quot;, _t);</span>
+        }
+    }
+
+    public java.lang.String workflowSubmit(java.lang.String scuflDocument, java.lang.String inputDocument, java.lang.String proxy, java.lang.String settings) throws java.rmi.RemoteException {
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        if (super.cachedEndpoint == null) {</span>
+<span class="nc" id="L153">            throw new org.apache.axis.NoEndPointException();</span>
+        }
+<span class="nc" id="L155">        org.apache.axis.client.Call _call = createCall();</span>
+<span class="nc" id="L156">        _call.setOperation(_operations[0]);</span>
+<span class="nc" id="L157">        _call.setUseSOAPAction(true);</span>
+<span class="nc" id="L158">        _call.setSOAPActionURI(&quot;&quot;);</span>
+<span class="nc" id="L159">        _call.setEncodingStyle(null);</span>
+<span class="nc" id="L160">        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);</span>
+<span class="nc" id="L161">        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);</span>
+<span class="nc" id="L162">        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);</span>
+<span class="nc" id="L163">        _call.setOperationName(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;workflowSubmit&quot;));</span>
+
+<span class="nc" id="L165">        setRequestHeaders(_call);</span>
+<span class="nc" id="L166">        setAttachments(_call);</span>
+        try {
+<span class="nc" id="L168">            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{scuflDocument, inputDocument, proxy, settings});</span>
+
+<span class="nc bnc" id="L170" title="All 2 branches missed.">            if (_resp instanceof java.rmi.RemoteException) {</span>
+<span class="nc" id="L171">                throw (java.rmi.RemoteException) _resp;</span>
+            } else {
+<span class="nc" id="L173">                extractAttachments(_call);</span>
+                try {
+<span class="nc" id="L175">                    return (java.lang.String) _resp;</span>
+<span class="nc" id="L176">                } catch (java.lang.Exception _exception) {</span>
+<span class="nc" id="L177">                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);</span>
+                }
+            }
+<span class="nc" id="L180">        } catch (org.apache.axis.AxisFault axisFaultException) {</span>
+<span class="nc" id="L181">            throw axisFaultException;</span>
+        }
+    }
+
+    public void killWorkflow(java.lang.String workflowID) throws java.rmi.RemoteException {
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        if (super.cachedEndpoint == null) {</span>
+<span class="nc" id="L187">            throw new org.apache.axis.NoEndPointException();</span>
+        }
+<span class="nc" id="L189">        org.apache.axis.client.Call _call = createCall();</span>
+<span class="nc" id="L190">        _call.setOperation(_operations[1]);</span>
+<span class="nc" id="L191">        _call.setUseSOAPAction(true);</span>
+<span class="nc" id="L192">        _call.setSOAPActionURI(&quot;&quot;);</span>
+<span class="nc" id="L193">        _call.setEncodingStyle(null);</span>
+<span class="nc" id="L194">        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);</span>
+<span class="nc" id="L195">        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);</span>
+<span class="nc" id="L196">        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);</span>
+<span class="nc" id="L197">        _call.setOperationName(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;killWorkflow&quot;));</span>
+
+<span class="nc" id="L199">        setRequestHeaders(_call);</span>
+<span class="nc" id="L200">        setAttachments(_call);</span>
+
+<span class="nc" id="L202">        java.lang.Object _resp = _call.invoke(new java.lang.Object[]{workflowID});</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if (_resp instanceof java.rmi.RemoteException) {</span>
+<span class="nc" id="L204">            throw (java.rmi.RemoteException) _resp;</span>
+        }
+<span class="nc" id="L206">    }</span>
+
+    public String getWorkflowStatus(String workflowID) throws RemoteException {
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        if (super.cachedEndpoint == null) {</span>
+<span class="nc" id="L210">            throw new org.apache.axis.NoEndPointException();</span>
+        }
+<span class="nc" id="L212">        org.apache.axis.client.Call _call = createCall();</span>
+<span class="nc" id="L213">        _call.setOperation(_operations[2]);</span>
+<span class="nc" id="L214">        _call.setUseSOAPAction(true);</span>
+<span class="nc" id="L215">        _call.setSOAPActionURI(&quot;&quot;);</span>
+<span class="nc" id="L216">        _call.setEncodingStyle(null);</span>
+<span class="nc" id="L217">        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);</span>
+<span class="nc" id="L218">        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);</span>
+<span class="nc" id="L219">        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);</span>
+<span class="nc" id="L220">        _call.setOperationName(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;getWorkflowStatus&quot;));</span>
+
+<span class="nc" id="L222">        setRequestHeaders(_call);</span>
+<span class="nc" id="L223">        setAttachments(_call);</span>
+
+        try {
+<span class="nc" id="L226">            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{workflowID});</span>
+
+<span class="nc bnc" id="L228" title="All 2 branches missed.">            if (_resp instanceof java.rmi.RemoteException) {</span>
+<span class="nc" id="L229">                throw (java.rmi.RemoteException) _resp;</span>
+            } else {
+<span class="nc" id="L231">                extractAttachments(_call);</span>
+                try {
+<span class="nc" id="L233">                    return (java.lang.String) _resp;</span>
+<span class="nc" id="L234">                } catch (java.lang.Exception _exception) {</span>
+<span class="nc" id="L235">                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);</span>
+                }
+            }
+<span class="nc" id="L238">        } catch (org.apache.axis.AxisFault axisFaultException) {</span>
+<span class="nc" id="L239">            throw axisFaultException;</span>
+        }
+    }
+
+    public java.lang.String getVersion() throws java.rmi.RemoteException {
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        if (super.cachedEndpoint == null) {</span>
+<span class="nc" id="L245">            throw new org.apache.axis.NoEndPointException();</span>
+        }
+<span class="nc" id="L247">        org.apache.axis.client.Call _call = createCall();</span>
+<span class="nc" id="L248">        _call.setOperation(_operations[3]);</span>
+<span class="nc" id="L249">        _call.setUseSOAPAction(true);</span>
+<span class="nc" id="L250">        _call.setSOAPActionURI(&quot;&quot;);</span>
+<span class="nc" id="L251">        _call.setEncodingStyle(null);</span>
+<span class="nc" id="L252">        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);</span>
+<span class="nc" id="L253">        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);</span>
+<span class="nc" id="L254">        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);</span>
+<span class="nc" id="L255">        _call.setOperationName(new javax.xml.namespace.QName(&quot;moteur_service&quot;, &quot;getVersion&quot;));</span>
+
+<span class="nc" id="L257">        setRequestHeaders(_call);</span>
+<span class="nc" id="L258">        setAttachments(_call);</span>
+        try {
+<span class="nc" id="L260">            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{});</span>
+
+<span class="nc bnc" id="L262" title="All 2 branches missed.">            if (_resp instanceof java.rmi.RemoteException) {</span>
+<span class="nc" id="L263">                throw (java.rmi.RemoteException) _resp;</span>
+            } else {
+<span class="nc" id="L265">                extractAttachments(_call);</span>
+                try {
+<span class="nc" id="L267">                    return (java.lang.String) _resp;</span>
+<span class="nc" id="L268">                } catch (java.lang.Exception _exception) {</span>
+<span class="nc" id="L269">                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);</span>
+                }
+            }
+<span class="nc" id="L272">        } catch (org.apache.axis.AxisFault axisFaultException) {</span>
+<span class="nc" id="L273">            throw axisFaultException;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

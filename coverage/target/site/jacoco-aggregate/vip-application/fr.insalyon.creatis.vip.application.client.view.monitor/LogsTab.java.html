@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LogsTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor</a> &gt; <span class="el_source">LogsTab.java</span></div><h1>LogsTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
+import com.smartgwt.client.widgets.grid.events.RowContextClickEvent;
+import com.smartgwt.client.widgets.grid.events.RowContextClickHandler;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowServiceAsync;
+import fr.insalyon.creatis.vip.application.client.view.monitor.menu.LogsContextMenu;
+import fr.insalyon.creatis.vip.application.client.view.monitor.record.FileOrFolderRecord;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class LogsTab extends Tab {
+
+    protected ModalWindow modal;
+    private String simulationID;
+    private ListGrid grid;
+    private ToolStrip toolStrip;
+    private SelectItem pathItem;
+
+<span class="nc" id="L76">    public LogsTab(String simulationID) {</span>
+
+<span class="nc" id="L78">        this.simulationID = simulationID;</span>
+
+<span class="nc" id="L80">        this.setTitle(Canvas.imgHTML(ApplicationConstants.ICON_LOG));</span>
+<span class="nc" id="L81">        this.setPrompt(&quot;Logs&quot;);</span>
+
+<span class="nc" id="L83">        configureToolStrip();</span>
+<span class="nc" id="L84">        configureGrid();</span>
+<span class="nc" id="L85">        modal = new ModalWindow(grid);</span>
+
+<span class="nc" id="L87">        VLayout vLayout = new VLayout();</span>
+<span class="nc" id="L88">        vLayout.setHeight100();</span>
+<span class="nc" id="L89">        vLayout.setOverflow(Overflow.AUTO);</span>
+<span class="nc" id="L90">        vLayout.addMember(toolStrip);</span>
+<span class="nc" id="L91">        vLayout.addMember(grid);</span>
+
+<span class="nc" id="L93">        this.setPane(vLayout);</span>
+
+<span class="nc" id="L95">        loadData(&quot;/&quot; + simulationID);</span>
+<span class="nc" id="L96">    }</span>
+
+    private void configureGrid() {
+<span class="nc" id="L99">        grid = new ListGrid();</span>
+<span class="nc" id="L100">        grid.setWidth100();</span>
+<span class="nc" id="L101">        grid.setHeight100();</span>
+<span class="nc" id="L102">        grid.setShowAllRecords(true);</span>
+<span class="nc" id="L103">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L104">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L105">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+
+<span class="nc" id="L107">        ListGridField icoField = FieldUtil.getIconGridField(&quot;icon&quot;);</span>
+<span class="nc" id="L108">        ListGridField nameField = new ListGridField(&quot;name&quot;, &quot;File Name&quot;);</span>
+<span class="nc" id="L109">        ListGridField sizeField = new ListGridField(&quot;size&quot;, &quot;Size&quot;);</span>
+<span class="nc" id="L110">        ListGridField lastModifiedField = new ListGridField(&quot;lastModified&quot;, &quot;Last Modification Date&quot;);</span>
+<span class="nc" id="L111">        ListGridField baseDirField = new ListGridField(&quot;baseDir&quot;, &quot;Base Path&quot;);</span>
+<span class="nc" id="L112">        baseDirField.setHidden(true);</span>
+
+<span class="nc" id="L114">        grid.setFields(icoField, nameField, sizeField, lastModifiedField, baseDirField);</span>
+<span class="nc" id="L115">        grid.setSortField(&quot;icon&quot;);</span>
+<span class="nc" id="L116">        grid.setSortDirection(SortDirection.DESCENDING);</span>
+
+<span class="nc" id="L118">        grid.addCellDoubleClickHandler(new CellDoubleClickHandler() {</span>
+
+            @Override
+            public void onCellDoubleClick(CellDoubleClickEvent event) {
+<span class="nc" id="L122">                String type = event.getRecord().getAttributeAsString(&quot;icon&quot;);</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                if (type.contains(&quot;folder&quot;)) {</span>
+<span class="nc" id="L124">                    String baseDir = event.getRecord().getAttributeAsString(&quot;baseDir&quot;);</span>
+<span class="nc" id="L125">                    String name = event.getRecord().getAttributeAsString(&quot;name&quot;);</span>
+<span class="nc" id="L126">                    loadData(baseDir + &quot;/&quot; + name);</span>
+                }
+<span class="nc" id="L128">            }</span>
+        });
+<span class="nc" id="L130">        grid.addRowContextClickHandler(new RowContextClickHandler() {</span>
+
+            @Override
+            public void onRowContextClick(RowContextClickEvent event) {
+<span class="nc" id="L134">                event.cancel();</span>
+<span class="nc" id="L135">                showContextMenu(event.getRecord());</span>
+<span class="nc" id="L136">            }</span>
+        });
+<span class="nc" id="L138">    }</span>
+
+    private void configureToolStrip() {
+
+<span class="nc" id="L142">        toolStrip = new ToolStrip();</span>
+<span class="nc" id="L143">        toolStrip.setWidth100();</span>
+
+<span class="nc" id="L145">        pathItem = new SelectItem(&quot;path&quot;);</span>
+<span class="nc" id="L146">        pathItem.setShowTitle(false);</span>
+<span class="nc" id="L147">        pathItem.setWidth(400);</span>
+<span class="nc" id="L148">        pathItem.setValue(&quot;/&quot; + simulationID);</span>
+<span class="nc" id="L149">        toolStrip.addFormItem(pathItem);</span>
+
+<span class="nc" id="L151">        ToolStripButton folderUpButton = new ToolStripButton();</span>
+<span class="nc" id="L152">        folderUpButton.setIcon(DataManagerConstants.ICON_FOLDER_UP);</span>
+<span class="nc" id="L153">        folderUpButton.setTooltip(&quot;Folder Up&quot;);</span>
+<span class="nc" id="L154">        folderUpButton.addClickHandler(new ClickHandler() {</span>
+
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L158" title="All 2 branches missed.">                if (!pathItem.getValueAsString().equals(&quot;/&quot; + simulationID)) {</span>
+<span class="nc" id="L159">                    String newPath = pathItem.getValueAsString();</span>
+<span class="nc" id="L160">                    loadData(newPath.substring(0, newPath.lastIndexOf(&quot;/&quot;)));</span>
+                }
+<span class="nc" id="L162">            }</span>
+        });
+<span class="nc" id="L164">        toolStrip.addButton(folderUpButton);</span>
+
+<span class="nc" id="L166">        ToolStripButton refreshButton = new ToolStripButton();</span>
+<span class="nc" id="L167">        refreshButton.setIcon(CoreConstants.ICON_REFRESH);</span>
+<span class="nc" id="L168">        refreshButton.setTooltip(&quot;Refresh&quot;);</span>
+<span class="nc" id="L169">        refreshButton.addClickHandler(new ClickHandler() {</span>
+
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L173">                loadData(pathItem.getValueAsString());</span>
+<span class="nc" id="L174">            }</span>
+        });
+<span class="nc" id="L176">        toolStrip.addButton(refreshButton);</span>
+
+<span class="nc" id="L178">        ToolStripButton homeButton = new ToolStripButton();</span>
+<span class="nc" id="L179">        homeButton.setIcon(CoreConstants.ICON_HOME);</span>
+<span class="nc" id="L180">        homeButton.setTooltip(&quot;Home&quot;);</span>
+<span class="nc" id="L181">        homeButton.addClickHandler(new ClickHandler() {</span>
+
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L185">                loadData(&quot;/&quot; + simulationID);</span>
+<span class="nc" id="L186">            }</span>
+        });
+<span class="nc" id="L188">        toolStrip.addButton(homeButton);</span>
+<span class="nc" id="L189">    }</span>
+
+    public void loadData(final String baseDir) {
+
+<span class="nc" id="L193">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L194">        AsyncCallback&lt;List&lt;String&gt;&gt; callback = new AsyncCallback&lt;List&lt;String&gt;&gt;() {</span>
+
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L198">                modal.hide();</span>
+<span class="nc" id="L199">                Layout.getInstance().setWarningMessage(&quot;Unable to get logs:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L200">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;String&gt; result) {
+<span class="nc" id="L204">                FileOrFolderRecord[] data = new FileOrFolderRecord[result.size()];</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">                for (int i = 0; i &lt; result.size(); i++) {</span>
+<span class="nc" id="L206">                    String[] dataType = result.get(i).split(&quot;-#-&quot;);</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">                    if (dataType[1].equals(&quot;Folder&quot;)) {</span>
+<span class="nc" id="L208">                        data[i] = new FileOrFolderRecord(dataType[0], &quot;folder&quot;, baseDir);</span>
+                    } else {
+<span class="nc" id="L210">                        String[] info = dataType[0].split(&quot;##&quot;);</span>
+<span class="nc" id="L211">                        data[i] = new FileOrFolderRecord(info[0], &quot;file&quot;, baseDir, info[1], info[2]);</span>
+                    }
+                }
+<span class="nc" id="L214">                pathItem.setValue(baseDir);</span>
+<span class="nc" id="L215">                grid.setData(data);</span>
+<span class="nc" id="L216">                modal.hide();</span>
+<span class="nc" id="L217">            }</span>
+        };
+<span class="nc" id="L219">        modal.show(&quot;Loading Logs Data...&quot;, true);</span>
+<span class="nc" id="L220">        service.getLogs(baseDir, callback);</span>
+<span class="nc" id="L221">    }</span>
+
+    private void showContextMenu(ListGridRecord record) {
+
+<span class="nc" id="L225">        String type = record.getAttributeAsString(&quot;icon&quot;);</span>
+<span class="nc" id="L226">        String dataName = record.getAttributeAsString(&quot;name&quot;);</span>
+<span class="nc" id="L227">        String folder = record.getAttributeAsString(&quot;baseDir&quot;);</span>
+
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        if (folder.equals(&quot;/&quot; + simulationID)) {</span>
+<span class="nc" id="L230">            folder = &quot;./&quot;;</span>
+        } else {
+<span class="nc" id="L232">            folder = folder.replace(&quot;/&quot; + simulationID + &quot;&quot;, &quot;&quot;);</span>
+        }
+<span class="nc" id="L234">        new LogsContextMenu(this, simulationID, dataName,</span>
+<span class="nc" id="L235">                folder, type.contains(&quot;file&quot;)).showContextMenu();</span>
+<span class="nc" id="L236">    }</span>
+
+    public ModalWindow getModal() {
+<span class="nc" id="L239">        return modal;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

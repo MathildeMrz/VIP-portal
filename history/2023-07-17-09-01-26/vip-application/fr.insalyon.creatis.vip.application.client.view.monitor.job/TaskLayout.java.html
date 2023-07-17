@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TaskLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.job</a> &gt; <span class="el_source">TaskLayout.java</span></div><h1>TaskLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.job;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.*;
+import com.smartgwt.client.widgets.layout.HLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.Task;
+import fr.insalyon.creatis.vip.application.client.rpc.JobService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class TaskLayout extends HLayout {
+
+    private String simulationID;
+    private String taskID;
+    private TaskStatus status;
+    private int exitCode;
+    private int minorStatus;
+    private Label statusLabel;
+    private Label minorStatusLabel;
+    private HLayout actionsLayout;
+    private boolean selected;
+
+<span class="nc" id="L63">    public TaskLayout(final DebugLayout debugLayout, String simulationID, Task task) {</span>
+
+<span class="nc" id="L65">        this.simulationID = simulationID;</span>
+<span class="nc" id="L66">        this.taskID = task.getId();</span>
+<span class="nc" id="L67">        this.status = task.getStatus();</span>
+<span class="nc" id="L68">        this.exitCode = task.getExitCode();</span>
+<span class="nc" id="L69">        this.minorStatus = task.getMinorStatus();</span>
+<span class="nc" id="L70">        this.selected = false;</span>
+
+<span class="nc" id="L72">        this.setWidth100();</span>
+<span class="nc" id="L73">        this.setHeight(16);</span>
+<span class="nc" id="L74">        this.setBorder(&quot;1px solid #F2F2F2&quot;);</span>
+<span class="nc" id="L75">        this.setPadding(1);</span>
+<span class="nc" id="L76">        this.setMembersMargin(3);</span>
+
+<span class="nc" id="L78">        Label idLabel = WidgetUtil.getLabel(taskID, 16, Cursor.HAND);</span>
+<span class="nc" id="L79">        idLabel.setWidth100();</span>
+<span class="nc" id="L80">        this.addMember(idLabel);</span>
+
+<span class="nc" id="L82">        statusLabel = WidgetUtil.getLabel(&quot;&lt;font color=\&quot;&quot; + status.getColor() + &quot;\&quot;&gt;&quot; + status.getDescription() + &quot;&lt;/font&gt;&quot;, 16, Cursor.HAND);</span>
+<span class="nc" id="L83">        statusLabel.setWidth(180);</span>
+<span class="nc" id="L84">        this.addMember(statusLabel);</span>
+
+<span class="nc" id="L86">        minorStatusLabel = WidgetUtil.getLabel(&quot;&lt;font color=\&quot;#666666\&quot;&gt;&quot; + parseMinorStatus() + &quot;&lt;/font&gt;&quot;, 16, Cursor.HAND);</span>
+<span class="nc" id="L87">        minorStatusLabel.setWidth(200);</span>
+<span class="nc" id="L88">        this.addMember(minorStatusLabel);</span>
+
+<span class="nc" id="L90">        actionsLayout = new HLayout(2);</span>
+<span class="nc" id="L91">        actionsLayout.setWidth(70);</span>
+<span class="nc" id="L92">        this.addMember(actionsLayout);</span>
+<span class="nc" id="L93">        configureActionLabels();</span>
+
+<span class="nc" id="L95">        this.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L98">                debugLayout.selectTask(taskID, status);</span>
+<span class="nc" id="L99">            }</span>
+        });
+<span class="nc" id="L101">        this.addMouseOverHandler(new MouseOverHandler() {</span>
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+<span class="nc" id="L104">                setBackgroundColor(&quot;#F7F7F7&quot;);</span>
+<span class="nc" id="L105">            }</span>
+        });
+<span class="nc" id="L107">        this.addMouseOutHandler(new MouseOutHandler() {</span>
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                if (!selected) {</span>
+<span class="nc" id="L111">                    setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+                } else {
+<span class="nc" id="L113">                    setBackgroundColor(&quot;#F5F5F5&quot;);</span>
+                }
+<span class="nc" id="L115">            }</span>
+        });
+<span class="nc" id="L117">    }</span>
+
+    public void setSelected(boolean selected) {
+
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (selected) {</span>
+<span class="nc" id="L122">            this.selected = true;</span>
+<span class="nc" id="L123">            this.setBackgroundColor(&quot;#F5F5F5&quot;);</span>
+        } else {
+<span class="nc" id="L125">            this.setBackgroundColor(&quot;#FFFFFF&quot;);</span>
+<span class="nc" id="L126">            this.selected = false;</span>
+        }
+<span class="nc" id="L128">    }</span>
+
+    private String parseMinorStatus() {
+
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (status.isCompletedStateWithOutputs()) {</span>
+<span class="nc bnc" id="L133" title="All 7 branches missed.">            switch (exitCode) {</span>
+                case -1:
+<span class="nc" id="L135">                    return &quot;Retrieving Status&quot;;</span>
+                case 0:
+<span class="nc" id="L137">                    return &quot;Execution Completed&quot;;</span>
+                case 1:
+<span class="nc" id="L139">                    return &quot;Inputs Download Failed&quot;;</span>
+                case 2:
+<span class="nc" id="L141">                    return &quot;Outputs Upload Failed&quot;;</span>
+                case 6:
+<span class="nc" id="L143">                    return &quot;Application Execution Failed&quot;;</span>
+                case 7:
+<span class="nc" id="L145">                    return &quot;Directories Creation Failed&quot;;</span>
+                default:
+            }
+        } else {
+<span class="nc bnc" id="L149" title="All 7 branches missed.">            switch (minorStatus) {</span>
+                case 1:
+<span class="nc" id="L151">                    return &quot;Job Set Up&quot;;</span>
+                case 2:
+<span class="nc" id="L153">                    return &quot;Downloading Background Script&quot;;</span>
+                case 3:
+<span class="nc" id="L155">                    return &quot;Downloading Inputs&quot;;</span>
+                case 4:
+<span class="nc" id="L157">                    return &quot;Application Execution&quot;;</span>
+                case 5:
+<span class="nc" id="L159">                    return &quot;Uploading Results&quot;;</span>
+                case 6:
+<span class="nc" id="L161">                    return &quot;Finishing&quot;;</span>
+                default:
+            }
+        }
+<span class="nc" id="L165">        return &quot;&quot;;</span>
+    }
+
+    private void configureActionLabels() {
+
+<span class="nc" id="L170">        actionsLayout.removeMembers(actionsLayout.getMembers());</span>
+
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (status.isRunningState()) {</span>
+<span class="nc" id="L173">            Label replicateLabel = WidgetUtil.getLabel(null, ApplicationConstants.ICON_TASK_REPLICATE, 16, Cursor.HAND);</span>
+<span class="nc" id="L174">            replicateLabel.setPrompt(&quot;Replicate Task&quot;);</span>
+<span class="nc" id="L175">            replicateLabel.setWidth(16);</span>
+<span class="nc" id="L176">            replicateLabel.addClickHandler(new ClickHandler() {</span>
+                @Override
+                public void onClick(ClickEvent event) {
+<span class="nc" id="L179">                    sendSignal(TaskStatus.REPLICATE);</span>
+<span class="nc" id="L180">                }</span>
+            });
+<span class="nc" id="L182">            actionsLayout.addMember(replicateLabel);</span>
+
+<span class="nc" id="L184">            Label rescheduleLabel = WidgetUtil.getLabel(null, ApplicationConstants.ICON_TASK_RESCHEDULE, 16, Cursor.HAND);</span>
+<span class="nc" id="L185">            rescheduleLabel.setPrompt(&quot;Reschedule Task&quot;);</span>
+<span class="nc" id="L186">            rescheduleLabel.setWidth(16);</span>
+<span class="nc" id="L187">            rescheduleLabel.addClickHandler(new ClickHandler() {</span>
+                @Override
+                public void onClick(ClickEvent event) {
+<span class="nc" id="L190">                    sendSignal(TaskStatus.RESCHEDULE);</span>
+<span class="nc" id="L191">                }</span>
+            });
+<span class="nc" id="L193">            actionsLayout.addMember(rescheduleLabel);</span>
+
+<span class="nc" id="L195">            Label killLabel = WidgetUtil.getLabel(null, ApplicationConstants.ICON_TASK_KILL, 16, Cursor.HAND);</span>
+<span class="nc" id="L196">            killLabel.setPrompt(&quot;Kill Task&quot;);</span>
+<span class="nc" id="L197">            killLabel.setWidth(16);</span>
+<span class="nc" id="L198">            killLabel.addClickHandler(new ClickHandler() {</span>
+                @Override
+                public void onClick(ClickEvent event) {
+<span class="nc" id="L201">                    sendSignal(TaskStatus.KILL);</span>
+<span class="nc" id="L202">                }</span>
+            });
+<span class="nc" id="L204">            actionsLayout.addMember(killLabel);</span>
+
+<span class="nc bnc" id="L206" title="All 4 branches missed.">        } else if (status == TaskStatus.ERROR_HELD || status == TaskStatus.STALLED_HELD) {</span>
+<span class="nc" id="L207">            Label releaseLabel = WidgetUtil.getLabel(null, ApplicationConstants.ICON_TASK_UNHOLD, 16, Cursor.HAND);</span>
+<span class="nc" id="L208">            releaseLabel.setPrompt(&quot;Release Task&quot;);</span>
+<span class="nc" id="L209">            releaseLabel.setWidth(16);</span>
+<span class="nc" id="L210">            releaseLabel.addClickHandler(new ClickHandler() {</span>
+                @Override
+                public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L213" title="All 2 branches missed.">                    if (status == TaskStatus.ERROR_HELD) {</span>
+<span class="nc" id="L214">                        sendSignal(TaskStatus.UNHOLD_ERROR);</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">                    } else if (status == TaskStatus.STALLED_HELD) {</span>
+<span class="nc" id="L216">                        sendSignal(TaskStatus.UNHOLD_STALLED);</span>
+                    }
+<span class="nc" id="L218">                }</span>
+            });
+<span class="nc" id="L220">            actionsLayout.addMember(releaseLabel);</span>
+        }
+<span class="nc" id="L222">    }</span>
+
+    private void sendSignal(final TaskStatus taskStatus) {
+
+<span class="nc" id="L226">        SC.ask(&quot;Do you really want to &quot; + taskStatus.name().toLowerCase()</span>
+<span class="nc" id="L227">                + &quot; this task?&quot;, new BooleanCallback() {</span>
+            @Override
+            public void execute(Boolean value) {
+<span class="nc bnc" id="L230" title="All 2 branches missed.">                if (value) {</span>
+<span class="nc" id="L231">                    AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                        @Override
+                        public void onFailure(Throwable caught) {
+<span class="nc" id="L234">                            statusLabel.setContents(&quot;&lt;font color=\&quot;&quot; + status.getColor() + &quot;\&quot;&gt;&quot; + status.getDescription() + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L235">                            minorStatusLabel.setContents(&quot;&quot;);</span>
+<span class="nc" id="L236">                            minorStatusLabel.setIcon(null);</span>
+<span class="nc" id="L237">                            Layout.getInstance().setWarningMessage(&quot;Unable to send signal:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L238">                        }</span>
+
+                        @Override
+                        public void onSuccess(Void result) {
+<span class="nc" id="L242">                            minorStatusLabel.setContents(&quot;&quot;);</span>
+<span class="nc" id="L243">                            minorStatusLabel.setIcon(null);</span>
+<span class="nc" id="L244">                            Layout.getInstance().setNoticeMessage(&quot;Signal Successfully sent.&quot;);</span>
+<span class="nc" id="L245">                        }</span>
+                    };
+<span class="nc" id="L247">                    statusLabel.setContents(&quot;&lt;font color=\&quot;&quot; + taskStatus.getColor() + &quot;\&quot;&gt;&quot; + taskStatus.getDescription() + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L248">                    minorStatusLabel.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;Sending signal...&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L249">                    minorStatusLabel.setIcon(CoreConstants.ICON_LOADING);</span>
+<span class="nc" id="L250">                    JobService.Util.getInstance().sendTaskSignal(simulationID, taskID, taskStatus.name(), callback);</span>
+                }
+<span class="nc" id="L252">            }</span>
+        });
+<span class="nc" id="L254">    }</span>
+
+    public String getTaskID() {
+<span class="nc" id="L257">        return taskID;</span>
+    }
+
+    public TaskStatus getStatus() {
+<span class="nc" id="L261">        return status;</span>
+    }
+
+    public void setStatus(TaskStatus status, int exitCode, int minorStatus) {
+
+<span class="nc" id="L266">        this.status = status;</span>
+<span class="nc" id="L267">        this.exitCode = exitCode;</span>
+<span class="nc" id="L268">        this.minorStatus = minorStatus;</span>
+
+<span class="nc" id="L270">        this.statusLabel.setContents(&quot;&lt;font color=\&quot;&quot; + status.getColor() + &quot;\&quot;&gt;&quot; + status.getDescription() + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L271">        this.minorStatusLabel.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;&quot; + parseMinorStatus() + &quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L272">        configureActionLabels();</span>
+<span class="nc" id="L273">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

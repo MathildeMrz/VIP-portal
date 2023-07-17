@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>InputLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.launch</a> &gt; <span class="el_source">InputLayout.java</span></div><h1>InputLayout.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.launch;
+
+import com.smartgwt.client.types.PickerIconName;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.PickerIcon;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesInput;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * Representation of an input in application launch form: name, description, value field or fields
+ *
+ * @author Guillaume Vanel
+ * @version %I%, %G%
+ */
+public abstract class InputLayout extends VLayout {
+<span class="nc" id="L23">    public static String MAIN_FIELD_NAME = &quot;value&quot;;</span>
+<span class="nc" id="L24">    public static String UNMODIFIABLE_ATTR = &quot;unmodifiable&quot;;</span>
+    protected final LaunchFormLayout parentLayout;
+    protected final BoutiquesInput input;
+<span class="nc" id="L27">    protected final ArrayList&lt;DynamicForm&gt; additionalForms = new ArrayList&lt;&gt;();</span>
+    // Dependencies with other inputs or groups
+<span class="nc" id="L29">    protected final Set&lt;InputLayout&gt; disables = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L30">    protected final Set&lt;InputLayout&gt; disabledBy = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L31">    protected final Map&lt;ValueChoiceInputLayout, Set&lt;String&gt;&gt; disabledByValue = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L32">    protected final Set&lt;InputLayout&gt; requires = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L33">    protected final Set&lt;InputLayout&gt; requiredBy = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L34">    protected final Map&lt;ValueChoiceInputLayout, Set&lt;String&gt;&gt; requiredByValue = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L35">    protected final PickerIcon removeValueIcon = this.configureRemoveValueIcon();</span>
+<span class="nc" id="L36">    protected final PickerIcon addValueIcon = this.configureAddValueIcon();</span>
+    // Input forms
+    protected DynamicForm masterForm;
+<span class="nc" id="L39">    protected boolean unmodifiable = false;</span>
+<span class="nc" id="L40">    protected boolean canAddValue = true;</span>
+
+    /**
+     * Initialises graphical labels and input field
+     *
+     * @param input        BoutiquesInput to be represented
+     * @param parentLayout LaunchFormLayout containing this
+     */
+    public InputLayout(BoutiquesInput input, LaunchFormLayout parentLayout) {
+<span class="nc" id="L49">        this(input, parentLayout, true);</span>
+<span class="nc" id="L50">    }</span>
+
+    /**
+     * Initialize graphical labels and input field in option. If createMasterForm is false, then the child
+     * constructor must call createMasterForm itself or create the masterForm in a different way
+     *
+     * @param input            BoutiquesInput to be represented
+     * @param parentLayout     LaunchFormLayout containing this
+     * @param createMasterForm true to create the masterForm
+     */
+    protected InputLayout(BoutiquesInput input, LaunchFormLayout parentLayout, boolean createMasterForm) {
+<span class="nc" id="L61">        super(0);</span>
+<span class="nc" id="L62">        this.setLayoutLeftMargin(25);</span>
+<span class="nc" id="L63">        this.setWidth(300);</span>
+<span class="nc" id="L64">        this.parentLayout = parentLayout;</span>
+<span class="nc" id="L65">        this.input = input;</span>
+        // Name
+<span class="nc" id="L67">        String nameText = &quot;&lt;b&gt;&quot; + input.getName();</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (!input.isOptional()) {</span>
+<span class="nc" id="L69">            nameText += &quot;&lt;font color=\&quot;red\&quot;&gt;*&lt;/font&gt;&quot;;</span>
+        }
+<span class="nc" id="L71">        nameText += &quot;&lt;/b&gt;&quot;;</span>
+<span class="nc" id="L72">        Label nameLabel = WidgetUtil.getLabel(nameText, 15);</span>
+        // Description
+<span class="nc" id="L74">        String description = input.getDescription();</span>
+<span class="nc" id="L75">        Label descriptionLabel = null;</span>
+<span class="nc bnc" id="L76" title="All 4 branches missed.">        if (description != null &amp;&amp; !description.isEmpty()) {</span>
+<span class="nc" id="L77">            descriptionLabel = WidgetUtil.getLabel(description, 15);</span>
+<span class="nc" id="L78">            descriptionLabel.setWidth(400);</span>
+        }
+<span class="nc" id="L80">        this.configureLayout(nameLabel, descriptionLabel, createMasterForm);</span>
+<span class="nc" id="L81">    }</span>
+
+    /**
+     * In a Map with Sets as values, add newValue to the Set corresponding to given key. If this Set does not exist yet,
+     * create it containing only newValue
+     *
+     * @param map      Map of Objects to Sets of Objects
+     * @param key      Object
+     * @param newValue Object
+     */
+    public static &lt;K, V&gt; void addToSetInMap(Map&lt;K, Set&lt;V&gt;&gt; map, K key,
+                                            V newValue) {
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (map.containsKey(key)) {</span>
+<span class="nc" id="L94">            map.get(key).add(newValue);</span>
+        } else {
+<span class="nc" id="L96">            map.put(key, new HashSet&lt;&gt;(Collections.singleton(newValue)));</span>
+        }
+<span class="nc" id="L98">    }</span>
+
+    protected void configureLayout(Label nameLabel, Label descriptionLabel, boolean createMasterForm) {
+<span class="nc" id="L101">        this.addMember(nameLabel);</span>
+        // Description
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (descriptionLabel != null) {</span>
+<span class="nc" id="L104">            this.addMember(descriptionLabel);</span>
+        }
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (createMasterForm) {</span>
+            // Input field
+<span class="nc" id="L108">            this.createMasterForm();</span>
+        }
+<span class="nc" id="L110">    }</span>
+
+    /**
+     * Configure the &quot;add value&quot; button on input main field
+     *
+     * @return PickerIcon representing the &quot;add value&quot; button
+     */
+    private PickerIcon configureAddValueIcon() {
+<span class="nc" id="L118">        PickerIcon icon = new PickerIcon(PickerIconName.SEARCH, event -&gt; this.createAdditionalForm());</span>
+<span class="nc" id="L119">        icon.setSrc(ApplicationConstants.ICON_PICKER_MORE);</span>
+<span class="nc" id="L120">        icon.setHeight(20);</span>
+<span class="nc" id="L121">        icon.setWidth(20);</span>
+<span class="nc" id="L122">        icon.setPrompt(&quot;Add another value&quot;);</span>
+<span class="nc" id="L123">        return icon;</span>
+    }
+
+    /**
+     * Configure the &quot;remove value&quot; button on input additional fields
+     *
+     * @return PickerIcon representing the &quot;remove value&quot; button
+     */
+    private PickerIcon configureRemoveValueIcon() {
+<span class="nc" id="L132">        PickerIcon icon = new PickerIcon(PickerIconName.SEARCH, event -&gt; this.removeAddedForm(event.getForm()));</span>
+<span class="nc" id="L133">        icon.setSrc(ApplicationConstants.ICON_PICKER_LESS);</span>
+<span class="nc" id="L134">        icon.setHeight(20);</span>
+<span class="nc" id="L135">        icon.setWidth(20);</span>
+<span class="nc" id="L136">        icon.setPrompt(&quot;Remove value&quot;);</span>
+<span class="nc" id="L137">        return icon;</span>
+    }
+
+    /**
+     * Create and return a new input field and add it to this layout
+     *
+     * @param iconToAdd PickerIcon attached to created input field
+     * @return DynamicForm representing created input field
+     */
+    protected DynamicForm newForm(PickerIcon iconToAdd) {
+<span class="nc" id="L147">        final DynamicForm inputForm = new DynamicForm();</span>
+<span class="nc" id="L148">        final FormItem inputField = this.getFormItem();</span>
+<span class="nc" id="L149">        inputField.setName(MAIN_FIELD_NAME);</span>
+<span class="nc" id="L150">        this.addValueChangeHandler(inputField);</span>
+<span class="nc" id="L151">        inputForm.setFields(inputField);</span>
+<span class="nc" id="L152">        this.addMember(inputForm);</span>
+        // Add/remove value button
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if (iconToAdd != null) {</span>
+<span class="nc" id="L155">            inputField.addIcon(iconToAdd);</span>
+        }
+<span class="nc" id="L157">        return inputForm;</span>
+    }
+
+    /**
+     * Create master input field for current layout
+     *
+     * @see #newForm(PickerIcon)
+     */
+    protected void createMasterForm() {
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        this.masterForm = this.newForm(this.canAddValue ? this.addValueIcon : null);</span>
+<span class="nc" id="L167">    }</span>
+
+    /**
+     * Create an additional input field for current layout
+     *
+     * @see #newForm(PickerIcon)
+     */
+    protected void createAdditionalForm() {
+<span class="nc" id="L175">        DynamicForm additionalForm = this.newForm(this.removeValueIcon);</span>
+<span class="nc" id="L176">        this.additionalForms.add(additionalForm);</span>
+<span class="nc" id="L177">        this.onValueChanged();</span>
+<span class="nc" id="L178">    }</span>
+
+    /**
+     * Remove an additional input field from current layout
+     *
+     * @param formToRemove DynamicForm to remove
+     * @throws IllegalArgumentException if formToRemove is not in this.additionalForms
+     * @see #createAdditionalForm()
+     */
+    private void removeAddedForm(DynamicForm formToRemove) throws IllegalArgumentException {
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        if (!this.additionalForms.remove(formToRemove)) {</span>
+<span class="nc" id="L189">            throw new IllegalArgumentException(&quot;Provided form is not contained in this InputLayout's additional forms.&quot;);</span>
+        }
+<span class="nc" id="L191">        LaunchFormLayout.assertCondition(this.hasMember(formToRemove),</span>
+                &quot;Illegal state: provided additional form was found but is not a member of this InputLayout.&quot;);
+<span class="nc" id="L193">        this.removeMember(formToRemove);</span>
+<span class="nc" id="L194">        this.onValueChanged();</span>
+<span class="nc" id="L195">    }</span>
+
+    /**
+     * Add a changed handler to given FormItem, to make it call this.onValueChanged (dependencies check) on change
+     *
+     * @param mainField FormItem
+     */
+    protected void addValueChangeHandler(FormItem mainField) {
+<span class="nc" id="L203">        mainField.addChangedHandler(changedEvent -&gt; this.onValueChanged(mainField));</span>
+<span class="nc" id="L204">    }</span>
+
+    /**
+     * Make target InputLayout disabled when this has non empty value
+     *
+     * @param disabledInput Target InputLayout
+     */
+    public void addDisables(InputLayout disabledInput) {
+<span class="nc" id="L212">        this.disables.add(disabledInput);</span>
+<span class="nc" id="L213">        disabledInput.addDisabledBy(this);</span>
+<span class="nc" id="L214">        disabledInput.checkDependencies();</span>
+<span class="nc" id="L215">    }</span>
+
+    /**
+     * Make this disabled when target InputLayout has non empty value
+     *
+     * @param disablingInput Target InputLayout
+     */
+    protected void addDisabledBy(InputLayout disablingInput) {
+<span class="nc" id="L223">        this.disabledBy.add(disablingInput);</span>
+<span class="nc" id="L224">    }</span>
+
+    /**
+     * Make this disabled when target ValueChoiceInputLayout has specified value
+     *
+     * @param disablingInput Target InputLayout
+     * @param disablingValue String representing specified value
+     */
+    protected void addDisabledByValue(ValueChoiceInputLayout disablingInput, String disablingValue) {
+<span class="nc" id="L233">        addToSetInMap(this.disabledByValue, disablingInput, disablingValue);</span>
+<span class="nc" id="L234">    }</span>
+
+    /**
+     * Make this disabled when target InputLayout has empty value
+     *
+     * @param requiredInput Target InputLayout
+     */
+    public void addRequires(InputLayout requiredInput) {
+<span class="nc" id="L242">        this.requires.add(requiredInput);</span>
+<span class="nc" id="L243">        requiredInput.addRequiredBy(this);</span>
+<span class="nc" id="L244">        this.checkDependencies();</span>
+<span class="nc" id="L245">    }</span>
+
+    /**
+     * Make target InputLayout disabled when this has empty value
+     *
+     * @param requiringInput Target InputLayout
+     */
+    protected void addRequiredBy(InputLayout requiringInput) {
+<span class="nc" id="L253">        this.requiredBy.add(requiringInput);</span>
+<span class="nc" id="L254">    }</span>
+
+    /**
+     * Make specified value from target ValueChoiceInputLayout invalid when this has empty value
+     *
+     * @param requiringInput Target InputLayout
+     * @param requiringValue String representing specified value
+     */
+    protected void addRequiredByValue(ValueChoiceInputLayout requiringInput, String requiringValue) {
+<span class="nc" id="L263">        addToSetInMap(this.requiredByValue, requiringInput, requiringValue);</span>
+<span class="nc" id="L264">    }</span>
+
+    /**
+     * Check dependencies with other inputs to enable or disable this as appropriate
+     */
+    protected void checkDependencies() {
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        if (!this.hasUniqueValue()) {</span>
+<span class="nc" id="L271">            return;</span>
+        }
+<span class="nc" id="L273">        boolean wasEmpty = this.isMasterEmpty();</span>
+        // Find all inputs that can cause this to be disabled
+<span class="nc" id="L275">        Set&lt;String&gt; disablingInputNames = this.filledDisablingInputs();</span>
+<span class="nc" id="L276">        Set&lt;String&gt; requiredInputNames = this.emptyRequiredInputs();</span>
+<span class="nc" id="L277">        Map&lt;String, String&gt; disablingValues = this.disablingInputValues();</span>
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if ((disablingInputNames.size() + requiredInputNames.size() + disablingValues.size()) == 0) {</span>
+<span class="nc" id="L279">            this.enableInput();</span>
+        } else {
+            // Disable input, with a help hover message explaining why
+<span class="nc" id="L282">            StringBuilder disabledHoverMessage = new StringBuilder(&quot;This value will be ignored because :&lt;ul&gt;&quot;);</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">            if (disablingInputNames.size() &gt; 0) {</span>
+<span class="nc" id="L284">                disabledHoverMessage.append(&quot;&lt;li&gt;following input(s) are non-empty: &quot;)</span>
+<span class="nc" id="L285">                        .append(disablingInputNames)</span>
+<span class="nc" id="L286">                        .append(&quot;.&lt;/li&gt;&quot;);</span>
+            }
+<span class="nc bnc" id="L288" title="All 2 branches missed.">            if (requiredInputNames.size() &gt; 0) {</span>
+<span class="nc" id="L289">                disabledHoverMessage.append(&quot;&lt;li&gt;following input(s) are empty: &quot;)</span>
+<span class="nc" id="L290">                        .append(requiredInputNames)</span>
+<span class="nc" id="L291">                        .append(&quot;.&lt;/li&gt;&quot;);</span>
+            }
+<span class="nc bnc" id="L293" title="All 2 branches missed.">            if (disablingValues.size() &gt; 0) {</span>
+<span class="nc" id="L294">                disablingValues.forEach(</span>
+<span class="nc" id="L295">                        (inputName, value) -&gt; disabledHoverMessage.append(&quot;&lt;li&gt;input [&quot;)</span>
+<span class="nc" id="L296">                                .append(inputName)</span>
+<span class="nc" id="L297">                                .append(&quot;] has value &quot;)</span>
+<span class="nc" id="L298">                                .append(value)</span>
+<span class="nc" id="L299">                                .append(&quot;.&lt;/li&gt;&quot;));</span>
+            }
+<span class="nc bnc" id="L301" title="All 2 branches missed.">            for (FormItem field : this.masterForm.getFields()) {</span>
+<span class="nc" id="L302">                field.disable();</span>
+<span class="nc" id="L303">                field.setPrompt(disabledHoverMessage.toString());</span>
+            }
+        }
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        if (this.isMasterEmpty() != wasEmpty) {</span>
+            // Status changed, this may enable/disable dependent inputs
+<span class="nc" id="L308">            this.onValueChanged();</span>
+        }
+<span class="nc" id="L310">    }</span>
+
+    /**
+     * @return Set of Strings representing names of inputs that are non empty and disable this.
+     */
+    protected Set&lt;String&gt; filledDisablingInputs() {
+<span class="nc" id="L316">        return this.disabledBy.stream()</span>
+<span class="nc" id="L317">                .filter(InputLayout::isUniqueFilled)</span>
+<span class="nc" id="L318">                .map(InputLayout::getInputName)</span>
+<span class="nc" id="L319">                .collect(Collectors.toSet());</span>
+    }
+
+    /**
+     * @return Set of Strings representing names of inputs that are empty and required by this (thus disabling this).
+     */
+    protected Set&lt;String&gt; emptyRequiredInputs() {
+<span class="nc" id="L326">        return this.requires.stream()</span>
+<span class="nc" id="L327">                .filter(InputLayout::isUniqueEmpty)</span>
+<span class="nc" id="L328">                .map(InputLayout::getInputName)</span>
+<span class="nc" id="L329">                .collect(Collectors.toSet());</span>
+    }
+
+    /**
+     * @return Map of Strings representing inputs for which current value disables this. Keys are input names and values
+     * are corresponding current values
+     */
+    protected Map&lt;String, String&gt; disablingInputValues() {
+<span class="nc" id="L337">        Map&lt;String, String&gt; disablingValues = new TreeMap&lt;&gt;();</span>
+<span class="nc" id="L338">        this.disabledByValue.forEach((disablingInput, disablingValueSet) -&gt; {</span>
+<span class="nc bnc" id="L339" title="All 2 branches missed.">            if (disablingInput.isUniqueFilled()) {</span>
+<span class="nc" id="L340">                Object masterValue = ValueList.formValue(disablingInput.masterForm);</span>
+<span class="nc bnc" id="L341" title="All 2 branches missed.">                LaunchFormLayout.assertCondition(masterValue != null,</span>
+                        &quot;Illegal state: master input field is not empty but has null value.&quot;);
+<span class="nc" id="L343">                String currentValue = masterValue.toString();</span>
+<span class="nc bnc" id="L344" title="All 2 branches missed.">                if (disablingValueSet.contains(currentValue)) {</span>
+<span class="nc" id="L345">                    disablingValues.put(disablingInput.getInputName(), currentValue);</span>
+                }
+            }
+<span class="nc" id="L348">        });</span>
+<span class="nc" id="L349">        return disablingValues;</span>
+    }
+
+    /**
+     * Enable, disable and validate this as well as dependant inputs. Meant to be called each time a modification
+     * happens on the values tracked by this (value changed by user, addition or removal of an additional form...)
+     *
+     * @param focusedItem FormItem currently focused, in order to give it focus back after validation of inputs
+     * @see #onValueChanged()
+     */
+    protected void onValueChanged(FormItem focusedItem) {
+<span class="nc" id="L360">        this.onValueChanged();</span>
+<span class="nc" id="L361">        focusedItem.focusInItem();</span>
+<span class="nc" id="L362">    }</span>
+
+    /**
+     * Enable, disable and validate this as well as dependant inputs. Meant to be called each time a modification
+     * happens on the values tracked by this (value changed by user, addition or removal of an additional form...)
+     */
+    protected void onValueChanged() {
+<span class="nc bnc" id="L369" title="All 2 branches missed.">        if (this.hasUniqueValue()) {</span>
+<span class="nc" id="L370">            this.parentLayout.removeUnsupportedDependencies(this.getInputId());</span>
+
+<span class="nc" id="L372">            this.checkDependencies();</span>
+        } else {
+<span class="nc" id="L374">            this.parentLayout.addUnsupportedDependencies(this);</span>
+<span class="nc" id="L375">            this.enableInput();</span>
+        }
+
+<span class="nc" id="L378">        this.disables.forEach(InputLayout::checkDependencies);</span>
+<span class="nc" id="L379">        this.requiredBy.forEach(InputLayout::checkDependencies);</span>
+        // Value-requires does not enable/disable target inputs, but only produces validation errors, thus we call
+        // validateInput, not checkDependencies
+<span class="nc" id="L382">        this.requiredByValue.keySet().forEach(ValueChoiceInputLayout::validateInput);</span>
+<span class="nc" id="L383">        this.validateInput();</span>
+<span class="nc" id="L384">        this.parentLayout.validateGroups();</span>
+<span class="nc" id="L385">    }</span>
+
+    /**
+     * Enable main field (additional fields cannot be disabled
+     */
+    protected void enableInput() {
+<span class="nc bnc" id="L391" title="All 2 branches missed.">        for (FormItem field : this.masterForm.getFields()) {</span>
+<span class="nc" id="L392">            field.setPrompt(null);</span>
+<span class="nc" id="L393">            field.enable();</span>
+        }
+<span class="nc" id="L395">    }</span>
+
+
+    public void makeUnmodifiablePermanently() {
+<span class="nc" id="L399">        this.unmodifiable = true;</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">        for (FormItem field : masterForm.getFields()) {</span>
+<span class="nc" id="L401">            field.disable();</span>
+<span class="nc" id="L402">            field.setPrompt(&quot;This input cannot be changed&quot;);</span>
+<span class="nc" id="L403">            field.setAttribute(UNMODIFIABLE_ATTR, true);</span>
+        }
+<span class="nc" id="L405">    }</span>
+
+    public void disableAddingValue() {
+<span class="nc" id="L408">        this.canAddValue = false;</span>
+<span class="nc" id="L409">        this.masterForm.getField(MAIN_FIELD_NAME).setIcons();</span>
+<span class="nc" id="L410">    }</span>
+
+    /**
+     * Validate this, and update parentLayout invalid inputs error message as appropriate
+     */
+    protected void validateInput() {
+<span class="nc bnc" id="L416" title="All 4 branches missed.">        if (this.masterForm.validate(false) &amp;&amp; validateAdditionalForms()) {</span>
+<span class="nc" id="L417">            this.parentLayout.removeValidationErrorOnInput(this);</span>
+        } else {
+<span class="nc" id="L419">            this.parentLayout.addValidationErrorOnInput(this);</span>
+        }
+<span class="nc" id="L421">    }</span>
+
+    /**
+     * @return boolean: true if all additional fields in this have valid values, else otherwise
+     */
+    protected boolean validateAdditionalForms() {
+<span class="nc" id="L427">        long nValidForms = this.additionalForms.stream()</span>
+<span class="nc" id="L428">                .filter(DynamicForm::validate)</span>
+<span class="nc" id="L429">                .count();</span>
+<span class="nc bnc" id="L430" title="All 2 branches missed.">        return this.additionalForms.size() == nValidForms;</span>
+    }
+
+    /**
+     * Overwrite current values with given valueSet
+     *
+     * @param valueList ValueSet containing values to write
+     */
+    public void overwriteValues(ValueSet valueList) {
+<span class="nc" id="L439">        int nValues = valueList.getNValues();</span>
+<span class="nc" id="L440">        this.setValue(this.masterForm, valueList.getValueNo(0));</span>
+        // Add or remove additional fields as needed
+<span class="nc bnc" id="L442" title="All 2 branches missed.">        while (this.additionalForms.size() &lt; (nValues - 1)) {</span>
+<span class="nc" id="L443">            this.createAdditionalForm();</span>
+        }
+<span class="nc bnc" id="L445" title="All 2 branches missed.">        while (this.additionalForms.size() &gt; (nValues - 1)) {</span>
+<span class="nc" id="L446">            this.removeAddedForm(this.additionalForms.get(0));</span>
+        }
+<span class="nc bnc" id="L448" title="All 2 branches missed.">        LaunchFormLayout.assertCondition(this.additionalForms.size() == (nValues - 1),</span>
+                &quot;Illegal state: form number still doesn't match the number of provided values.&quot;);
+        // Overwrite additional form values
+<span class="nc bnc" id="L451" title="All 2 branches missed.">        for (int valueNo = 1; valueNo &lt; nValues; valueNo++) {</span>
+<span class="nc" id="L452">            this.setValue(this.additionalForms.get(valueNo - 1), valueList.getValueNo(valueNo));</span>
+        }
+        // Check dependencies
+<span class="nc" id="L455">        this.onValueChanged();</span>
+<span class="nc" id="L456">    }</span>
+
+    /**
+     * Overwrite given input field with provided value
+     *
+     * @param overWrittenForm DynamicForm representing the input field to overwrite
+     * @param value           Object representing the value to write
+     */
+    protected void setValue(DynamicForm overWrittenForm, Object value) {
+<span class="nc" id="L465">        overWrittenForm.getField(MAIN_FIELD_NAME).setValue(value);</span>
+<span class="nc" id="L466">    }</span>
+
+    /**
+     * @return boolean: true if this input currently displays only one input field (unique value).
+     */
+    public boolean hasUniqueValue() {
+<span class="nc bnc" id="L472" title="All 2 branches missed.">        return (this.additionalForms.size() &lt;= 0);</span>
+    }
+
+    /**
+     * @return boolean: true if main input field is empty
+     */
+    public boolean isMasterEmpty() {
+<span class="nc bnc" id="L479" title="All 2 branches missed.">        return (ValueList.formValue(this.masterForm) == null);</span>
+    }
+
+    /**
+     * @return boolean: true if main input field is empty AND this has no additional input field
+     * @see #hasUniqueValue()
+     * @see #isMasterEmpty()
+     */
+    public boolean isUniqueEmpty() {
+<span class="nc bnc" id="L488" title="All 4 branches missed.">        return this.hasUniqueValue() &amp;&amp; this.isMasterEmpty();</span>
+    }
+
+    /**
+     * @return boolean: true if main input field is non empty AND this has no additional input field
+     * @see #hasUniqueValue()
+     * @see #isMasterEmpty()
+     */
+    public boolean isUniqueFilled() {
+<span class="nc bnc" id="L497" title="All 4 branches missed.">        return this.hasUniqueValue() &amp;&amp; !this.isMasterEmpty();</span>
+    }
+
+    /**
+     * @return ValueSet representing current values of this input
+     */
+    public ValueSet getValueList() {
+<span class="nc" id="L504">        return new ValueList(this.masterForm, this.additionalForms);</span>
+    }
+
+    /**
+     * @return Human-readable input name as String
+     */
+    public String getInputName() {
+<span class="nc" id="L511">        return this.input.getName();</span>
+    }
+
+    /**
+     * @return Unique input ID as String
+     */
+    public String getInputId() {
+<span class="nc" id="L518">        return this.input.getId();</span>
+    }
+
+    /**
+     * @return boolean: true if this is an optional input
+     */
+    public boolean isOptional() {
+<span class="nc" id="L525">        return this.input.isOptional();</span>
+    }
+
+    /**
+     * @return Object representing this input's default value
+     */
+    public Object getDefaultValue() {
+<span class="nc" id="L532">        return this.input.getDefaultValue();</span>
+    }
+
+    /**
+     * @return Set of InputLayouts that need to be non empty for this to be active
+     */
+    public Set&lt;InputLayout&gt; getRequires() {
+<span class="nc" id="L539">        return this.requires;</span>
+    }
+
+    /**
+     * @return Set of InputLayouts that are disabled when this is empty
+     */
+    public Set&lt;InputLayout&gt; getRequiredBy() {
+<span class="nc" id="L546">        return this.requiredBy;</span>
+    }
+
+    /**
+     * @return Set of InputLayouts that are disabled when this is non empty
+     */
+    public Set&lt;InputLayout&gt; getDisables() {
+<span class="nc" id="L553">        return this.disables;</span>
+    }
+
+    /**
+     * @return Set of InputLayouts that need to be empty for this to be active
+     */
+    public Set&lt;InputLayout&gt; getDisabledBy() {
+<span class="nc" id="L560">        return this.disabledBy;</span>
+    }
+
+    /**
+     * @return Map of InputLayouts that need this to be non empty to allow selection of certain values. Keys are
+     * dependant InputLayouts, and values are Sets of Strings representing their dependant values
+     */
+    public Map&lt;InputLayout, Set&lt;String&gt;&gt; getRequiredByValue() {
+<span class="nc" id="L568">        return new HashMap&lt;&gt;(this.requiredByValue);</span>
+    }
+
+    /**
+     * @return Map of InputLayouts for which certain values disable this. Keys are these InputLayouts, and values are
+     * Sets of Strings representing their values disabling this
+     */
+    public Map&lt;InputLayout, Set&lt;String&gt;&gt; getDisabledByValue() {
+<span class="nc" id="L576">        return new HashMap&lt;&gt;(this.disabledByValue);</span>
+    }
+
+    /**
+     * @return FormItem representing an input field for this input
+     */
+    protected abstract FormItem getFormItem();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

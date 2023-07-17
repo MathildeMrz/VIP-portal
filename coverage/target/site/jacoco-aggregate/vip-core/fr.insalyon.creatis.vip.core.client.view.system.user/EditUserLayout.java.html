@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EditUserLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.client.view.system.user</a> &gt; <span class="el_source">EditUserLayout.java</span></div><h1>EditUserLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.client.view.system.user;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.MultipleAppearance;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.CheckboxItem;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.SpinnerItem;
+import fr.insalyon.creatis.vip.core.client.bean.Group;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants.GROUP_ROLE;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.user.UserLevel;
+import fr.insalyon.creatis.vip.core.client.view.util.CountryCode;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class EditUserLayout extends AbstractFormLayout {
+
+    private Label nameLabel;
+    private Label emailLabel;
+    private SelectItem levelPickList;
+    private SelectItem groupsPickList;
+    private SelectItem countryPickList;
+    private SpinnerItem maxRunningSimulationsItem;
+    private CheckboxItem confirmedField;
+    private CheckboxItem lockedField;
+    private IButton saveButton;
+
+    public EditUserLayout() {
+
+<span class="nc" id="L77">        super(380, 300);</span>
+<span class="nc" id="L78">        addTitle(&quot;Edit User&quot;, CoreConstants.ICON_PERSONAL);</span>
+
+<span class="nc" id="L80">        configure();</span>
+<span class="nc" id="L81">        loadData();</span>
+<span class="nc" id="L82">    }</span>
+
+    private void configure() {
+
+<span class="nc" id="L86">        nameLabel = WidgetUtil.getLabel(&quot;&quot;, 15);</span>
+<span class="nc" id="L87">        nameLabel.setCanSelectText(true);</span>
+
+<span class="nc" id="L89">        emailLabel = WidgetUtil.getLabel(&quot;&quot;, 15);</span>
+<span class="nc" id="L90">        emailLabel.setCanSelectText(true);</span>
+
+<span class="nc" id="L92">        levelPickList = new SelectItem();</span>
+<span class="nc" id="L93">        levelPickList.setShowTitle(false);</span>
+<span class="nc" id="L94">        levelPickList.setWidth(350);</span>
+<span class="nc" id="L95">        levelPickList.setRequired(true);</span>
+
+<span class="nc" id="L97">        groupsPickList = new SelectItem();</span>
+<span class="nc" id="L98">        groupsPickList.setShowTitle(false);</span>
+<span class="nc" id="L99">        groupsPickList.setMultiple(true);</span>
+<span class="nc" id="L100">        groupsPickList.setMultipleAppearance(MultipleAppearance.PICKLIST);</span>
+<span class="nc" id="L101">        groupsPickList.setWidth(350);</span>
+
+<span class="nc" id="L103">        countryPickList = new SelectItem();</span>
+<span class="nc" id="L104">        countryPickList.setShowTitle(false);</span>
+<span class="nc" id="L105">        countryPickList.setValueMap(CountryCode.getCountriesMap());</span>
+<span class="nc" id="L106">        countryPickList.setValueIcons(CountryCode.getCodesMap());</span>
+<span class="nc" id="L107">        countryPickList.setImageURLPrefix(CoreConstants.FOLDER_FLAGS);</span>
+<span class="nc" id="L108">        countryPickList.setImageURLSuffix(&quot;.png&quot;);</span>
+<span class="nc" id="L109">        countryPickList.setRequired(true);</span>
+<span class="nc" id="L110">        countryPickList.setWidth(350);</span>
+
+<span class="nc" id="L112">        maxRunningSimulationsItem = new SpinnerItem();</span>
+<span class="nc" id="L113">        maxRunningSimulationsItem.setShowTitle(false);</span>
+<span class="nc" id="L114">        maxRunningSimulationsItem.setDefaultValue(1);</span>
+<span class="nc" id="L115">        maxRunningSimulationsItem.setMin(1);</span>
+<span class="nc" id="L116">        maxRunningSimulationsItem.setMax(100);</span>
+<span class="nc" id="L117">        maxRunningSimulationsItem.setStep(1);</span>
+
+<span class="nc" id="L119">        confirmedField = new CheckboxItem();</span>
+<span class="nc" id="L120">        confirmedField.setTitle(&quot;Confirmed&quot;);</span>
+<span class="nc" id="L121">        confirmedField.setDisabled(true);</span>
+<span class="nc" id="L122">        confirmedField.setWidth(350);</span>
+
+<span class="nc" id="L124">        lockedField = new CheckboxItem();</span>
+<span class="nc" id="L125">        lockedField.setTitle(&quot;Locked&quot;);</span>
+<span class="nc" id="L126">        lockedField.setDisabled(false);</span>
+<span class="nc" id="L127">        lockedField.setWidth(350);</span>
+
+<span class="nc" id="L129">        saveButton = WidgetUtil.getIButton(&quot;Save&quot;, CoreConstants.ICON_SAVED,</span>
+<span class="nc" id="L130">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                        if (levelPickList.validate() &amp; countryPickList.validate()) {</span>
+
+<span class="nc" id="L135">                            String[] values = groupsPickList.getValues();</span>
+<span class="nc" id="L136">                            Map&lt;String, CoreConstants.GROUP_ROLE&gt; map = new HashMap&lt;String, CoreConstants.GROUP_ROLE&gt;();</span>
+
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                            for (String v : values) {</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">                                if (v.equals(CoreConstants.GROUP_SUPPORT)) {</span>
+<span class="nc" id="L140">                                    map.put(v, CoreConstants.GROUP_ROLE.User);</span>
+
+                                } else {
+<span class="nc" id="L143">                                    String name = v.substring(0, v.indexOf(&quot; (&quot;));</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">                                    CoreConstants.GROUP_ROLE role = v.contains(&quot;(&quot;</span>
+<span class="nc" id="L145">                                            + CoreConstants.GROUP_ROLE.Admin.name() + &quot;)&quot;)</span>
+<span class="nc" id="L146">                                            ? CoreConstants.GROUP_ROLE.Admin</span>
+<span class="nc" id="L147">                                            : CoreConstants.GROUP_ROLE.User;</span>
+
+<span class="nc bnc" id="L149" title="All 4 branches missed.">                                    if (map.get(name) == null || role == CoreConstants.GROUP_ROLE.Admin) {</span>
+<span class="nc" id="L150">                                        map.put(name, role);</span>
+                                    }
+                                }
+                            }
+<span class="nc" id="L154">                            save(emailLabel.getContents(),</span>
+<span class="nc" id="L155">                                    UserLevel.valueOf(levelPickList.getValueAsString()),</span>
+<span class="nc" id="L156">                                    CountryCode.valueOf(countryPickList.getValueAsString()),</span>
+<span class="nc" id="L157">                                    Integer.parseInt(maxRunningSimulationsItem.getValueAsString()),</span>
+<span class="nc" id="L158">                                    map, lockedField.getValueAsBoolean());</span>
+                        }
+<span class="nc" id="L160">                    }</span>
+                });
+<span class="nc" id="L162">        saveButton.setDisabled(true);</span>
+
+<span class="nc" id="L164">        this.addMember(nameLabel);</span>
+<span class="nc" id="L165">        this.addMember(emailLabel);</span>
+<span class="nc" id="L166">        addField(&quot;Level&quot;, levelPickList);</span>
+<span class="nc" id="L167">        addField(&quot;Groups&quot;, groupsPickList);</span>
+<span class="nc" id="L168">        addField(&quot;Country&quot;, countryPickList);</span>
+<span class="nc" id="L169">        addField(&quot;Max Running Simulations&quot;, maxRunningSimulationsItem);</span>
+<span class="nc" id="L170">        this.addMember(FieldUtil.getForm(confirmedField));</span>
+<span class="nc" id="L171">        this.addMember(FieldUtil.getForm(lockedField));</span>
+<span class="nc" id="L172">        this.addMember(saveButton);</span>
+<span class="nc" id="L173">    }</span>
+
+    /**
+     * Sets a user to edit.
+     *
+     * @param name                  User's name
+     * @param email                 User's email
+     * @param confirmed             If the user confirmed his account
+     * @param level                 User's level
+     * @param countryCode           User's country code
+     * @param maxRunningSimulations User's max running simulations
+     * @param locked                True if user is locked
+     */
+    public void setUser(String name, String email, boolean confirmed,
+                        String level, String countryCode, int maxRunningSimulations, boolean locked) {
+
+<span class="nc" id="L189">        this.nameLabel.setContents(name);</span>
+<span class="nc" id="L190">        this.emailLabel.setContents(email);</span>
+<span class="nc" id="L191">        this.confirmedField.setValue(confirmed);</span>
+<span class="nc" id="L192">        this.lockedField.setValue(locked);</span>
+<span class="nc" id="L193">        this.levelPickList.setValue(level);</span>
+<span class="nc" id="L194">        this.countryPickList.setValue(countryCode);</span>
+<span class="nc" id="L195">        this.maxRunningSimulationsItem.setValue(maxRunningSimulations);</span>
+
+<span class="nc" id="L197">        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L198">        final AsyncCallback&lt;Map&lt;Group, GROUP_ROLE&gt;&gt; callback = new AsyncCallback&lt;Map&lt;Group, GROUP_ROLE&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L201">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of groups:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L202">            }</span>
+
+            @Override
+            public void onSuccess(Map&lt;Group, GROUP_ROLE&gt; result) {
+
+<span class="nc" id="L207">                List&lt;String&gt; userGroups = new ArrayList&lt;String&gt;();</span>
+
+<span class="nc bnc" id="L209" title="All 2 branches missed.">                for (Group group : result.keySet()) {</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">                    if (result.get(group) != CoreConstants.GROUP_ROLE.None) {</span>
+<span class="nc" id="L211">                        userGroups.add(</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">                                group.getName().equals(CoreConstants.GROUP_SUPPORT)</span>
+<span class="nc" id="L213">                                        ? group.getName()</span>
+<span class="nc" id="L214">                                        : group.getName() + &quot; (&quot; + result.get(group).name() + &quot;)&quot;);</span>
+                    }
+<span class="nc" id="L216">                }</span>
+<span class="nc" id="L217">                groupsPickList.setValues(userGroups.toArray(new String[]{}));</span>
+<span class="nc" id="L218">                saveButton.setDisabled(false);</span>
+<span class="nc" id="L219">            }</span>
+        };
+<span class="nc" id="L221">        service.getUserGroups(email, callback);</span>
+<span class="nc" id="L222">    }</span>
+
+    /**
+     * @param email  User's email
+     * @param level  User's level
+     * @param groups List of groups
+     */
+    private void save(String email, UserLevel level, CountryCode countryCode,
+                      int maxRunningSimulations, Map&lt;String, CoreConstants.GROUP_ROLE&gt; groups, boolean locked) {
+
+<span class="nc" id="L232">        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L233">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L236">                WidgetUtil.resetIButton(saveButton, &quot;Save&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L237">                Layout.getInstance().setWarningMessage(&quot;Unable to update user:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L238">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L242">                WidgetUtil.resetIButton(saveButton, &quot;Save&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L243">                saveButton.setDisabled(true);</span>
+<span class="nc" id="L244">                nameLabel.setContents(&quot;&quot;);</span>
+<span class="nc" id="L245">                emailLabel.setContents(&quot;&quot;);</span>
+<span class="nc" id="L246">                levelPickList.setValues(new String[]{});</span>
+<span class="nc" id="L247">                groupsPickList.setValues(new String[]{});</span>
+<span class="nc" id="L248">                countryPickList.setValues(new String[]{});</span>
+<span class="nc" id="L249">                confirmedField.setValue(false);</span>
+<span class="nc" id="L250">                lockedField.setValue(false);</span>
+<span class="nc" id="L251">                ((ManageUsersTab) Layout.getInstance().getTab(CoreConstants.TAB_MANAGE_USERS)).loadUsers();</span>
+<span class="nc" id="L252">                Layout.getInstance().setNoticeMessage(&quot;User successfully updated.&quot;);</span>
+<span class="nc" id="L253">            }</span>
+        };
+<span class="nc" id="L255">        WidgetUtil.setLoadingIButton(saveButton, &quot;Updating user...&quot;);</span>
+<span class="nc" id="L256">        service.updateUser(email, level, countryCode, maxRunningSimulations, groups, locked, callback);</span>
+<span class="nc" id="L257">    }</span>
+
+    /**
+     * Loads list of groups.
+     */
+    private void loadData() {
+
+<span class="nc" id="L264">        levelPickList.setValueMap(UserLevel.toStringArray());</span>
+
+<span class="nc" id="L266">        ConfigurationServiceAsync service = ConfigurationService.Util.getInstance();</span>
+<span class="nc" id="L267">        final AsyncCallback&lt;List&lt;Group&gt;&gt; callback = new AsyncCallback&lt;List&lt;Group&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L270">                Layout.getInstance().setWarningMessage(&quot;Unable to get groups list:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L271">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Group&gt; result) {
+
+<span class="nc" id="L276">                List&lt;String&gt; dataList = new ArrayList&lt;String&gt;();</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">                for (Group g : result) {</span>
+<span class="nc bnc" id="L278" title="All 2 branches missed.">                    if (g.getName().equals(CoreConstants.GROUP_SUPPORT)) {</span>
+<span class="nc" id="L279">                        dataList.add(g.getName());</span>
+                    } else {
+<span class="nc" id="L281">                        dataList.add(g.getName() + &quot; (&quot; + CoreConstants.GROUP_ROLE.Admin.name() + &quot;)&quot;);</span>
+<span class="nc" id="L282">                        dataList.add(g.getName() + &quot; (&quot; + CoreConstants.GROUP_ROLE.User.name() + &quot;)&quot;);</span>
+                    }
+<span class="nc" id="L284">                }</span>
+<span class="nc" id="L285">                groupsPickList.setValueMap(dataList.toArray(new String[]{}));</span>
+<span class="nc" id="L286">            }</span>
+        };
+<span class="nc" id="L288">        service.getGroups(callback);</span>
+<span class="nc" id="L289">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
