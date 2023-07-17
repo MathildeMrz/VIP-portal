@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 
 import java.io.UnsupportedEncodingException;
@@ -68,6 +69,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class SpringAuthenticationIT extends BaseWebSpringIT {
 
     @Autowired
+    @Qualifier("mockUserDAO")
     UserDAO userDAO;
 
     @BeforeEach

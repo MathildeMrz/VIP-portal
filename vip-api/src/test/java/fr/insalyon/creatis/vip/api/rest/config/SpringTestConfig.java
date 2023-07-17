@@ -94,7 +94,7 @@ public class SpringTestConfig {
         return Mockito.mock(SimulationBusiness.class);
     }
 
-    @Bean
+    /*@Bean
     public LFCBusiness lfcBusiness() {
         return Mockito.mock(LFCBusiness.class);
     }
@@ -102,7 +102,7 @@ public class SpringTestConfig {
     @Bean
     public LfcPathsBusiness lfcPathsBusiness() {
         return Mockito.mock(LfcPathsBusiness.class);
-    }
+    }*/
 
     @Bean
     public LFCPermissionBusiness lfcPermissionBusiness() {

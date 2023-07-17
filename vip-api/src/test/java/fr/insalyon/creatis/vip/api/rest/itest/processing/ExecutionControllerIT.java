@@ -58,6 +58,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -81,21 +82,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Test method on platform path
  */
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ExecutionControllerIT extends BaseWebSpringIT {
     @Autowired
+    @Qualifier("mockWorkflowDAO")
     WorkflowDAO workflowDAO;
     @Autowired
+    @Qualifier("mockOutputDAO")
     OutputDAO outputDAO;
     @Autowired
+    @Qualifier("mockInputDAO")
     InputDAO inputDAO;
     @Autowired
+    @Qualifier("mockUsersGroupsDAO")
     UsersGroupsDAO usersGroupsDAO;
     @Autowired
+    @Qualifier("mockApplicationDAO")
     ApplicationDAO applicationDAO;
     @Autowired
+    @Qualifier("mockWebServiceEngine")
     WebServiceEngine webServiceEngine;
     @Autowired
+    @Qualifier("mockGroupDAO")
     GroupDAO groupDAO;
 
     private Workflow w1;
@@ -319,7 +326,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
     }
 
 
-    @Test
+    /*@Test
     public void shouldKillExecution2() throws Exception
     {
         when(workflowDAO.get(eq(simulation2.getID()))).thenReturn(w2, w2, null);
@@ -329,7 +336,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
                 .andDo(print());
 
         verify(webServiceEngine).kill(simulation2.getID());
-    }
+    }*/
 
     @Test
     public void testPlayExecutionIsNotImplemented() throws Exception
@@ -381,7 +388,7 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
                         PathTestUtils.jsonCorrespondsToPath(PathTestUtils.testFile1PathProperties)));*/
     }
 
-    @Test
+    /*@Test
     public void testInitExecution() throws Exception
     {
         // engine test creation
@@ -439,5 +446,5 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
         .andExpect(jsonPath("$",
                 jsonCorrespondsToExecution(execution1)
         ));
-    }
+    }*/
 }

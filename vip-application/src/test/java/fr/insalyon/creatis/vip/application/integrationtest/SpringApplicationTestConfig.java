@@ -27,86 +27,80 @@ public class SpringApplicationTestConfig {
 
 
     @Bean
-    @Primary
-    public WorkflowsDBDAOFactory workflowsDBDAOFactory() {
+    //@Primary
+    public WorkflowsDBDAOFactory mockWorkflowsDBDAOFactory() {
         return Mockito.mock(WorkflowsDBDAOFactory.class);
     }
 
     @Bean
-    @Primary
-    public SessionFactory sessionFactory() {
+    //@Primary
+    public SessionFactory mockSessionFactory() {
         return Mockito.mock(SessionFactory.class);
     }
 
     @Bean
-    @Primary
-    public WorkflowDAO getTestWorkflowDAO() {
+    //@Primary
+    public WorkflowDAO mockWorkflowDAO() {
         return Mockito.mock(WorkflowDAO.class);
     }
 
     @Bean
-    @Primary
-    public ProcessorDAO getTestProcessorDAO() {
+    //@Primary
+    public ProcessorDAO mockProcessorDAO() {
         return Mockito.mock(ProcessorDAO.class);
     }
 
     @Bean
-    @Primary
-    public OutputDAO getTestOutputDAO() {return Mockito.mock(OutputDAO.class);}
+    //@Primary
+    public OutputDAO mockOutputDAO() {return Mockito.mock(OutputDAO.class);}
 
     @Bean
-    @Primary
-    public UsersGroupsDAO getTestUsersGroupsDAO() {
+    //@Primary
+    public UsersGroupsDAO mockUsersGroupsDAO() {
         return Mockito.mock(UsersGroupsDAO.class);
     }
 
     @Bean
     //@Primary
-    public UserDAO getTestUserDAO() {return Mockito.mock(UserDAO.class);}
+    public UserDAO mockUserDAO() {return Mockito.mock(UserDAO.class);}
 
     @Bean
-    @Primary
-    public InputDAO getTestInputDAO() {
+    //@Primary
+    public InputDAO mockInputDAO() {
         return Mockito.mock(InputDAO.class);
     }
 
     @Bean
-    @Primary
-    public StatsDAO getTestStatsDAO() {return Mockito.mock(StatsDAO.class);}
+    //@Primary
+    public StatsDAO mockStatsDAO() {return Mockito.mock(StatsDAO.class);}
 
     @Bean
     //@Primary
-    public ApplicationDAO getTestApplicationDAO() {
+    public ApplicationDAO mockApplicationDAO() {
         return Mockito.mock(ApplicationDAO.class);
     }
 
     @Bean
-    @Primary
-    public WebServiceEngine getTestWebServiceEngine() {
+    //@Primary
+    public WebServiceEngine mockWebServiceEngine() {
         return Mockito.mock(WebServiceEngine.class);
     }
 
     @Bean
     //@Primary
-    public GroupDAO getTestGroupDAO() {
+    public GroupDAO mockGroupDAO() {
         return Mockito.mock(GroupDAO.class);
     }
 
     @Bean
     //@Primary
-    public ClassDAO getTestClassDAO() {
+    public ClassDAO mockClassDAO() {
         return Mockito.mock(ClassDAO.class);
     }
 
     @Bean
-    @Primary
-    public DataManagerBusiness getDataManagerBusiness() {
+    //@Primary
+    public DataManagerBusiness mockDataManagerBusiness() {
         return Mockito.mock(DataManagerBusiness.class);
     }
-
-
-
-
-
-
 }

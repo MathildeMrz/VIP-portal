@@ -53,4 +53,5 @@ public class SpringApplicationConfig {
     public StatsDAO getStatsDAO() throws WorkflowsDBDAOException {
         return workflowsDBDAOFactory().getStatsDAO();
     }
+
 }

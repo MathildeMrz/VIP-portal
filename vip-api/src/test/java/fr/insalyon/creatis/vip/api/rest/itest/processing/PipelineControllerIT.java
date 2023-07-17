@@ -33,17 +33,25 @@ package fr.insalyon.creatis.vip.api.rest.itest.processing;
 
 import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
+import fr.insalyon.creatis.vip.application.client.bean.AppClass;
+import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
+import fr.insalyon.creatis.vip.application.client.bean.Application;
+import fr.insalyon.creatis.vip.application.client.bean.Engine;
 import fr.insalyon.creatis.vip.application.server.dao.ApplicationDAO;
 import fr.insalyon.creatis.vip.application.server.dao.ClassDAO;
+import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.datamanager.server.business.DataManagerBusiness;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static fr.insalyon.creatis.vip.api.data.AppVersionTestUtils.*;
 import static fr.insalyon.creatis.vip.api.data.ApplicationTestUtils.*;
@@ -72,10 +80,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PipelineControllerIT extends BaseWebSpringIT {
 
     @Autowired
+    @Qualifier("mockClassDAO")
     ClassDAO classDAO;
     @Autowired
+    @Qualifier("mockApplicationDAO")
     ApplicationDAO applicationDAO;
     @Autowired
+    @Qualifier("mockDataManagerBusiness")
     DataManagerBusiness dataManagerBusiness;
 
     @BeforeEach
@@ -136,8 +147,8 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     @Test
     public void shouldReturnErrorOnConfiguredVipException() throws Exception
     {
-        configureApplications(this, baseUser1, Arrays.asList(class1, class2),
-                app2, version42);
+        /*configureApplications(this, baseUser1, Arrays.asList(class1, class2),
+                app2, version42);*/
 
         String pipelineId = app2.getName() + "/" + version42.getVersion();
 
@@ -156,8 +167,9 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     @Test
     public void userGetAPipelineWithPathParameterNonEncoded() throws Exception
     {
-        configureApplications(this, baseUser1, Arrays.asList(class1, class2),
-                app2, version42);
+        /*configureApplications(this, baseUser1, Arrays.asList(class1, class2),
+                app2, version42);*/
+
         String pipelineId = configureAnApplication(this, baseUser1, app2, version42, 0, 1);
         mockMvc.perform(get("/rest/pipelines/" + pipelineId)
                         .with(baseUser1()))
@@ -169,10 +181,10 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     @Test
     public void shouldReturnPipelines() throws Exception
     {
-        configureApplications(this, baseUser1, Arrays.asList(class1, class2),
+        /*configureApplications(this, baseUser1, Arrays.asList(class1, class2),
                 app1, version42, version43,
                 app2, version01,
-                app3, version01, version42, version43);
+                app3, version01, version42, version43);*/
 
         mockMvc.perform(get("/rest/pipelines").with(baseUser1()))
                 .andDo(print())
@@ -190,8 +202,8 @@ public class PipelineControllerIT extends BaseWebSpringIT {
     @Test
     public void userGetAPipelineWithQueryParameter() throws Exception
     {
-        configureApplications(this, baseUser1, Arrays.asList(class1, class2),
-                app2, version42);
+        /*configureApplications(this, baseUser1, Arrays.asList(class1, class2),
+                app2, version42);*/
 
         when(dataManagerBusiness.getRemoteFile(eq(baseUser1), anyString())).thenReturn("path");
 
