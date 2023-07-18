@@ -8,7 +8,9 @@ import fr.insalyon.creatis.vip.core.server.business.proxy.ProxyClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.io.FileSystemResource;
@@ -23,9 +25,9 @@ import java.util.Map;
 /**
  * Spring configuration to make vip work in local, without any other
  * external service.
- *
+ * <p>
  * This overrides ProxyClient and SmaClient.
- *
+ * <p>
  * This also import properties from vip-local.conf to configure all the other
  * local components of this package
  */

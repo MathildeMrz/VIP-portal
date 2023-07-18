@@ -108,4 +108,5 @@ public class ExternalPlatform {
     public void setRefreshTokenUrl(String refreshTokenUrl) {
         this.refreshTokenUrl = refreshTokenUrl;
     }
+
 }

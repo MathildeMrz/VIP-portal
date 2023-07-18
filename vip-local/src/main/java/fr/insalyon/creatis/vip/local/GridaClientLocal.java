@@ -8,23 +8,24 @@ import fr.insalyon.creatis.vip.core.server.business.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * overides original GRIDAClient by a simpler version that do local file
  * transfers in a configured "localRoot" directory.
- *
+ * <p>
  * replication methods are not implemented
  */
 @Component
@@ -51,7 +52,7 @@ public class GridaClientLocal extends GRIDAClient {
     @PostConstruct
     public void init() {
         // creating root if needed
-        if (localRoot.toFile().exists() && ! localRoot.toFile().isDirectory()) {
+        if (localRoot.toFile().exists() && !localRoot.toFile().isDirectory()) {
             throw new IllegalStateException("grida local root must be a directory");
         } else if (localRoot.toFile().exists()) {
             return;
@@ -69,7 +70,7 @@ public class GridaClientLocal extends GRIDAClient {
 
     private void createDirectory(Path dir, String description) {
         boolean mkdirOK = dir.toFile().mkdirs();
-        if ( ! mkdirOK) {
+        if (!mkdirOK) {
             throw new IllegalStateException("Error creating " + description + " directory");
         }
     }
@@ -102,13 +103,13 @@ public class GridaClientLocal extends GRIDAClient {
         }
         Path dirPath = localRoot.resolve(dir);
         try {
-            return Files.list(dirPath).map( path -> path.toFile()).map(file ->
-                new GridData(
-                        file.getName(),
-                        file.isDirectory() ? Type.Folder : Type.File,
-                        file.length(),
-                        String.valueOf(file.lastModified()),
-                        "", "")
+            return Files.list(dirPath).map(path -> path.toFile()).map(file ->
+                    new GridData(
+                            file.getName(),
+                            file.isDirectory() ? Type.Folder : Type.File,
+                            file.length(),
+                            String.valueOf(file.lastModified()),
+                            "", "")
             ).collect(Collectors.toList());
         } catch (IOException e) {
             throw new GRIDAClientException(e);
@@ -144,7 +145,7 @@ public class GridaClientLocal extends GRIDAClient {
         }
         Path from = Paths.get(localFile);
         Path to = localRoot.resolve(remoteDir).resolve(from.getFileName());
-        if ( ! to.getParent().toFile().exists()) {
+        if (!to.getParent().toFile().exists()) {
             createDirectory(to.getParent(), "");
         }
         try {

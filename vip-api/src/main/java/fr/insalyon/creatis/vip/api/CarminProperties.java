@@ -76,7 +76,7 @@ public interface CarminProperties {
     String KEYCLOAK_REALM_URL = "keycloak.realm.url";
     String KEYCLOAK_CLIENT_ID = "keycloak.client.id";
     String KEYCLOAK_CLIENT_SECRET = "keycloak.client.secret";
-    
+
     // Client secret EGI
     String EGI_CLIENT_ID = "oidc.egi.client_id";
     String EGI_CLIENT_SECRET = "oidc.egi.client_secret";

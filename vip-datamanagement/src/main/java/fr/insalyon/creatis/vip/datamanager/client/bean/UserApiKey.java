@@ -37,10 +37,11 @@ public class UserApiKey {
     private String userEmail;
     private String apiKey;
 
-    public UserApiKey() {}
+    public UserApiKey() {
+    }
 
     public UserApiKey(
-        String storageIdentifier, String userEmail, String apiKey) {
+            String storageIdentifier, String userEmail, String apiKey) {
         this.storageIdentifier = storageIdentifier;
         this.userEmail = userEmail;
         this.apiKey = apiKey;
@@ -73,9 +74,9 @@ public class UserApiKey {
     @Override
     public String toString() {
         return "UserApiKey@" + Integer.toHexString(hashCode())
-            + "[storageIdentifier=" + storageIdentifier
-            + ",userEmail=" + userEmail
-            + ",apiKey=" + apiKey
-            + "]";
+                + "[storageIdentifier=" + storageIdentifier
+                + ",userEmail=" + userEmail
+                + ",apiKey=" + apiKey
+                + "]";
     }
 }

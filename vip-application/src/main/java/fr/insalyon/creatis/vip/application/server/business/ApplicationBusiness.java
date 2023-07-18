@@ -46,11 +46,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Service
@@ -111,6 +113,7 @@ public class ApplicationBusiness {
                         .map(group -> group.getName())
                         .collect(Collectors.toSet());
 
+
                 List<String> publicClasses = application.getApplicationClasses().stream()
                         .filter(className -> allClasses.get(className).getGroups().stream()
                                 .map(groupName -> allGroups.get(groupName))
@@ -143,7 +146,7 @@ public class ApplicationBusiness {
                 throw new BusinessException("Wrong application name");
             }
             // need to fetch all the groups to get their properties
-            Map<String,Group> allGroups = groupDAO.getGroups().stream().collect(
+            Map<String, Group> allGroups = groupDAO.getGroups().stream().collect(
                     Collectors.toMap(Group::getName, group -> group));
             List<Group> appGroups = new ArrayList<>();
             for (String className : application.getApplicationClasses()) {

@@ -50,49 +50,12 @@ import fr.insalyon.creatis.vip.social.client.view.SocialTab;
 import java.util.Set;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class SocialModule extends Module {
 
     private static ToolStripButton socialButton;
     private Timer timer;
-
-    @Override
-    public void load() {
-
-        CoreModule.addGeneralApplicationParser(new SocialParser());
-
-        socialButton = new ToolStripButton();
-        socialButton.addClickHandler(new ClickHandler() {
-
-            public void onClick(ClickEvent event) {
-                Layout.getInstance().addTab(
-                    SocialConstants.TAB_SOCIAL, SocialTab::new);
-            }
-        });
-
-        MainToolStrip.getInstance().addSeparator();
-        MainToolStrip.getInstance().addButton(socialButton);
-        verifyMessages();
-
-        timer = new Timer() {
-
-            public void run() {
-                verifyMessages();
-            }
-        };
-        timer.scheduleRepeating(5 * 60000);
-    }
-
-    @Override
-    public void postLoading() {
-    }
-
-    @Override
-    public void terminate(Set<Tab> removedTabs) {
-        timer.cancel();
-    }
 
     public static void verifyMessages() {
 
@@ -117,5 +80,41 @@ public class SocialModule extends Module {
             }
         };
         service.verifyMessages(callback);
+    }
+
+    @Override
+    public void load() {
+
+        CoreModule.addGeneralApplicationParser(new SocialParser());
+
+        socialButton = new ToolStripButton();
+        socialButton.addClickHandler(new ClickHandler() {
+
+            public void onClick(ClickEvent event) {
+                Layout.getInstance().addTab(
+                        SocialConstants.TAB_SOCIAL, SocialTab::new);
+            }
+        });
+
+        MainToolStrip.getInstance().addSeparator();
+        MainToolStrip.getInstance().addButton(socialButton);
+        verifyMessages();
+
+        timer = new Timer() {
+
+            public void run() {
+                verifyMessages();
+            }
+        };
+        timer.scheduleRepeating(5 * 60000);
+    }
+
+    @Override
+    public void postLoading() {
+    }
+
+    @Override
+    public void terminate(Set<Tab> removedTabs) {
+        timer.cancel();
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author khalilkes service to signup a user in VIP
@@ -32,7 +31,6 @@ public class ApiUserBusiness {
     }
 
     /**
-     *
      * @param user
      * @param comments
      * @param applicationNames
@@ -51,7 +49,6 @@ public class ApiUserBusiness {
             throw new ApiException("Signing up Error", e);
         }
     }
-
 
 
     public void sendResetCode(String email) throws ApiException {

@@ -36,7 +36,6 @@ import fr.insalyon.creatis.vip.api.controller.ApiController;
 import fr.insalyon.creatis.vip.api.exception.ApiException;
 import fr.insalyon.creatis.vip.api.model.Pipeline;
 import fr.insalyon.creatis.vip.application.client.bean.Application;
-import fr.insalyon.creatis.vip.core.client.bean.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +47,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * Created by abonnet on 7/28/16.
- *
  */
 @RestController
 @RequestMapping("pipelines")

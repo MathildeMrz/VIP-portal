@@ -36,17 +36,11 @@ import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.DrawEvent;
-import com.smartgwt.client.widgets.events.DrawHandler;
-import com.smartgwt.client.widgets.events.ResizedEvent;
-import com.smartgwt.client.widgets.events.ResizedHandler;
+import com.smartgwt.client.widgets.events.*;
 import com.smartgwt.client.widgets.layout.HLayout;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class MessageWindow {
@@ -108,7 +102,7 @@ public class MessageWindow {
      * Creates a label and adds it to the message panel.
      *
      * @param title Label title
-     * @param icon Label icon
+     * @param icon  Label icon
      */
     private void createLabel(String title, String icon) {
 
@@ -155,8 +149,8 @@ public class MessageWindow {
      *
      * @param message Message to be displayed
      * @param bgColor Background color in hexadecimal
-     * @param icon Message icon
-     * @param delay Time in seconds the panel will appear
+     * @param icon    Message icon
+     * @param delay   Time in seconds the panel will appear
      */
     public void setMessage(String message, String bgColor, String icon, int delay) {
 

@@ -45,8 +45,10 @@ public class VipWebConfigurationIT {
     protected WebApplicationContext wac;
     private MockMvc mockMvc;
 
-    @Autowired private GRIDAClient gridaClient;
-    @Autowired private ConfigurationBusiness configurationBusiness;
+    @Autowired
+    private GRIDAClient gridaClient;
+    @Autowired
+    private ConfigurationBusiness configurationBusiness;
 
     @BeforeEach
     public final void setup() {
@@ -66,11 +68,11 @@ public class VipWebConfigurationIT {
         Mockito.when(gridaClient.exist(anyString())).thenReturn(true, false);
         configurationBusiness.signup(newUser, "", (Group) null);
         mockMvc.perform(get("/rest/pipelines")
-            .with(SecurityMockMvcRequestPostProcessors.user(new SpringApiPrincipal(newUser))))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$[*]", Matchers.hasSize(0)));
+                        .with(SecurityMockMvcRequestPostProcessors.user(new SpringApiPrincipal(newUser))))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$[*]", Matchers.hasSize(0)));
     }
 
     @Test
@@ -81,7 +83,5 @@ public class VipWebConfigurationIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.platformName").value("VIP_TEST"));
     }
-
-
 
 }

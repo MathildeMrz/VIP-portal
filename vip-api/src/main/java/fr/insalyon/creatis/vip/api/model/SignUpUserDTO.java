@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * @author KhalilKes
- *
+ * <p>
  * DTO to transfer user data
  */
 public class SignUpUserDTO {
@@ -22,9 +22,10 @@ public class SignUpUserDTO {
     private String comments;
     private List<String> applications;
 
-    public SignUpUserDTO(){
+    public SignUpUserDTO() {
 
     }
+
     public SignUpUserDTO(String firstName, String lastName, String email, String institution, String password, UserLevel level, CountryCode countryCode, String comments, List<String> applications) {
         this.firstName = firstName;
         this.lastName = lastName;

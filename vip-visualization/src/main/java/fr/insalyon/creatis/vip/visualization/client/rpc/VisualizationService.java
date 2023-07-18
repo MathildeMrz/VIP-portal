@@ -42,20 +42,20 @@ public interface VisualizationService extends RemoteService {
 
     public static final String SERVICE_URI = "/visualizationservice";
 
+    public Image getImageSlicesURL(String localPath, String direction)
+            throws VisualizationException;
+
+    public VisualizationItem getVisualizationItemFromLFN(String lfn)
+            throws VisualizationException;
+
     public static class Util {
         public static VisualizationServiceAsync getInstance() {
             VisualizationServiceAsync instance =
-                (VisualizationServiceAsync)
-                GWT.create(VisualizationService.class);
+                    (VisualizationServiceAsync)
+                            GWT.create(VisualizationService.class);
             ServiceDefTarget target = (ServiceDefTarget) instance;
             target.setServiceEntryPoint(GWT.getModuleBaseURL() + SERVICE_URI);
             return instance;
         }
     }
-
-    public Image getImageSlicesURL(String localPath, String direction)
-        throws VisualizationException;
-
-    public VisualizationItem getVisualizationItemFromLFN(String lfn)
-        throws VisualizationException;
 }

@@ -31,29 +31,28 @@
  */
 package fr.insalyon.creatis.vip.api.rest.config;
 
-import fr.insalyon.creatis.vip.api.*;
 import fr.insalyon.creatis.vip.api.business.VipConfigurer;
-import fr.insalyon.creatis.vip.application.server.business.*;
+import fr.insalyon.creatis.vip.application.server.business.ApplicationBusiness;
+import fr.insalyon.creatis.vip.application.server.business.ClassBusiness;
+import fr.insalyon.creatis.vip.application.server.business.SimulationBusiness;
+import fr.insalyon.creatis.vip.application.server.business.WorkflowBusiness;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
-import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
-import fr.insalyon.creatis.vip.datamanager.server.business.*;
+import fr.insalyon.creatis.vip.datamanager.server.business.LFCPermissionBusiness;
+import fr.insalyon.creatis.vip.datamanager.server.business.TransferPoolBusiness;
 import org.mockito.Mockito;
-import org.springframework.context.annotation.*;
-
-import java.sql.Connection;
-import java.util.function.*;
+import org.springframework.context.annotation.Bean;
 
 import static org.mockito.ArgumentMatchers.any;
 
 /**
  * Created by abonnet on 7/26/16.
- *
+ * <p>
  * Spring test config that mock bean that interacts with vip outside vip-api
- *
+ * <p>
  * TODO : after spring is now everywhere, this does not work anymore, work needed here
  */
-@Import(SpringWebConfig.class)
-@Configuration
+//@Import(SpringWebConfig.class)
+//@Configuration
 public class SpringTestConfig {
 
     @Bean
@@ -93,10 +92,15 @@ public class SpringTestConfig {
         return Mockito.mock(SimulationBusiness.class);
     }
 
-    @Bean
+    /*@Bean
     public LFCBusiness lfcBusiness() {
         return Mockito.mock(LFCBusiness.class);
     }
+
+    @Bean
+    public LfcPathsBusiness lfcPathsBusiness() {
+        return Mockito.mock(LfcPathsBusiness.class);
+    }*/
 
     @Bean
     public LFCPermissionBusiness lfcPermissionBusiness() {

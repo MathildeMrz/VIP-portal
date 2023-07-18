@@ -46,12 +46,12 @@ import org.springframework.security.web.firewall.DefaultHttpFirewall;
 
 /**
  * Spring security configuration.
- *
+ * <p>
  * It secures by api key all rest requests (except /platform)
  * General configuration is done here (what is secured, session management etc).
- *
+ * <p>
  * The custom api key configuration is done in {@link ApiSecurityConfig}
- *
+ * <p>
  * Created by abonnet on 7/22/16.
  */
 @EnableWebSecurity
@@ -62,20 +62,20 @@ public class EgiSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
+                .authorizeRequests()
                 .anyRequest().permitAll()
-            .and()
+                .and()
                 .oauth2Login()
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorize-client")
                 .authorizationRequestRepository(authorizationRequestRepository())
-            .and()
+                .and()
                 .tokenEndpoint()
                 .accessTokenResponseClient(accessTokenResponseClient())
-            .and()
+                .and()
                 .defaultSuccessUrl("/rest/loginEgi")
                 .failureUrl("/loginFailure")
-            .and()
+                .and()
                 .cors().and()
                 .headers().frameOptions().sameOrigin().and()
                 .csrf().disable();

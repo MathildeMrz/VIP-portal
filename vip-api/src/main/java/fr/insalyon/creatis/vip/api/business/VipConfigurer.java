@@ -48,9 +48,9 @@ import java.util.Calendar;
 
 /**
  * Configure vip (proxy verification)
- *
+ * <p>
  * Do it on startup, and then every day (test at each api request)
- *
+ * <p>
  * Created by abonnet on 7/26/16.
  */
 @Component

@@ -37,11 +37,11 @@ import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
 import fr.insalyon.creatis.vip.application.client.view.launch.LaunchTab;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationsTileGrid;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class ApplicationTileGrid extends ApplicationsTileGrid {
@@ -57,14 +57,14 @@ public class ApplicationTileGrid extends ApplicationsTileGrid {
 
     @Override
     public void parse(
-        final String applicationName, final String applicationVersion) {
+            final String applicationName, final String applicationVersion) {
 
         String appName = applicationVersion == null ? applicationName : applicationName + " " + applicationVersion;
         if (applicationNames.contains(appName)) {
             Layout.getInstance().addTab(
-                ApplicationConstants.getLaunchTabID(applicationName),
-                () -> new LaunchTab(
-                    applicationName, applicationVersion, tileName));
+                    ApplicationConstants.getLaunchTabID(applicationName),
+                    () -> new LaunchTab(
+                            applicationName, applicationVersion, tileName));
         }
     }
 

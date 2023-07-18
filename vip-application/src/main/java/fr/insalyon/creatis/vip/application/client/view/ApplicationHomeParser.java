@@ -31,19 +31,13 @@
  */
 package fr.insalyon.creatis.vip.application.client.view;
 
-import com.smartgwt.client.widgets.tab.Tab;
 import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationsTab;
 import fr.insalyon.creatis.vip.application.client.view.system.application.ManageApplicationsTab;
-import fr.insalyon.creatis.vip.core.client.CoreModule;
-import fr.insalyon.creatis.vip.core.client.bean.User;
-import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationParser;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
-import fr.insalyon.creatis.vip.core.client.view.user.UserLevel;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class ApplicationHomeParser extends ApplicationParser {
@@ -63,7 +57,7 @@ public class ApplicationHomeParser extends ApplicationParser {
 
         if (applicationName.equals(ApplicationConstants.APP_MONITOR)) {
             Layout.getInstance().addTab(
-                ApplicationConstants.TAB_MONITOR, SimulationsTab::new);
+                    ApplicationConstants.TAB_MONITOR, SimulationsTab::new);
             return true;
         }
         if (applicationName.equals(ApplicationConstants.APP_PUBLIC_APPLICATION)) {

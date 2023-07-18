@@ -22,7 +22,7 @@ public class BoutiquesApplicationExtensions implements IsSerializable {
         valueChoicesLabels.put(inputId, valueChoiceLabels);
     }
 
-    public void addNonListInputs(String... inputIds){
+    public void addNonListInputs(String... inputIds) {
         Collections.addAll(nonListInputs, inputIds);
     }
 

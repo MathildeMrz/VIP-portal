@@ -32,7 +32,8 @@ knowledge of the CeCILL-B license and that you accept its terms.
 
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -77,6 +78,11 @@ knowledge of the CeCILL-B license and that you accept its terms.
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.rikka.tools.autoresconfig</groupId>
+            <artifactId>gradle-plugin</artifactId>
+            <version>1.2.2</version>
         </dependency>
 
     </dependencies>

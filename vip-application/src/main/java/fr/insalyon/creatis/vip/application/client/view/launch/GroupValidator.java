@@ -19,13 +19,14 @@ public class GroupValidator {
 
     /**
      * Initializes group members
-     * @param group         BoutiquesGroup to handle validation for
-     * @param parentLayout  LaunchFormLayout for which validation is performed
+     *
+     * @param group        BoutiquesGroup to handle validation for
+     * @param parentLayout LaunchFormLayout for which validation is performed
      */
-    public GroupValidator(BoutiquesGroup group, LaunchFormLayout parentLayout){
+    public GroupValidator(BoutiquesGroup group, LaunchFormLayout parentLayout) {
         this.group = group;
         this.parentLayout = parentLayout;
-        for (String currentMemberId : group.getMembers()){
+        for (String currentMemberId : group.getMembers()) {
             InputLayout memberInput = parentLayout.getInputsMap().get(currentMemberId);
             this.members.add(memberInput);
             this.memberNames.add(memberInput.getInputName());
@@ -36,12 +37,12 @@ public class GroupValidator {
      * Perform client-side validation logic for the group. Make parentLayout display appropriate warning or error
      * messages
      */
-    public void validate(){
+    public void validate() {
         // Number of non empty group members
         int nActiveMembers = 0;
-        for (InputLayout iMember : this.members){
-            if(iMember.hasUniqueValue()){
-                if (iMember.isUniqueFilled()){
+        for (InputLayout iMember : this.members) {
+            if (iMember.hasUniqueValue()) {
+                if (iMember.isUniqueFilled()) {
                     nActiveMembers++;
                 }
             } else {
@@ -52,15 +53,15 @@ public class GroupValidator {
         }
         // Group dependency is supported, check if group conditions are satisfied and display appropriate error messages
         this.parentLayout.removeUnsupportedGroup(this);
-        if(this.group.isMutuallyExclusive()){
+        if (this.group.isMutuallyExclusive()) {
             this.parentLayout.groupErrorMessage(LaunchFormLayout.mutuallyExclusiveMessage(this.memberNames),
                     (nActiveMembers > 1));
         }
-        if(this.group.isAllOrNone()){
+        if (this.group.isAllOrNone()) {
             this.parentLayout.groupErrorMessage(LaunchFormLayout.allOrNoneMessage(this.memberNames),
                     ((nActiveMembers != 0) && (nActiveMembers != this.members.size())));
         }
-        if(this.group.isOneIsRequired()){
+        if (this.group.isOneIsRequired()) {
             this.parentLayout.groupErrorMessage(LaunchFormLayout.oneIsRequiredMessage(this.memberNames),
                     (nActiveMembers < 1));
         }
@@ -69,28 +70,28 @@ public class GroupValidator {
     /**
      * @return String representing underlying group ID
      */
-    public String getGroupId(){
+    public String getGroupId() {
         return this.group.getId();
     }
 
     /**
      * @return boolean: true if this represents a mutually exclusive group
      */
-    public boolean isMutuallyExclusive(){
+    public boolean isMutuallyExclusive() {
         return this.group.isMutuallyExclusive();
     }
 
     /**
      * @return boolean: true if this represents an all-or-none group
      */
-    public boolean isAllOrNone(){
+    public boolean isAllOrNone() {
         return this.group.isAllOrNone();
     }
 
     /**
      * @return boolean: true if this represents a one-is-required  group
      */
-    public boolean isOneIsRequired(){
+    public boolean isOneIsRequired() {
         return this.group.isOneIsRequired();
     }
 

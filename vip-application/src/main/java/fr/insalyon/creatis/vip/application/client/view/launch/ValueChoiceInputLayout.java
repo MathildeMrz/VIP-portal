@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * @author Guillaume Vanel
  * @version %I%, %G%
  */
-public class ValueChoiceInputLayout extends InputLayout{
+public class ValueChoiceInputLayout extends InputLayout {
     protected final Map<InputLayout, Set<String>> valueDisables = new HashMap<>();
     protected final Map<InputLayout, Set<String>> valueRequires = new HashMap<>();
     protected final Map<String, String> labels;
@@ -54,7 +54,7 @@ public class ValueChoiceInputLayout extends InputLayout{
         }
         if (this.getDefaultValue() != null) {
             inputField.setValue(this.getDefaultValue());
-        } else if ( ! this.input.getPossibleValues().isEmpty()){
+        } else if (!this.input.getPossibleValues().isEmpty()) {
             inputField.setValue(this.input.getPossibleValues().iterator().next());
         }
         return inputField;
@@ -67,7 +67,7 @@ public class ValueChoiceInputLayout extends InputLayout{
      * @see InputLayout#onValueChanged()
      */
     @Override
-    protected void onValueChanged(){
+    protected void onValueChanged() {
         super.onValueChanged();
         this.valueDisables.keySet().forEach(InputLayout::checkDependencies);
     }
@@ -75,10 +75,10 @@ public class ValueChoiceInputLayout extends InputLayout{
     /**
      * Make all InputLayouts in disabledInputSet disabled when provided value is selected in this
      *
-     * @param value             String representing the disabling value
-     * @param disabledInputSet  Set of InputLayouts to disable when value is selected
+     * @param value            String representing the disabling value
+     * @param disabledInputSet Set of InputLayouts to disable when value is selected
      */
-    public void addValueDisables(String value, Set<InputLayout> disabledInputSet){
+    public void addValueDisables(String value, Set<InputLayout> disabledInputSet) {
         disabledInputSet.forEach(disabledInput -> {
             addToSetInMap(this.valueDisables, disabledInput, value);
             disabledInput.addDisabledByValue(this, value);
@@ -93,7 +93,7 @@ public class ValueChoiceInputLayout extends InputLayout{
      * @param valueRequiresInputs Map from input values as Strings to Set of InputLayouts required by corresponding
      *                            value.
      */
-    public void addValueRequires(Map<String, Set<InputLayout>> valueRequiresInputs){
+    public void addValueRequires(Map<String, Set<InputLayout>> valueRequiresInputs) {
         valueRequiresInputs.forEach((value, requiredInputSet) -> {
             requiredInputSet.forEach(requiredInput -> {
                 addToSetInMap(this.valueRequires, requiredInput, value);
@@ -108,7 +108,7 @@ public class ValueChoiceInputLayout extends InputLayout{
             protected boolean condition(Object value) {
                 // Dependencies are ignored when input has multiple values, thus any value is considered valid
                 // Empty value cannot require another input, thus it is always considered valid
-                if(layoutInstance.hasUniqueValue() && (value != null)) {
+                if (layoutInstance.hasUniqueValue() && (value != null)) {
                     // Identify all inputs required by current value that are empty, and collect their names
                     Set<String> emptyRequiredInputNames = layoutInstance.valueRequires.entrySet()
                             .stream()
@@ -129,7 +129,7 @@ public class ValueChoiceInputLayout extends InputLayout{
 
     /**
      * @return Map of InputLayouts disabled when certain values of this are selected. Keys are dependant InputLayouts
-     *         and values are Sets of Strings representing disabling values
+     * and values are Sets of Strings representing disabling values
      */
     public Map<InputLayout, Set<String>> getValueDisables() {
         return this.valueDisables;
@@ -137,7 +137,7 @@ public class ValueChoiceInputLayout extends InputLayout{
 
     /**
      * @return Map of InputLayouts that need to be non empty for certain values of this to be valid when selected. Keys
-     *         are required InputLayouts and values are Sets of Strings representing dependant values
+     * are required InputLayouts and values are Sets of Strings representing dependant values
      */
     public Map<InputLayout, Set<String>> getValueRequires() {
         return this.valueRequires;

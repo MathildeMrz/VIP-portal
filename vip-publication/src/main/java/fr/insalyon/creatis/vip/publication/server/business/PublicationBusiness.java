@@ -43,7 +43,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva,Nouha boujelben
  */
 @Service
@@ -60,7 +59,6 @@ public class PublicationBusiness {
 
 
     /**
-     *
      * @return @throws BusinessException
      */
     public List<Publication> getPublications()
@@ -99,6 +97,7 @@ public class PublicationBusiness {
             throw new BusinessException(ex);
         }
     }
+
     public Publication getPublication(Long id)
             throws BusinessException {
         try {

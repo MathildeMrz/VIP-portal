@@ -54,7 +54,6 @@ import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
 import fr.insalyon.creatis.vip.datamanager.client.view.selection.PathSelectionWindow;
 
 /**
- *
  * @author Nouha Boujelben
  */
 public class BoutiquesImportLayout extends AbstractFormLayout {
@@ -137,16 +136,16 @@ public class BoutiquesImportLayout extends AbstractFormLayout {
                 try {
                     BoutiquesApplication boutiquesTool = DisplayTab.parseJSON(jsonFileContent);
                     DisplayTab displayTab =
-                        (DisplayTab) Layout.getInstance().addTab(
-                            Constants.TAB_ID_BOUTIQUES_APPLICATION,
-                            () -> new DisplayTab(
-                                Constants.ICON_BOUTIQUES,
-                                Constants.TAB_ID_BOUTIQUES_APPLICATION,
-                                Constants.TAB_NAME_BOUTIQUES));
+                            (DisplayTab) Layout.getInstance().addTab(
+                                    Constants.TAB_ID_BOUTIQUES_APPLICATION,
+                                    () -> new DisplayTab(
+                                            Constants.ICON_BOUTIQUES,
+                                            Constants.TAB_ID_BOUTIQUES_APPLICATION,
+                                            Constants.TAB_NAME_BOUTIQUES));
                     displayTab.setBoutiqueTool(boutiquesTool);
                 } catch (ApplicationImporterException ex) {
                     Layout.getInstance().setWarningMessage(
-                        "Unable to parse JSON file :" + ex.getMessage());
+                            "Unable to parse JSON file :" + ex.getMessage());
                 }
             }
         };

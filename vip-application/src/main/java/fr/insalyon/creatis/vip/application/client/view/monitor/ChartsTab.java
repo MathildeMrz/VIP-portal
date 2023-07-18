@@ -4,16 +4,16 @@
  * This software is a web portal for pipeline execution on distributed systems.
  *
  * This software is governed by the CeCILL-B license under French law and
- * abiding by the rules of distribution of free software.  You can  use, 
+ * abiding by the rules of distribution of free software.  You can  use,
  * modify and/ or redistribute the software under the terms of the CeCILL-B
  * license as circulated by CEA, CNRS and INRIA at the following URL
- * "http://www.cecill.info". 
+ * "http://www.cecill.info".
  *
  * As a counterpart to the access to the source code and  rights to copy,
  * modify and redistribute granted by the license, users are provided only
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
- * liability. 
+ * liability.
  *
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
@@ -22,9 +22,9 @@
  * therefore means  that it is reserved for developers  and  experienced
  * professionals having in-depth computer knowledge. Users are therefore
  * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or 
- * data to be ensured and,  more generally, to use and operate it in the 
- * same conditions as regards security. 
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
  *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-B license and that you accept its terms.
@@ -59,11 +59,11 @@ import fr.insalyon.creatis.vip.application.client.view.monitor.chart.SitesBarCha
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
 import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class ChartsTab extends Tab {
@@ -258,7 +258,6 @@ public class ChartsTab extends Tab {
     }
 
     /**
-     *
      * @param binSize Size of the group
      */
     private void plotExecutionPerNumberOfJobs(final int binSize) {
@@ -281,7 +280,6 @@ public class ChartsTab extends Tab {
     }
 
     /**
-     *
      * @param binSize
      */
     private void plotDownloadPerNumberOfJobs(final int binSize) {
@@ -304,7 +302,6 @@ public class ChartsTab extends Tab {
     }
 
     /**
-     *
      * @param binSize
      */
     private void plotUploadPerNumberOfJobs(final int binSize) {
@@ -347,14 +344,14 @@ public class ChartsTab extends Tab {
         JobService.Util.getInstance().getSiteHistogram(simulationID, callback);
         setLoadingGenerateButton();
     }
-    
+
     /**
      * Sets the generate chart button to the loading state.
      */
     private void setLoadingGenerateButton() {
         WidgetUtil.setLoadingIButton(generateButton, "Generating...");
     }
-    
+
     /**
      * Resets the generate chart button to its initial state.
      */

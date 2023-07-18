@@ -12,22 +12,34 @@ import org.springframework.context.annotation.Profile;
 
 /**
  * Spring configuration class for tests.
- *
+ * <p>
  * Overrides the dependency services (grida, proxyclient, email) by mocked ones
  */
 @Configuration
 @Profile("test")
 public class SpingTestConfig {
 
-    @Bean @Primary
-    public GRIDAClient testGridaClient() {return Mockito.mock(GRIDAClient.class);}
+    @Bean
+    @Primary
+    public GRIDAClient testGridaClient() {
+        return Mockito.mock(GRIDAClient.class);
+    }
 
-    @Bean @Primary
-    public GRIDAPoolClient testGridaPoolClient() {return Mockito.mock(GRIDAPoolClient.class);}
+    @Bean
+    @Primary
+    public GRIDAPoolClient testGridaPoolClient() {
+        return Mockito.mock(GRIDAPoolClient.class);
+    }
 
-    @Bean @Primary
-    public EmailBusiness testEmailBusiness() {return Mockito.mock(EmailBusiness.class);}
+    @Bean
+    @Primary
+    public EmailBusiness testEmailBusiness() {
+        return Mockito.mock(EmailBusiness.class);
+    }
 
-    @Bean @Primary
-    public ProxyClient testProxyClient() {return Mockito.mock(ProxyClient.class);}
+    @Bean
+    @Primary
+    public ProxyClient testProxyClient() {
+        return Mockito.mock(ProxyClient.class);
+    }
 }

@@ -65,103 +65,19 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class CoreModule extends Module {
 
     public static User user;
+    public static List<String> accountTypes;
     private static GeneralTileGrid generalTileGrid;
     private static SystemTileGrid systemTileGrid;
     private static HomeTab homeTab;
-    private static Map<String,Runnable> homePageActions;
-    public static List<String> accountTypes;
+    private static Map<String, Runnable> homePageActions;
 
     public CoreModule() {
 
-        init();
-    }
-
-    @Override
-    public void load() {
-
-        // Add tile grids
-        homeTab.addTileGrid(generalTileGrid);
-        if (user.isSystemAdministrator() || user.isGroupAdmin() || user.isDeveloper()) {
-            systemTileGrid.addParser(new SystemParser());
-            homeTab.addTileGrid(systemTileGrid);
-        }
-
-        // Configure User's toolstrip
-        MainToolStrip.getInstance().addMenuButton(new UserMenuButton(user));
-
-        // Home Tab
-        Layout.getInstance().addTab(CoreConstants.TAB_HOME, () -> homeTab);
-
-        // open account tab to accept the terms of use if necessary
-        // Also open the tab for users with no group :
-        // It was possible with former Mozilla Persona but keep it just in case
-
-        if (!user.hasGroups() || !user.hasAcceptTermsOfUse()) {
-            final AccountTab accountTab =
-                (AccountTab) Layout.getInstance().addTab(
-                    CoreConstants.TAB_ACCOUNT, AccountTab::new);
-            if (!user.hasAcceptTermsOfUse()) {
-                showDialog("Please accept our Terms of Use", accountTab);
-            }
-        }
-
-        // check if the user has requested an email change
-        if (user.getNextEmail() != null) {
-            Layout.getInstance().setNoticeMessage("You have requested an email address change. Please validate it in your account page", 10);
-        }
-
-        //call to terms of use
-         if (user.hasAcceptTermsOfUse()) {
-        final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-            @Override
-            public void onFailure(Throwable caught) {
-
-                Layout.getInstance().setWarningMessage("Cannot get last update of Terms of Use" + caught.getMessage(), 10);
-
-            }
-
-            @Override
-            public void onSuccess(Boolean result) {
-                if (result) {
-                    final AccountTab accountTab =
-                        (AccountTab) Layout.getInstance().addTab(
-                            CoreConstants.TAB_ACCOUNT, AccountTab::new);
-                    showDialog("Our Terms of Use have changed. Please accept them again.", accountTab);
-
-                }
-            }
-        };
-        ConfigurationService.Util.getInstance().compare(callback);
-        }
-
-    }
-
-    @Override
-    public void postLoading() {
-
-        // Experiencing problems button
-        ToolStripButton helpButton = new ToolStripButton("Experiencing problems?");
-        helpButton.setIcon(CoreConstants.ICON_HELP);
-        helpButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Layout.getInstance().addTab(
-                    CoreConstants.TAB_CONTACT, ContactTab::new);
-            }
-        });
-
-        MainToolStrip.getInstance().addFill();
-        MainToolStrip.getInstance().addMember(helpButton);
-    }
-
-    @Override
-    public void terminate(Set<Tab> removedTabs) {
         init();
     }
 
@@ -208,6 +124,89 @@ public class CoreModule extends Module {
 
     public static Map<String, Runnable> getHomePageActions() {
         return homePageActions;
+    }
+
+    @Override
+    public void load() {
+
+        // Add tile grids
+        homeTab.addTileGrid(generalTileGrid);
+        if (user.isSystemAdministrator() || user.isGroupAdmin() || user.isDeveloper()) {
+            systemTileGrid.addParser(new SystemParser());
+            homeTab.addTileGrid(systemTileGrid);
+        }
+
+        // Configure User's toolstrip
+        MainToolStrip.getInstance().addMenuButton(new UserMenuButton(user));
+
+        // Home Tab
+        Layout.getInstance().addTab(CoreConstants.TAB_HOME, () -> homeTab);
+
+        // open account tab to accept the terms of use if necessary
+        // Also open the tab for users with no group :
+        // It was possible with former Mozilla Persona but keep it just in case
+
+        if (!user.hasGroups() || !user.hasAcceptTermsOfUse()) {
+            final AccountTab accountTab =
+                    (AccountTab) Layout.getInstance().addTab(
+                            CoreConstants.TAB_ACCOUNT, AccountTab::new);
+            if (!user.hasAcceptTermsOfUse()) {
+                showDialog("Please accept our Terms of Use", accountTab);
+            }
+        }
+
+        // check if the user has requested an email change
+        if (user.getNextEmail() != null) {
+            Layout.getInstance().setNoticeMessage("You have requested an email address change. Please validate it in your account page", 10);
+        }
+
+        //call to terms of use
+        if (user.hasAcceptTermsOfUse()) {
+            final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+                @Override
+                public void onFailure(Throwable caught) {
+
+                    Layout.getInstance().setWarningMessage("Cannot get last update of Terms of Use" + caught.getMessage(), 10);
+
+                }
+
+                @Override
+                public void onSuccess(Boolean result) {
+                    if (result) {
+                        final AccountTab accountTab =
+                                (AccountTab) Layout.getInstance().addTab(
+                                        CoreConstants.TAB_ACCOUNT, AccountTab::new);
+                        showDialog("Our Terms of Use have changed. Please accept them again.", accountTab);
+
+                    }
+                }
+            };
+            ConfigurationService.Util.getInstance().compare(callback);
+        }
+
+    }
+
+    @Override
+    public void postLoading() {
+
+        // Experiencing problems button
+        ToolStripButton helpButton = new ToolStripButton("Experiencing problems?");
+        helpButton.setIcon(CoreConstants.ICON_HELP);
+        helpButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Layout.getInstance().addTab(
+                        CoreConstants.TAB_CONTACT, ContactTab::new);
+            }
+        });
+
+        MainToolStrip.getInstance().addFill();
+        MainToolStrip.getInstance().addMember(helpButton);
+    }
+
+    @Override
+    public void terminate(Set<Tab> removedTabs) {
+        init();
     }
 
     private void init() {

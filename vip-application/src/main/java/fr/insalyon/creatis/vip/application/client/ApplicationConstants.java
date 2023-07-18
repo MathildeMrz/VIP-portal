@@ -34,7 +34,6 @@ package fr.insalyon.creatis.vip.application.client;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class ApplicationConstants {
@@ -46,6 +45,23 @@ public class ApplicationConstants {
     public final static String TAB_MANAGE_ENGINE = "manage_engine_tab";
     public final static String TAB_MONITOR = "monitor_tab";
     public final static String TAB_STATS = "stats_tab";
+    // Application Names
+    public static final String APP_APPLICATION = "Applications";
+    public static final String APP_CLASSES = "Classes";
+    public static final String APP_MONITOR = "Execution Monitor";
+    public static final String APP_ENGINE = "Engines";
+    public static final String APP_SIMULATION_ERROR = "Error File";
+    public static final String APP_SIMULATION_OUT = "Output File";
+    public static final String APP_PUBLIC_APPLICATION = "Applications";
+    // Application launch, input without value
+    public static final String INPUT_WITHOUT_VALUE = "No_value_provided";
+    public static final String INPUT_WITHOUT_VALUE_REQUIRED_MESSAGE = "Either you deselect the field or you fill it in";
+    // Configuration
+    public static final String SESSION_CLASSES = "vip-classes";
+    public static final String SEPARATOR_INPUT = "##";
+    public static final String SEPARATOR_LIST = "@@";
+    public static final String INPUT_VALID_CHARS = "0-9.,A-Za-z-+@/_(): ";
+    public static final String EXEC_NAME_VALID_CHARS = "0-9A-Za-z-_ ";
     // Icons
     private static final String IMG_FOLDER = "application/";
     public static final String ICON_APPLICATION = IMG_FOLDER + "icon-application.png";
@@ -72,7 +88,6 @@ public class ApplicationConstants {
     public static final String ICON_MONITOR_SIMULATION_COMPLETED = IMG_FOLDER + "monitor/icon-simulation-completed.png";
     public static final String ICON_MARK_COMPLETED = IMG_FOLDER + "icon-mark-completed.png";
     public static final String ICON_USER = IMG_FOLDER + "icon-user.png";
-    ;
     public static final String ICON_MONITOR_SIMULATION_FAILED = IMG_FOLDER + "monitor/icon-simulation-failed.png";
     public static final String ICON_MONITOR_SIMULATION_KILLED = IMG_FOLDER + "monitor/icon-simulation-killed.png";
     public static final String ICON_MONITOR_SIMULATION_RUNNING = IMG_FOLDER + "monitor/icon-simulation-running.png";
@@ -99,14 +114,6 @@ public class ApplicationConstants {
     public static final String ICON_TREE_OUTPUT = IMG_FOLDER + "tree/icon-tree-output.png";
     public static final String ICON_TREE_SERVICE = IMG_FOLDER + "tree/icon-tree-service.png";
     public static final String ICON_TREE_SIMULATION = IMG_FOLDER + "tree/icon-tree-simulation.png";
-    // Application Names
-    public static final String APP_APPLICATION = "Applications";
-    public static final String APP_CLASSES = "Classes";
-    public static final String APP_MONITOR = "Execution Monitor";
-    public static final String APP_ENGINE = "Engines";
-    public static final String APP_SIMULATION_ERROR = "Error File";
-    public static final String APP_SIMULATION_OUT = "Output File";
-    public static final String APP_PUBLIC_APPLICATION = "Applications";
     // Application Images
     public static final String APP_IMG_APPLICATION = IMG_FOLDER + "app-application.png";
     public static final String APP_IMG_CLASSES = IMG_FOLDER + "app-classes.png";
@@ -114,19 +121,10 @@ public class ApplicationConstants {
     public static final String APP_IMG_ENGINE = IMG_FOLDER + "app-engine.png";
     public static final String APP_IMG_SIMULATION_ERROR = IMG_FOLDER + "app-simulation-error.png";
     public static final String APP_IMG_SIMULATION_OUT = IMG_FOLDER + "app-simulation-out.png";
-    // Application launch, input without value
-    public static final String INPUT_WITHOUT_VALUE = "No_value_provided";
-    public static final String INPUT_WITHOUT_VALUE_REQUIRED_MESSAGE = "Either you deselect the field or you fill it in";
-    // Configuration
-    public static final String SESSION_CLASSES = "vip-classes";
-    public static final String SEPARATOR_INPUT = "##";
-    public static final String SEPARATOR_LIST = "@@";
-    public static final String INPUT_VALID_CHARS = "0-9.,A-Za-z-+@/_(): ";
-    public static final String EXEC_NAME_VALID_CHARS = "0-9A-Za-z-_ ";
 
     public static String getLaunchTabID(String applicationName) {
         return "launch_"
-            + CoreConstants.replaceSpacesInIds(applicationName)
-            + "_tab";
+                + CoreConstants.replaceSpacesInIds(applicationName)
+                + "_tab";
     }
 }

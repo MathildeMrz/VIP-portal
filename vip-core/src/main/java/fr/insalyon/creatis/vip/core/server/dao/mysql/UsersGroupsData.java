@@ -37,30 +37,38 @@ import fr.insalyon.creatis.vip.core.client.view.CoreConstants.GROUP_ROLE;
 import fr.insalyon.creatis.vip.core.client.view.user.UserLevel;
 import fr.insalyon.creatis.vip.core.client.view.util.CountryCode;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import fr.insalyon.creatis.vip.core.server.dao.GroupDAO;
 import fr.insalyon.creatis.vip.core.server.dao.UsersGroupsDAO;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Repository
 @Transactional
+@Primary
 public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private GroupDAO groupDao;
+
+    @Autowired
+    public UsersGroupsData(GroupDAO groupDao) {
+        this.groupDao = groupDao;
+    }
 
     @Autowired
     public void useDataSource(DataSource dataSource) {
@@ -68,28 +76,29 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
     }
 
     @Override
-    public void add(String email, String groupname, GROUP_ROLE role)
+    public void add(String email, String groupName, GROUP_ROLE role)
             throws DAOException {
 
         try {
+
             PreparedStatement ps = getConnection().prepareStatement(
                     "INSERT INTO VIPUsersGroups(email, groupname, role) "
-                    + "VALUES(?, ?, ?)");
+                            + "VALUES(?, ?, ?)");
 
             ps.setString(1, email);
-            ps.setString(2, groupname);
+            ps.setString(2, groupName);
             ps.setString(3, role.name());
             ps.execute();
             ps.close();
 
+
         } catch (SQLException ex) {
-            logger.error("Error adding group {} to {}", groupname, email, ex);
+            logger.error("Error adding group {} to {}", groupName, email, ex);
             throw new DAOException(ex);
         }
     }
 
     /**
-     *
      * @param email
      * @return
      * @throws DAOException
@@ -101,8 +110,8 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
         try {
             PreparedStatement ps = getConnection().prepareStatement(
                     "SELECT g.groupname, g.public, g.gridfile, g.gridjobs, role "
-                    + "FROM VIPGroups g JOIN VIPUsersGroups ug "
-                    + "ON g.groupname = ug.groupname AND email = ?");
+                            + "FROM VIPGroups g JOIN VIPUsersGroups ug "
+                            + "ON g.groupname = ug.groupname AND email = ?");
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
 
@@ -126,7 +135,6 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
     }
 
     /**
-     *
      * @param email
      * @return
      * @throws DAOException
@@ -157,7 +165,6 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
     }
 
     /**
-     *
      * @param email
      * @param groups
      * @throws DAOException
@@ -186,7 +193,6 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
     }
 
     /**
-     *
      * @param groups
      * @return
      * @throws DAOException
@@ -198,10 +204,15 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
             StringBuilder sb = new StringBuilder();
 
             for (String groupName : groups) {
-                if (sb.length() > 0) {
-                    sb.append(" OR ");
+                if (groupDao.isGroup(groupName)) {
+                    if (sb.length() > 0) {
+                        sb.append(" OR ");
+                    }
+                    sb.append("groupname = '").append(groupName).append("'");
+                } else {
+                    logger.error("There is no group registered with the groupname {}", groupName);
+                    throw new DAOException("There is no group registered with the groupname : " + groupName);
                 }
-                sb.append("groupname = '").append(groupName).append("'");
             }
             PreparedStatement ps = getConnection().prepareStatement("SELECT DISTINCT "
                     + "first_name, last_name, LOWER(first_name), LOWER(last_name) "
@@ -232,8 +243,8 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
         try {
             PreparedStatement ps = getConnection().prepareStatement(
                     "SELECT public, gridfile, gridjobs "
-                    + "FROM VIPGroups g, VIPUsersGroups ug "
-                    + "WHERE g.groupname = ug.groupname AND ug.email= ?");
+                            + "FROM VIPGroups g, VIPUsersGroups ug "
+                            + "WHERE g.groupname = ug.groupname AND ug.email= ?");
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
 
@@ -268,7 +279,6 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
     }
 
     /**
-     *
      * @return @throws DAOException
      */
     @Override
@@ -316,7 +326,6 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
     }
 
     /**
-     *
      * @param email
      * @param groupName
      * @throws DAOException
@@ -325,12 +334,17 @@ public class UsersGroupsData extends JdbcDaoSupport implements UsersGroupsDAO {
     public void removeUserFromGroup(String email, String groupName) throws DAOException {
 
         try {
-            PreparedStatement ps = getConnection().prepareStatement("DELETE FROM "
-                    + "VIPUsersGroups WHERE email = ? AND groupname = ?");
-            ps.setString(1, email);
-            ps.setString(2, groupName);
-            ps.executeUpdate();
-            ps.close();
+            if (groupDao.isGroup(groupName)) {
+                PreparedStatement ps = getConnection().prepareStatement("DELETE FROM "
+                        + "VIPUsersGroups WHERE email = ? AND groupname = ?");
+                ps.setString(1, email);
+                ps.setString(2, groupName);
+                ps.executeUpdate();
+                ps.close();
+            } else {
+                logger.error("There is no group registered with the groupname {}", groupName);
+                throw new DAOException("There is no group registered with the groupname : " + groupName);
+            }
 
         } catch (SQLException ex) {
             logger.error("Error removing {} from group {} ", email, groupName, ex);

@@ -45,8 +45,6 @@ import fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness;
 import fr.insalyon.creatis.vip.datamanager.server.business.TransferPoolBusiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletException;
 import java.io.File;
@@ -55,7 +53,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
 public class DataManagerServiceImpl extends AbstractRemoteServiceServlet implements DataManagerService {
@@ -95,9 +92,9 @@ public class DataManagerServiceImpl extends AbstractRemoteServiceServlet impleme
                 for (String s : LfcDirSSHSynchronization) {
                     if (s.equals(dataPath)) {
                         d.setType(Data.Type.folderSync);
-                    } else if (dataPath.contains(s+"/") && d.getType().equals(Data.Type.file)) {
+                    } else if (dataPath.contains(s + "/") && d.getType().equals(Data.Type.file)) {
                         d.setType(Data.Type.fileSync);
-                    } else if (dataPath.contains(s+"/") && d.getType().equals(Data.Type.folder)) {
+                    } else if (dataPath.contains(s + "/") && d.getType().equals(Data.Type.folder)) {
                         d.setType(Data.Type.folderSync);
                     }
                 }
@@ -153,10 +150,10 @@ public class DataManagerServiceImpl extends AbstractRemoteServiceServlet impleme
 
     @Override
     public void rename(String baseDir, List<String> paths, String newBaseDir,
-            boolean extendPath) throws DataManagerException {
+                       boolean extendPath) throws DataManagerException {
         try {
             lfcBusiness.rename(
-                getSessionUser(), baseDir, paths, newBaseDir, extendPath);
+                    getSessionUser(), baseDir, paths, newBaseDir, extendPath);
         } catch (BusinessException | CoreException ex) {
             throw new DataManagerException(ex);
         }
@@ -204,7 +201,7 @@ public class DataManagerServiceImpl extends AbstractRemoteServiceServlet impleme
         try {
             User user = getSessionUser();
             return transferPoolBusiness.getOperations(
-                user.getEmail(), startDate, user.getFolder());
+                    user.getEmail(), startDate, user.getFolder());
         } catch (BusinessException | CoreException ex) {
             throw new DataManagerException(ex);
         }
@@ -225,7 +222,7 @@ public class DataManagerServiceImpl extends AbstractRemoteServiceServlet impleme
             throws DataManagerException {
         try {
             return transferPoolBusiness.getOperationById(
-                operationId, getSessionUser().getFolder());
+                    operationId, getSessionUser().getFolder());
         } catch (BusinessException | CoreException ex) {
             throw new DataManagerException(ex);
         }

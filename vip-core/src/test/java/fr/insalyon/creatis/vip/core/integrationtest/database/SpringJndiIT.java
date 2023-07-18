@@ -2,7 +2,6 @@ package fr.insalyon.creatis.vip.core.integrationtest.database;
 
 import fr.insalyon.creatis.grida.client.GRIDAClient;
 import fr.insalyon.creatis.grida.client.GRIDAClientException;
-import fr.insalyon.creatis.vip.core.client.bean.Account;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.util.CountryCode;
@@ -11,8 +10,6 @@ import fr.insalyon.creatis.vip.core.server.SpringCoreConfig;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
 import fr.insalyon.creatis.vip.core.server.business.EmailBusiness;
-import fr.insalyon.creatis.vip.core.server.business.Server;
-import fr.insalyon.creatis.vip.core.server.dao.mysql.CoreDataInitializer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -22,16 +19,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -40,7 +33,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -65,7 +57,8 @@ import static org.mockito.ArgumentMatchers.*;
     database without jndi, and should be enough to detect most database issues
     in a automatic way
  */
-@SpringJUnitConfig(SpringCoreConfig.class) // launch all spring environment for testing, also take test bean though automatic package scan
+@SpringJUnitConfig(SpringCoreConfig.class)
+// launch all spring environment for testing, also take test bean though automatic package scan
 @TestPropertySource(properties = "db.tableEngine=") // to disable the default mysql/innodb engine on database init
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles({"jndi-db", "test"}) // to use default jndi datasource but avoid default server config
@@ -193,7 +186,7 @@ public class SpringJndiIT {
         }
         Mockito.reset(emailBusiness);
         assertEquals(exception, exceptionCatched);
-        assertEquals(shouldRollback ? 2:1, countUser.get());
+        assertEquals(shouldRollback ? 2 : 1, countUser.get());
         if (shouldRollback) {
             // clean if necessary
             configurationBusiness.removeUser(testEmail, false);
@@ -218,7 +211,11 @@ public class SpringJndiIT {
         // and not spring DataAccessException
         JdbcTemplate jdbcTemplate = new JdbcTemplate(lazyDataSource);
         // close the datasource to make the next request fail
-        try { jdbcTemplate.execute("SHUTDOWN"); } catch (Exception e) {e.printStackTrace();}
+        try {
+            jdbcTemplate.execute("SHUTDOWN");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         assertThrows(BusinessException.class, () -> configurationBusiness.addTermsUse());
     }
 
@@ -227,7 +224,11 @@ public class SpringJndiIT {
     public void connectionShouldBeLazyInTransaction() throws SQLException, MalformedURLException {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(lazyDataSource);
         // close the datasource to make the next request fail
-        try { jdbcTemplate.execute("SHUTDOWN"); } catch (Exception e) {e.printStackTrace();}
+        try {
+            jdbcTemplate.execute("SHUTDOWN");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // getConnection throw an exception but should not be called as 'getLoginUrlCas' do not need db access
         String res = configurationBusiness.getLoginUrlCas(new URL("file:/plop"));
         assertEquals(ServerMockConfig.TEST_CAS_URL + "/login?service=file:/plop", res);

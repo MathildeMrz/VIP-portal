@@ -61,24 +61,21 @@ import static fr.insalyon.creatis.vip.api.CarminProperties.ADDITIONNAL_INPUT_VAL
 import static fr.insalyon.creatis.vip.application.client.ApplicationConstants.INPUT_VALID_CHARS;
 
 /**
- *
  * @author Tristan Glatard
  */
 @Service
 public class ExecutionBusiness {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    // API dependencies
-    private Supplier<User> currentUserProvider;
     private final DataApiBusiness dataApiBusiness;
-
     // other modules dependencies
     private final SimulationBusiness simulationBusiness;
     private final WorkflowBusiness workflowBusiness;
     private final PipelineBusiness pipelineBusiness;
     private final ConfigurationBusiness configurationBusiness;
     private final ApplicationBusiness applicationBusiness;
+    // API dependencies
+    private Supplier<User> currentUserProvider;
 
     @Autowired
     public ExecutionBusiness(Supplier<User> currentUserProvider,
@@ -141,12 +138,12 @@ public class ExecutionBusiness {
                     null // results location (not available in VIP yet)
             );
 
-            if(summarize) // don't look into inputs and outputs
+            if (summarize) // don't look into inputs and outputs
                 return e;
 
             // Inputs
             List<InOutData> inputs = workflowBusiness.getInputData(
-                executionId, currentUserProvider.get().getFolder());
+                    executionId, currentUserProvider.get().getFolder());
             logger.info("Execution has " + inputs.size() + " inputs ");
             for (InOutData iod : inputs) {
                 e.getInputValues().put(iod.getProcessor(), iod.getPath());
@@ -154,10 +151,10 @@ public class ExecutionBusiness {
 
             // Outputs
             List<InOutData> outputs = workflowBusiness.getOutputData(
-                executionId, currentUserProvider.get().getFolder());
+                    executionId, currentUserProvider.get().getFolder());
             for (InOutData iod : outputs) {
                 if (!e.getReturnedFiles().containsKey(iod.getProcessor())) {
-                     e.getReturnedFiles().put(iod.getProcessor(), new ArrayList<>());
+                    e.getReturnedFiles().put(iod.getProcessor(), new ArrayList<>());
                 }
                 e.getReturnedFiles().get(iod.getProcessor()).add(iod.getPath());
             }
@@ -192,7 +189,7 @@ public class ExecutionBusiness {
                 if (!(s == null) && !(s.getStatus() == SimulationStatus.Cleaned)) {
                     count++;
                     executions.add(getExecution(s.getID(), true));
-                    if(count >= maxReturned){
+                    if (count >= maxReturned) {
                         logger.warn("Only the {} most recent pipelines were returned.", maxReturned);
                         break;
                     }
@@ -248,22 +245,22 @@ public class ExecutionBusiness {
     }
 
     public String initExecution(Execution execution)
-        throws ApiException {
+            throws ApiException {
         Map<String, String> inputMap = new HashMap<>();
-        for (Entry<String,Object> restInput : execution.getInputValues().entrySet()) {
+        for (Entry<String, Object> restInput : execution.getInputValues().entrySet()) {
             inputMap.put(restInput.getKey(),
                     handleRestParameter(restInput.getKey(), restInput.getValue()));
         }
         String resultsLocation = execution.getResultsLocation();
         if (resultsLocation != null) {
             inputMap.put(CoreConstants.RESULTS_DIRECTORY_PARAM_NAME,
-                         resultsLocation);
+                    resultsLocation);
         }
 
         checkInputExecNameIsValid(execution.getName());
         return initExecution(
-            execution.getPipelineIdentifier(), inputMap, execution.getTimeout(),
-            execution.getName(), execution.getStudyIdentifier());
+                execution.getPipelineIdentifier(), inputMap, execution.getTimeout(),
+                execution.getName(), execution.getStudyIdentifier());
     }
 
     private String handleRestParameter(String parameterName, Object restParameterValue)
@@ -280,7 +277,7 @@ public class ExecutionBusiness {
                 paramBuilder.append(inputValue);
                 isFirst = false;
             }
-            logger.info("Handling list parameter for parameter [" + parameterName +"]");
+            logger.info("Handling list parameter for parameter [" + parameterName + "]");
             return paramBuilder.toString();
         } else {
             String inputValue = restParameterValue.toString();
@@ -291,7 +288,7 @@ public class ExecutionBusiness {
 
     private void checkInputIsValid(String input) throws ApiException {
         String validChars = INPUT_VALID_CHARS + ADDITIONNAL_INPUT_VALID_CHARS;
-        if( ! input.matches("[" + validChars + "]+")) {
+        if (!input.matches("[" + validChars + "]+")) {
             logger.error("Input {} is not valid. Authorized characters are {}",
                     input, validChars);
             throw new ApiException("Input " + input + " is not valid.");
@@ -299,7 +296,7 @@ public class ExecutionBusiness {
     }
 
     private void checkInputExecNameIsValid(String input) throws ApiException {
-        if( ! input.matches("[" + ApplicationConstants.EXEC_NAME_VALID_CHARS + "]+")) {
+        if (!input.matches("[" + ApplicationConstants.EXEC_NAME_VALID_CHARS + "]+")) {
             logger.error("Execution name {} is not valid. Authorized characters are {}",
                     input, ApplicationConstants.EXEC_NAME_VALID_CHARS);
             throw new ApiException("Execution name " + input + " is not valid.");
@@ -308,10 +305,10 @@ public class ExecutionBusiness {
     }
 
     private String initExecution(String pipelineId,
-                                Map<String,String> inputValues,
-                                Integer timeoutInSeconds,
-                                String executionName,
-                                String studyId) throws ApiException {
+                                 Map<String, String> inputValues,
+                                 Integer timeoutInSeconds,
+                                 String executionName,
+                                 String studyId) throws ApiException {
         try {
             // We cannot easily initialize an execution without starting it.
             // So we will just launch the execution, and launch an error in case playExecution is not true.
@@ -350,18 +347,18 @@ public class ExecutionBusiness {
             }
 
             boolean hasInputResultsDirectory =
-                inputValues.containsKey(
-                    CoreConstants.RESULTS_DIRECTORY_PARAM_NAME);
+                    inputValues.containsKey(
+                            CoreConstants.RESULTS_DIRECTORY_PARAM_NAME);
 
             boolean hasPipelineResultsDirectory =
-                p.getParameters().stream().anyMatch(
-                        param ->
-                        param.getName().equals(CoreConstants.RESULTS_DIRECTORY_PARAM_NAME));
+                    p.getParameters().stream().anyMatch(
+                            param ->
+                                    param.getName().equals(CoreConstants.RESULTS_DIRECTORY_PARAM_NAME));
 
             if (hasInputResultsDirectory && !hasPipelineResultsDirectory) {
                 logger.error("Missing results-directory for {}", pipelineId);
                 throw new ApiException(
-                    "Input has parameter results-directory but it is not defined in pipeline.");
+                        "Input has parameter results-directory but it is not defined in pipeline.");
             }
 
             // Get user groups
@@ -439,7 +436,7 @@ public class ExecutionBusiness {
         List<InOutData> outputs;
         try {
             outputs = workflowBusiness.getOutputData(
-                executionId, currentUserProvider.get().getFolder());
+                    executionId, currentUserProvider.get().getFolder());
         } catch (BusinessException e) {
             throw new ApiException(e);
         }

@@ -40,7 +40,6 @@ import fr.insalyon.creatis.vip.core.client.view.system.setting.ManageSettingTab;
 import fr.insalyon.creatis.vip.core.client.view.system.user.ManageUsersTab;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class SystemParser extends ApplicationParser {
@@ -59,15 +58,15 @@ public class SystemParser extends ApplicationParser {
     public boolean parse(String applicationName, String applicationVersion) {
         if (applicationName.equals(CoreConstants.APP_USER)) {
             Layout.getInstance().addTab(
-                CoreConstants.TAB_MANAGE_USERS, ManageUsersTab::new);
+                    CoreConstants.TAB_MANAGE_USERS, ManageUsersTab::new);
             return true;
         } else if (applicationName.equals(CoreConstants.APP_GROUP)) {
             Layout.getInstance().addTab(
-                CoreConstants.TAB_MANAGE_GROUPS, ManageGroupsTab::new);
+                    CoreConstants.TAB_MANAGE_GROUPS, ManageGroupsTab::new);
             return true;
-        }  else if (applicationName.equals(CoreConstants.APP_SETTING)) {
+        } else if (applicationName.equals(CoreConstants.APP_SETTING)) {
             Layout.getInstance().addTab(
-                CoreConstants.TAB_MANAGE_SETTING, ManageSettingTab::new);
+                    CoreConstants.TAB_MANAGE_SETTING, ManageSettingTab::new);
             return true;
         }
         return false;

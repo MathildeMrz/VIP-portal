@@ -37,10 +37,10 @@ import fr.insalyon.creatis.vip.visualization.client.bean.VisualizationItem;
 
 public interface VisualizationServiceAsync {
     public void getImageSlicesURL(
-        String imageLocalPath,
-        String direction,
-        AsyncCallback<Image> asyncCallback);
+            String imageLocalPath,
+            String direction,
+            AsyncCallback<Image> asyncCallback);
 
     public void getVisualizationItemFromLFN(
-        String lfn, AsyncCallback<VisualizationItem> asyncCallback);
+            String lfn, AsyncCallback<VisualizationItem> asyncCallback);
 }

@@ -51,7 +51,7 @@ import static fr.insalyon.creatis.vip.api.CarminProperties.*;
 /**
  * Add an additional "vip-api.conf" property file to spring environment
  * This file must be in the vip configuration folder (alongside vip.conf)
- *
+ * <p>
  * Created by abonnet on 5/7/18.
  */
 @Component
@@ -66,8 +66,10 @@ public class ApiPropertiesInitializer {
             Resource vipConfigFolder,
             ConfigurableEnvironment environment) throws IOException {
         this.env = environment;
+
         Resource configFileResource = new FileSystemResource(
                 vipConfigFolder.getFile().toPath().resolve("vip-api.conf"));
+
         env.getPropertySources().addLast(
                 new ResourcePropertySource(configFileResource)
         );

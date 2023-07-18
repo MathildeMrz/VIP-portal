@@ -33,10 +33,10 @@ package fr.insalyon.creatis.vip.api.business;
 
 import fr.insalyon.creatis.vip.api.CarminProperties;
 import fr.insalyon.creatis.vip.api.exception.ApiException;
+import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.api.model.ParameterType;
 import fr.insalyon.creatis.vip.api.model.Pipeline;
 import fr.insalyon.creatis.vip.api.model.PipelineParameter;
-import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.application.client.bean.*;
 import fr.insalyon.creatis.vip.application.server.business.ApplicationBusiness;
 import fr.insalyon.creatis.vip.application.server.business.ClassBusiness;
@@ -44,7 +44,6 @@ import fr.insalyon.creatis.vip.application.server.business.WorkflowBusiness;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
-import fr.insalyon.creatis.vip.publication.client.bean.Publication;
 import fr.insalyon.creatis.vip.publication.server.business.PublicationBusiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,20 +59,17 @@ import java.util.function.Supplier;
 import static fr.insalyon.creatis.vip.api.exception.ApiException.ApiError.*;
 
 /**
- *
  * @author Tristan Glatard
  */
 @Service
 public class PipelineBusiness {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private Environment env;
-
-    private Supplier<User> currentUserProvider;
     private final WorkflowBusiness workflowBusiness;
     private final ApplicationBusiness applicationBusiness;
     private final ClassBusiness classBusiness;
+    private Environment env;
+    private Supplier<User> currentUserProvider;
 
     @Autowired
     public PipelineBusiness(
@@ -92,8 +88,8 @@ public class PipelineBusiness {
         Pipeline p = getPipelineWithResultsDirectory(pipelineId);
 
         p.getParameters().removeIf(
-            param ->
-            param.getName().equals(CoreConstants.RESULTS_DIRECTORY_PARAM_NAME));
+                param ->
+                        param.getName().equals(CoreConstants.RESULTS_DIRECTORY_PARAM_NAME));
 
         return p;
     }
@@ -116,11 +112,11 @@ public class PipelineBusiness {
                     sourceType = ParameterType.Boolean;
                 }
                 PipelineParameter pp = new PipelineParameter(s.getName(),
-                                                             sourceType,
-                                                             s.isOptional(),
-                                                             false,
-                                                             s.getDefaultValue(),
-                                                             s.getDescription());
+                        sourceType,
+                        s.isOptional(),
+                        false,
+                        s.getDefaultValue(),
+                        s.getDescription());
                 p.getParameters().add(pp);
             }
             return p;
@@ -144,10 +140,10 @@ public class PipelineBusiness {
             }
 
             List<Application> applications =
-                applicationBusiness.getApplications(classNames);
+                    applicationBusiness.getApplications(classNames);
             for (Application a : applications) {
                 List<AppVersion> versions =
-                    applicationBusiness.getVersions(a.getName());
+                        applicationBusiness.getVersions(a.getName());
                 for (AppVersion av : versions) {
                     if (isApplicationVersionUsableInApi(av)) {
                         pipelines.add(
@@ -167,7 +163,7 @@ public class PipelineBusiness {
 
     public List<Application> listPublicPipelines() throws ApiException {
         try {
-             return applicationBusiness.getPublicApplicationsWithGroups();
+            return applicationBusiness.getPublicApplicationsWithGroups();
         } catch (BusinessException e) {
             throw new ApiException(e);
         }
@@ -216,7 +212,7 @@ public class PipelineBusiness {
 
             String applicationName = getApplicationName(pipelineId);
             List<String> userClassNames = classBusiness.getUserClassesName(
-                currentUserProvider.get().getEmail(), false);
+                    currentUserProvider.get().getEmail(), false);
 
             Application a = applicationBusiness.getApplication(applicationName);
             if (a == null) {
@@ -238,7 +234,7 @@ public class PipelineBusiness {
 
     private Pipeline getPipelineWithPermissions(
             String applicationName, String applicationVersion)
-        throws ApiException {
+            throws ApiException {
         Pipeline[] pipelines = listPipelines("");
         for (Pipeline p : pipelines) {
             if (p.getName().equals(applicationName) && p.getVersion().equals(applicationVersion)) {
@@ -246,7 +242,7 @@ public class PipelineBusiness {
             }
         }
         logger.error("Pipeline {}/{} doesn't exist or user {} cannot access it",
-                applicationName, applicationVersion , currentUserProvider.get());
+                applicationName, applicationVersion, currentUserProvider.get());
         throw new ApiException(PIPELINE_NOT_FOUND, applicationName + "/" + applicationVersion);
     }
 }

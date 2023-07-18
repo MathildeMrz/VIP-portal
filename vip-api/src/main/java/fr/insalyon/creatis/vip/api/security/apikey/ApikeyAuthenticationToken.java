@@ -35,14 +35,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collections;
 
 /**
  * Created by abonnet on 10/6/16.
- *
+ * <p>
  * Used to store the apikey
  * Does not contain user info, because we dont know it at first
  */

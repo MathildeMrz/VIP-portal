@@ -38,14 +38,13 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
+import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
 import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationServiceAsync;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationParser;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
-import fr.insalyon.creatis.vip.core.client.rpc.ConfigurationService;
 
 
 /**
- *
  * @author Rafael Ferreira da Silva, Nouha Boujelben, Sorina Pop
  */
 public class PublicationParser extends ApplicationParser {
@@ -84,7 +83,6 @@ public class PublicationParser extends ApplicationParser {
         }
         return false;
     }
-
 
 
     private void showDialog(String message) {

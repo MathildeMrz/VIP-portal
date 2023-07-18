@@ -32,23 +32,24 @@ knowledge of the CeCILL-B license and that you accept its terms.
 
 -->
 
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.7.0//EN" "http://google-web-toolkit.googlecode.com/svn/tags/1.7.0/distro-source/core/src/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.7.0//EN"
+        "http://google-web-toolkit.googlecode.com/svn/tags/1.7.0/distro-source/core/src/gwt-module.dtd">
 <module>
-    <inherits name="com.google.gwt.user.User" />
+    <inherits name="com.google.gwt.user.User"/>
     <inherits name="com.smartgwt.SmartGwt"/>
-    <inherits name="com.google.gwt.core.Core" />
-    <inherits name="com.google.gwt.user.History" />
-    <inherits name="com.google.gwt.i18n.I18N" />
-    <inherits name='com.google.gwt.user.theme.standard.Standard' />
+    <inherits name="com.google.gwt.core.Core"/>
+    <inherits name="com.google.gwt.user.History"/>
+    <inherits name="com.google.gwt.i18n.I18N"/>
+    <inherits name='com.google.gwt.user.theme.standard.Standard'/>
 
-    <inherits name="com.google.gwt.logging.Logging" />
-    <set-property name="gwt.logging.enabled" value="TRUE" />
-    <set-property name="gwt.logging.logLevel" value="FINEST" />
-    <set-property name="gwt.logging.consoleHandler" value="ENABLED" />
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.logLevel" value="FINEST"/>
+    <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>
 
-    <set-property name="gwt.logging.simpleRemoteHandler" value="DISABLED" />
-    <set-property name="gwt.logging.developmentModeHandler" value="DISABLED" />
-    <set-property name="gwt.logging.systemHandler" value="DISABLED" />
+    <set-property name="gwt.logging.simpleRemoteHandler" value="DISABLED"/>
+    <set-property name="gwt.logging.developmentModeHandler" value="DISABLED"/>
+    <set-property name="gwt.logging.systemHandler" value="DISABLED"/>
 
     <!-- Servlets -->
     <servlet class="fr.insalyon.creatis.vip.core.server.rpc.GetFileServiceImpl" path="/getfileservice"/>

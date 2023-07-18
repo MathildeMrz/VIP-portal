@@ -74,20 +74,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ErrorCodeAndMessage fetchErrorInException(Throwable throwable) {
 
         // cast to vipException
-        VipException vipException =  Optional.ofNullable(throwable)
+        VipException vipException = Optional.ofNullable(throwable)
                 .filter(VipException.class::isInstance)
                 .map(VipException.class::cast)
                 // stop recursion if no exception or if not a VipException
-                .orElse( new ApiException(ApiError.GENERIC_API_ERROR));
+                .orElse(new ApiException(ApiError.GENERIC_API_ERROR));
 
         // return code and message if present otherwise call parent
         return vipException.getVipErrorCode()
-                .map( errorCode -> new ErrorCodeAndMessage(
+                .map(errorCode -> new ErrorCodeAndMessage(
                         errorCode,
-                        cleanExceptionMessage(vipException) )
+                        cleanExceptionMessage(vipException))
                 )
-                .orElseGet( () ->
-                        fetchErrorInException( vipException.getCause() )
+                .orElseGet(() ->
+                        fetchErrorInException(vipException.getCause())
                 );
 
     }

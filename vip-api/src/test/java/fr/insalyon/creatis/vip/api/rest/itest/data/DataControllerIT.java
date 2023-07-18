@@ -31,8 +31,8 @@
  */
 package fr.insalyon.creatis.vip.api.rest.itest.data;
 
-import fr.insalyon.creatis.vip.api.rest.config.BaseVIPSpringIT;
 import fr.insalyon.creatis.vip.api.model.PathProperties;
+import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation;
 import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation.Status;
 import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation.Type;
@@ -49,11 +49,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static fr.insalyon.creatis.vip.api.data.PathTestUtils.*;
-import static fr.insalyon.creatis.vip.api.data.UserTestUtils.*;
+import static fr.insalyon.creatis.vip.api.data.UserTestUtils.baseUser1;
+import static fr.insalyon.creatis.vip.api.data.UserTestUtils.baseUser2;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -61,14 +62,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by abonnet on 1/23/17.
  */
 @Disabled
-public class DataControllerIT extends BaseVIPSpringIT {
+public class DataControllerIT extends BaseWebSpringIT {
 
     @Test
     public void shouldReturnFilePath() throws Exception {
         configureDataFS();
         String testLfcPath = getAbsolutePath(testFile1);
         mockMvc.perform(
-                get("/rest/path" + testLfcPath).param("action", "properties").with(baseUser1()))
+                        get("/rest/path" + testLfcPath).param("action", "properties").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -80,7 +81,7 @@ public class DataControllerIT extends BaseVIPSpringIT {
         configureDataFS();
         String testLfcPath = getAbsolutePath(testDir1);
         mockMvc.perform(
-                get("/rest/path" + testLfcPath).param("action", "properties").with(baseUser2()))
+                        get("/rest/path" + testLfcPath).param("action", "properties").with(baseUser2()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -91,12 +92,12 @@ public class DataControllerIT extends BaseVIPSpringIT {
     public void shouldReturnNonExistingPath() throws Exception {
         String testLfcPath = "/vip/Home/WRONG/PATH";
         when(lfcBusiness.exists(eq(baseUser1), eq(testLfcPath)))
-            .thenReturn(false);
+                .thenReturn(false);
         PathProperties expectedPathProperties = new PathProperties();
         expectedPathProperties.setExists(false);
         expectedPathProperties.setPath(testLfcPath);
         mockMvc.perform(
-                get("/rest/path" + testLfcPath).param("action", "exists").with(baseUser1()))
+                        get("/rest/path" + testLfcPath).param("action", "exists").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -108,15 +109,15 @@ public class DataControllerIT extends BaseVIPSpringIT {
         configureDataFS();
         String lfcPath = getAbsolutePath(user2Dir);
         mockMvc.perform(
-                get("/rest/path" + lfcPath).param("action", "list").with(baseUser2()))
+                        get("/rest/path" + lfcPath).param("action", "list").with(baseUser2()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$[*]", Matchers.containsInAnyOrder(
-                        jsonCorrespondsToPath(testDir1PathProperties),
-                        jsonCorrespondsToPath(testFile2PathProperties)
-                ))
-        );
+                                jsonCorrespondsToPath(testDir1PathProperties),
+                                jsonCorrespondsToPath(testFile2PathProperties)
+                        ))
+                );
     }
 
     @Test
@@ -124,14 +125,14 @@ public class DataControllerIT extends BaseVIPSpringIT {
         configureDataFS();
         String lfcPath = getAbsolutePath(testDir1);
         mockMvc.perform(
-                get("/rest/path" + lfcPath).param("action", "list").with(baseUser2()))
+                        get("/rest/path" + lfcPath).param("action", "list").with(baseUser2()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$[*]", Matchers.containsInAnyOrder(
-                        jsonCorrespondsToPath(testFile3PathProperties),
-                        jsonCorrespondsToPath(testFile4PathProperties),
-                        jsonCorrespondsToPath(testFile5PathProperties)
+                                jsonCorrespondsToPath(testFile3PathProperties),
+                                jsonCorrespondsToPath(testFile4PathProperties),
+                                jsonCorrespondsToPath(testFile5PathProperties)
                         ))
                 );
     }
@@ -147,15 +148,15 @@ public class DataControllerIT extends BaseVIPSpringIT {
                 null, null, null, testFile, Type.Download, Status.Done, baseUser1.getEmail(), 100);
         PoolOperation runningPoolOperation = new PoolOperation(operationId,
                 null, null, null, null, Type.Download, Status.Running, baseUser1.getEmail(), 0);
-        when (transferPoolBusiness.downloadFile(eq(baseUser1), eq(lfcPath)))
-            .thenReturn(operationId);
-        when (transferPoolBusiness.getOperationById(
-                  eq(operationId), eq(baseUser1.getFolder())))
-            .thenReturn(runningPoolOperation, runningPoolOperation, donePoolOperation);
-        when (transferPoolBusiness.getDownloadPoolOperation(operationId))
+        when(transferPoolBusiness.downloadFile(eq(baseUser1), eq(lfcPath)))
+                .thenReturn(operationId);
+        when(transferPoolBusiness.getOperationById(
+                eq(operationId), eq(baseUser1.getFolder())))
+                .thenReturn(runningPoolOperation, runningPoolOperation, donePoolOperation);
+        when(transferPoolBusiness.getDownloadPoolOperation(operationId))
                 .thenReturn(donePoolOperation);
         mockMvc.perform(
-                get("/rest/path" + lfcPath).param("action", "content").with(baseUser1()))
+                        get("/rest/path" + lfcPath).param("action", "content").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk());
         // todo test file content
@@ -168,13 +169,13 @@ public class DataControllerIT extends BaseVIPSpringIT {
         String operationId = "testOpId";
         PoolOperation runningPoolOperation = new PoolOperation(operationId,
                 null, null, null, null, Type.Download, Status.Running, baseUser1.getEmail(), 0);
-        when (transferPoolBusiness.downloadFile(eq(baseUser1), eq(lfcPath)))
-            .thenReturn(operationId);
-        when (transferPoolBusiness.getOperationById(
-                  eq(operationId), eq(baseUser1.getFolder())))
-            .thenReturn(runningPoolOperation, runningPoolOperation);
+        when(transferPoolBusiness.downloadFile(eq(baseUser1), eq(lfcPath)))
+                .thenReturn(operationId);
+        when(transferPoolBusiness.getOperationById(
+                eq(operationId), eq(baseUser1.getFolder())))
+                .thenReturn(runningPoolOperation, runningPoolOperation);
         mockMvc.perform(
-                get("/rest/path" + lfcPath).param("action", "content").with(baseUser1()))
+                        get("/rest/path" + lfcPath).param("action", "content").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
@@ -190,24 +191,24 @@ public class DataControllerIT extends BaseVIPSpringIT {
                 null, null, null, null, Type.Download, Status.Running, baseUser1.getEmail(), 0);
         PoolOperation donePoolOperation = new PoolOperation(operationId,
                 null, null, null, testFile, Type.Download, Status.Done, baseUser1.getEmail(), 100);
-        when (transferPoolBusiness.downloadFile(eq(baseUser1), eq(lfcPath)))
+        when(transferPoolBusiness.downloadFile(eq(baseUser1), eq(lfcPath)))
                 .thenReturn(operationId);
-        when (transferPoolBusiness.getOperationById(
+        when(transferPoolBusiness.getOperationById(
                 eq(operationId), eq(baseUser1.getFolder())))
                 .thenReturn(runningPoolOperation);
-        when (transferPoolBusiness.getDownloadPoolOperation(operationId))
-              .thenReturn(donePoolOperation);
+        when(transferPoolBusiness.getDownloadPoolOperation(operationId))
+                .thenReturn(donePoolOperation);
         mockMvc.perform(
-                get("/rest/path" + lfcPath).param("action", "content").with(baseUser1()))
+                        get("/rest/path" + lfcPath).param("action", "content").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
         // now do an OK download
-        Thread.sleep(3*1000);
-          when (transferPoolBusiness.getOperationById(
-                  eq(operationId), eq(baseUser1.getFolder())))
-                  .thenReturn(runningPoolOperation, runningPoolOperation, donePoolOperation);
+        Thread.sleep(3 * 1000);
+        when(transferPoolBusiness.getOperationById(
+                eq(operationId), eq(baseUser1.getFolder())))
+                .thenReturn(runningPoolOperation, runningPoolOperation, donePoolOperation);
         mockMvc.perform(
-                get("/rest/path" + lfcPath).param("action", "content").with(baseUser1()))
+                        get("/rest/path" + lfcPath).param("action", "content").with(baseUser1()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -215,7 +216,7 @@ public class DataControllerIT extends BaseVIPSpringIT {
     @Test
     public void shouldUploadFile() throws Exception {
         configureDataFS();
-        String path =  getAbsolutePath(testDir1) + "/uploaded.txt";
+        String path = getAbsolutePath(testDir1) + "/uploaded.txt";
         byte fileContent[] = Files.readAllBytes(Paths.get(
                 ClassLoader.getSystemResource("testFile.txt").toURI()));
         String operationId = "testOpId";
@@ -223,25 +224,25 @@ public class DataControllerIT extends BaseVIPSpringIT {
                 null, null, null, null, Type.Upload, Status.Done, baseUser2.getEmail(), 100);
         PoolOperation runningPoolOperation = new PoolOperation(operationId,
                 null, null, null, null, Type.Upload, Status.Running, baseUser2.getEmail(), 0);
-        when (transferPoolBusiness.uploadFile(
-                  eq(baseUser2),
-                  anyString(),
-                  eq(getAbsolutePath(testDir1))))
+        when(transferPoolBusiness.uploadFile(
+                eq(baseUser2),
+                anyString(),
+                eq(getAbsolutePath(testDir1))))
                 .thenReturn(operationId);
-        when (transferPoolBusiness.getOperationById(
-                  eq(operationId), eq(baseUser2.getFolder())))
-            .thenReturn(runningPoolOperation, runningPoolOperation, donePoolOperation);
+        when(transferPoolBusiness.getOperationById(
+                eq(operationId), eq(baseUser2.getFolder())))
+                .thenReturn(runningPoolOperation, runningPoolOperation, donePoolOperation);
         mockMvc.perform(
-                put("/rest/path" + path)
-                        .content(fileContent).contentType(MediaType.TEXT_PLAIN)
-                        .with(baseUser2()))
+                        put("/rest/path" + path)
+                                .content(fileContent).contentType(MediaType.TEXT_PLAIN)
+                                .with(baseUser2()))
                 .andDo(print())
                 .andExpect(status().isCreated());
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(transferPoolBusiness).uploadFile(
-            eq(baseUser2),
-            captor.capture(),
-            eq(getAbsolutePath(testDir1)));
+                eq(baseUser2),
+                captor.capture(),
+                eq(getAbsolutePath(testDir1)));
         String copiedFile = captor.getValue();
         File expectedFile = getResourceFromClasspath("testFile.txt").getFile();
         assertThat(
@@ -253,32 +254,32 @@ public class DataControllerIT extends BaseVIPSpringIT {
     @Test
     public void shouldUploadBase64Data() throws Exception {
         configureDataFS();
-        String path =  getAbsolutePath(testDir1) + "/uploaded.txt";
+        String path = getAbsolutePath(testDir1) + "/uploaded.txt";
         String operationId = "testOpId";
         PoolOperation donePoolOperation = new PoolOperation(operationId,
                 null, null, null, null, Type.Upload, Status.Done, baseUser2.getEmail(), 100);
         PoolOperation runningPoolOperation = new PoolOperation(operationId,
                 null, null, null, null, Type.Upload, Status.Running, baseUser2.getEmail(), 0);
-        when (transferPoolBusiness.uploadFile(
-                  eq(baseUser2),
-                  anyString(),
-                  eq(getAbsolutePath(testDir1))))
-            .thenReturn(operationId);
-        when (transferPoolBusiness.getOperationById(
-                  eq(operationId), eq(baseUser2.getFolder())))
-            .thenReturn(runningPoolOperation, runningPoolOperation, donePoolOperation);
+        when(transferPoolBusiness.uploadFile(
+                eq(baseUser2),
+                anyString(),
+                eq(getAbsolutePath(testDir1))))
+                .thenReturn(operationId);
+        when(transferPoolBusiness.getOperationById(
+                eq(operationId), eq(baseUser2.getFolder())))
+                .thenReturn(runningPoolOperation, runningPoolOperation, donePoolOperation);
         mockMvc.perform(
-                put("/rest/path" + path)
-                        .content(getResourceAsString("jsonObjects/uploadData_1.json"))
-                        .contentType("application/carmin+json")
-                        .with(baseUser2()))
+                        put("/rest/path" + path)
+                                .content(getResourceAsString("jsonObjects/uploadData_1.json"))
+                                .contentType("application/carmin+json")
+                                .with(baseUser2()))
                 .andDo(print())
                 .andExpect(status().isCreated());
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(transferPoolBusiness).uploadFile(
-            eq(baseUser2),
-            captor.capture(),
-            eq(getAbsolutePath(testDir1)));
+                eq(baseUser2),
+                captor.capture(),
+                eq(getAbsolutePath(testDir1)));
         String copiedFile = captor.getValue();
         File expectedFile = getResourceFromClasspath("b64decoded/uploadData_1.txt").getFile();
         assertThat(

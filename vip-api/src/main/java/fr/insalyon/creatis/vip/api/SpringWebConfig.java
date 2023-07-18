@@ -38,19 +38,10 @@ import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.config.annotation.*;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import static fr.insalyon.creatis.vip.api.CarminProperties.CORS_AUTHORIZED_DOMAINS;
@@ -59,9 +50,9 @@ import static fr.insalyon.creatis.vip.api.CarminProperties.CORS_AUTHORIZED_DOMAI
  * Configure the spring mvc DispatcherServlet. Few things to do, as the
  * controllers and dependencies are automatically configured through
  * scanning.
- *
+ * <p>
  * Created by abonnet on 7/13/16.
- *
+ * <p>
  * Modified by khalilkes
  */
 @EnableWebMvc
@@ -103,8 +94,8 @@ public class SpringWebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
-            .allowedOrigins(env.getRequiredProperty(CORS_AUTHORIZED_DOMAINS, String[].class));
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
+                .allowedOrigins(env.getRequiredProperty(CORS_AUTHORIZED_DOMAINS, String[].class));
     }
 
     /*

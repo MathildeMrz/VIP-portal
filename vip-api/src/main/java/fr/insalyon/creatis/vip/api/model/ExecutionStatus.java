@@ -31,7 +31,8 @@
  */
 package fr.insalyon.creatis.vip.api.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 
 /**
@@ -57,7 +58,9 @@ public enum ExecutionStatus {
     @JsonCreator
     public static ExecutionStatus fromRestLabel(String restlabel) {
         for (ExecutionStatus status : values()) {
-            if (status.restLabel.equals(restlabel)) { return status; }
+            if (status.restLabel.equals(restlabel)) {
+                return status;
+            }
         }
         throw new IllegalArgumentException("Unknown execution status : " + restlabel);
     }

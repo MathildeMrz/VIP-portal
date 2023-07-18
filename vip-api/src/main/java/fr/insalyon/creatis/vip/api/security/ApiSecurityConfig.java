@@ -32,19 +32,16 @@
 package fr.insalyon.creatis.vip.api.security;
 
 import fr.insalyon.creatis.vip.api.CarminProperties;
-
-import fr.insalyon.creatis.vip.api.security.apikey.SpringApiPrincipal;
 import fr.insalyon.creatis.vip.api.security.apikey.ApikeyAuthenticationFilter;
 import fr.insalyon.creatis.vip.api.security.apikey.ApikeyAuthenticationProvider;
+import fr.insalyon.creatis.vip.api.security.apikey.SpringApiPrincipal;
 import fr.insalyon.creatis.vip.api.security.keycloak.SpringKeycloakPrincipal;
 import fr.insalyon.creatis.vip.api.security.keycloak.VipKeycloakAuthenticationProvider;
 import fr.insalyon.creatis.vip.core.client.bean.User;
-
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
-
 import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +50,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
-
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
@@ -76,11 +70,10 @@ import static fr.insalyon.creatis.vip.api.CarminProperties.KEYCLOAK_ACTIVATED;
 
 /**
  * Keycloaksecurity configuration.
- *
+ * <p>
  * It secures by api key all rest requests (except platform and authenticate)
- *
+ * <p>
  * Modified by khalilkes to implement keycloak adapter
- *
  */
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class})
 @KeycloakConfiguration
@@ -149,7 +142,7 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             super.configure(http);
         }
         http.antMatcher("/rest/**")
-            .authorizeRequests()
+                .authorizeRequests()
                 .antMatchers("/rest/platform").permitAll()
                 .antMatchers("/rest/authenticate").permitAll()
                 .antMatchers("/rest/session").permitAll()
@@ -162,15 +155,15 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                 .antMatchers("/rest/statistics/**").hasAnyRole("ADVANCED", "ADMINISTRATOR")
                 .antMatchers("/rest/**").authenticated()
                 .anyRequest().permitAll()
-            .and()
-            .addFilterBefore(apikeyAuthenticationFilter(), BasicAuthenticationFilter.class)
-            .exceptionHandling().authenticationEntryPoint(vipAuthenticationEntryPoint)// also done in parent but needed here when keycloak is not active. It can be done twice without harm.
-            // session must be activated otherwise OIDC auth info will be lost when accessing /loginEgi
-            //.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .cors().and()
-            .headers().frameOptions().sameOrigin().and()
-            .csrf().disable();
+                .and()
+                .addFilterBefore(apikeyAuthenticationFilter(), BasicAuthenticationFilter.class)
+                .exceptionHandling().authenticationEntryPoint(vipAuthenticationEntryPoint)// also done in parent but needed here when keycloak is not active. It can be done twice without harm.
+                // session must be activated otherwise OIDC auth info will be lost when accessing /loginEgi
+                //.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .cors().and()
+                .headers().frameOptions().sameOrigin().and()
+                .csrf().disable();
     }
 
     @Bean
@@ -178,6 +171,27 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         return new ApikeyAuthenticationFilter(
                 env.getRequiredProperty(CarminProperties.APIKEY_HEADER_NAME),
                 vipAuthenticationEntryPoint, authenticationManager());
+    }
+
+    /*
+        Do not use the default firewall (StrictHttpFirewall) because it blocks
+        "//" in url and it is used in gwt rpc calls
+     */
+    @Bean
+    public DefaultHttpFirewall httpFirewall() {
+        DefaultHttpFirewall firewall = new DefaultHttpFirewall();
+        firewall.setAllowUrlEncodedSlash(true);
+        return firewall;
+    }
+
+    /**
+     * customize roles to match keycloak roles without ROLE_
+     */
+    @Bean
+    public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
+        SimpleAuthorityMapper mapper = new SimpleAuthorityMapper();
+        mapper.setConvertToUpperCase(true);
+        return mapper;
     }
 
     @Service
@@ -200,7 +214,7 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         }
 
         private User getApikeyUser(Authentication authentication) {
-            if ( ! (authentication.getPrincipal() instanceof SpringApiPrincipal)) {
+            if (!(authentication.getPrincipal() instanceof SpringApiPrincipal)) {
                 return null;
             }
             SpringApiPrincipal springCompatibleUser =
@@ -209,34 +223,13 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         }
 
         private User getKeycloakUser(Authentication authentication) {
-            if ( ! (authentication.getPrincipal() instanceof SpringKeycloakPrincipal)) {
+            if (!(authentication.getPrincipal() instanceof SpringKeycloakPrincipal)) {
                 return null;
             }
             SpringKeycloakPrincipal springKeycloakPrincipal =
                     (SpringKeycloakPrincipal) authentication.getPrincipal();
             return springKeycloakPrincipal.getVipUser();
         }
-    }
-
-    /*
-        Do not use the default firewall (StrictHttpFirewall) because it blocks
-        "//" in url and it is used in gwt rpc calls
-     */
-    @Bean
-    public DefaultHttpFirewall httpFirewall() {
-        DefaultHttpFirewall firewall = new DefaultHttpFirewall();
-        firewall.setAllowUrlEncodedSlash(true);
-        return firewall;
-    }
-
-    /**
-     * customize roles to match keycloak roles without ROLE_
-     */
-    @Bean
-    public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
-        SimpleAuthorityMapper mapper = new SimpleAuthorityMapper();
-        mapper.setConvertToUpperCase(true);
-        return mapper;
     }
 
 

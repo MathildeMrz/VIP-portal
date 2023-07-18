@@ -45,7 +45,9 @@ import org.springframework.util.Assert;
 
 import java.util.function.Supplier;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by abonnet on 7/6/16.
@@ -72,10 +74,11 @@ public class ExecutionBusinessTest {
         WorkflowBusiness mockedWb = prepareMockedWorkflowBusiness(EXEC_ID, simulation);
         ExecutionBusiness sut = new ExecutionBusiness(userSupplier, null, mockedWb, null, null, null, null);
         ApiException apiException = assertThrows(ApiException.class,
-            () -> sut.checkIfUserCanAccessExecution(EXEC_ID)
+                () -> sut.checkIfUserCanAccessExecution(EXEC_ID)
         );
         assertEquals("Permission denied", apiException.getMessage());
     }
+
 
     @Test
     public void checkIfBasicUserCanAccessItsExecution() throws Exception {
@@ -85,6 +88,7 @@ public class ExecutionBusinessTest {
         ExecutionBusiness sut = new ExecutionBusiness(userSupplier, null, mockedWb, null, null, null, null);
         sut.checkIfUserCanAccessExecution(EXEC_ID);
     }
+
 
     @Test
     public void checkErrorWhenAccessingACleanedExecution() throws Exception {
@@ -117,8 +121,9 @@ public class ExecutionBusinessTest {
 
     private WorkflowBusiness prepareMockedWorkflowBusiness(String execId, Simulation simu) throws Exception {
         WorkflowBusiness mockedWb = Mockito.mock(WorkflowBusiness.class);
-        Mockito.when(mockedWb.getSimulation(execId)).thenReturn(simu);
+        when(mockedWb.getSimulation(execId)).thenReturn(simu);
         return mockedWb;
     }
+
 
 }

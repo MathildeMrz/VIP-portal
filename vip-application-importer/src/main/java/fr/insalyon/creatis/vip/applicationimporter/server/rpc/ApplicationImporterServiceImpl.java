@@ -59,7 +59,7 @@ public class ApplicationImporterServiceImpl extends fr.insalyon.creatis.vip.core
     @Override
     public String readAndValidateBoutiquesFile(String fileLFN) throws ApplicationImporterException {
         try {
-            trace(logger, "Reading file "+fileLFN+" as string.");
+            trace(logger, "Reading file " + fileLFN + " as string.");
             return applicationImporterBusiness.readAndValidationBoutiquesFile(
                     fileLFN, getSessionUser());
         } catch (CoreException | BusinessException ex) {

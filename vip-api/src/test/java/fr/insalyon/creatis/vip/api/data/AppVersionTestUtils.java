@@ -31,7 +31,8 @@
  */
 package fr.insalyon.creatis.vip.api.data;
 
-import fr.insalyon.creatis.vip.application.client.bean.*;
+import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
+import fr.insalyon.creatis.vip.application.client.bean.Application;
 
 /**
  * Created by abonnet on 7/29/16.

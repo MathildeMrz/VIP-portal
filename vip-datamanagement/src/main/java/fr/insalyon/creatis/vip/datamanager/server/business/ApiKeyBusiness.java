@@ -34,14 +34,13 @@ package fr.insalyon.creatis.vip.datamanager.server.business;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.datamanager.client.bean.UserApiKey;
-import fr.insalyon.creatis.vip.datamanager.server.dao.*;
+import fr.insalyon.creatis.vip.datamanager.server.dao.ApiKeysDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Connection;
 import java.util.List;
 
 @Service
@@ -74,12 +73,12 @@ public class ApiKeyBusiness {
 
             List<UserApiKey> keys = apiKeysDAO.getByUser(userEmail);
             UserApiKey newKey =
-                new UserApiKey(storageIdentifier, userEmail, apiKey);
+                    new UserApiKey(storageIdentifier, userEmail, apiKey);
 
             if (keys.stream().anyMatch(
                     k ->
-                    k.getStorageIdentifier().equals(storageIdentifier)
-                    && k.getUserEmail().equals(userEmail))) {
+                            k.getStorageIdentifier().equals(storageIdentifier)
+                                    && k.getUserEmail().equals(userEmail))) {
                 apiKeysDAO.updateKey(newKey);
             } else {
                 apiKeysDAO.addKey(newKey);

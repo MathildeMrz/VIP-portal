@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class InOutContextMenu extends Menu {
@@ -100,6 +99,7 @@ public class InOutContextMenu extends Menu {
                 DataManagerModule.dataManagerSection.expand();
             }
         });
+
 
         if (node.getName().startsWith(DataManagerConstants.ROOT + "/")) {
             ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();

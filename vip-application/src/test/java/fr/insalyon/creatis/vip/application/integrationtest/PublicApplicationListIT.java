@@ -14,6 +14,7 @@ import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.integrationtest.database.BaseSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class PublicApplicationListIT extends BaseSpringIT {
     private ConfigurationBusiness configurationBusiness;
 
     @Test
-    public void shouldNotIncludePrivateGroupsAndClasses() throws BusinessException, ApplicationException {
+    public void shouldNotIncludePrivateGroupsAndClasses() throws DAOException, BusinessException {
         // prepare test data
         Group publicGroup = new Group("public group", true, true, true);
         Group privateGroup = new Group("private group", false, true, true);

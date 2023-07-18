@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -21,13 +20,12 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class KeycloakBusiness {
 
+    private static final byte ALLOWED_ATTEMPTS = 2;
     private final Environment env;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static final byte ALLOWED_ATTEMPTS = 2;
-
     @Autowired
-    KeycloakBusiness(Environment env){
+    KeycloakBusiness(Environment env) {
         this.env = env;
     }
 
@@ -62,7 +60,7 @@ public class KeycloakBusiness {
             }
         }
 
-        if (responseEntity == null){
+        if (responseEntity == null) {
             throw new ApiException("token not refreshed after " + attempt + " attempts");
         }
         return responseEntity;

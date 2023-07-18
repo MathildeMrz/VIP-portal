@@ -60,7 +60,6 @@ import fr.insalyon.creatis.vip.datamanager.server.business.DataManagerBusiness;
 import fr.insalyon.creatis.vip.datamanager.server.business.ExternalPlatformBusiness;
 import fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +75,6 @@ import java.util.*;
 import static fr.insalyon.creatis.vip.application.client.view.ApplicationException.ApplicationError.*;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Service
@@ -96,8 +94,12 @@ public class WorkflowBusiness {
     private ApplicationDAO applicationDAO;
     private UsersGroupsDAO usersGroupsDAO;
     private EngineBusiness engineBusiness;
+
+    @Autowired
     private DataManagerBusiness dataManagerBusiness;
     private EmailBusiness emailBusiness;
+
+    @Autowired
     private LfcPathsBusiness lfcPathsBusiness;
     private GRIDAPoolClient gridaPoolClient;
     private GRIDAClient gridaClient;
@@ -217,17 +219,17 @@ public class WorkflowBusiness {
 
         try {
             long runningWorkflows = workflowDAO.getNumberOfRunning(user.getFullName());
-            long runningSimulations=workflowDAO.getRunning().size();
-            if(runningSimulations >= server.getMaxPlatformRunningSimulations()){
+            long runningSimulations = workflowDAO.getRunning().size();
+            if (runningSimulations >= server.getMaxPlatformRunningSimulations()) {
                 logger.warn("Unable to launch execution '{}': max number of"
-                        + " running workflows reached in the platform : {}",
+                                + " running workflows reached in the platform : {}",
                         simulationName, runningSimulations);
                 throw new BusinessException(PLATFORM_MAX_EXECS);
             }
             if (runningWorkflows >= user.getMaxRunningSimulations()) {
 
                 logger.warn("Unable to launch execution '{}': max number of "
-                        + "running workflows reached ({}/{}) for user '{}'.",
+                                + "running workflows reached ({}/{}) for user '{}'.",
                         simulationName, runningWorkflows,
                         user.getMaxRunningSimulations(), user);
                 throw new BusinessException(USER_MAX_EXECS, runningWorkflows);
@@ -258,12 +260,12 @@ public class WorkflowBusiness {
                     for (String v : values) {
 
                         String parsedParameter =
-                            parseParameter(user, groups, name, v);
+                                parseParameter(user, groups, name, v);
                         ps.addValue(parsedParameter);
                     }
                 } else {
                     String parsedParameter =
-                        parseParameter(user, groups, name, valuesStr);
+                            parseParameter(user, groups, name, valuesStr);
                     ps.addValue(parsedParameter);
                 }
                 parameters.add(ps);
@@ -297,8 +299,8 @@ public class WorkflowBusiness {
                                 new String[]{u.getEmail()}, true, user.getEmail());
                     }
                     throw new BusinessException("Workflow is null, engine " + engine.getName() + " has been disabled");
-                }else{
-                    logger.info("Launched workflow "+workflow.toString());
+                } else {
+                    logger.info("Launched workflow " + workflow.toString());
                 }
             }
 
@@ -320,8 +322,8 @@ public class WorkflowBusiness {
         parameterValue = parameterValue.trim();
 
         ExternalPlatformBusiness.ParseResult parseResult =
-            externalPlatformBusiness.parseParameter(
-                parameterName, parameterValue, user);
+                externalPlatformBusiness.parseParameter(
+                        parameterName, parameterValue, user);
         if (parseResult.isUri) {
             // The uri has been generated
             return parseResult.result;
@@ -332,7 +334,7 @@ public class WorkflowBusiness {
         if (!user.isSystemAdministrator()) {
             checkFolderACL(user, groups, parsedPath);
         }
-        if ( ! parsedPath.equals(parameterValue) // the parameter is a file path
+        if (!parsedPath.equals(parameterValue) // the parameter is a file path
                 && server.useLocalFilesInInputs()) {
             parsedPath = "file:" + parsedPath;
         }
@@ -353,7 +355,6 @@ public class WorkflowBusiness {
 
     /**
      * Get the simulation information
-     *
      */
     public List<Simulation> getSimulations(
             String userName, String application, String status, String appClass,
@@ -389,7 +390,7 @@ public class WorkflowBusiness {
     /**
      * Get the simulation information
      *
-     * @param users list of users
+     * @param users  list of users
      * @param status Simulation status to filter the request
      */
     public List<Simulation> getSimulations(
@@ -469,7 +470,7 @@ public class WorkflowBusiness {
             Workflow workflow = workflowDAO.get(simulationID);
             workflow.setStatus(WorkflowStatus.Cleaned);
             workflowDAO.update(workflow);
-            if(deleteFiles){
+            if (deleteFiles) {
                 for (Output output : outputDAO.get(simulationID)) {
                     gridaPoolClient.delete(output.getOutputID().getPath(), email);
                 }
@@ -483,8 +484,8 @@ public class WorkflowBusiness {
         }
     }
 
-    public void clean(String simulationId, String email) throws BusinessException{
-        clean(simulationId,email,true);
+    public void clean(String simulationId, String email) throws BusinessException {
+        clean(simulationId, email, true);
     }
 
     public void purge(String simulationID) throws BusinessException {
@@ -511,8 +512,8 @@ public class WorkflowBusiness {
 
         //TODO fix
         Map<String, String> inputs =
-            getInputM2Parser(currentUserFolder).parse(
-                server.getWorkflowsPath() + "/" + simulationID + "/input-m2.xml");
+                getInputM2Parser(currentUserFolder).parse(
+                        server.getWorkflowsPath() + "/" + simulationID + "/input-m2.xml");
 
         return inputs;
     }
@@ -561,7 +562,7 @@ public class WorkflowBusiness {
         try {
             for (Output output : outputDAO.get(simulationID)) {
                 String path = lfcPathsBusiness.parseRealDir(
-                    output.getOutputID().getPath(), currentUserFolder);
+                        output.getOutputID().getPath(), currentUserFolder);
                 list.add(new InOutData(path, output.getOutputID().getProcessor(),
                         output.getType().name()));
             }
@@ -583,7 +584,7 @@ public class WorkflowBusiness {
             List<InOutData> list = new ArrayList<InOutData>();
             for (Input input : inputDAO.get(simulationID)) {
                 String path = lfcPathsBusiness.parseRealDir(
-                    input.getInputID().getPath(), currentUserFolder);
+                        input.getInputID().getPath(), currentUserFolder);
                 list.add(new InOutData(path, input.getInputID().getProcessor(),
                         input.getType().name()));
             }
@@ -703,7 +704,7 @@ public class WorkflowBusiness {
                     }
 
                     sb.append(
-                        lfcPathsBusiness.parseBaseDir(user, input));
+                            lfcPathsBusiness.parseBaseDir(user, input));
                 }
             }
 
@@ -735,7 +736,7 @@ public class WorkflowBusiness {
     public void updateDescription(String simulationID, String newDescription)
             throws BusinessException {
         try {
-            Workflow w= workflowDAO.get(simulationID);
+            Workflow w = workflowDAO.get(simulationID);
             w.setDescription(newDescription);
             workflowDAO.update(w);
         } catch (WorkflowsDBDAOException ex) {

@@ -55,7 +55,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
 @Service
@@ -109,7 +108,7 @@ public class TransferPoolBusiness {
 
             for (Operation operation : gridaPoolClient.getAllOperations()) {
                 poolOperations.add(
-                    processOperation(operation, currentUserFolder));
+                        processOperation(operation, currentUserFolder));
             }
 
             return poolOperations;
@@ -180,7 +179,7 @@ public class TransferPoolBusiness {
             dest = "Platform";
             source = operation.getType() == Operation.Type.Download
                     ? lfcPathsBusiness.parseRealDir(
-                        operation.getSource(), currentUserFolder)
+                    operation.getSource(), currentUserFolder)
                     : FilenameUtils.getBaseName(operation.getDest());
         }
 
@@ -304,7 +303,7 @@ public class TransferPoolBusiness {
     }
 
     public void delete(User user, String... paths)
-        throws BusinessException {
+            throws BusinessException {
 
         try {
 

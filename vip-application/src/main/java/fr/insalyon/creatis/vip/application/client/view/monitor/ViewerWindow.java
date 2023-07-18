@@ -49,7 +49,6 @@ import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
 import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
 
 /**
- *
  * @author Rafael Silva
  */
 public class ViewerWindow extends Window {
@@ -63,6 +62,39 @@ public class ViewerWindow extends Window {
     private String extension;
     private String content = null;
     private boolean file;
+
+    /**
+     * Views string content
+     *
+     * @param title
+     * @param simulationID
+     * @param content
+     */
+    public ViewerWindow(String title, String simulationID, String content) {
+        this.file = false;
+        this.content = content;
+        init(title, simulationID);
+
+    }
+
+    /**
+     * Views file content
+     *
+     * @param title
+     * @param simulationID
+     * @param folder
+     * @param fileName
+     * @param extension
+     */
+    public ViewerWindow(String title, String simulationID, String folder,
+                        String fileName, String extension) {
+        this.file = true;
+        this.folder = folder;
+        this.fileName = fileName;
+        this.extension = extension;
+        init(title, simulationID);
+
+    }
 
     private void init(String title, String simulationID) {
         this.simulationID = simulationID;
@@ -87,37 +119,6 @@ public class ViewerWindow extends Window {
         this.addItem(pane);
 
         load();
-    }
-
-    /**
-     * Views string content
-     * @param title
-     * @param simulationID
-     * @param content
-     */
-    public ViewerWindow(String title, String simulationID, String content) {
-        this.file = false;
-        this.content = content;
-        init(title, simulationID);
-
-    }
-
-    /**
-     * Views file content
-     * @param title
-     * @param simulationID
-     * @param folder
-     * @param fileName
-     * @param extension
-     */
-    public ViewerWindow(String title, String simulationID, String folder,
-            String fileName, String extension) {
-        this.file = true;
-        this.folder = folder;
-        this.fileName = fileName;
-        this.extension = extension;
-        init(title, simulationID);
-
     }
 
     private void load() {
@@ -172,10 +173,10 @@ public class ViewerWindow extends Window {
             public void onClick(ClickEvent event) {
                 com.google.gwt.user.client.Window.open(
                         GWT.getModuleBaseURL()
-                        + "/getfileservice?filepath=" + "/" + simulationID
-                        + "/" + folder + "/" + fileName + extension
-                        + "&" + CoreConstants.COOKIES_SESSION
-                        + "=" + Cookies.getCookie(CoreConstants.COOKIES_SESSION),
+                                + "/getfileservice?filepath=" + "/" + simulationID
+                                + "/" + folder + "/" + fileName + extension
+                                + "&" + CoreConstants.COOKIES_SESSION
+                                + "=" + Cookies.getCookie(CoreConstants.COOKIES_SESSION),
                         "", "");
             }
         });

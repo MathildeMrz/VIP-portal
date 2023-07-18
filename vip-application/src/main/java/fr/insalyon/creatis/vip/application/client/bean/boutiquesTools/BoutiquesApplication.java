@@ -36,17 +36,22 @@ public class BoutiquesApplication implements IsSerializable {
 
     private BoutiquesApplicationExtensions boutiquesExtensions;
 
-    public BoutiquesApplication(){}
+    public BoutiquesApplication() {
+    }
 
     /**
-     * @param name String
+     * @param name        String
      * @param description String
-     * @param version String
+     * @param version     String
      */
-    public BoutiquesApplication(String name, String description, String version){
+    public BoutiquesApplication(String name, String description, String version) {
         this.name = name;
         this.description = description;
         this.version = version;
+    }
+
+    public BoutiquesApplicationExtensions getBoutiquesExtensions() {
+        return boutiquesExtensions;
     }
 
     public void setBoutiquesExtensions(BoutiquesApplicationExtensions boutiquesExtensions) {
@@ -56,21 +61,17 @@ public class BoutiquesApplication implements IsSerializable {
         this.boutiquesExtensions = boutiquesExtensions;
     }
 
-    public BoutiquesApplicationExtensions getBoutiquesExtensions() {
-        return boutiquesExtensions;
-    }
-
     /**
      * @return String of format 'applicationName applicationVersion'
      */
-    public String getFullName(){
+    public String getFullName() {
         return this.name + " " + this.version;
     }
 
     /**
      * @return Application description as String
      */
-    public String getDescription(){
+    public String getDescription() {
         return this.description;
     }
 
@@ -96,10 +97,10 @@ public class BoutiquesApplication implements IsSerializable {
      * Generic method for getters of input attribute maps.
      *
      * @param inputGetter Function: getter implemented in BoutiquesInput to return an input attribute.
-     * @param <T> Type of the input attribute
-     * @return  Map from String input IDs to the attribute of those inputs
+     * @param <T>         Type of the input attribute
+     * @return Map from String input IDs to the attribute of those inputs
      */
-    private <T> Map<String, T> getMap(Function<BoutiquesInput, T> inputGetter){
+    private <T> Map<String, T> getMap(Function<BoutiquesInput, T> inputGetter) {
         return this.inputs.stream()
                 .filter(input -> inputGetter.apply(input) != null)
                 .collect(Collectors.toMap(BoutiquesInput::getId, inputGetter));
@@ -148,6 +149,10 @@ public class BoutiquesApplication implements IsSerializable {
         return author;
     }
 
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
     public String getToolVersion() {
         return version;
     }
@@ -156,28 +161,56 @@ public class BoutiquesApplication implements IsSerializable {
         return commandLine;
     }
 
+    public void setCommandLine(String commandLine) {
+        this.commandLine = commandLine;
+    }
+
     public String getContainerType() {
         return containerType;
+    }
+
+    public void setContainerType(String containerType) {
+        this.containerType = containerType;
     }
 
     public String getContainerImage() {
         return containerImage;
     }
 
+    public void setContainerImage(String containerImage) {
+        this.containerImage = containerImage;
+    }
+
     public String getContainerIndex() {
         return containerIndex;
+    }
+
+    public void setContainerIndex(String containerIndex) {
+        this.containerIndex = containerIndex;
     }
 
     public String getSchemaVersion() {
         return schemaVersion;
     }
 
+    public void setSchemaVersion(String schemaVersion) {
+        this.schemaVersion = schemaVersion;
+    }
+
     public String getChallengerEmail() {
         return challengerEmail;
     }
 
+    public void setChallengerEmail(String challengerEmail) {
+        this.challengerEmail = challengerEmail;
+    }
+
     public String getChallengerTeam() {
         return challengerTeam;
+    }
+
+    public void setChallengerTeam(String challengerTeam) {
+        this.challengerTeam = challengerTeam;
     }
 
     public Set<BoutiquesOutputFile> getOutputFiles() {
@@ -194,6 +227,10 @@ public class BoutiquesApplication implements IsSerializable {
 
     public String getApplicationLFN() {
         return applicationLFN;
+    }
+
+    public void setApplicationLFN(String applicationLFN) {
+        this.applicationLFN = applicationLFN;
     }
 
     public String getWrapperLFN() {
@@ -220,50 +257,12 @@ public class BoutiquesApplication implements IsSerializable {
         return this.applicationLFN + "/json/" + getName() + ".json";
     }
 
-
-
-    public void addInput(BoutiquesInput input){
+    public void addInput(BoutiquesInput input) {
         this.inputs.add(input);
     }
 
-    public void addGroup(BoutiquesGroup group){
+    public void addGroup(BoutiquesGroup group) {
         this.groups.add(group);
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public void setCommandLine(String commandLine) {
-        this.commandLine = commandLine;
-    }
-
-    public void setContainerType(String containerType) {
-        this.containerType = containerType;
-    }
-
-    public void setContainerImage(String containerImage) {
-        this.containerImage = containerImage;
-    }
-
-    public void setContainerIndex(String containerIndex) {
-        this.containerIndex = containerIndex;
-    }
-
-    public void setSchemaVersion(String schemaVersion) {
-        this.schemaVersion = schemaVersion;
-    }
-
-    public void setChallengerEmail(String challengerEmail) {
-        this.challengerEmail = challengerEmail;
-    }
-
-    public void setChallengerTeam(String challengerTeam) {
-        this.challengerTeam = challengerTeam;
-    }
-
-    public void setApplicationLFN(String applicationLFN) {
-        this.applicationLFN = applicationLFN;
     }
 
     public void addTag(String key, String value) {

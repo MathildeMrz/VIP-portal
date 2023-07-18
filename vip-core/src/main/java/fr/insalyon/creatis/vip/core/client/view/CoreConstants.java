@@ -32,10 +32,10 @@
 package fr.insalyon.creatis.vip.core.client.view;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.util.Date;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class CoreConstants implements IsSerializable {
@@ -101,9 +101,49 @@ public class CoreConstants implements IsSerializable {
     // home actions
     public static final String HOME_ACTION_SHOW_APPLICATIONS = "SHOW_APPLICATIONS";
     public static final String HOME_ACTION_SHOW_PUBLICATIONS = "SHOW_PUBLICATIONS";
+    public static final String ICON_SEARCH = "icon-search.png";
+    // Folders
+    public static final String FOLDER_TRASH = "Trash";
+    // Application Names
+    public static final String APP_ACCOUNT = "My Account";
+    public static final String APP_GROUP = "Groups";
+    public static final String APP_TIP = "Tips";
+    public static final String APP_USER = "Users";
+    public static final String APP_SETTING = "Settings";
+    // Session Attributes
+    public static final String COOKIES_USER = "vip-cookie-user";
+    public static final String COOKIES_SESSION = "vip-cookie-session";
+    public static final String SESSION_USER = "vip-user";
+    public static final String SESSION_GROUPS = "vip-groups";
+    public static final Date COOKIES_EXPIRATION_DATE = new Date(new Date().getTime() + (1000l * 60 * 60 * 24 * 7)); //cookies are valid for a week
+    // Roles and Groups
+    public static final String GROUP_SUPPORT = "Support";
+    // ssh
+    public static final String SSH_PUBLIC_KEY = "ssh.publickey";
+    //application,Gatelab
+    public static final String RESULTS_DIRECTORY_PARAM_NAME = "results-directory";
+    public static final String APPLET_GATELAB_CLASSES = "appletGatelab.classes";
+    public static final String APPLET_GATELABTEST_CLASSES = "appletGatelabTest.classes";
+    public static final String UNDESIRED_MAIL_DOMAINS = "account.undesiredEmailDomains";
+    public static final String UNDESIRED_COUNTRIES = "account.undesiredCountries";
+    public static final String SAML_TRUSTED_CERTIFICATE = "saml.trustedcertificate";
+    public static final String SAML_DEFAULT_GROUP = "saml.defaultgroup";
+    //Boutiques
+    public static final String APP_CLASS = "boutiques.application.class";
+    public static final String APPLICATION_FILES_REPOSITORY = "boutiques.upload.repository";
+    public static final String APP_DELETE_FILES_AFTER_UPLOAD = "boutiques.upload.deleteFile";
+    public static final String APP_IMPORTER_ROOT_FOLDER = "boutiques.application.rootFolder";
+    public static final String APP_REQUIREMENTS = "boutiques.application.requirements";
+    //Publication
+    public static final String PUB_MONTHS_UPDATES = "last.publication.update";
+    //Zenodo publication
+    public static final String PUBLICATION_SYSTEM_COMMAND = "publication.system-command";
+    // External storage, girder.
+    public static final String GIRDER_TOKEN_DURATION_IN_DAYS = "girder.token.duration-in-days";
+    // Local config
+    public static final String USE_LOCAL_FILES_AS_INPUTS = "execution.input.local-files";
     // Icons
     private static final String IMG_FOLDER = "core/";
-    public static final String ICON_SEARCH = "icon-search.png";
     public static final String ICON_ACCOUNT = IMG_FOLDER + "icon-account.png";
     public static final String ICON_ACCOUNT_REMOVE = IMG_FOLDER + "icon-account-remove.png";
     public static final String ICON_ACTIVE = IMG_FOLDER + "icon-select.png";
@@ -137,57 +177,17 @@ public class CoreConstants implements IsSerializable {
     public static final String ICON_WARNING = IMG_FOLDER + "icon-warning.png";
     public static final String ICON_WORLD = IMG_FOLDER + "flags/_world.png";
     public static final String ICON_TERMS_USE = IMG_FOLDER + "icon-terms_of_use.png";
-    public static final String ICON_RUNNING_SIMULATIONS = IMG_FOLDER +"icon-runningSimulation.png";
+    public static final String ICON_RUNNING_SIMULATIONS = IMG_FOLDER + "icon-runningSimulation.png";
     public static final String ICON_VIP_LOGO = IMG_FOLDER + "vip-logo.png";
     public static final String ICON_VIP_LOGO_WITHOUT_TEXT = IMG_FOLDER + "vip-logo-without-text.png";
     public static final String EGI_CHECK_IN_LOGO = IMG_FOLDER + "egi-check-in-color.svg";
-    // Folders
-    public static final String FOLDER_TRASH = "Trash";
     public static final String FOLDER_FLAGS = IMG_FOLDER + "flags/";
-    // Application Names
-    public static final String APP_ACCOUNT = "My Account";
-    public static final String APP_GROUP = "Groups";
-    public static final String APP_TIP = "Tips";
-    public static final String APP_USER = "Users";
-    public static final String APP_SETTING = "Settings";
     // Application Images
     public static final String APP_IMG_ACCOUNT = IMG_FOLDER + "app-account.png";
     public static final String APP_IMG_GROUP = IMG_FOLDER + "system/app-group.png";
     public static final String APP_IMG_TIP = IMG_FOLDER + "system/app-tip.png";
     public static final String APP_IMG_USER = IMG_FOLDER + "system/app-user.png";
     public static final String APP_IMG_SETTING = IMG_FOLDER + "system/app-setting.png";
-    // Session Attributes
-    public static final String COOKIES_USER = "vip-cookie-user";
-    public static final String COOKIES_SESSION = "vip-cookie-session";
-    public static final String SESSION_USER = "vip-user";
-    public static final String SESSION_GROUPS = "vip-groups";
-    public static final Date COOKIES_EXPIRATION_DATE = new Date(new Date().getTime() + (1000l * 60 * 60 * 24 * 7)); //cookies are valid for a week
-    // Roles and Groups
-    public static final String GROUP_SUPPORT = "Support";
-    // ssh
-    public static final String SSH_PUBLIC_KEY = "ssh.publickey";
-    //application,Gatelab
-    public static final String RESULTS_DIRECTORY_PARAM_NAME = "results-directory";
-    public static final String APPLET_GATELAB_CLASSES = "appletGatelab.classes";
-    public static final String APPLET_GATELABTEST_CLASSES = "appletGatelabTest.classes";
-    public static final String UNDESIRED_MAIL_DOMAINS = "account.undesiredEmailDomains";
-    public static final String UNDESIRED_COUNTRIES = "account.undesiredCountries";
-    public static final String SAML_TRUSTED_CERTIFICATE = "saml.trustedcertificate";
-    public static final String SAML_DEFAULT_GROUP = "saml.defaultgroup";
-    //Boutiques
-    public static final String APP_CLASS = "boutiques.application.class";
-    public static final String APPLICATION_FILES_REPOSITORY = "boutiques.upload.repository";
-    public static final String APP_DELETE_FILES_AFTER_UPLOAD = "boutiques.upload.deleteFile";
-    public static final String APP_IMPORTER_ROOT_FOLDER = "boutiques.application.rootFolder";
-    public static final String APP_REQUIREMENTS = "boutiques.application.requirements";
-    //Publication
-    public static final String  PUB_MONTHS_UPDATES = "last.publication.update";
-    //Zenodo publication
-    public static final String PUBLICATION_SYSTEM_COMMAND = "publication.system-command";
-    // External storage, girder.
-    public static final String GIRDER_TOKEN_DURATION_IN_DAYS = "girder.token.duration-in-days";
-    // Local config
-    public static final String USE_LOCAL_FILES_AS_INPUTS = "execution.input.local-files";
     // API
     public static final String API_PARALLEL_DOWNLOAD_NB = "api.downloads.nb";
 
@@ -197,14 +197,16 @@ public class CoreConstants implements IsSerializable {
         Admin, User, None
     };
 
-
     public static String getTileGridId(String tileName) {
         return "application_"
                 + replaceSpacesInIds(tileName)
                 + "_tilegrid";
     }
 
+    ;
+
     public static String replaceSpacesInIds(String baseName) {
         return baseName.replaceAll("[ -]", "_").toLowerCase();
     }
+
 }

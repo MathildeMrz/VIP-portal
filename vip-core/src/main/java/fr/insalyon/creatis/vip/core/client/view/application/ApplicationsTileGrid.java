@@ -34,14 +34,15 @@ package fr.insalyon.creatis.vip.core.client.view.application;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.tile.TileGrid;
-import com.smartgwt.client.widgets.tile.events.*;
-import com.smartgwt.client.widgets.viewer.*;
+import com.smartgwt.client.widgets.tile.events.RecordClickEvent;
+import com.smartgwt.client.widgets.tile.events.RecordClickHandler;
+import com.smartgwt.client.widgets.viewer.DetailFormatter;
+import com.smartgwt.client.widgets.viewer.DetailViewerField;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 
 import java.util.logging.Logger;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public abstract class ApplicationsTileGrid extends TileGrid {
@@ -146,14 +147,14 @@ public abstract class ApplicationsTileGrid extends TileGrid {
         addApplication(new ApplicationTileRecord(applicationName, applicationImage));
         //this.setHeight("100%");
         //test with redraw
-       // redraw();
+        // redraw();
 
     }
 
     protected void addApplication(String applicationName, String version, String applicationImage) {
 
         addApplication(new ApplicationTileRecord(applicationName, version, applicationImage));
-       //this.setHeight("100%");
+        //this.setHeight("100%");
 
 
     }
@@ -161,7 +162,7 @@ public abstract class ApplicationsTileGrid extends TileGrid {
     protected void addApplication(ApplicationTileRecord record) {
 
         this.addData(record);
-         //this.setHeight("100%");
+        //this.setHeight("100%");
 
     }
 

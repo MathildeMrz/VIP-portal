@@ -33,9 +33,11 @@ package fr.insalyon.creatis.vip.social.server.dao.mysql;
 
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import fr.insalyon.creatis.vip.core.server.dao.GroupDAO;
 import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
 import fr.insalyon.creatis.vip.social.client.bean.GroupMessage;
 import fr.insalyon.creatis.vip.social.server.dao.GroupMessageDAO;
+import fr.insalyon.creatis.vip.social.server.dao.MessageDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +53,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Repository
@@ -61,11 +62,15 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private UserDAO userDAO;
+    private GroupDAO groupDao;
+    private MessageDAO messageDao;
 
     @Autowired
-    public GroupMessageData(UserDAO userDAO, DataSource dataSource) {
+    public GroupMessageData(UserDAO userDAO, GroupDAO groupDao, MessageDAO messageDao, DataSource dataSource) {
         setDataSource(dataSource);
         this.userDAO = userDAO;
+        this.groupDao = groupDao;
+        this.messageDao = messageDao;
     }
 
     public long add(String sender, String groupName, String title, String message) throws DAOException {
@@ -135,10 +140,10 @@ public class GroupMessageData extends JdbcDaoSupport implements GroupMessageDAO 
 
             return messages;
 
+
         } catch (SQLException ex) {
             logger.error("Error getting group messages for {}", groupName, ex);
             throw new DAOException(ex);
         }
     }
-
 }

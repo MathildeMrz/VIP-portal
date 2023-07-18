@@ -41,7 +41,7 @@ import java.util.Collection;
 
 /**
  * Vip user proxy that is conform to spring security (must implement a specific class)
- *
+ * <p>
  * Created by abonnet on 7/25/16.
  */
 public class SpringApiPrincipal implements UserDetails, Principal {

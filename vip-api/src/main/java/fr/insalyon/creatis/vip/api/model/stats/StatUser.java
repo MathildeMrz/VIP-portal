@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.insalyon.creatis.vip.api.CarminProperties;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @JsonInclude(Include.NON_NULL)
@@ -19,7 +18,8 @@ public class StatUser {
     private String researchInstitute;
     private String researchInstituteUrl;
 
-    public StatUser() {}
+    public StatUser() {
+    }
 
     public StatUser(String city, String country, LocalDateTime lastSeen,
                     LocalDateTime memberSince, String position,
@@ -50,7 +50,7 @@ public class StatUser {
     }
 
     @JsonProperty("last_seen")
-    @JsonFormat(pattern= CarminProperties.STATS_DATE_FORMAT)
+    @JsonFormat(pattern = CarminProperties.STATS_DATE_FORMAT)
     public LocalDateTime getLastSeen() {
         return lastSeen;
     }
@@ -60,7 +60,7 @@ public class StatUser {
     }
 
     @JsonProperty("member_since")
-    @JsonFormat(pattern= CarminProperties.STATS_DATE_FORMAT)
+    @JsonFormat(pattern = CarminProperties.STATS_DATE_FORMAT)
     public LocalDateTime getMemberSince() {
         return memberSince;
     }

@@ -33,6 +33,25 @@ package fr.insalyon.creatis.vip.core.server.business.proxy;
 
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.Server;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
+import org.bouncycastle.util.encoders.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.net.ssl.*;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.x500.X500Principal;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ProtocolException;
@@ -40,38 +59,14 @@ import java.nio.channels.FileChannel;
 import java.security.*;
 import java.security.cert.*;
 import java.util.*;
-import javax.net.ssl.*;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.x500.X500Principal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.util.encoders.Base64;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
-import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
- *
  * @author Rafael Silva
  */
 @Component
 public class ProxyClient {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private SSLSocket socket;
-    private BufferedInputStream socketIn;
-    private BufferedOutputStream socketOut;
-    private Collection certificateChain;
-    private KeyPair keyPair;
     // CONSTANTS
     private final String VERSION = "VERSION=MYPROXYv2";
     private final String GETCOMMAND = "COMMAND=0";
@@ -80,7 +75,11 @@ public class ProxyClient {
     private final String LIFETIME = "LIFETIME=";
     private final String RESPONSE = "RESPONSE=";
     private final String ERROR = "ERROR=";
-
+    private SSLSocket socket;
+    private BufferedInputStream socketIn;
+    private BufferedOutputStream socketOut;
+    private Collection certificateChain;
+    private KeyPair keyPair;
     private Server server;
 
     /**
@@ -144,7 +143,7 @@ public class ProxyClient {
     }
 
     private X509Certificate readCertificate(File proxyFile)
-        throws FileNotFoundException, IOException, CertificateException {
+            throws FileNotFoundException, IOException, CertificateException {
         try (FileInputStream fis = new FileInputStream(proxyFile)) {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             return (X509Certificate) cf.generateCertificate(fis);
@@ -269,7 +268,7 @@ public class ProxyClient {
         KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
         keyPair = keyGenerator.generateKeyPair();
 
-        X500Principal subject = new X500Principal ("CN=irrelevant");
+        X500Principal subject = new X500Principal("CN=irrelevant");
         ContentSigner signGen = new JcaContentSignerBuilder("SHA1withRSA").build(keyPair.getPrivate());
         PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(subject, keyPair.getPublic());
         PKCS10CertificationRequest cert = builder.build(signGen);
@@ -366,7 +365,7 @@ public class ProxyClient {
         pki = PrivateKeyInfo.getInstance(keyInfo);
         ASN1Primitive innerType = pki.parsePrivateKey().toASN1Primitive();
         // build and return the actual key
-        ASN1Sequence privKey  = (ASN1Sequence)innerType;
+        ASN1Sequence privKey = (ASN1Sequence) innerType;
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         DEROutputStream der = new DEROutputStream(bout);
         der.writeObject(privKey);
@@ -383,6 +382,101 @@ public class ProxyClient {
             return new String(sb);
         }
         return null;
+    }
+
+    private X509Certificate[] getX509CertsFromStringList(String[] certList) throws CertificateException {
+
+        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+        Collection<X509Certificate> c = new ArrayList<X509Certificate>(
+                certList.length);
+        for (int i = 0; i < certList.length; i++) {
+            int index = -1;
+            String certData = certList[i];
+            if (certData != null) {
+                index = certData.indexOf("-----BEGIN CERTIFICATE-----");
+            }
+            if (index >= 0) {
+                certData = certData.substring(index);
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(
+                        certData.getBytes());
+                X509Certificate cert = (X509Certificate) certFactory.generateCertificate(inputStream);
+                c.add(cert);
+            }
+        }
+        if (c.isEmpty()) {
+            return null;
+        }
+        return c.toArray(new X509Certificate[0]);
+    }
+
+    /**
+     * Gets the existing trusted CA certificates directory.
+     *
+     * @return directory path string or null if none found
+     */
+    public String getExistingTrustRootPath() {
+        String path, GL;
+
+        GL = System.getenv("GLOBUS_LOCATION");
+        if (GL == null) {
+            GL = System.getProperty("GLOBUS_LOCATION");
+        }
+
+        path = System.getenv("X509_CERT_DIR");
+        if (path == null) {
+            path = System.getProperty("X509_CERT_DIR");
+        }
+        if (path == null) {
+            path = getDir("/etc/grid-security/certificates");
+        }
+        if (path == null) {
+            path = getDir(GL + File.separator + "share" + File.separator
+                    + "certificates");
+        }
+
+        return path;
+    }
+
+    private String getDir(String path) {
+        if (path == null) {
+            return null;
+        }
+        File f = new File(path);
+        if (f.isDirectory() && f.canRead()) {
+            return f.getAbsolutePath();
+        }
+        return null;
+    }
+
+    public void copyFile(String source, String dest) {
+        FileChannel in = null;
+        FileChannel out = null;
+
+        try {
+            // Init
+            in = new FileInputStream(source).getChannel();
+            out = new FileOutputStream(dest).getChannel();
+            in.transferTo(0, in.size(), out);
+
+        } catch (Exception e) {
+            logger.error("Error copying file from {} to {}", source, dest, e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    logger.error("Error closing FileInputStream for file copy", e);
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    logger.error("Error closing FileInputStream for file copy", e);
+                }
+            }
+        }
+
     }
 
     private class MyTrustManager implements X509TrustManager {
@@ -491,7 +585,7 @@ public class ProxyClient {
                             subject);
                     throw new CertificateException(
                             "Server certificate subject CN contains unknown service element: "
-                            + subject);
+                                    + subject);
                 }
             }
             String myHostname = server.getMyProxyHost();
@@ -507,105 +601,10 @@ public class ProxyClient {
                         CN, server.getMyProxyHost());
                 throw new CertificateException(
                         "Server certificate subject CN (" + CN
-                        + ") does not match server hostname ("
-                        + server.getMyProxyHost()
-                        + ").");
+                                + ") does not match server hostname ("
+                                + server.getMyProxyHost()
+                                + ").");
             }
         }
-    }
-
-    private X509Certificate[] getX509CertsFromStringList(String[] certList) throws CertificateException {
-
-        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
-        Collection<X509Certificate> c = new ArrayList<X509Certificate>(
-                certList.length);
-        for (int i = 0; i < certList.length; i++) {
-            int index = -1;
-            String certData = certList[i];
-            if (certData != null) {
-                index = certData.indexOf("-----BEGIN CERTIFICATE-----");
-            }
-            if (index >= 0) {
-                certData = certData.substring(index);
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(
-                        certData.getBytes());
-                X509Certificate cert = (X509Certificate) certFactory.generateCertificate(inputStream);
-                c.add(cert);
-            }
-        }
-        if (c.isEmpty()) {
-            return null;
-        }
-        return c.toArray(new X509Certificate[0]);
-    }
-
-    /**
-     * Gets the existing trusted CA certificates directory.
-     *
-     * @return directory path string or null if none found
-     */
-    public String getExistingTrustRootPath() {
-        String path, GL;
-
-        GL = System.getenv("GLOBUS_LOCATION");
-        if (GL == null) {
-            GL = System.getProperty("GLOBUS_LOCATION");
-        }
-
-        path = System.getenv("X509_CERT_DIR");
-        if (path == null) {
-            path = System.getProperty("X509_CERT_DIR");
-        }
-        if (path == null) {
-            path = getDir("/etc/grid-security/certificates");
-        }
-        if (path == null) {
-            path = getDir(GL + File.separator + "share" + File.separator
-                    + "certificates");
-        }
-
-        return path;
-    }
-
-    private String getDir(String path) {
-        if (path == null) {
-            return null;
-        }
-        File f = new File(path);
-        if (f.isDirectory() && f.canRead()) {
-            return f.getAbsolutePath();
-        }
-        return null;
-    }
-
-    public void copyFile(String source, String dest) {
-        FileChannel in = null;
-        FileChannel out = null;
-
-        try {
-            // Init
-            in = new FileInputStream(source).getChannel();
-            out = new FileOutputStream(dest).getChannel();
-            in.transferTo(0, in.size(), out);
-
-        } catch (Exception e) {
-            logger.error("Error copying file from {} to {}", source, dest, e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    logger.error("Error closing FileInputStream for file copy", e);
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    logger.error("Error closing FileInputStream for file copy", e);
-                }
-            }
-        }
-
     }
 }

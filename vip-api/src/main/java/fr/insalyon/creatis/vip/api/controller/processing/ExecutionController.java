@@ -39,17 +39,14 @@ import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.api.model.DeleteExecutionConfiguration;
 import fr.insalyon.creatis.vip.api.model.Execution;
 import fr.insalyon.creatis.vip.api.model.PathProperties;
-import fr.insalyon.creatis.vip.core.client.bean.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static fr.insalyon.creatis.vip.api.CarminProperties.DEFAULT_LIMIT_LIST_EXECUTION;
 
@@ -116,14 +113,14 @@ public class ExecutionController extends ApiController {
 
         return executionBusiness.getExecution(executionId, false);
     }
-    
+
     @RequestMapping("/{executionId}/summary")
     public Execution getExecutionSummary(@PathVariable String executionId)
             throws ApiException {
         logMethodInvocation(logger, "getExecutionSummary", executionId);
         return executionBusiness.getExecution(executionId, true);
     }
-    
+
 
     @RequestMapping(value = "/{executionId}", method = RequestMethod.PUT)
     public Execution updateExecution(
@@ -141,7 +138,7 @@ public class ExecutionController extends ApiController {
             throws ApiException {
         logMethodInvocation(logger, "initExecution", execution);
         pipelineBusiness.checkIfUserCanAccessPipeline(
-            execution.getPipelineIdentifier());
+                execution.getPipelineIdentifier());
         String execId = executionBusiness.initExecution(execution);
         return executionBusiness.getExecution(execId, false);
     }
@@ -161,7 +158,7 @@ public class ExecutionController extends ApiController {
         return executionBusiness.getStdOut(executionId);
     }
 
-    @RequestMapping(value= "/{executionId}/stderr", produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/{executionId}/stderr", produces = "text/plain;charset=UTF-8")
     public String getStderr(@PathVariable String executionId) throws ApiException {
         logMethodInvocation(logger, "getStderr", executionId);
         executionBusiness.checkIfUserCanAccessExecution(executionId);

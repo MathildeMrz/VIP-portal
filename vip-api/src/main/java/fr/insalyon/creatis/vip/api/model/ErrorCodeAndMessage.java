@@ -38,10 +38,13 @@ import javax.validation.constraints.NotNull;
  */
 public class ErrorCodeAndMessage {
 
-    @NotNull private Integer errorCode;
-    @NotNull private String errorMessage;
+    @NotNull
+    private Integer errorCode;
+    @NotNull
+    private String errorMessage;
 
-    public ErrorCodeAndMessage() {}
+    public ErrorCodeAndMessage() {
+    }
 
     public ErrorCodeAndMessage(Integer errorCode) {
         this.errorCode = errorCode;

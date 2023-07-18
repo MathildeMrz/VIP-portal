@@ -3,7 +3,6 @@ package fr.insalyon.creatis.vip.api.model.stats;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import fr.insalyon.creatis.vip.api.CarminProperties;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class UsersNumber {
@@ -12,7 +11,8 @@ public class UsersNumber {
     private LocalDateTime end;
     private Long total;
 
-    public UsersNumber() {}
+    public UsersNumber() {
+    }
 
     public UsersNumber(LocalDateTime start, LocalDateTime end, Long total) {
         this.start = start;
@@ -20,7 +20,7 @@ public class UsersNumber {
         this.total = total;
     }
 
-    @JsonFormat(pattern= CarminProperties.STATS_DATE_FORMAT)
+    @JsonFormat(pattern = CarminProperties.STATS_DATE_FORMAT)
     public LocalDateTime getStart() {
         return start;
     }
@@ -29,7 +29,7 @@ public class UsersNumber {
         this.start = start;
     }
 
-    @JsonFormat(pattern= CarminProperties.STATS_DATE_FORMAT)
+    @JsonFormat(pattern = CarminProperties.STATS_DATE_FORMAT)
     public LocalDateTime getEnd() {
         return end;
     }

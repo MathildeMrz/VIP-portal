@@ -4,16 +4,16 @@
  * This software is a web portal for pipeline execution on distributed systems.
  *
  * This software is governed by the CeCILL-B license under French law and
- * abiding by the rules of distribution of free software.  You can  use, 
+ * abiding by the rules of distribution of free software.  You can  use,
  * modify and/ or redistribute the software under the terms of the CeCILL-B
  * license as circulated by CEA, CNRS and INRIA at the following URL
- * "http://www.cecill.info". 
+ * "http://www.cecill.info".
  *
  * As a counterpart to the access to the source code and  rights to copy,
  * modify and redistribute granted by the license, users are provided only
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
- * liability. 
+ * liability.
  *
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
@@ -22,9 +22,9 @@
  * therefore means  that it is reserved for developers  and  experienced
  * professionals having in-depth computer knowledge. Users are therefore
  * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or 
- * data to be ensured and,  more generally, to use and operate it in the 
- * same conditions as regards security. 
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
  *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-B license and that you accept its terms.
@@ -46,7 +46,6 @@ import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
 import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class OperationToolStrip extends ToolStrip {
@@ -67,34 +66,34 @@ public class OperationToolStrip extends ToolStrip {
         clearButton = WidgetUtil.getToolStripButton("Clear List",
                 DataManagerConstants.OP_ICON_CLEAR,
                 "Remove all operations from this list", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                SC.ask("Do you want to clear all operations?", new BooleanCallback() {
                     @Override
-                    public void execute(Boolean value) {
+                    public void onClick(ClickEvent event) {
+                        SC.ask("Do you want to clear all operations?", new BooleanCallback() {
+                            @Override
+                            public void execute(Boolean value) {
 
-                        if (value) {
-                            DataManagerServiceAsync service = DataManagerService.Util.getInstance();
-                            AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-                                @Override
-                                public void onFailure(Throwable caught) {
-                                    WidgetUtil.resetToolStripButton(clearButton, "Clear List", DataManagerConstants.OP_ICON_CLEAR);
-                                    Layout.getInstance().setWarningMessage("Unable to remove operations:<br />" + caught.getMessage());
-                                }
+                                if (value) {
+                                    DataManagerServiceAsync service = DataManagerService.Util.getInstance();
+                                    AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+                                        @Override
+                                        public void onFailure(Throwable caught) {
+                                            WidgetUtil.resetToolStripButton(clearButton, "Clear List", DataManagerConstants.OP_ICON_CLEAR);
+                                            Layout.getInstance().setWarningMessage("Unable to remove operations:<br />" + caught.getMessage());
+                                        }
 
-                                @Override
-                                public void onSuccess(Void result) {
-                                    WidgetUtil.resetToolStripButton(clearButton, "Clear List", DataManagerConstants.OP_ICON_CLEAR);
-                                    OperationLayout.getInstance().clearOperations();
+                                        @Override
+                                        public void onSuccess(Void result) {
+                                            WidgetUtil.resetToolStripButton(clearButton, "Clear List", DataManagerConstants.OP_ICON_CLEAR);
+                                            OperationLayout.getInstance().clearOperations();
+                                        }
+                                    };
+                                    WidgetUtil.setLoadingToolStripButton(clearButton, "Clearing...");
+                                    service.removeUserOperations(callback);
                                 }
-                            };
-                            WidgetUtil.setLoadingToolStripButton(clearButton, "Clearing...");
-                            service.removeUserOperations(callback);
-                        }
+                            }
+                        });
                     }
                 });
-            }
-        });
         this.addButton(clearButton);
     }
 }

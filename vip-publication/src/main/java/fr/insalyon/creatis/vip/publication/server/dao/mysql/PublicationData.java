@@ -31,15 +31,9 @@
  */
 package fr.insalyon.creatis.vip.publication.server.dao.mysql;
 
-import fr.insalyon.creatis.vip.publication.client.bean.Publication;
 import fr.insalyon.creatis.vip.core.server.dao.DAOException;
+import fr.insalyon.creatis.vip.publication.client.bean.Publication;
 import fr.insalyon.creatis.vip.publication.server.dao.PublicationDAO;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +42,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author Nouha Boujelben
  */
 @Repository
@@ -66,12 +64,11 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
 
     @Override
     public void add(Publication pub) throws DAOException {
-
         PreparedStatement ps = null;
         try {
             ps = getConnection().prepareStatement(
                     "INSERT INTO VIPPublication(title,date,doi,authors,type,typeName,vipAuthor,vipApplication) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?,?)");
+                            + "VALUES (?, ?, ?, ?, ?, ?, ?,?)");
 
             ps.setString(1, pub.getTitle());
             ps.setString(2, pub.getDate());
@@ -84,8 +81,18 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
             ps.execute();
             ps.close();
         } catch (SQLException ex) {
+            // Does not work because id is not used
+            //
+                /*if (ex.getMessage().contains("Unique index or primary key"))
+                {
+                    logger.error("There is already a publication registered with the id {}", pub.getId());
+                    throw new DAOException(String.format("There is already a publication registered with the id : %d", pub.getId()));
+                }*/
+            //else
+            //{
             logger.error("Error adding publication {} {}", pub.getTitle(), pub.getDoi(), ex);
             throw new DAOException(ex);
+            //}
         }
     }
 
@@ -108,10 +115,11 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
             ps.setString(8, publication.getVipApplication());
             ps.setLong(9, publication.getId());
             ps.executeUpdate();
+
             ps.close();
 
         } catch (SQLException ex) {
-            logger.error("Error updating publication {}",publication.getId(), ex);
+            logger.error("Error updating publication {}", publication.getId(), ex);
             throw new DAOException(ex);
         }
     }
@@ -124,8 +132,8 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
 
             ps.setLong(1, id);
             ps.execute();
-            ps.close();
 
+            ps.close();
         } catch (SQLException ex) {
             logger.error("Error removing publication {}", id, ex);
             throw new DAOException(ex);
@@ -148,7 +156,6 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
             List<Publication> publications = new ArrayList<Publication>();
 
             while (rs.next()) {
-
                 publications.add(new Publication(rs.getLong("id"), rs.getString("title"), rs.getString("date"), rs.getString("doi"), rs.getString("authors"), rs.getString("type"), rs.getString("typeName"), rs.getString("VIPAuthor"), rs.getString("VIPApplication")));
             }
 
@@ -168,7 +175,7 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
             PreparedStatement ps;
 
             ps = getConnection().prepareStatement("SELECT "
-                    + "id,title,date,doi,authors,type,typeName,VIPAuthor FROM "
+                    + "id,title,date,doi,authors,type,typeName,VIPAuthor,VIPApplication FROM " // VIPApplication was missing in the SQL request
                     + "VIPPublication where id=?");
 
             ps.setLong(1, id);
@@ -178,6 +185,13 @@ public class PublicationData extends JdbcDaoSupport implements PublicationDAO {
             if (rs.next()) {
                 p = new Publication(rs.getLong("id"), rs.getString("title"), rs.getString("date"), rs.getString("doi"), rs.getString("authors"), rs.getString("type"), rs.getString("typeName"), rs.getString("VIPAuthor"), rs.getString("VIPApplication"));
             }
+            //////////ADDED//////////
+                /*else
+                {
+                    logger.error("There is no publication registered with the id {}", id);
+                    throw new DAOException(String.format("There is no publication registered with the id : %d", id));
+                }
+                //////////ADDED//////////*/
 
             rs.close();
             return p;

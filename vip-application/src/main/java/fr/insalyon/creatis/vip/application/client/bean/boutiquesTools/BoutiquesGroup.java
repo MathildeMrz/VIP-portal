@@ -29,7 +29,7 @@ public class BoutiquesGroup implements IsSerializable {
      * @param members           List of String IDs of this group members
      */
     public BoutiquesGroup(String id, boolean allOrNone, boolean mutuallyExclusive, boolean oneIsRequired,
-                          Set<String> members){
+                          Set<String> members) {
         this.id = id;
         this.allOrNone = allOrNone;
         this.mutuallyExclusive = mutuallyExclusive;

@@ -42,13 +42,11 @@ import fr.insalyon.creatis.vip.visualization.client.view.VisualizationException;
 import fr.insalyon.creatis.vip.visualization.server.business.VisualizationBusiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletException;
 
 public class VisualizationServiceImpl extends AbstractRemoteServiceServlet
-    implements VisualizationService {
+        implements VisualizationService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -62,12 +60,12 @@ public class VisualizationServiceImpl extends AbstractRemoteServiceServlet
 
     @Override
     public Image getImageSlicesURL(String imageFileName, String direction)
-        throws VisualizationException {
+            throws VisualizationException {
 
         try {
             trace(logger, "Slicing image: " + imageFileName);
             return visualizationBusiness.getImageSlicesURL(
-                imageFileName, direction);
+                    imageFileName, direction);
         } catch (CoreException | BusinessException ex) {
             throw new VisualizationException(ex);
         }
@@ -80,8 +78,8 @@ public class VisualizationServiceImpl extends AbstractRemoteServiceServlet
             trace(logger, "Getting URL for file: " + lfn);
             User user = getSessionUser();
             return visualizationBusiness.getVisualizationItemFromLFN(
-                lfn,
-                user);
+                    lfn,
+                    user);
         } catch (BusinessException | CoreException ex) {
             throw new VisualizationException(ex);
         }

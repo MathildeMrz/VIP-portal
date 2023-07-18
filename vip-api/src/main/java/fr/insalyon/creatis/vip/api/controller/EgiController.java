@@ -6,6 +6,7 @@ import fr.insalyon.creatis.vip.core.client.view.CoreException;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
 import fr.insalyon.creatis.vip.core.server.business.VipSessionBusiness;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +41,12 @@ public class EgiController {
             HttpServletRequest request, HttpServletResponse response, Principal user)
             throws ApiException {
 
-        if ( ! (user instanceof OAuth2AuthenticationToken)) {
+        if (!(user instanceof OAuth2AuthenticationToken)) {
             logger.error("Egi login must only be called after an OIDC login. User [{}]", user);
             throw new ApiException(ApiException.ApiError.WRONG_OIDC_LOGIN);
         }
-        OAuth2AuthenticationToken authToken = ((OAuth2AuthenticationToken) user);
-        if ( ! authToken.isAuthenticated()) {
+        OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) user;
+        if (!authToken.isAuthenticated()) {
             logger.error("Egi login method called with an anonymous user");
             throw new ApiException(ApiException.ApiError.WRONG_OIDC_LOGIN);
         }
@@ -53,9 +54,9 @@ public class EgiController {
         Map<String, Object> userAttributes = authToken.getPrincipal().getAttributes();
         Object institution = userAttributes.get("eduperson_scoped_affiliation");
         String domainName;
-        if(institution != null){
+        if (institution != null) {
             String institution_string = institution.toString();
-            String temp = institution_string .substring(institution_string .indexOf("@") + 1);
+            String temp = institution_string.substring(institution_string.indexOf("@") + 1);
             domainName = temp.substring(0, temp.indexOf("."));
             domainName = domainName.toUpperCase();
         } else {
@@ -68,6 +69,8 @@ public class EgiController {
             vipSessionBusiness.setVIPSession(request, response, vipUser); // creates VIP cookies and session
         } catch (BusinessException | CoreException e) {
             throw new ApiException(ApiException.ApiError.WRONG_OIDC_LOGIN, e);
+        } catch (DAOException e) {
+            throw new RuntimeException(e);
         }
 
         return new RedirectView(getRootUrl(request)); // redirect on the home page where the VIP cookies will authenticate the user
@@ -76,7 +79,7 @@ public class EgiController {
     private String getRootUrl(HttpServletRequest request) {
         String decodedUri = UriUtils.decode(request.getRequestURI(), "UTF-8");
         int index = decodedUri.indexOf("/rest/loginEgi");
-        return decodedUri.substring(0, index+1); // keep trailing slash
+        return decodedUri.substring(0, index + 1); // keep trailing slash
     }
 }
 

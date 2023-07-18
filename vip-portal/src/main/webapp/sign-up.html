@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>VIP sign-up</title>
-    <link rel="stylesheet" href="css/style_signup.css" />
-    <link rel="icon" href="images/core/vip-logo-without-text.png">
+    <link href="css/style_signup.css" rel="stylesheet"/>
+    <link href="images/core/vip-logo-without-text.png" rel="icon">
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link rel="icon" href="images/core/vip-logo-without-text.png">
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" rel="stylesheet">
+    <link href="images/core/vip-logo-without-text.png" rel="icon">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Ubuntu&family=Yellowtail&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Ubuntu&family=Yellowtail&display=swap"
+          rel="stylesheet">
 
     <!-- For the sign up -->
     <script language="javascript" src="js/sign-up.js"></script>
@@ -24,33 +26,34 @@
 </head>
 <body class="text-center" style="font-family: 'Montserrat', sans-serif; background-color: #f0f2f5;">
 <section>
-    <img class="mb-4" src="images/core/vip-logo.png" alt="" width="220" height="150">
+    <img alt="" class="mb-4" height="150" src="images/core/vip-logo.png" width="220">
     <div class="container h-100">
         <div class="row justify-content-center align-items-center h-100">
             <div class="col-12 col-lg-9 col-xl-7">
                 <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registration Form</h3>
-                        <div class='alert alert-danger' style='display:none' id='emptyFields-failed'>
-                            Please fill in the fields: First Name, Last Name, Email, Re-enter email, Select an application,
+                        <div class='alert alert-danger' id='emptyFields-failed' style='display:none'>
+                            Please fill in the fields: First Name, Last Name, Email, Re-enter email, Select an
+                            application,
                             Select your country, Institution, Password and Re-enter password.
                         </div>
-                        <div class='alert alert-danger' style='display:none' id='emailMatch-failed'>
+                        <div class='alert alert-danger' id='emailMatch-failed' style='display:none'>
                             Email and Re-enter email isn't matching.
                         </div>
-                        <div class='alert alert-danger' style='display:none' id='passwordMatch-failed'>
+                        <div class='alert alert-danger' id='passwordMatch-failed' style='display:none'>
                             Password and Re-enter password isn't matching.
                         </div>
-                        <div class='alert alert-danger' style='display:none' id='termsOfUse-failed'>
+                        <div class='alert alert-danger' id='termsOfUse-failed' style='display:none'>
                             Please read the terms of Use and checked it.
                         </div>
-                        <div class='alert alert-danger' style='display:none' id='email-failed'>
+                        <div class='alert alert-danger' id='email-failed' style='display:none'>
                             Email adress isn't valid.
                         </div>
-                        <div class='alert alert-danger' style='display:none' id='signUp-failed'>
+                        <div class='alert alert-danger' id='signUp-failed' style='display:none'>
                             Email or Password aren't the same.
                         </div>
-                        <div class='alert alert-danger' style='display:none' id='fetch-failed'>
+                        <div class='alert alert-danger' id='fetch-failed' style='display:none'>
                             There seems to be a problem to create an account now.
                         </div>
                         <form>
@@ -59,7 +62,7 @@
                                 <div class="col-md-6 mb-4">
 
                                     <div class="form-floating">
-                                        <input type="text" id="firstName" class="form-control form-control-lg" />
+                                        <input class="form-control form-control-lg" id="firstName" type="text"/>
                                         <label class="form-label" for="firstName">First Name</label>
                                     </div>
 
@@ -67,7 +70,7 @@
                                 <div class="col-md-6 mb-4">
 
                                     <div class="form-floating">
-                                        <input type="text" id="lastName" class="form-control form-control-lg" />
+                                        <input class="form-control form-control-lg" id="lastName" type="text"/>
                                         <label class="form-label" for="lastName">Last Name</label>
                                     </div>
 
@@ -78,7 +81,7 @@
                                 <div class="col-md-6 mb-4">
 
                                     <div class="form-floating">
-                                        <input type="text" id="email" class="form-control form-control-lg" />
+                                        <input class="form-control form-control-lg" id="email" type="text"/>
                                         <label class="form-label" for="email">Email</label>
                                     </div>
 
@@ -86,22 +89,25 @@
                                 <div class="col-md-6 mb-4">
 
                                     <div class="form-floating">
-                                        <input type="text" id="reEmail" class="form-control form-control-lg" />
+                                        <input class="form-control form-control-lg" id="reEmail" type="text"/>
                                         <label class="form-label" for="reEmail">Re-enter email</label>
                                     </div>
 
                                 </div>
                             </div>
 
-                            <p>Select the applications you want to use. Once you are registered, you will be able to use more applications by joining groups in the "My Account" page.</p>
+                            <p>Select the first application you want to use. Once you are registered, you will be able
+                                to use more applications by joining groups in the "My Account" page.</p>
+
 
                             <div class="row">
-                                <div id="select-app" class="col-md-6 mb-4">
+                                <div class="col-md-6 mb-4" id="select-app">
                                 </div>
 
                                 <div class="col-md-6 mb-4">
                                     <div class="form">
-                                        <select id="country" name="select-country" class="form-select" aria-label="Default select example">
+                                        <select aria-label="Default select example" class="form-select" id="country"
+                                                name="select-country">
                                             <option>Select your Country</option>
                                             <option value="AF">Afghanistan</option>
                                             <option value="AX">&Aring;land Islands</option>
@@ -356,7 +362,7 @@
                             </div>
 
                             <div class="form-floating">
-                                <input type="text" id="institution" class="form-control form-control-lg" />
+                                <input class="form-control form-control-lg" id="institution" type="text"/>
                                 <label class="form-label" for="institution">Institution</label>
                             </div>
                             <br>
@@ -365,7 +371,7 @@
                                 <div class="col-md-6 mb-4">
 
                                     <div class="form-floating">
-                                        <input type="password" id="password" class="form-control form-control-lg" />
+                                        <input class="form-control form-control-lg" id="password" type="password"/>
                                         <label class="form-label" for="password">Password</label>
                                     </div>
 
@@ -373,7 +379,7 @@
                                 <div class="col-md-6 mb-4">
 
                                     <div class="form-floating">
-                                        <input type="password" id="rePassword" class="form-control form-control-lg" />
+                                        <input class="form-control form-control-lg" id="rePassword" type="password"/>
                                         <label class="form-label" for="rePassword">Re-enter password</label>
                                     </div>
 
@@ -381,18 +387,21 @@
                             </div>
 
                             <div class="form-outline">
-                                <textarea class="form-control" rows="3" placeholder="Message sent to the VIP team"></textarea>
+                                <textarea class="form-control" placeholder="Message sent to the VIP team"
+                                          rows="3"></textarea>
                             </div>
 
                             <div class="form-check d-flex justify-content-center mb-5">
-                                <input class="form-check-input me-2" type="checkbox" value="" id="termsOfUse" />
+                                <input class="form-check-input me-2" id="termsOfUse" type="checkbox" value=""/>
                                 <label class="form-check-label">
-                                    I accept the <a href="https://vip.creatis.insa-lyon.fr/documentation/terms.html">Terms of use</a>
+                                    I accept the <a href="https://vip.creatis.insa-lyon.fr/documentation/terms.html">Terms
+                                    of use</a>
                                 </label>
                             </div>
 
                             <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                <button type="button" class="btn btn-primary btn-lg" onclick="createUser()">Sign-up</button>
+                                <button class="btn btn-primary btn-lg" onclick="createUser()" type="button">Sign-up
+                                </button>
                             </div>
 
 
