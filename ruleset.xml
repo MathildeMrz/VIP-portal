@@ -43,7 +43,7 @@
     <rule ref="category/java/errorprone.xml/OverrideBothEqualsAndHashcode"/>
     <rule ref="category/java/errorprone.xml/ReturnFromFinallyBlock"/>
     <rule ref="category/java/errorprone.xml/UnconditionalIfStatement"/>
-    <rule ref="category/java/errorprone.xml/UnnecessaryConversionTemporarAy"/>
+    <rule ref="category/java/errorprone.xml/UnnecessaryConversionTemporary"/>
     <rule ref="category/java/errorprone.xml/UnusedNullCheckInEquals"/>
     <rule ref="category/java/errorprone.xml/UselessOperationOnImmutable"/>
 
