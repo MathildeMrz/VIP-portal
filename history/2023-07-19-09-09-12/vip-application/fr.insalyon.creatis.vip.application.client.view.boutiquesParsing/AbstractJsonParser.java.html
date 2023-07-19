@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractJsonParser.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.boutiquesParsing</a> &gt; <span class="el_source">AbstractJsonParser.java</span></div><h1>AbstractJsonParser.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.application.client.view.boutiquesParsing;
+
+import com.google.gwt.json.client.*;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+/**
+ * Helper class for parsing JSON objects
+ *
+ * @author Guillaume Vanel
+ * @version %I%, %G%
+ */
+<span class="nc" id="L17">public class AbstractJsonParser {</span>
+
+    /**
+     * Helper method to get value associated to given key in given JSON object. Provided converter function allows
+     * conversion from JSONValue to awaited type. Converter returns null if obtained value is not of expected type
+     * (in which case applyToValue throws an InvalidBoutiquesDescriptorException)
+     *
+     * @param jsonObject JSONObject to parse
+     * @param key        String representing the key in jsonObject associated to searched value
+     * @param optional   boolean: true if key is optional, in which case its absence will lead to a null return value
+     *                   instead of a RuntimeException
+     * @param converter  Function&lt;JSONValue, T&gt; converting found JSONValue to expected type, or null if value is
+     *                   invalid
+     * @param &lt;T&gt;        Type of expected value after conversion
+     * @return Value associated to key after conversion, or null if key is absent and optional is true
+     * @throws InvalidBoutiquesDescriptorException if value is invalid or if key is absent and optional is false
+     * @see #getStringValue(JSONObject, String, boolean)
+     * @see #getDoubleValue(JSONObject, String, boolean)
+     * @see #getBooleanValue(JSONObject, String, boolean)
+     * @see #getArrayValue(JSONObject, String, boolean)
+     */
+    protected &lt;T&gt; T applyToValue(JSONObject jsonObject, String key, boolean optional,
+                                 Function&lt;JSONValue, T&gt; converter)
+            throws InvalidBoutiquesDescriptorException {
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (jsonObject.containsKey(key)) {</span>
+<span class="nc" id="L42">            T value = converter.apply(jsonObject.get(key));</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">            if (value == null) {</span>
+<span class="nc" id="L44">                throw new InvalidBoutiquesDescriptorException(&quot;Invalid JSON object: '&quot; + key + &quot;' value is not valid.&quot;);</span>
+            }
+<span class="nc" id="L46">            return value;</span>
+        } else {
+<span class="nc bnc" id="L48" title="All 2 branches missed.">            if (optional) {</span>
+<span class="nc" id="L49">                return null;</span>
+            } else {
+<span class="nc" id="L51">                throw new InvalidBoutiquesDescriptorException(&quot;Invalid JSON object: does not contain mandatory key '&quot;</span>
+                        + key + &quot;'.&quot;);
+            }
+        }
+    }
+
+    /**
+     * Convert given JSONValue to a Double if possible, otherwise return null
+     *
+     * @param value JSONValue to convert
+     * @return Double representation of value, or null if it is not a valid number
+     */
+    protected Double jsonValueToDouble(JSONValue value) {
+<span class="nc" id="L64">        JSONNumber numberValue = value.isNumber();</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (numberValue != null) {</span>
+<span class="nc" id="L66">            return numberValue.doubleValue();</span>
+        }
+        // If value is not a number, it can be a String containing a number
+<span class="nc" id="L69">        JSONString stringValue = value.isString();</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (stringValue == null) {</span>
+<span class="nc" id="L71">            return null;</span>
+        }
+        try {
+<span class="nc" id="L74">            return Double.parseDouble(stringValue.stringValue());</span>
+<span class="nc" id="L75">        } catch (NumberFormatException exception) {</span>
+<span class="nc" id="L76">            return null;</span>
+        }
+    }
+
+    /**
+     * Convert given JSONValue to a String if possible, otherwise return null
+     *
+     * @param value JSONValue to convert
+     * @return String representation of value, or null if it is not a valid String
+     */
+    protected String jsonValueToString(JSONValue value) {
+<span class="nc" id="L87">        JSONString stringValue = value.isString();</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (stringValue != null) {</span>
+<span class="nc" id="L89">            return stringValue.stringValue();</span>
+        }
+<span class="nc" id="L91">        return null;</span>
+    }
+
+    /**
+     * Converts a JSONArray to Set of Strings. Each value is checked using valueConverter which converts them to any
+     * Object or returns null if the value is invalid.
+     *
+     * @param addEmptyValue  boolean: true if null should be added as first value of returned List
+     * @param jsonArray      JSONArray from which values are taken
+     * @param valueConverter Function converting a JSONValue to any Object, or returning null if the JSONValue is
+     *                       not of expected type. It is used to ensure all values from jsonArray are valid.
+     * @return Set of String. Always null if jsonArray was null
+     * @throws InvalidBoutiquesDescriptorException if a value is not valid (valueConverter returned null on one of
+     *                                             jsonArray's values)
+     */
+    protected Set&lt;String&gt; jsonArrayToStringSet(boolean addEmptyValue, JSONArray jsonArray,
+                                               Function&lt;JSONValue, Object&gt; valueConverter)
+            throws InvalidBoutiquesDescriptorException {
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (jsonArray == null) {</span>
+<span class="nc" id="L110">            return null;</span>
+        }
+<span class="nc" id="L112">        Set&lt;String&gt; stringList = new HashSet&lt;&gt;();</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (addEmptyValue) {</span>
+<span class="nc" id="L114">            stringList.add(null);</span>
+        }
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        for (int valueNo = 0; valueNo &lt; jsonArray.size(); valueNo++) {</span>
+<span class="nc" id="L117">            Object iValue = valueConverter.apply(jsonArray.get(valueNo));</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if (iValue == null) {</span>
+<span class="nc" id="L119">                throw new InvalidBoutiquesDescriptorException(&quot;Invalid JSON array: value &quot; + valueNo</span>
+                        + &quot; is not of expected type.&quot;);
+            }
+<span class="nc" id="L122">            stringList.add(iValue.toString());</span>
+        }
+<span class="nc" id="L124">        return stringList;</span>
+    }
+
+    /**
+     * Get numeric value associated to given key in given JSON object
+     *
+     * @param descriptor JSONObject to parse
+     * @param key        String representing the key in descriptor associated to searched value
+     * @param optional   boolean: true if key is optional, in which case its absence will lead to a null return value
+     *                   instead of a RuntimeException
+     * @return Double value associated to key in descriptor, or null if key is absent and optional is true
+     * @throws InvalidBoutiquesDescriptorException if expected value is not a valid number or if key is absent and
+     *                                             optional is false
+     */
+    protected Double getDoubleValue(JSONObject descriptor, String key, boolean optional)
+            throws InvalidBoutiquesDescriptorException {
+        try {
+<span class="nc" id="L141">            return applyToValue(descriptor, key, optional, this::jsonValueToDouble);</span>
+<span class="nc" id="L142">        } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L143">            throw new InvalidBoutiquesDescriptorException(&quot;Invalid JSON object: no valid double value with key '&quot;</span>
+                    + key + &quot;'.&quot;, exception);
+        }
+    }
+
+    /**
+     * Get boolean value associated to given key in given JSON object
+     *
+     * @param descriptor JSONObject to parse
+     * @param key        String representing the key in descriptor associated to searched value
+     * @param optional   boolean: true if key is optional, in which case its absence will lead to a false return
+     *                   value instead of a RuntimeException
+     * @return boolean value associated to key in descriptor, or false if key is absent and optional is
+     * true
+     * @throws InvalidBoutiquesDescriptorException if expected value is not a valid boolean or if key is absent and
+     *                                             optional is false
+     */
+    protected boolean getBooleanValue(JSONObject descriptor, String key, boolean optional)
+            throws InvalidBoutiquesDescriptorException {
+        try {
+<span class="nc" id="L163">            JSONBoolean value = applyToValue(descriptor, key, optional, JSONValue::isBoolean);</span>
+<span class="nc bnc" id="L164" title="All 4 branches missed.">            return (value != null) &amp;&amp; value.booleanValue();</span>
+<span class="nc" id="L165">        } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L166">            throw new InvalidBoutiquesDescriptorException(&quot;Invalid JSON object: no valid boolean value with key '&quot;</span>
+                    + key + &quot;'.&quot;, exception);
+        }
+    }
+
+    /**
+     * Get String value associated to given mandatory key in given JSON object
+     *
+     * @param descriptor JSONObject to parse
+     * @param key        String representing the key in descriptor associated to searched value
+     * @return String value associated to key in descriptor
+     * @throws InvalidBoutiquesDescriptorException if expected value is not a valid String or if key is absent
+     * @see #getStringValue(JSONObject, String, boolean)
+     */
+    protected String getStringValue(JSONObject descriptor, String key) throws InvalidBoutiquesDescriptorException {
+<span class="nc" id="L181">        String stringValue = getStringValue(descriptor, key, false);</span>
+<span class="nc" id="L182">        return stringValue;</span>
+    }
+
+    /**
+     * Get String value associated to given key in given JSON object
+     *
+     * @param descriptor JSONObject to parse
+     * @param key        String representing the key in descriptor associated to searched value
+     * @param optional   boolean: true if key is optional, in which case its absence will lead to a null return value
+     *                   instead of a RuntimeException
+     * @return String value associated to key in descriptor, or null if key is absent and optional is true
+     * @throws InvalidBoutiquesDescriptorException if expected value is not a valid String or if key is absent and
+     *                                             optional is false
+     */
+    protected String getStringValue(JSONObject descriptor, String key, boolean optional)
+            throws InvalidBoutiquesDescriptorException {
+        try {
+<span class="nc" id="L199">            JSONString value = applyToValue(descriptor, key, optional, JSONValue::isString);</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            return value == null ? null : value.stringValue();</span>
+<span class="nc" id="L201">        } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L202">            throw new InvalidBoutiquesDescriptorException(&quot;Invalid JSON object: no valid String value with key '&quot;</span>
+                    + key + &quot;'.&quot;, exception);
+        }
+    }
+
+    /**
+     * Get JSONArray value associated to given key in given JSON object
+     *
+     * @param descriptor JSONObject to parse
+     * @param key        String representing the key in descriptor associated to searched value
+     * @param optional   boolean: true if key is optional, in which case its absence will lead to a null return
+     *                   value instead of a RuntimeException
+     * @return JSONArray value associated to key in descriptor, or null if key is absent and optional is
+     * true
+     * @throws InvalidBoutiquesDescriptorException if expected value is not a valid array or if key is absent and
+     *                                             optional is false
+     */
+    protected JSONArray getArrayValue(JSONObject descriptor, String key, boolean optional)
+            throws InvalidBoutiquesDescriptorException {
+        try {
+<span class="nc" id="L222">            return applyToValue(descriptor, key, optional, JSONValue::isArray);</span>
+<span class="nc" id="L223">        } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L224">            throw new InvalidBoutiquesDescriptorException(&quot;Invalid JSON object: no valid Array value with key '&quot;</span>
+                    + key + &quot;'.&quot;, exception);
+        }
+    }
+
+    /**
+     * Get a Set of String associated to given key in given JSON object
+     *
+     * @param descriptor JSONObject to parse
+     * @param key        String representing the key in descriptor associated to searched value
+     * @param optional   boolean: true if key is optional, in which case its absence will lead to a null return
+     *                   value instead of a RuntimeException
+     * @return Set of Strings associated to key in descriptor, or null if key is absent and optional is
+     * true
+     * @throws InvalidBoutiquesDescriptorException if expected value is not a valid String array or if key is absent
+     *                                             and optional is false
+     */
+    protected Set&lt;String&gt; getArrayValueAsStringSet(JSONObject descriptor, String key, boolean optional)
+            throws InvalidBoutiquesDescriptorException {
+<span class="nc" id="L243">        JSONArray array = getArrayValue(descriptor, key, optional);</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        if (array == null) {</span>
+<span class="nc" id="L245">            return null;</span>
+        } else {
+            try {
+<span class="nc" id="L248">                return jsonArrayToStringSet(false, array, this::jsonValueToString);</span>
+<span class="nc" id="L249">            } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L250">                throw new InvalidBoutiquesDescriptorException(&quot;Invalid JSON object: '&quot; + key</span>
+                        + &quot;' array contains non-String element(s).&quot;, exception);
+            }
+        }
+    }
+
+    /**
+     * Get a Map representing the JSON object associated to given key in given parent JSON object. Obtained JSON
+     * object must have String keys and String arrays as values
+     *
+     * @param descriptor Parent JSONObject to parse
+     * @param key        String representing the key in descriptor associated to searched value
+     * @param optional   boolean: true if key is optional, in which case its absence will lead to a null return
+     *                   value instead of a RuntimeException
+     * @return Map representing JSON object associated to key in descriptor, or null if key is absent and
+     * optional is true. Map's keys are obtained JSON object keys and values are String arrays
+     * representing its values
+     * @throws InvalidBoutiquesDescriptorException if expected value is not a valid object or if key is absent and
+     *                                             optional is false
+     */
+    protected Map&lt;String, Set&lt;String&gt;&gt; getStringSetMapValue(JSONObject descriptor, String key, boolean optional)
+            throws InvalidBoutiquesDescriptorException {
+<span class="nc" id="L272">        JSONObject object = getObjectValue(descriptor, key, optional);</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">        if (object == null) {</span>
+<span class="nc" id="L274">            return null;</span>
+        }
+        // Converts obtained object to a Map of Strings to String arrays
+<span class="nc" id="L277">        Map&lt;String, Set&lt;String&gt;&gt; convertedObject = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        for (String objectKey : object.keySet()) {</span>
+<span class="nc" id="L279">            JSONArray objectValue = object.get(objectKey).isArray();</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">            if (objectValue == null) {</span>
+<span class="nc" id="L281">                throw new InvalidBoutiquesDescriptorException(&quot;Invalid JSON object: '&quot; + objectKey</span>
+                        + &quot;' value in &quot; + key + &quot;object is not a JSON Array.&quot;);
+            }
+<span class="nc bnc" id="L284" title="All 2 branches missed.">            if (objectValue.size() &gt; 0) {</span>
+<span class="nc" id="L285">                convertedObject.put(objectKey, jsonArrayToStringSet(false, objectValue,</span>
+                        this::jsonValueToString));
+            }
+<span class="nc" id="L288">        }</span>
+<span class="nc" id="L289">        return convertedObject;</span>
+    }
+
+    /**
+     * Return the JSONObject associated to given key in given descriptor
+     *
+     * @param descriptor JSONObject containing key
+     * @param key        String key associated to returned value
+     * @param optional   boolean: true if key is optional, in which case its absence will lead to a null return
+     *                   value instead of a RuntimeException
+     * @return JSONObject associated to key in descriptor
+     * @throws InvalidBoutiquesDescriptorException if expected value is not a valid JSONObjector if key is absent and
+     *                                             optional is false
+     */
+    protected JSONObject getObjectValue(JSONObject descriptor, String key, boolean optional)
+            throws InvalidBoutiquesDescriptorException {
+        try {
+<span class="nc" id="L306">            return applyToValue(descriptor, key, optional, JSONValue::isObject);</span>
+<span class="nc" id="L307">        } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L308">            throw new InvalidBoutiquesDescriptorException(&quot;Invalid JSON object: no valid JSON object value with key '&quot;</span>
+                    + key + &quot;'.&quot;, exception);
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

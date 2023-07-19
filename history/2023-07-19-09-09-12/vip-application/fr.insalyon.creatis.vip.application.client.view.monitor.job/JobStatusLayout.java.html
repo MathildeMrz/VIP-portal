@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JobStatusLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.job</a> &gt; <span class="el_source">JobStatusLayout.java</span></div><h1>JobStatusLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.job;
+
+import com.google.gwt.user.client.Timer;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.FlowLayout;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+import java.util.Iterator;
+import java.util.Set;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class JobStatusLayout extends VLayout {
+
+    private String simulationID;
+    private JobStatus status;
+    private Set&lt;Integer&gt; jobsList;
+    private Label titleLabel;
+    private FlowLayout layout;
+    private int count;
+
+<span class="nc" id="L61">    public JobStatusLayout(String simulationID, JobStatus status, Set&lt;Integer&gt; jobsList) {</span>
+
+<span class="nc" id="L63">        this.simulationID = simulationID;</span>
+<span class="nc" id="L64">        this.status = status;</span>
+<span class="nc" id="L65">        this.jobsList = jobsList;</span>
+
+<span class="nc" id="L67">        this.setWidth100();</span>
+
+<span class="nc" id="L69">        HLayout hLayout = new HLayout();</span>
+<span class="nc" id="L70">        hLayout.setWidth100();</span>
+<span class="nc" id="L71">        hLayout.setHeight(20);</span>
+<span class="nc" id="L72">        hLayout.setBorder(&quot;1px solid #CCCCCC&quot;);</span>
+<span class="nc" id="L73">        hLayout.setBackgroundColor(&quot;#F7F7F7&quot;);</span>
+<span class="nc" id="L74">        hLayout.setPadding(5);</span>
+
+<span class="nc" id="L76">        titleLabel = WidgetUtil.getLabel(&quot;&lt;b&gt;&quot; + status.getDescription()</span>
+<span class="nc" id="L77">                + &quot;&lt;/b&gt; (&quot; + jobsList.size() + &quot;)&quot;, 18, Cursor.HAND);</span>
+<span class="nc" id="L78">        titleLabel.setWidth100();</span>
+<span class="nc" id="L79">        titleLabel.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L82">                loadData();</span>
+<span class="nc" id="L83">            }</span>
+        });
+<span class="nc" id="L85">        hLayout.addMember(titleLabel);</span>
+<span class="nc" id="L86">        this.addMember(hLayout);</span>
+<span class="nc" id="L87">    }</span>
+
+    private void loadData() {
+
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (layout == null) {</span>
+<span class="nc" id="L92">            layout = new FlowLayout();</span>
+<span class="nc" id="L93">            layout.setWidth100();</span>
+<span class="nc" id="L94">            layout.setHeight100();</span>
+<span class="nc" id="L95">            layout.setOverflow(Overflow.VISIBLE);</span>
+<span class="nc" id="L96">            this.addMember(layout);</span>
+
+<span class="nc" id="L98">            count = 0;</span>
+<span class="nc" id="L99">            final Iterator&lt;Integer&gt; iterator = jobsList.iterator();</span>
+<span class="nc" id="L100">            new Timer() {</span>
+                @Override
+                public void run() {
+
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                    if (count &gt;= jobsList.size()) {</span>
+<span class="nc" id="L105">                        cancel();</span>
+                    } else {
+<span class="nc" id="L107">                        layout.addTile(new JobLayout(iterator.next(), simulationID, status));</span>
+<span class="nc" id="L108">                        count++;</span>
+                    }
+<span class="nc" id="L110">                }</span>
+<span class="nc" id="L111">            }.scheduleRepeating(20);</span>
+
+<span class="nc" id="L113">        } else {</span>
+<span class="nc" id="L114">            layout.destroy();</span>
+<span class="nc" id="L115">            layout = null;</span>
+        }
+<span class="nc" id="L117">    }</span>
+
+    public void add(int jobID) {
+
+<span class="nc" id="L121">        jobsList.add(jobID);</span>
+<span class="nc" id="L122">        titleLabel.setContents(&quot;&lt;b&gt;&quot; + status.getDescription() + &quot;&lt;/b&gt; (&quot; + jobsList.size() + &quot;)&quot;);</span>
+
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (layout != null) {</span>
+<span class="nc" id="L125">            layout.addTile(new JobLayout(jobID, simulationID, status));</span>
+        }
+<span class="nc" id="L127">    }</span>
+
+    public void remove(int jobID, JobStatus status) {
+
+<span class="nc" id="L131">        jobsList.remove(jobID);</span>
+<span class="nc" id="L132">        titleLabel.setContents(&quot;&lt;b&gt;&quot; + status.getDescription() + &quot;&lt;/b&gt; (&quot; + jobsList.size() + &quot;)&quot;);</span>
+
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (layout != null) {</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            for (Canvas canvas : layout.getChildren()) {</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">                if (canvas instanceof JobLayout) {</span>
+<span class="nc" id="L137">                    JobLayout jl = (JobLayout) canvas;</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                    if (jl.getJobID() == jobID) {</span>
+<span class="nc" id="L139">                        jl.destroy();</span>
+<span class="nc" id="L140">                        break;</span>
+                    }
+                }
+            }
+        }
+<span class="nc" id="L145">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

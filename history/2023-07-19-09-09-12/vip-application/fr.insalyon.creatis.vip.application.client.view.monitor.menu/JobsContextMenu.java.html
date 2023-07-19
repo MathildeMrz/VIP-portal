@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JobsContextMenu.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.menu</a> &gt; <span class="el_source">JobsContextMenu.java</span></div><h1>JobsContextMenu.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.menu;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.menu.Menu;
+import com.smartgwt.client.widgets.menu.MenuItem;
+import com.smartgwt.client.widgets.menu.MenuItemSeparator;
+import com.smartgwt.client.widgets.menu.events.ClickHandler;
+import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.rpc.JobService;
+import fr.insalyon.creatis.vip.application.client.rpc.JobServiceAsync;
+import fr.insalyon.creatis.vip.application.client.view.monitor.NodeInfoWindow;
+import fr.insalyon.creatis.vip.application.client.view.monitor.ViewerWindow;
+import fr.insalyon.creatis.vip.application.client.view.monitor.job.TaskStatus;
+import fr.insalyon.creatis.vip.application.client.view.monitor.record.JobRecord;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class JobsContextMenu extends Menu {
+
+    private ModalWindow modal;
+    private String simulationID;
+
+<span class="nc" id="L60">    public JobsContextMenu(ModalWindow modal, final String simulationID, final JobRecord job) {</span>
+
+<span class="nc" id="L62">        this.modal = modal;</span>
+<span class="nc" id="L63">        this.simulationID = simulationID;</span>
+<span class="nc" id="L64">        this.setShowShadow(true);</span>
+<span class="nc" id="L65">        this.setShadowDepth(10);</span>
+<span class="nc" id="L66">        this.setWidth(90);</span>
+
+<span class="nc" id="L68">        MenuItem appOutputItem = new MenuItem(&quot;View Application Output&quot;);</span>
+<span class="nc" id="L69">        appOutputItem.setIcon(ApplicationConstants.ICON_PREVIEW);</span>
+<span class="nc" id="L70">        appOutputItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L73">                new ViewerWindow(&quot;Viewing Application Output for Job ID &quot; + job.getID(),</span>
+<span class="nc" id="L74">                        simulationID, &quot;out&quot;, job.getFileName(), &quot;.sh.app.out&quot;).show();</span>
+<span class="nc" id="L75">            }</span>
+        });
+
+<span class="nc" id="L78">        MenuItem appErrorItem = new MenuItem(&quot;View Application Error&quot;);</span>
+<span class="nc" id="L79">        appErrorItem.setIcon(ApplicationConstants.ICON_PREVIEW);</span>
+<span class="nc" id="L80">        appErrorItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L83">                new ViewerWindow(&quot;Viewing Application Error for Job ID &quot; + job.getID(),</span>
+<span class="nc" id="L84">                        simulationID, &quot;err&quot;, job.getFileName(), &quot;.sh.app.err&quot;).show();</span>
+<span class="nc" id="L85">            }</span>
+        });
+
+<span class="nc" id="L88">        MenuItem outputItem = new MenuItem(&quot;View Output File&quot;);</span>
+<span class="nc" id="L89">        outputItem.setIcon(ApplicationConstants.ICON_PREVIEW);</span>
+<span class="nc" id="L90">        outputItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L93">                new ViewerWindow(&quot;Viewing Output File for Job ID &quot; + job.getID(),</span>
+<span class="nc" id="L94">                        simulationID, &quot;out&quot;, job.getFileName(), &quot;.sh.out&quot;).show();</span>
+<span class="nc" id="L95">            }</span>
+        });
+
+<span class="nc" id="L98">        MenuItem errorItem = new MenuItem(&quot;View Error File&quot;);</span>
+<span class="nc" id="L99">        errorItem.setIcon(ApplicationConstants.ICON_PREVIEW);</span>
+<span class="nc" id="L100">        errorItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L103">                new ViewerWindow(&quot;Viewing Error File for Job ID &quot; + job.getID(),</span>
+<span class="nc" id="L104">                        simulationID, &quot;err&quot;, job.getFileName(), &quot;.sh.err&quot;).show();</span>
+<span class="nc" id="L105">            }</span>
+        });
+
+<span class="nc" id="L108">        MenuItem scriptItem = new MenuItem(&quot;View Script File&quot;);</span>
+<span class="nc" id="L109">        scriptItem.setIcon(ApplicationConstants.ICON_PREVIEW);</span>
+<span class="nc" id="L110">        scriptItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L113">                new ViewerWindow(&quot;Viewing Script File for Job ID &quot; + job.getID(),</span>
+<span class="nc" id="L114">                        simulationID, &quot;sh&quot;, job.getFileName(), &quot;.sh&quot;).show();</span>
+<span class="nc" id="L115">            }</span>
+        });
+
+<span class="nc" id="L118">        MenuItem nodeItem = new MenuItem(&quot;Node Information&quot;);</span>
+<span class="nc" id="L119">        nodeItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L122">                new NodeInfoWindow(simulationID, job.getID(),</span>
+<span class="nc" id="L123">                        job.getSiteName(), job.getNodeName()).show();</span>
+<span class="nc" id="L124">            }</span>
+        });
+
+<span class="nc" id="L127">        MenuItem replicateItem = getSignalItem(&quot;Replicate&quot;, ApplicationConstants.ICON_TASK_REPLICATE,</span>
+<span class="nc" id="L128">                job.getID(), TaskStatus.REPLICATE);</span>
+
+<span class="nc" id="L130">        MenuItem killItem = getSignalItem(&quot;Kill&quot;, ApplicationConstants.ICON_TASK_KILL,</span>
+<span class="nc" id="L131">                job.getID(), TaskStatus.KILL);</span>
+
+<span class="nc" id="L133">        MenuItem rescheduleItem = getSignalItem(&quot;Reschedule&quot;, ApplicationConstants.ICON_TASK_RESCHEDULE,</span>
+<span class="nc" id="L134">                job.getID(), TaskStatus.RESCHEDULE);</span>
+
+<span class="nc" id="L136">        MenuItemSeparator separator = new MenuItemSeparator();</span>
+
+<span class="nc" id="L138">        TaskStatus status = TaskStatus.valueOf(job.getStatus());</span>
+<span class="nc bnc" id="L139" title="All 8 branches missed.">        if ((status == TaskStatus.ERROR || status == TaskStatus.COMPLETED</span>
+                || status == TaskStatus.CANCELLED || status == TaskStatus.STALLED)
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                &amp;&amp; !job.getMinorStatus().equals(&quot;Retrieving Status&quot;)) {</span>
+
+<span class="nc" id="L143">            this.setItems(appOutputItem, appErrorItem, separator,</span>
+                    outputItem, errorItem, separator, scriptItem,
+                    separator, nodeItem);
+        } else {
+<span class="nc" id="L147">            this.setItems(scriptItem, separator, replicateItem, killItem,</span>
+                    rescheduleItem);
+        }
+<span class="nc" id="L150">    }</span>
+
+    private MenuItem getSignalItem(final String title, String icon,
+                                   final String jobID, final TaskStatus status) {
+
+<span class="nc" id="L155">        MenuItem menuItem = new MenuItem(&quot;Send &quot; + title + &quot; Signal&quot;, icon);</span>
+<span class="nc" id="L156">        menuItem.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L159">                SC.ask(&quot;Do you really want to &quot; + title.toLowerCase()</span>
+<span class="nc" id="L160">                        + &quot; this task?&quot;, new BooleanCallback() {</span>
+                    @Override
+                    public void execute(Boolean value) {
+<span class="nc bnc" id="L163" title="All 2 branches missed.">                        if (value) {</span>
+<span class="nc" id="L164">                            sendSignal(jobID, status);</span>
+                        }
+<span class="nc" id="L166">                    }</span>
+                });
+<span class="nc" id="L168">            }</span>
+        });
+<span class="nc" id="L170">        return menuItem;</span>
+    }
+
+    private void sendSignal(String jobID, TaskStatus status) {
+
+<span class="nc" id="L175">        JobServiceAsync service = JobService.Util.getInstance();</span>
+<span class="nc" id="L176">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L179">                modal.hide();</span>
+<span class="nc" id="L180">                Layout.getInstance().setWarningMessage(&quot;Unable to send signal:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L181">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L185">                modal.hide();</span>
+<span class="nc" id="L186">                Layout.getInstance().setNoticeMessage(&quot;Signal Successfully sent.&quot;);</span>
+<span class="nc" id="L187">            }</span>
+        };
+<span class="nc" id="L189">        modal.show(&quot;Sending signal to job...&quot;, true);</span>
+<span class="nc" id="L190">        service.sendSignal(simulationID, jobID, status.name(), callback);</span>
+<span class="nc" id="L191">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

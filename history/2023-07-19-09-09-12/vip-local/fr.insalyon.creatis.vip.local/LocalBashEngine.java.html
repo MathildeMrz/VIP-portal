@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LocalBashEngine.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-local</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.local</a> &gt; <span class="el_source">LocalBashEngine.java</span></div><h1>LocalBashEngine.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.local;
+
+import fr.insalyon.creatis.grida.client.GRIDAClientException;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+import fr.insalyon.creatis.vip.application.server.business.simulation.ParameterSweep;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+/**
+ * Local engine that simulates workflow execution.
+ * &lt;p&gt;
+ * At the moment it does the basic minimum :
+ * - looks for a bash script in the gwendia file
+ * - creates a local directory for each execution
+ * - copies the input file and the bash script in the file
+ * - launches the bash script with the inputs in the command line
+ * - transfers the results in a results-directory given path
+ * - do all this asynchronously and handle a status
+ * - handles all path as lfn and use GridaClientLocal for transfers
+ * &lt;p&gt;
+ * A lot of improvements are possible
+ */
+@Component
+@Profile(&quot;local&quot;)
+public class LocalBashEngine {
+<span class="nc" id="L45">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+
+    private GridaClientLocal gridaClient;
+
+    private Path workflowsDir;
+    private Map&lt;String, LocalBashExecution&gt; executionsInfo;
+    private Map&lt;String, Future&lt;?&gt;&gt; executionsFutures;
+    private ExecutorService executorService;
+<span class="nc" id="L53">    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(&quot;yy-MM-dd-HHmmss.SSS&quot;);</span>
+
+    @Autowired
+    public LocalBashEngine(
+            Resource vipConfigFolder,
+            GridaClientLocal gridaClient,
+            @Value(&quot;${local.workflow.dirname}&quot;) String workflowsDirName,
+<span class="nc" id="L60">            @Value(&quot;${local.engine.threadNb}&quot;) Integer localThreadNb) throws IOException {</span>
+<span class="nc" id="L61">        this.gridaClient = gridaClient;</span>
+<span class="nc" id="L62">        executorService = Executors.newFixedThreadPool(localThreadNb);</span>
+<span class="nc" id="L63">        executionsInfo = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L64">        executionsFutures = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L65">        workflowsDir = Paths.get(vipConfigFolder.getURI())</span>
+<span class="nc" id="L66">                .resolve(workflowsDirName);</span>
+<span class="nc bnc" id="L67" title="All 4 branches missed.">        if (!workflowsDir.toFile().exists() &amp;&amp; !workflowsDir.toFile().mkdir()) {</span>
+<span class="nc" id="L68">            throw new IllegalStateException(&quot;cannot create local bash workflows directory&quot;);</span>
+        }
+<span class="nc" id="L70">    }</span>
+
+    public String launch(File workflowFile, List&lt;ParameterSweep&gt; parameters) {
+        try {
+<span class="nc" id="L74">            LocalBashExecution newExecution =</span>
+<span class="nc" id="L75">                    createExecution(workflowFile, parameters);</span>
+<span class="nc" id="L76">            String execId = newExecution.id;</span>
+<span class="nc" id="L77">            executionsInfo.put(execId, newExecution);</span>
+<span class="nc" id="L78">            newExecution.status = SimulationStatus.Queued;</span>
+<span class="nc" id="L79">            Future&lt;?&gt; executionFuture =</span>
+<span class="nc" id="L80">                    executorService.submit(new LocalExecutionRun(newExecution));</span>
+<span class="nc" id="L81">            executionsFutures.put(execId, executionFuture);</span>
+<span class="nc" id="L82">            return execId;</span>
+<span class="nc" id="L83">        } catch (IOException e) {</span>
+<span class="nc" id="L84">            throw new RuntimeException(&quot;Cannot launch local execution&quot;, e);</span>
+<span class="nc" id="L85">        } catch (Exception e) {</span>
+<span class="nc" id="L86">            logger.error(&quot;launch error&quot;, e);</span>
+<span class="nc" id="L87">            throw e;</span>
+        }
+    }
+
+    public SimulationStatus getStatus(String workflowID) {
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (!executionsFutures.containsKey(workflowID)) {</span>
+<span class="nc" id="L93">            return SimulationStatus.Killed;</span>
+        }
+<span class="nc" id="L95">        Future&lt;?&gt; execFuture = executionsFutures.get(workflowID);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (execFuture.isCancelled()) {</span>
+<span class="nc" id="L97">            return SimulationStatus.Killed;</span>
+        }
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (execFuture.isDone()) {</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">            return isFinishedSuccessfully(execFuture) ?</span>
+<span class="nc" id="L101">                    SimulationStatus.Completed : SimulationStatus.Failed;</span>
+        }
+<span class="nc" id="L103">        return executionsInfo.get(workflowID).status;</span>
+    }
+
+    private boolean isFinishedSuccessfully(Future&lt;?&gt; execFuture) {
+        try {
+<span class="nc" id="L108">            execFuture.get();</span>
+<span class="nc" id="L109">        } catch (InterruptedException e) {</span>
+            // should not happen, the execution should be already finished
+<span class="nc" id="L111">            logger.error(&quot;An execution was interrupted while checking for its completion&quot;);</span>
+<span class="nc" id="L112">            throw new IllegalStateException(&quot;Unexpected test bash execution state&quot;);</span>
+<span class="nc" id="L113">        } catch (ExecutionException e) {</span>
+            // execution finished with an error
+<span class="nc" id="L115">            return false;</span>
+<span class="nc" id="L116">        }</span>
+<span class="nc" id="L117">        return true;</span>
+    }
+
+    public void kill(String workflowID) {
+<span class="nc" id="L121">        Future&lt;?&gt; execFuture = executionsFutures.get(workflowID);</span>
+<span class="nc" id="L122">        execFuture.cancel(true);</span>
+<span class="nc" id="L123">    }</span>
+
+    private LocalBashExecution createExecution(File workflowFile, List&lt;ParameterSweep&gt; parameters) throws IOException {
+<span class="nc" id="L126">        LocalBashExecution exec = new LocalBashExecution();</span>
+<span class="nc" id="L127">        exec.workflowFile = workflowFile;</span>
+<span class="nc" id="L128">        exec.id = createWorkflowId();</span>
+<span class="nc" id="L129">        exec.workflowDir = createWorkflowDir(exec.id);</span>
+<span class="nc" id="L130">        exec.gwendiaInputs = getGwendiaInputs(workflowFile);</span>
+<span class="nc" id="L131">        exec.gwendiaOutputs = getGwendiaOutputs(workflowFile);</span>
+<span class="nc" id="L132">        exec.execInputs = getExecInputs(parameters);</span>
+<span class="nc" id="L133">        exec.scriptFileLFN = getGwendiaScriptFile(workflowFile);</span>
+<span class="nc" id="L134">        return exec;</span>
+    }
+
+    private String createWorkflowId() throws IOException {
+<span class="nc" id="L138">        String dateString = DATE_FORMAT.format(new Date());</span>
+<span class="nc" id="L139">        return &quot;workflow-local-&quot; + dateString;</span>
+    }
+
+    private Path createWorkflowDir(String execId) throws IOException {
+<span class="nc" id="L143">        Path dir = workflowsDir.resolve(execId);</span>
+<span class="nc" id="L144">        Files.createDirectory(dir);</span>
+<span class="nc" id="L145">        return dir;</span>
+    }
+
+    private Map&lt;String, String&gt; getGwendiaInputs(File workflowFile) throws IOException {
+        // &lt;in name=&quot;results-directory&quot; type=&quot;string/URI&quot; /&gt;
+<span class="nc" id="L150">        Pattern pattern = Pattern.compile(&quot;\\s*&lt;in\\s+&quot;</span>
+                + &quot;name=\&quot;([\\w-]+)\&quot;\\s+&quot;
+                + &quot;type=\&quot;([\\w-]+)\&quot;.*/&gt;\\s*&quot;);
+<span class="nc" id="L153">        return Files.lines(workflowFile.toPath())</span>
+<span class="nc" id="L154">                .map(line -&gt; pattern.matcher(line))</span>
+<span class="nc" id="L155">                .filter(matcher -&gt; matcher.find())</span>
+<span class="nc" id="L156">                .collect(Collectors.toMap(matcher -&gt; matcher.group(1), matcher -&gt; matcher.group(2)));</span>
+    }
+
+    private Map&lt;String, String&gt; getGwendiaOutputs(File workflowFile) throws IOException {
+        // &lt;out name=&quot;output&quot; type=&quot;URI&quot; depth=&quot;0&quot;/&gt;
+<span class="nc" id="L161">        Pattern pattern = Pattern.compile(&quot;\\s*&lt;out\\s+&quot;</span>
+                + &quot;name=\&quot;([\\w-]+)\&quot;\\s+&quot;
+                + &quot;type=\&quot;([\\w-]+)\&quot;.*/&gt;\\s*&quot;);
+<span class="nc" id="L164">        return Files.lines(workflowFile.toPath())</span>
+<span class="nc" id="L165">                .map(line -&gt; pattern.matcher(line))</span>
+<span class="nc" id="L166">                .filter(matcher -&gt; matcher.find())</span>
+<span class="nc" id="L167">                .collect(Collectors.toMap(matcher -&gt; matcher.group(1), matcher -&gt; matcher.group(2)));</span>
+    }
+
+    private String getGwendiaScriptFile(File workflowFile) throws IOException {
+        //  &lt;bash script=&quot;/path/to/script.sh&quot;/&gt;
+<span class="nc" id="L172">        Pattern pattern = Pattern.compile(&quot;\\s*&lt;bash\\s+&quot; +</span>
+                &quot;script=\&quot;([\\w/_.-]+)\&quot;\\s*/&gt;\\s*&quot;);
+<span class="nc" id="L174">        List&lt;String&gt; bashScripts = Files.lines(workflowFile.toPath())</span>
+<span class="nc" id="L175">                .map(line -&gt; pattern.matcher(line))</span>
+<span class="nc" id="L176">                .filter(matcher -&gt; matcher.find())</span>
+<span class="nc" id="L177">                .map(matcher -&gt; matcher.group(1))</span>
+<span class="nc" id="L178">                .collect(Collectors.toList());</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (bashScripts.size() != 1) {</span>
+<span class="nc" id="L180">            throw new RuntimeException(&quot;There should be 1 and only 1 bash script&quot;);</span>
+        }
+<span class="nc" id="L182">        return bashScripts.get(0);</span>
+    }
+
+    private Map&lt;String, String&gt; getExecInputs(List&lt;ParameterSweep&gt; parameters) {
+<span class="nc" id="L186">        if (parameters.stream()</span>
+<span class="nc bnc" id="L187" title="All 4 branches missed.">                .anyMatch(param -&gt; param.getValues().size() != 1)) {</span>
+<span class="nc" id="L188">            throw new RuntimeException(&quot;There must be exactly 1 value for all parameters&quot;);</span>
+        }
+<span class="nc" id="L190">        return parameters.stream()</span>
+<span class="nc" id="L191">                .map(p -&gt; {</span>
+<span class="nc" id="L192">                    logger.info(&quot;exec input {} -- {}&quot;, p.getParameterName(), p.getValues());</span>
+<span class="nc" id="L193">                    return p;</span>
+                })
+<span class="nc" id="L195">                .collect(Collectors.toMap(</span>
+<span class="nc" id="L196">                        param -&gt; param.getParameterName(),</span>
+<span class="nc" id="L197">                        param -&gt; param.getValues().get(0)</span>
+                ));
+    }
+
+<span class="nc" id="L201">    private static class LocalBashExecution {</span>
+        String id;
+        File workflowFile;
+        Path workflowDir;
+        String scriptFileLFN;
+        Map&lt;String, String&gt; execInputs;     // name -&gt; value
+        Map&lt;String, String&gt; gwendiaInputs;  // name -&gt; type (string/URI)
+        Map&lt;String, String&gt; gwendiaOutputs;  // name -&gt; type (string/URI)
+<span class="nc" id="L209">        SimulationStatus status = SimulationStatus.Unknown;</span>
+    }
+
+    /*
+    TODO :
+    - verify inputs are present
+    - handle append-date
+    - create jobs h2 table
+    - support boutiques jobs
+    */
+    private class LocalExecutionRun implements Runnable {
+
+        LocalBashExecution exec;
+
+<span class="nc" id="L223">        public LocalExecutionRun(LocalBashExecution exec) {</span>
+<span class="nc" id="L224">            this.exec = exec;</span>
+<span class="nc" id="L225">        }</span>
+
+        @Override
+        public void run() {
+            try {
+<span class="nc" id="L230">                exec.status = SimulationStatus.Running;</span>
+<span class="nc" id="L231">                Map&lt;String, Path&gt; inputFiles = transferInputFiles();</span>
+<span class="nc" id="L232">                Path scriptPath = copyScript();</span>
+<span class="nc" id="L233">                List&lt;String&gt; commandLine = generateCommandLine(scriptPath, inputFiles);</span>
+<span class="nc" id="L234">                Path execDir = scriptPath.getParent();</span>
+<span class="nc" id="L235">                execute(execDir, commandLine);</span>
+<span class="nc" id="L236">                transferOutputFiles(execDir);</span>
+<span class="nc" id="L237">            } catch (InterruptedException e) {</span>
+<span class="nc" id="L238">                Thread.currentThread().interrupt();  // set interrupt flag</span>
+<span class="nc" id="L239">            } catch (Exception e) {</span>
+<span class="nc" id="L240">                logger.error(&quot;test run error&quot;, e);</span>
+<span class="nc" id="L241">                throw new RuntimeException(&quot;Error running local execution&quot;, e);</span>
+<span class="nc" id="L242">            }</span>
+<span class="nc" id="L243">        }</span>
+
+        private Map&lt;String, Path&gt; transferInputFiles() throws IOException, GRIDAClientException {
+            // find URI inputs
+<span class="nc" id="L247">            Path toDir = exec.workflowDir.resolve(&quot;inputs&quot;);</span>
+<span class="nc" id="L248">            Files.createDirectory(toDir);</span>
+<span class="nc" id="L249">            Map&lt;String, Path&gt; inputsFiles = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">            for (String name : getFileInputNames()) {</span>
+<span class="nc" id="L251">                Path from = Paths.get(exec.execInputs.get(name));</span>
+<span class="nc" id="L252">                String to = gridaClient.getRemoteFile(from.toString(), toDir.toString());</span>
+<span class="nc" id="L253">                inputsFiles.put(name, Paths.get(to));</span>
+<span class="nc" id="L254">            }</span>
+<span class="nc" id="L255">            return inputsFiles;</span>
+        }
+
+        private Path copyScript() throws IOException, GRIDAClientException {
+            // find URI inputs
+<span class="nc" id="L260">            Path execDir = exec.workflowDir.resolve(&quot;exec_dir&quot;);</span>
+<span class="nc" id="L261">            Files.createDirectory(execDir);</span>
+<span class="nc" id="L262">            String from = exec.scriptFileLFN;</span>
+<span class="nc" id="L263">            String to = gridaClient.getRemoteFile(from, execDir.toString());</span>
+<span class="nc" id="L264">            return Paths.get(to);</span>
+        }
+
+        private Set&lt;String&gt; getFileInputNames() {
+            // find URI inputs
+<span class="nc" id="L269">            return exec.gwendiaInputs.entrySet().stream()</span>
+<span class="nc" id="L270">                    .filter(x -&gt; x.getValue().equals(&quot;URI&quot;))</span>
+<span class="nc" id="L271">                    .map(x -&gt; x.getKey())</span>
+<span class="nc" id="L272">                    .collect(Collectors.toSet());</span>
+        }
+
+        private Set&lt;String&gt; getNonFileInputName() {
+            // find URI inputs
+<span class="nc" id="L277">            return exec.gwendiaInputs.entrySet().stream()</span>
+<span class="nc" id="L278">                    .filter(x -&gt; x.getValue().equals(&quot;string&quot;))</span>
+<span class="nc" id="L279">                    .map(x -&gt; x.getKey())</span>
+<span class="nc" id="L280">                    .collect(Collectors.toSet());</span>
+        }
+
+        private List&lt;String&gt; generateCommandLine(Path scriptPath, Map&lt;String, Path&gt; inputFiles) {
+            // sh $WORKFLOW_DIR/exec_dir/$script_name --$file-input-name $WORKFLOW_DIR/inputs/$file_name --$non-file-input-name $value
+<span class="nc" id="L285">            List&lt;String&gt; commandLine = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L286">            commandLine.add(&quot;bash&quot;);</span>
+<span class="nc" id="L287">            commandLine.add(scriptPath.getFileName().toString());</span>
+<span class="nc" id="L288">            inputFiles.entrySet().stream().forEach(mapEntry -&gt; {</span>
+<span class="nc" id="L289">                commandLine.add(&quot;--&quot; + mapEntry.getKey());</span>
+<span class="nc" id="L290">                commandLine.add(mapEntry.getValue().toString());</span>
+<span class="nc" id="L291">            });</span>
+<span class="nc bnc" id="L292" title="All 2 branches missed.">            for (String nonFileInput : getNonFileInputName()) {</span>
+<span class="nc" id="L293">                commandLine.add(&quot;--&quot; + nonFileInput);</span>
+<span class="nc" id="L294">                commandLine.add(exec.execInputs.get(nonFileInput));</span>
+<span class="nc" id="L295">            }</span>
+<span class="nc" id="L296">            return commandLine;</span>
+        }
+
+        private void execute(Path execDir, List&lt;String&gt; commandLine) throws IOException, InterruptedException {
+<span class="nc" id="L300">            logger.info(&quot;Running a bash test execution in [{}]. Command : {}&quot;,</span>
+<span class="nc" id="L301">                    execDir, String.join(&quot; &quot;, commandLine));</span>
+<span class="nc" id="L302">            ProcessBuilder builder = new ProcessBuilder()</span>
+<span class="nc" id="L303">                    .command(commandLine)</span>
+<span class="nc" id="L304">                    .directory(execDir.toFile())</span>
+<span class="nc" id="L305">                    .redirectErrorStream(true)</span>
+<span class="nc" id="L306">                    .redirectOutput(execDir.resolve(&quot;output.log&quot;).toFile());</span>
+<span class="nc" id="L307">            Process process = builder.start();</span>
+<span class="nc bnc" id="L308" title="All 2 branches missed.">            if (process.waitFor() != 0) {</span>
+<span class="nc" id="L309">                throw new RuntimeException(&quot;process finished with error&quot;);</span>
+            }
+<span class="nc" id="L311">        }</span>
+
+        private void transferOutputFiles(Path execDir) throws GRIDAClientException {
+<span class="nc" id="L314">            String toDir = exec.execInputs.get(&quot;results-directory&quot;);</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">            if (toDir == null) {</span>
+<span class="nc" id="L316">                throw new RuntimeException(&quot;there should be a results-directory parameter&quot;);</span>
+            }
+<span class="nc" id="L318">            if (exec.gwendiaOutputs.values().stream()</span>
+<span class="nc bnc" id="L319" title="All 4 branches missed.">                    .anyMatch(type -&gt; !&quot;URI&quot;.equals(type))) {</span>
+<span class="nc" id="L320">                throw new RuntimeException(&quot;Only URI outputs are supported&quot;);</span>
+            }
+<span class="nc bnc" id="L322" title="All 2 branches missed.">            for (String output : exec.gwendiaOutputs.keySet()) {</span>
+<span class="nc" id="L323">                Path from = execDir.resolve(output);</span>
+<span class="nc" id="L324">                gridaClient.uploadFile(from.toString(), toDir);</span>
+<span class="nc" id="L325">            }</span>
+<span class="nc" id="L326">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

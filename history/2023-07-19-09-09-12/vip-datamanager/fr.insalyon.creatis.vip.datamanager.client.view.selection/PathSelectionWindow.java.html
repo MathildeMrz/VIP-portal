@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PathSelectionWindow.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client.view.selection</a> &gt; <span class="el_source">PathSelectionWindow.java</span></div><h1>PathSelectionWindow.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client.view.selection;
+
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.SelectionAppearance;
+import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.events.CellContextClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellContextClickHandler;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.menu.Menu;
+import com.smartgwt.client.widgets.menu.MenuItem;
+import com.smartgwt.client.widgets.menu.events.ClickHandler;
+import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.view.common.BasicBrowserToolStrip;
+import fr.insalyon.creatis.vip.datamanager.client.view.common.BrowserUtil;
+
+/**
+ * @author Rafael Silva
+ */
+public class PathSelectionWindow extends Window {
+
+<span class="nc" id="L62">    private static String oldPath = DataManagerConstants.ROOT;</span>
+    private BasicBrowserToolStrip toolStrip;
+    private ListGrid grid;
+    private HLayout bottomLayout;
+    private ModalWindow modal;
+    private TextItem textItem;
+    private Runnable toRunOnSelection;
+    private Menu contextMenu;
+    private String name;
+
+    public PathSelectionWindow(TextItem textItem) {
+<span class="nc" id="L73">        this(textItem, null);</span>
+<span class="nc" id="L74">    }</span>
+
+<span class="nc" id="L76">    public PathSelectionWindow(TextItem textItem, Runnable toRunOnSelection) {</span>
+
+<span class="nc" id="L78">        this.textItem = textItem;</span>
+<span class="nc" id="L79">        this.toRunOnSelection = toRunOnSelection;</span>
+
+<span class="nc" id="L81">        this.setTitle(&quot;Path Selection&quot;);</span>
+<span class="nc" id="L82">        this.setWidth(600);</span>
+<span class="nc" id="L83">        this.setHeight(350);</span>
+<span class="nc" id="L84">        this.setShowMinimizeButton(false);</span>
+<span class="nc" id="L85">        this.setIsModal(true);</span>
+<span class="nc" id="L86">        this.setShowModalMask(true);</span>
+<span class="nc" id="L87">        this.centerInPage();</span>
+
+<span class="nc" id="L89">        grid = BrowserUtil.getListGrid();</span>
+<span class="nc" id="L90">        modal = new ModalWindow(grid);</span>
+<span class="nc" id="L91">        toolStrip = new BasicBrowserToolStrip(modal, grid);</span>
+
+<span class="nc" id="L93">        configureGrid();</span>
+<span class="nc" id="L94">        configureContextMenu();</span>
+<span class="nc" id="L95">        configureBottom();</span>
+
+<span class="nc" id="L97">        this.addItem(toolStrip);</span>
+<span class="nc" id="L98">        this.addItem(grid);</span>
+<span class="nc" id="L99">        this.addItem(bottomLayout);</span>
+
+<span class="nc" id="L101">        String path = textItem.getValueAsString();</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (path != null) {</span>
+<span class="nc" id="L103">            path = path.trim();</span>
+<span class="nc bnc" id="L104" title="All 4 branches missed.">            if (!path.isEmpty() &amp;&amp; path.startsWith(DataManagerConstants.ROOT)) {</span>
+<span class="nc" id="L105">                oldPath = path.substring(0, path.lastIndexOf(&quot;/&quot;));</span>
+            }
+        }
+<span class="nc" id="L108">        BrowserUtil.loadData(modal, grid, toolStrip, oldPath, false);</span>
+<span class="nc" id="L109">    }</span>
+
+    private void configureGrid() {
+
+<span class="nc" id="L113">        grid.setSelectionType(SelectionStyle.SINGLE);</span>
+<span class="nc" id="L114">        grid.setSelectionAppearance(SelectionAppearance.CHECKBOX);</span>
+
+<span class="nc" id="L116">        grid.addCellDoubleClickHandler(new CellDoubleClickHandler() {</span>
+
+            public void onCellDoubleClick(CellDoubleClickEvent event) {
+<span class="nc" id="L119">                String type = event.getRecord().getAttributeAsString(&quot;icon&quot;);</span>
+<span class="nc" id="L120">                String name = event.getRecord().getAttributeAsString(&quot;name&quot;);</span>
+
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                if (type.contains(&quot;folder&quot;)) {</span>
+<span class="nc" id="L123">                    BrowserUtil.loadData(modal, grid, toolStrip,</span>
+<span class="nc" id="L124">                            toolStrip.getPath() + &quot;/&quot; + name, false);</span>
+<span class="nc" id="L125">                    oldPath = toolStrip.getPath() + &quot;/&quot; + name;</span>
+                } else {
+<span class="nc" id="L127">                    selectValueAndDestroy(toolStrip.getPath() + &quot;/&quot; + name);</span>
+                }
+<span class="nc" id="L129">            }</span>
+        });
+<span class="nc" id="L131">        grid.addCellContextClickHandler(new CellContextClickHandler() {</span>
+
+            public void onCellContextClick(CellContextClickEvent event) {
+<span class="nc" id="L134">                event.cancel();</span>
+<span class="nc" id="L135">                name = event.getRecord().getAttributeAsString(&quot;name&quot;);</span>
+<span class="nc" id="L136">                contextMenu.showContextMenu();</span>
+<span class="nc" id="L137">            }</span>
+        });
+<span class="nc" id="L139">    }</span>
+
+    private void configureBottom() {
+
+<span class="nc" id="L143">        bottomLayout = new HLayout(5);</span>
+<span class="nc" id="L144">        bottomLayout.setWidth100();</span>
+<span class="nc" id="L145">        bottomLayout.setHeight(24);</span>
+<span class="nc" id="L146">        bottomLayout.setAlign(Alignment.RIGHT);</span>
+<span class="nc" id="L147">        bottomLayout.setPadding(2);</span>
+
+<span class="nc" id="L149">        IButton selectButton = new IButton(&quot;Select&quot;);</span>
+<span class="nc" id="L150">        selectButton.setIcon(CoreConstants.ICON_ACTIVE);</span>
+<span class="nc" id="L151">        selectButton.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {</span>
+
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L154">                name = grid.getSelectedRecord().getAttributeAsString(&quot;name&quot;);</span>
+<span class="nc" id="L155">                selectValueAndDestroy(toolStrip.getPath() + &quot;/&quot; + name);</span>
+<span class="nc" id="L156">            }</span>
+        });
+
+<span class="nc" id="L159">        IButton cancelButton = new IButton(&quot;Cancel&quot;);</span>
+<span class="nc" id="L160">        cancelButton.setIcon(CoreConstants.ICON_DELETE);</span>
+<span class="nc" id="L161">        cancelButton.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {</span>
+
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L164">                destroy();</span>
+<span class="nc" id="L165">            }</span>
+        });
+
+<span class="nc" id="L168">        bottomLayout.addMember(selectButton);</span>
+<span class="nc" id="L169">        bottomLayout.addMember(cancelButton);</span>
+<span class="nc" id="L170">    }</span>
+
+    private void configureContextMenu() {
+
+<span class="nc" id="L174">        contextMenu = new Menu();</span>
+<span class="nc" id="L175">        contextMenu.setShowShadow(true);</span>
+<span class="nc" id="L176">        contextMenu.setShadowDepth(10);</span>
+<span class="nc" id="L177">        contextMenu.setWidth(90);</span>
+
+<span class="nc" id="L179">        MenuItem selectItem = new MenuItem(&quot;Select this path&quot;);</span>
+<span class="nc" id="L180">        selectItem.setIcon(CoreConstants.ICON_ACTIVE);</span>
+<span class="nc" id="L181">        selectItem.addClickHandler(new ClickHandler() {</span>
+
+            public void onClick(MenuItemClickEvent event) {
+<span class="nc" id="L184">                selectValueAndDestroy(toolStrip.getPath() + &quot;/&quot; + name);</span>
+<span class="nc" id="L185">            }</span>
+        });
+<span class="nc" id="L187">        contextMenu.setItems(selectItem);</span>
+<span class="nc" id="L188">    }</span>
+
+    private void selectValueAndDestroy(String value) {
+<span class="nc" id="L191">        textItem.setValue(value);</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (toRunOnSelection != null) {</span>
+<span class="nc" id="L193">            toRunOnSelection.run();</span>
+        }
+<span class="nc" id="L195">        destroy();</span>
+<span class="nc" id="L196">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
