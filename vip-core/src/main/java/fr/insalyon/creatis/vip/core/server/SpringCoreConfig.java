@@ -11,7 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
@@ -19,22 +22,13 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
-import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.util.ResourceUtils;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.function.Consumer;
 
 import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 
@@ -44,14 +38,14 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
  * classes and to create/inject automatically all the beans / service. Note that
  * the GWT servlet cannot be created this way (they are created by the application
  * server / tomcat) through the web.xml file.
- *
+ * <p>
  * This also configures the database/transaction/connection : spring will
  * automatically handle transactions and connection creation (and closing)
  * by annotating classes with @Transactional and using spring utils to get
  * the connection in the dao
- *
+ * <p>
  * This also creates spring beans for services coming from maven dependencies (grida and sma)
- *
+ * <p>
  * This also manage the vip configuration folder, defaulting to "$HOME/.vip" but
  * allowing change for tests and local use.
  */
@@ -61,6 +55,55 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 public class SpringCoreConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringCoreConfig.class);
+
+    // to verify the @Value injection existence
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer properties() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    // to handle list in spring @value
+    @Bean
+    public static ConversionService conversionService() {
+        return new DefaultConversionService();
+    }
+
+    // VIP dependencies beans
+
+    /*
+    find the vip configuration folder. This defaults to $HOME/.vip as this is
+    the traditional behavior.
+    This is changeable through the vipConfigFolder property which can be given
+    as a JVM parameter or a system environment variable. This can be changed
+    to a absolute path or a relative classpath.
+     */
+    @Bean
+    public static Resource vipConfigFolder(
+            ConfigurableApplicationContext configurableApplicationContext) throws IOException {
+        ConfigurableEnvironment env = configurableApplicationContext.getEnvironment();
+        // look for configLocation in environment
+        String configFolder = env.getProperty("vipConfigFolder");
+        // if present, look for file
+        if (configFolder != null) {
+            logger.info("found vipConfigFolder property : {}", configFolder);
+        } else {
+            // if not, look in user home folder
+            configFolder = env.getProperty("user.home") + Server.VIP_DIR;
+            logger.info("vipConfigFolder property not found, using user-home : {}", configFolder);
+        }
+        Resource vipConfigFolder;
+        if (configFolder.startsWith(CLASSPATH_URL_PREFIX)) {
+            vipConfigFolder = new ClassPathResource(configFolder.substring(CLASSPATH_URL_PREFIX.length()));
+        } else {
+            vipConfigFolder = new FileSystemResource(configFolder);
+        }
+        if (!vipConfigFolder.exists() &&
+                !vipConfigFolder.getFile().mkdir()) {
+            logger.error("Cannot create VIP config folder : {}", vipConfigFolder);
+            throw new BeanInitializationException("Cannot create VIP config folder");
+        }
+        return vipConfigFolder;
+    }
 
     /*
     wrapper around the "real" datasource to open a connection only when needed
@@ -81,8 +124,6 @@ public class SpringCoreConfig {
     public PlatformTransactionManager transactionManager(LazyConnectionDataSourceProxy lazyDataSource) {
         return new DataSourceTransactionManager(lazyDataSource);
     }
-
-    // VIP dependencies beans
 
     @Bean
     public GRIDAClient gridaClient(Server server) {
@@ -119,53 +160,6 @@ public class SpringCoreConfig {
     @Bean
     public SMAClient smaClient(Server server) {
         return new SMAClient(server.getSMAHost(), server.getSMAPort());
-    }
-
-    // to verify the @Value injection existence
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer properties(){
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
-    // to handle list in spring @value
-    @Bean
-    public static ConversionService conversionService() {
-        return new DefaultConversionService();
-    }
-
-    /*
-    find the vip configuration folder. This defaults to $HOME/.vip as this is
-    the traditional behavior.
-    This is changeable through the vipConfigFolder property which can be given
-    as a JVM parameter or a system environment variable. This can be changed
-    to a absolute path or a relative classpath.
-     */
-    @Bean
-    public static Resource vipConfigFolder(
-            ConfigurableApplicationContext configurableApplicationContext) throws IOException {
-        ConfigurableEnvironment env = configurableApplicationContext.getEnvironment();
-        // look for configLocation in environment
-        String configFolder = env.getProperty("vipConfigFolder");
-        // if present, look for file
-        if (configFolder != null) {
-            logger.info("found vipConfigFolder property : {}", configFolder);
-        } else {
-            // if not, look in user home folder
-            configFolder = env.getProperty("user.home")  + Server.VIP_DIR;
-            logger.info("vipConfigFolder property not found, using user-home : {}", configFolder);
-        }
-        Resource vipConfigFolder;
-        if ( configFolder.startsWith(CLASSPATH_URL_PREFIX)) {
-            vipConfigFolder = new ClassPathResource(configFolder.substring(CLASSPATH_URL_PREFIX.length()));
-        } else {
-            vipConfigFolder = new FileSystemResource(configFolder);
-        }
-        if ( ! vipConfigFolder.exists() &&
-                ! vipConfigFolder.getFile().mkdir()) {
-            logger.error("Cannot create VIP config folder : {}", vipConfigFolder);
-            throw new BeanInitializationException("Cannot create VIP config folder");
-        }
-        return vipConfigFolder;
     }
 
 }

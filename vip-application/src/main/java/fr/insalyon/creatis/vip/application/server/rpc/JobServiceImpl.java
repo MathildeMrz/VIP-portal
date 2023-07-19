@@ -44,15 +44,12 @@ import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.rpc.AbstractRemoteServiceServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletException;
 import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobService {
@@ -89,7 +86,7 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
      * Gets a list of tasks of a simulation with determined parameters.
      *
      * @param simulationID Simulation identification
-     * @param jobID Job identification
+     * @param jobID        Job identification
      * @return
      * @throws ApplicationException
      */
@@ -97,7 +94,7 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     public List<Task> getTasks(String simulationID, int jobID) throws ApplicationException {
         try {
             return simulationBusiness.getTasks(
-                simulationID, jobID, getSessionUser().getFolder());
+                    simulationID, jobID, getSessionUser().getFolder());
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
@@ -107,14 +104,14 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
      * Reads a simulation file.
      *
      * @param simulationID Simulation identification
-     * @param taskID Task identification
-     * @param fileType Simulation file type
+     * @param taskID       Task identification
+     * @param fileType     Simulation file type
      * @return
      * @throws ApplicationException
      */
     @Override
     public String[] readSimulationFile(String simulationID, String taskID,
-            SimulationFileType fileType) throws ApplicationException {
+                                       SimulationFileType fileType) throws ApplicationException {
 
         try {
             return simulationBusiness.readSimulationFile(simulationID, taskID, fileType);
@@ -128,8 +125,8 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
      * Sends a signal to a task.
      *
      * @param simulationID Simulation identification
-     * @param taskID Task identification
-     * @param status Simulation
+     * @param taskID       Task identification
+     * @param status       Simulation
      */
     @Override
     public void sendTaskSignal(String simulationID, String taskID, String status) throws ApplicationException {
@@ -143,7 +140,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @return
      * @throws ApplicationException
@@ -160,7 +156,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @param folder
      * @param fileName
@@ -170,7 +165,7 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
      */
     @Override
     public String readFile(String simulationID, String folder, String fileName,
-            String extension) throws ApplicationException {
+                           String extension) throws ApplicationException {
 
         try {
             return simulationBusiness.readFile(simulationID, folder, fileName, extension);
@@ -181,7 +176,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @param binSize
      * @return
@@ -189,7 +183,7 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
      */
     @Override
     public List<String> getExecutionPerNumberOfJobs(String simulationID,
-            int binSize) throws ApplicationException {
+                                                    int binSize) throws ApplicationException {
 
         try {
             return simulationBusiness.getExecutionPerNumberOfJobs(simulationID, binSize);
@@ -200,7 +194,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @param binSize
      * @return
@@ -208,7 +201,7 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
      */
     @Override
     public List<String> getDownloadPerNumberOfJobs(String simulationID,
-            int binSize) throws ApplicationException {
+                                                   int binSize) throws ApplicationException {
 
         try {
             return simulationBusiness.getDownloadPerNumberOfJobs(simulationID, binSize);
@@ -219,7 +212,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @param binSize
      * @return
@@ -227,7 +219,7 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
      */
     @Override
     public List<String> getUploadPerNumberOfJobs(String simulationID,
-            int binSize) throws ApplicationException {
+                                                 int binSize) throws ApplicationException {
 
         try {
             return simulationBusiness.getUploadPerNumberOfJobs(simulationID, binSize);
@@ -238,7 +230,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @return
      * @throws ApplicationException
@@ -255,7 +246,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @return
      * @throws ApplicationException
@@ -272,7 +262,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @param siteName
      * @param nodeName
@@ -292,7 +281,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @param jobID
      * @param status
@@ -313,7 +301,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @return
      * @throws ApplicationException
@@ -330,7 +317,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @param jobIDs
      * @param status
@@ -338,7 +324,7 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
      */
     @Override
     public void sendSignal(String simulationID, List<String> jobIDs,
-            String status) throws ApplicationException {
+                           String status) throws ApplicationException {
 
         try {
             trace(logger, "Sending '" + status + "' signal to '"
@@ -351,7 +337,6 @@ public class JobServiceImpl extends AbstractRemoteServiceServlet implements JobS
     }
 
     /**
-     *
      * @param simulationID
      * @return
      * @throws ApplicationException

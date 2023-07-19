@@ -31,9 +31,9 @@
  */
 package fr.insalyon.creatis.vip.api.rest.itest;
 
-import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.api.data.UserTestUtils;
-import fr.insalyon.creatis.vip.api.rest.config.BaseVIPSpringIT;
+import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
+import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,6 @@ import org.springframework.http.MediaType;
 
 import static fr.insalyon.creatis.vip.api.data.AuthenticationInfoTestUtils.jsonCorrespondsToAuthenticationInfo;
 import static fr.insalyon.creatis.vip.api.data.CarminAPITestConstants.TEST_APIKEY_HEADER;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,23 +51,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by abonnet on 8/21/17.
  */
 @Disabled
-public class AuthenticationControllerIT extends BaseVIPSpringIT {
+public class AuthenticationControllerIT extends BaseWebSpringIT {
 
     @Test
     public void okAuthentication() throws Exception {
         ConfigurationBusiness configBness = getConfigurationBusiness();
         String email = UserTestUtils.baseUser1.getEmail();
-        String apikey="plopplop";
+        String apikey = "plopplop";
         when(configBness.signin(anyString(), anyString()))
-            .thenThrow(new RuntimeException());
+                .thenThrow(new RuntimeException());
         doReturn(UserTestUtils.baseUser1)
-            .when(configBness)
-            .signin(eq(email),eq("coucou"));
+                .when(configBness)
+                .signin(eq(email), eq("coucou"));
         when(configBness.getUserApikey(eq(email))).thenReturn(apikey);
         mockMvc.perform(
-                post("/rest/authenticate")
-                        .contentType("application/json")
-                        .content(getResourceAsString("jsonObjects/user-credentials.json")))
+                        post("/rest/authenticate")
+                                .contentType("application/json")
+                                .content(getResourceAsString("jsonObjects/user-credentials.json")))
                 .andDo(print())
                 .andExpect(jsonPath(
                         "$",
@@ -81,14 +80,14 @@ public class AuthenticationControllerIT extends BaseVIPSpringIT {
     @Test
     public void missingInfoAuthentication() throws Exception {
         mockMvc.perform(
-                post("/rest/authenticate")
-                        .contentType("application/json")
-                        .content("{}"))
+                        post("/rest/authenticate")
+                                .contentType("application/json")
+                                .content("{}"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.errorCode")
-                        .value(ApiError.INPUT_FIELD_NOT_VALID.getCode()));;
+                        .value(ApiError.INPUT_FIELD_NOT_VALID.getCode()));
     }
 
 }

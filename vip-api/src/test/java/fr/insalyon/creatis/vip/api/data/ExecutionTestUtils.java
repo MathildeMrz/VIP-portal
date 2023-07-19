@@ -31,13 +31,14 @@
  */
 package fr.insalyon.creatis.vip.api.data;
 
-import fr.insalyon.creatis.vip.api.model.*;
+import fr.insalyon.creatis.vip.api.model.Execution;
+import fr.insalyon.creatis.vip.api.model.ExecutionStatus;
 import fr.insalyon.creatis.vip.api.tools.spring.JsonCustomObjectMatcher;
-import fr.insalyon.creatis.vip.application.client.bean.*;
+import fr.insalyon.creatis.vip.application.client.bean.InOutData;
+import fr.insalyon.creatis.vip.application.client.bean.Simulation;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
 import org.hamcrest.Matcher;
 
-import java.lang.Object;
 import java.util.*;
 import java.util.function.Function;
 
@@ -48,9 +49,9 @@ import static fr.insalyon.creatis.vip.api.tools.spring.JsonCustomObjectMatcher.j
  */
 public class ExecutionTestUtils {
 
-    public static final Map<String,Function> executionSuppliers;
+    public static final Map<String, Function> executionSuppliers;
 
-    public static final Execution execution1,   execution2;
+    public static final Execution execution1, execution2;
     public static final Simulation simulation1, simulation2;
     public static final List<InOutData> simulation1InData, simulation2InData;
     public static final List<InOutData> simulation1OutData, simulation2OutData;
@@ -62,10 +63,10 @@ public class ExecutionTestUtils {
                 new GregorianCalendar(2016, 9, 2).getTime(),
                 "Exec test 1", SimulationStatus.Running.toString(), "engine 1");
         execution1 = getExecution(simulation1, ExecutionStatus.RUNNING);
-        execution1.setInputValues(new HashMap<String,Object>() {{
-                put("param 1", "value 1");
-                put("param 2", "42");
-            }}
+        execution1.setInputValues(new HashMap<String, Object>() {{
+                                      put("param 1", "value 1");
+                                      put("param 2", "42");
+                                  }}
         );
         execution1.clearReturnedFiles();
 
@@ -79,11 +80,11 @@ public class ExecutionTestUtils {
                 new GregorianCalendar(2016, 4, 29).getTime(),
                 "Exec test 2", SimulationStatus.Completed.toString(), "engine 1");
         execution2 = getExecution(simulation2, ExecutionStatus.FINISHED);
-        execution2.setInputValues(new HashMap<String,Object>() {{
-                  put("param2-1", "5.3");
-              }}
+        execution2.setInputValues(new HashMap<String, Object>() {{
+                                      put("param2-1", "5.3");
+                                  }}
         );
-        execution2.setReturnedFiles(new HashMap<String,List<Object>>() {{
+        execution2.setReturnedFiles(new HashMap<String, List<Object>>() {{
             put("param2-res", Collections.singletonList("/vip/Home/testFile1.xml"));
         }});
         simulation2InData = Collections.singletonList(
@@ -98,11 +99,11 @@ public class ExecutionTestUtils {
         // TODO : startDate should be in seconds
         String resultsDirectory = null;
         return new Execution(
-            simulation.getID(),
-            simulation.getSimulationName(),
-            simulation.getApplicationName() + "/" + simulation.getApplicationVersion(),
-            0, executionStatus, null, null, simulation.getDate().getTime(), null,
-            resultsDirectory);
+                simulation.getID(),
+                simulation.getSimulationName(),
+                simulation.getApplicationName() + "/" + simulation.getApplicationVersion(),
+                0, executionStatus, null, null, simulation.getDate().getTime(), null,
+                resultsDirectory);
     }
 
     public static Execution summariseExecution(Execution execution) {
@@ -156,7 +157,7 @@ public class ExecutionTestUtils {
         return newSimulation;
     }
 
-    public static Map<String,Function> getExecutionSuppliers() {
+    public static Map<String, Function> getExecutionSuppliers() {
         return JsonCustomObjectMatcher.formatSuppliers(
                 Arrays.asList(
                         "identifier", "name", "pipelineIdentifier", "timeout",
@@ -176,7 +177,7 @@ public class ExecutionTestUtils {
         );
     }
 
-    public static Matcher<Map<String,?>> jsonCorrespondsToExecution(Execution execution) {
+    public static Matcher<Map<String, ?>> jsonCorrespondsToExecution(Execution execution) {
         Map<Class, Map<String, Function>> suppliersRegistry = new HashMap<>();
         return jsonCorrespondsTo(execution, executionSuppliers, suppliersRegistry);
     }

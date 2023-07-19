@@ -53,7 +53,6 @@ import java.io.File;
 import java.io.FileInputStream;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class GetFileServiceImpl extends HttpServlet {

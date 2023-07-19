@@ -37,6 +37,7 @@ import fr.insalyon.creatis.vip.core.server.dao.GroupDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,11 +50,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Repository
 @Transactional
+@Primary
 public class GroupData extends JdbcDaoSupport implements GroupDAO {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -77,9 +78,9 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
             ps.close();
 
         } catch (SQLException ex) {
-            if (ex.getMessage().contains("Duplicate entry")) {
-                logger.error("A group named {} already exists", group.getName());
-                throw new DAOException("Error creating a group", ex);
+            if (ex.getMessage().contains("Unique index or primary key")) {
+                logger.error("There is already a group registered with the name {}", group.getName());
+                throw new DAOException(String.format("There is already a group registered with the name : %s", group.getName()));
             } else {
                 logger.error("Error adding group {}", group.getName(), ex);
                 throw new DAOException(ex);
@@ -95,6 +96,7 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
 
             ps.setString(1, groupName);
             ps.execute();
+
             ps.close();
 
         } catch (SQLException ex) {
@@ -117,6 +119,7 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
             ps.setBoolean(4, group.isGridJobs());
             ps.setString(5, name);
             ps.executeUpdate();
+
             ps.close();
 
         } catch (SQLException ex) {
@@ -128,7 +131,6 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
     @Override
     public List<Group> getGroups() throws DAOException {
         try {
-
             List<Group> groups = new ArrayList<Group>();
             PreparedStatement ps = getConnection().prepareStatement("SELECT "
                     + "groupname, public, gridfile, gridjobs FROM "
@@ -137,7 +139,7 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 groups.add(new Group(rs.getString("groupname"),
-                        rs.getBoolean("public"),rs.getBoolean("gridfile"),rs.getBoolean("gridjobs")));
+                        rs.getBoolean("public"), rs.getBoolean("gridfile"), rs.getBoolean("gridjobs")));
             }
             ps.close();
             return groups;
@@ -145,6 +147,27 @@ public class GroupData extends JdbcDaoSupport implements GroupDAO {
         } catch (SQLException ex) {
             logger.error("Error getting all groups", ex);
             throw new DAOException(ex);
+        }
+    }
+
+    @Override
+    public boolean isGroup(String groupName) throws DAOException {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement("SELECT * "
+                    + "FROM VIPGroups "
+                    + "WHERE groupname=? ");
+
+            ps.setString(1, groupName);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return true;
+            }
+
+            return false;
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

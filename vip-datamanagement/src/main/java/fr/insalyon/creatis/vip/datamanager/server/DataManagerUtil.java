@@ -31,24 +31,13 @@
  */
 package fr.insalyon.creatis.vip.datamanager.server;
 
-import fr.insalyon.creatis.vip.core.client.bean.*;
-import fr.insalyon.creatis.vip.core.server.business.BusinessException;
-import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
 import fr.insalyon.creatis.vip.core.server.business.CoreUtil;
-import fr.insalyon.creatis.vip.core.server.business.Server;
-import fr.insalyon.creatis.vip.core.server.dao.*;
-import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
-import fr.insalyon.creatis.vip.datamanager.client.view.DataManagerException;
 
 import java.io.File;
-import java.net.URI;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.text.Normalizer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author Rafael Silva
  */
 public class DataManagerUtil {
@@ -57,9 +46,9 @@ public class DataManagerUtil {
         return lfcDir.substring(lfcDir.lastIndexOf("/") + 1);
     }
 
-     public static List<String> getPaths(List<String> groups){
+    public static List<String> getPaths(List<String> groups) {
         ArrayList<String> paths = new ArrayList<>();
-        for(String s : groups)
+        for (String s : groups)
             paths.add(s.replaceAll(" ", "_"));
         return paths;
     }

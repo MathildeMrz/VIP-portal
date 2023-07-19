@@ -31,8 +31,6 @@
  */
 package fr.insalyon.creatis.vip.core.client.view.layout;
 
-import com.google.gwt.core.client.Callback;
-import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -51,15 +49,11 @@ import fr.insalyon.creatis.vip.core.client.view.auth.ActivationTab;
 import fr.insalyon.creatis.vip.core.client.view.auth.SignInTab;
 import fr.insalyon.creatis.vip.core.client.view.common.MessageWindow;
 import fr.insalyon.creatis.vip.core.client.view.layout.toolstrip.MainToolStrip;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+
 import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class Layout {
@@ -67,18 +61,16 @@ public class Layout {
     private static Logger logger = Logger.getLogger(Layout.class.getName());
 
     private static Layout instance;
+
+    static {
+        Layout.exportMessageFunctionsToJS();
+    }
+
     private VLayout vLayout;
     private CenterTabSet centerTabSet;
     private SectionStack mainSectionStack;
     private ModalWindow modal;
     private MessageWindow messageWindow;
-
-    public static Layout getInstance() {
-        if (instance == null) {
-            instance = new Layout();
-        }
-        return instance;
-    }
 
     private Layout() {
 
@@ -111,6 +103,40 @@ public class Layout {
         vLayout.draw();
     }
 
+    public static Layout getInstance() {
+        if (instance == null) {
+            instance = new Layout();
+        }
+        return instance;
+    }
+
+    // The default delay is used, so the warning automatically disappears after
+    // some time.
+    public static void setWarningMessageFromJS(String error) {
+        Layout.getInstance().setWarningMessage(error);
+    }
+
+    // The delay is set to 0, so the message stays until it is overwritten by a
+    // new message or the hideMessage function is called.  This behavior is
+    // different from the warning case.  This is what is currently needed by the
+    // javascript code.
+    public static void setNoticeMessageFromJS(String message) {
+        Layout.getInstance().setNoticeMessage(message, 0);
+    }
+
+    public static void hideMessageFromJS() {
+        Layout.getInstance().hideMessage();
+    }
+
+    public static native void exportMessageFunctionsToJS() /*-{
+        $wnd.setWarningMessage = $entry(
+           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::setWarningMessageFromJS(Ljava/lang/String;));
+        $wnd.setNoticeMessage = $entry(
+           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::setNoticeMessageFromJS(Ljava/lang/String;));
+        $wnd.hideMessage = $entry(
+           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::hideMessageFromJS());
+    }-*/;
+
     public Canvas getLayoutCanvas() {
         return vLayout;
     }
@@ -121,14 +147,13 @@ public class Layout {
 
     /**
      * Authenticates a user.
-     *
      */
     public void authenticate(User user) {
         if (user != null && Cookies.isCookieEnabled()) {
             Cookies.setCookie(CoreConstants.COOKIES_USER, user.getEmail(),
-                              CoreConstants.COOKIES_EXPIRATION_DATE, null, "/", false);
+                    CoreConstants.COOKIES_EXPIRATION_DATE, null, "/", false);
             Cookies.setCookie(CoreConstants.COOKIES_SESSION, user.getSession(),
-                              CoreConstants.COOKIES_EXPIRATION_DATE, null, "/", false);
+                    CoreConstants.COOKIES_EXPIRATION_DATE, null, "/", false);
 
             if (user.isConfirmed()) {
                 Modules.getInstance().initializeModules(user);
@@ -150,7 +175,6 @@ public class Layout {
 
     /**
      * Signs out.
-     *
      */
     public void signout() {
 
@@ -210,50 +234,11 @@ public class Layout {
     }
 
     /**
-     *
      * @param message
      * @param delay
      */
     public void setMessage(String message, int delay) {
         messageWindow.setMessage(message, "#FFFFFF", null, delay);
-    }
-
-    /**
-     *
-     * @param message
-     */
-    public void setNoticeMessage(String message) {
-        setNoticeMessage(message, 15);
-    }
-
-    /**
-     *
-     * @param message
-     * @param delay
-     */
-    public void setNoticeMessage(String message, int delay) {
-        messageWindow.setMessage(message, "#B3CC99", CoreConstants.ICON_SUCCESS, delay);
-    }
-
-    /**
-     *
-     * @param message
-     */
-    public void setWarningMessage(String message) {
-        setWarningMessage(message, 0);
-    }
-
-    /**
-     *
-     * @param message
-     * @param delay
-     */
-    public void setWarningMessage(String message, int delay) {
-        messageWindow.setMessage(message, "#F79191", CoreConstants.ICON_WARNING, delay);
-    }
-
-    public void hideMessage() {
-        messageWindow.hideMessage();
     }
 
     //-------------------------------------------------------------------- Make
@@ -263,35 +248,38 @@ public class Layout {
     //    window.setNoticeMessage(msg)
     //    window.hideMessage()
 
-    // The default delay is used, so the warning automatically disappears after
-    // some time.
-    public static void setWarningMessageFromJS(String error) {
-        Layout.getInstance().setWarningMessage(error);
+    /**
+     * @param message
+     */
+    public void setNoticeMessage(String message) {
+        setNoticeMessage(message, 15);
     }
 
-    // The delay is set to 0, so the message stays until it is overwritten by a
-    // new message or the hideMessage function is called.  This behavior is
-    // different from the warning case.  This is what is currently needed by the
-    // javascript code.
-    public static void setNoticeMessageFromJS(String message) {
-        Layout.getInstance().setNoticeMessage(message, 0);
+    /**
+     * @param message
+     * @param delay
+     */
+    public void setNoticeMessage(String message, int delay) {
+        messageWindow.setMessage(message, "#B3CC99", CoreConstants.ICON_SUCCESS, delay);
     }
 
-    public static void hideMessageFromJS() {
-        Layout.getInstance().hideMessage();
+    /**
+     * @param message
+     */
+    public void setWarningMessage(String message) {
+        setWarningMessage(message, 0);
     }
 
-    public static native void exportMessageFunctionsToJS() /*-{
-        $wnd.setWarningMessage = $entry(
-           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::setWarningMessageFromJS(Ljava/lang/String;));
-        $wnd.setNoticeMessage = $entry(
-           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::setNoticeMessageFromJS(Ljava/lang/String;));
-        $wnd.hideMessage = $entry(
-           @fr.insalyon.creatis.vip.core.client.view.layout.Layout::hideMessageFromJS());
-    }-*/;
+    /**
+     * @param message
+     * @param delay
+     */
+    public void setWarningMessage(String message, int delay) {
+        messageWindow.setMessage(message, "#F79191", CoreConstants.ICON_WARNING, delay);
+    }
 
-    static {
-        Layout.exportMessageFunctionsToJS();
+    public void hideMessage() {
+        messageWindow.hideMessage();
     }
 
     //--------------------------------------------------------------------

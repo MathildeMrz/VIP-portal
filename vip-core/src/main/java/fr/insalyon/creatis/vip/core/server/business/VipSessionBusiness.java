@@ -1,6 +1,5 @@
 package fr.insalyon.creatis.vip.core.server.business;
 
-import fr.insalyon.creatis.vip.core.client.CoreModule;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
@@ -25,8 +24,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /*
     Manages the reads/writes of vip core information in the web session
@@ -65,7 +62,7 @@ public class VipSessionBusiness {
             sessionCookie.setPath("/");
             response.addCookie(sessionCookie);
         } catch (UnsupportedEncodingException ex) {
-            logger.error("Error setting VIP session for {} ",user, ex);
+            logger.error("Error setting VIP session for {} ", user, ex);
             throw new BusinessException(ex);
         }
     }
@@ -119,8 +116,8 @@ public class VipSessionBusiness {
         try {
             Map<String, String> cookies = getCookies(request);
 
-            if ( ! cookies.containsKey(CoreConstants.COOKIES_USER) ||
-                    ! cookies.containsKey(CoreConstants.COOKIES_SESSION)) {
+            if (!cookies.containsKey(CoreConstants.COOKIES_USER) ||
+                    !cookies.containsKey(CoreConstants.COOKIES_SESSION)) {
                 return null;
             }
 
@@ -140,7 +137,7 @@ public class VipSessionBusiness {
     }
 
     private Map<String, String> getCookies(HttpServletRequest request) {
-        HashMap<String,String> cookiesMap = new HashMap<>();
+        HashMap<String, String> cookiesMap = new HashMap<>();
         for (Cookie cookie : request.getCookies()) {
             cookiesMap.put(cookie.getName(), decodeCookieValue(cookie.getValue()));
         }
@@ -156,7 +153,7 @@ public class VipSessionBusiness {
         }
     }
 
-    private User setUserInSession(String  email, HttpSession session) throws CoreException {
+    private User setUserInSession(String email, HttpSession session) throws CoreException {
         try {
             User user = configurationBusiness.getUser(email);
             return setUserInSession(user, session);
@@ -189,7 +186,7 @@ public class VipSessionBusiness {
         return st.toString();
     }
 
-    public Boolean isUserConnected(HttpServletRequest request){
+    public Boolean isUserConnected(HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(CoreConstants.SESSION_USER);
         if (user != null) {

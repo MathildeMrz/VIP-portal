@@ -4,7 +4,7 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.*;
-
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,15 +14,15 @@ import java.util.Set;
  * @author Guillaume Vanel
  * @version %I%, %G%
  */
-public class BoutiquesParser extends AbstractJsonParser{
+public class BoutiquesParser extends AbstractJsonParser {
 
     /**
      * Parse JSON Boutiques descriptor
      *
-     * @param descriptor        String representing application JSON descriptor
+     * @param descriptor String representing application JSON descriptor
      * @throws InvalidBoutiquesDescriptorException if descriptor is invalid
      */
-    public BoutiquesApplication parseApplication(String descriptor) throws InvalidBoutiquesDescriptorException{
+    public BoutiquesApplication parseApplication(String descriptor) throws InvalidBoutiquesDescriptorException {
         JSONObject parsedDescriptor = JSONParser.parseStrict(descriptor).isObject();
         if (parsedDescriptor == null) {
             throw new InvalidBoutiquesDescriptorException("Invalid Boutiques descriptor: not a JSON object.");
@@ -33,11 +33,11 @@ public class BoutiquesParser extends AbstractJsonParser{
         BoutiquesApplication application = new BoutiquesApplication(name, description, version);
         // Inputs
         JSONArray inputsArray = getArrayValue(parsedDescriptor, "inputs", false);
-        for(int inputNo = 0; inputNo < inputsArray.size(); inputNo++){
+        for (int inputNo = 0; inputNo < inputsArray.size(); inputNo++) {
             BoutiquesInput input;
             try {
                 input = parseInput(inputsArray.get(inputNo).isObject());
-            } catch (InvalidBoutiquesDescriptorException exception){
+            } catch (InvalidBoutiquesDescriptorException exception) {
                 throw new InvalidBoutiquesDescriptorException("Invalid Boutiques descriptor: input " + inputNo
                         + " is invalid.", exception);
             }
@@ -46,7 +46,7 @@ public class BoutiquesParser extends AbstractJsonParser{
         // Groups
         JSONArray groupsArray = getArrayValue(parsedDescriptor, "groups", true);
         if (groupsArray != null) {
-            for(int groupNo = 0; groupNo < groupsArray.size(); groupNo++) {
+            for (int groupNo = 0; groupNo < groupsArray.size(); groupNo++) {
                 JSONObject currentGroupDescriptor = groupsArray.get(groupNo).isObject();
                 if (currentGroupDescriptor == null) {
                     throw new InvalidBoutiquesDescriptorException("Invalid Boutiques descriptor: group " + groupNo
@@ -54,7 +54,7 @@ public class BoutiquesParser extends AbstractJsonParser{
                 }
                 try {
                     application.addGroup(parseGroup(currentGroupDescriptor));
-                } catch (InvalidBoutiquesDescriptorException exception){
+                } catch (InvalidBoutiquesDescriptorException exception) {
                     throw new InvalidBoutiquesDescriptorException("Invalid Boutiques descriptor: group " + groupNo
                             + " is invalid.", exception);
                 }
@@ -70,9 +70,9 @@ public class BoutiquesParser extends AbstractJsonParser{
         JSONArray outputJSONArray = getArrayValue(parsedDescriptor, "output-files", true);
         if (outputJSONArray != null) {
             for (int i = 0; i < outputJSONArray.size(); i++) {
-                try{
+                try {
                     application.getOutputFiles().add(parseBoutiquesOutputFile(outputJSONArray.get(i).isObject()));
-                } catch (InvalidBoutiquesDescriptorException exception){
+                } catch (InvalidBoutiquesDescriptorException exception) {
                     throw new InvalidBoutiquesDescriptorException("Invalid Boutiques descriptor: output file " + i
                             + " is invalid.", exception);
                 }
@@ -84,8 +84,8 @@ public class BoutiquesParser extends AbstractJsonParser{
             for (String key : tagsJSONObject.keySet()) {
                 String value;
                 try {
-                     value = getStringValue(tagsJSONObject, key);
-                } catch (InvalidBoutiquesDescriptorException exception){
+                    value = getStringValue(tagsJSONObject, key);
+                } catch (InvalidBoutiquesDescriptorException exception) {
                     throw new InvalidBoutiquesDescriptorException("Invalid Boutiques descriptor: tag with key '" + key
                             + "' is not a valid String.", exception);
                 }
@@ -99,7 +99,7 @@ public class BoutiquesParser extends AbstractJsonParser{
                 application.setContainerType(getStringValue(containerObject, "type"));
                 application.setContainerImage(getStringValue(containerObject, "image"));
                 application.setContainerIndex(getStringValue(containerObject, "index", true));
-            } catch (InvalidBoutiquesDescriptorException exception){
+            } catch (InvalidBoutiquesDescriptorException exception) {
                 throw new InvalidBoutiquesDescriptorException("Invalid Boutiques descriptor: invalid container-image.",
                         exception);
             }
@@ -113,11 +113,11 @@ public class BoutiquesParser extends AbstractJsonParser{
      * Parse a JSONObject corresponding to an input inside a Boutiques descriptor and return corresponding BoutiquesInput
      *
      * @param inputJson JSONObject containing input information
-     * @return          Parsed BoutiquesInput
+     * @return Parsed BoutiquesInput
      * @throws InvalidBoutiquesDescriptorException if the JSONObject is not a valid representation of a Boutiques input
      */
-    public BoutiquesInput parseInput(JSONObject inputJson) throws InvalidBoutiquesDescriptorException{
-        if (inputJson == null){
+    public BoutiquesInput parseInput(JSONObject inputJson) throws InvalidBoutiquesDescriptorException {
+        if (inputJson == null) {
             throw new InvalidBoutiquesDescriptorException("Invalid input descriptor: not a JSON object");
         }
         // General attributes
@@ -131,7 +131,7 @@ public class BoutiquesParser extends AbstractJsonParser{
         BoutiquesInput.InputType inputType = BoutiquesInput.InputType.valueOf(typeString.toUpperCase());
         BoutiquesInput input;
         // Flag is treated separately as it does not accept value-disables, value-requires or value-choice properties
-        if (inputType == BoutiquesInput.InputType.FLAG){
+        if (inputType == BoutiquesInput.InputType.FLAG) {
             boolean defaultValue = getBooleanValue(inputJson, "default-value", true);
             input = new BoutiquesFlagInput(id, name, description, isOptional, disablesInputsId, requiresInputsId,
                     defaultValue);
@@ -147,7 +147,7 @@ public class BoutiquesParser extends AbstractJsonParser{
                 case NUMBER:
                     try {
                         possibleValues = jsonArrayToStringSet(isOptional, possibleValuesArray, this::jsonValueToDouble);
-                    } catch (InvalidBoutiquesDescriptorException exception){
+                    } catch (InvalidBoutiquesDescriptorException exception) {
                         throw new InvalidBoutiquesDescriptorException("Invalid input descriptor: "
                                 + "input of type 'Number' but value-choice contains non-double value(s).",
                                 exception);
@@ -173,7 +173,7 @@ public class BoutiquesParser extends AbstractJsonParser{
                     }
                     String defaultValueString = getStringValue(inputJson, "default-value", true);
                     input = new BoutiquesStringInput(id, name, description, inputType, isOptional, disablesInputsId,
-                            requiresInputsId,  possibleValues, valueDisablesInputsId, valueRequiresInputsId,
+                            requiresInputsId, possibleValues, valueDisablesInputsId, valueRequiresInputsId,
                             defaultValueString);
                     break;
                 default:
@@ -195,7 +195,7 @@ public class BoutiquesParser extends AbstractJsonParser{
      * @return BoutiquesGroup representing parsed group
      * @throws InvalidBoutiquesDescriptorException if JSON Object is not a valid representation of a group
      */
-    public BoutiquesGroup parseGroup(JSONObject groupJson) throws InvalidBoutiquesDescriptorException{
+    public BoutiquesGroup parseGroup(JSONObject groupJson) throws InvalidBoutiquesDescriptorException {
         String id = getStringValue(groupJson, "id");
         Set<String> members = getArrayValueAsStringSet(groupJson, "members", false);
         boolean allOrNone = getBooleanValue(groupJson, "all-or-none", true);
@@ -221,6 +221,8 @@ public class BoutiquesParser extends AbstractJsonParser{
         bof.setPathTemplate(getStringValue(outputFile, "path-template", true));
         bof.setList(getBooleanValue(outputFile, "list", true));
         bof.setOptional(getBooleanValue(outputFile, "optional", true));
+        Set<String> stripExtn=getArrayValueAsStringSet(outputFile, "path-template-stripped-extensions", true);
+        bof.setPathTemplateStrippedExtensionsString(stripExtn == null ? null : String.join(",", stripExtn));
         String commandLineFlag = getStringValue(outputFile, "command-line-flag", true);
         commandLineFlag = commandLineFlag == null ? "" : commandLineFlag;
         bof.setCommandLineFlag(commandLineFlag);

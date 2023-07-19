@@ -32,7 +32,6 @@
 package fr.insalyon.creatis.vip.core.server.rpc;
 
 import fr.insalyon.creatis.grida.client.GRIDAClient;
-import fr.insalyon.creatis.vip.core.client.bean.Account;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.UsageStats;
 import fr.insalyon.creatis.vip.core.client.bean.User;
@@ -59,7 +58,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva,Nouha boujelben
  */
 public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet implements ConfigurationService {
@@ -77,14 +75,13 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
         userDAO = getBean(UserDAO.class);
         gridaClient = getBean(GRIDAClient.class);
     }
-    
+
     @Override
     public User configure(String email, String session) throws CoreException {
         try {
             logger.debug("Initializing VIP configuration.");
             configurationBusiness.configure();
             logger.debug("VIP successfully configured.");
-
 
 
             if (configurationBusiness.validateSession(email, session)) {
@@ -103,13 +100,12 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
     }
 
     /**
-     *
-     * @param user User bean object
+     * @param user     User bean object
      * @param comments User's comments
      */
     @Override
     public void signup(User user, String comments)
-        throws CoreException {
+            throws CoreException {
         try {
             logger.info("Sign up request from '" + user.getEmail() + "'.");
             configurationBusiness.signup(user, comments, (Group) null);
@@ -183,7 +179,6 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
 
     /**
      * Get list of users.
-     *
      */
     @Override
     public List<User> getUsers() throws CoreException {
@@ -201,7 +196,7 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
             authenticateSystemAdministrator(logger);
             trace(logger, "Adding group '" + group + "'.");
             configurationBusiness.addGroup(group);
-        } catch (BusinessException ex) {
+        } catch (BusinessException | DAOException ex) {
             throw new CoreException(ex);
         }
     }
@@ -252,8 +247,8 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
     public User removeUser(String email) throws CoreException {
         try {
             User user = email != null
-                ? configurationBusiness.getUser(email)
-                : getSessionUser();
+                    ? configurationBusiness.getUser(email)
+                    : getSessionUser();
             if (email != null) {
                 authenticateSystemAdministrator(logger);
             }
@@ -268,7 +263,7 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
 
     @Override
     public Map<Group, GROUP_ROLE> getUserGroups(String email)
-        throws CoreException {
+            throws CoreException {
         try {
             if (email != null) {
                 authenticateSystemAdministrator(logger);
@@ -287,10 +282,11 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
      */
     private void authenticateGroupAdministrator(Logger logger, String groupName) throws CoreException {
 
-        try{
+        try {
             authenticateSystemAdministrator(logger);
             return;
-        } catch(CoreException ignored){ } // The user is not a system administrator. Ignore the exception.
+        } catch (CoreException ignored) {
+        } // The user is not a system administrator. Ignore the exception.
 
         User user = getSessionUser();
         Map<Group, GROUP_ROLE> userGroups = getUserGroups(null);
@@ -339,19 +335,19 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
 
     @Override
     public void updateUser(
-        String email, UserLevel level, CountryCode countryCode,
-        int maxRunningSimulations, Map<String, GROUP_ROLE> groups,
-        boolean locked)
-        throws CoreException {
+            String email, UserLevel level, CountryCode countryCode,
+            int maxRunningSimulations, Map<String, GROUP_ROLE> groups,
+            boolean locked)
+            throws CoreException {
         try {
             authenticateSystemAdministrator(logger);
             trace(logger, "Updating user '" + email + "'.");
             configurationBusiness.updateUser(
-                email,
-                level,
-                countryCode,
-                maxRunningSimulations,
-                locked);
+                    email,
+                    level,
+                    countryCode,
+                    maxRunningSimulations,
+                    locked);
             configurationBusiness.setUserGroups(email, groups);
         } catch (BusinessException ex) {
             throw new CoreException(ex);
@@ -385,8 +381,8 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
             trace(logger, "Updating user password.");
             configurationBusiness.updateUserPassword(
                     getSessionUser().getEmail(),
-                currentPassword,
-                newPassword);
+                    currentPassword,
+                    newPassword);
         } catch (BusinessException ex) {
             throw new CoreException(ex);
         }
@@ -632,7 +628,7 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
     public void deleteUserApikey(String email) throws CoreException {
         try {
             configurationBusiness
-                .deleteUserApikey(getSessionUser().getEmail());
+                    .deleteUserApikey(getSessionUser().getEmail());
         } catch (BusinessException ex) {
             throw new CoreException(ex);
         }
@@ -642,7 +638,7 @@ public class ConfigurationServiceImpl extends AbstractRemoteServiceServlet imple
     public String generateNewUserApikey(String email) throws CoreException {
         try {
             return configurationBusiness
-                .generateNewUserApikey(getSessionUser().getEmail());
+                    .generateNewUserApikey(getSessionUser().getEmail());
         } catch (BusinessException ex) {
             throw new CoreException(ex);
         }

@@ -31,18 +31,18 @@
  */
 package fr.insalyon.creatis.vip.api.rest.itest;
 
-import fr.insalyon.creatis.vip.api.exception.ApiException;
 import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.api.model.Module;
-import fr.insalyon.creatis.vip.api.rest.config.BaseVIPSpringIT;
 import fr.insalyon.creatis.vip.api.model.SupportedTransferProtocol;
-import fr.insalyon.creatis.vip.application.client.bean.Application;
+import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.application.client.view.ApplicationException.ApplicationError;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -57,11 +57,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Created by abonnet on 7/20/16.
- *
+ * <p>
  * Test method on platform path
  */
 @Disabled
-public class PlatformControllerIT extends BaseVIPSpringIT {
+public class PlatformControllerIT extends BaseWebSpringIT {
 
     @Test
     public void platformShouldNotBeSecured() throws Exception {
@@ -73,7 +73,7 @@ public class PlatformControllerIT extends BaseVIPSpringIT {
     @Test
     public void testPlatformProperties() throws Exception {
         // the test properties are set in BaseVIPSpringIT (with @TestPropertySource)
-        mockMvc.perform(get("/rest/platform"))
+        ResultActions resultActions = mockMvc.perform(get("/rest/platform"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -99,19 +99,23 @@ public class PlatformControllerIT extends BaseVIPSpringIT {
                 .andExpect(jsonPath("$.APIErrorCodesAndMessages[*]",
                         hasSize(ApiError.values().length + ApplicationError.values().length)))
                 .andExpect(jsonPath("$.APIErrorCodesAndMessages[*]",
-                    hasItems(
-                        jsonCorrespondsToErrorCodeAndMessage(ApiError.GENERIC_API_ERROR),
-                        jsonCorrespondsToErrorCodeAndMessage(ApiError.NOT_ALLOWED_TO_USE_APPLICATION),
-                        jsonCorrespondsToErrorCodeAndMessage(ApplicationError.USER_MAX_EXECS),
-                        jsonCorrespondsToErrorCodeAndMessage(8002, "The error message for 'bad credentials' cannot be known in advance"))));
+                        hasItems(
+                                jsonCorrespondsToErrorCodeAndMessage(ApiError.GENERIC_API_ERROR),
+                                jsonCorrespondsToErrorCodeAndMessage(ApiError.NOT_ALLOWED_TO_USE_APPLICATION),
+                                jsonCorrespondsToErrorCodeAndMessage(ApplicationError.USER_MAX_EXECS),
+                                jsonCorrespondsToErrorCodeAndMessage(8002, "The error message for 'bad credentials' cannot be known in advance"))));
+
+        MvcResult result = resultActions.andReturn();
+        String responseContent = result.getResponse().getContentAsString();
+        System.out.println("Response: " + responseContent);
 
     }
 
-    private <T> Matcher<Collection<String>> isArray(T[] values, Function<T,String> mapper) {
+    private <T> Matcher<Collection<String>> isArray(T[] values, Function<T, String> mapper) {
         // magic java 8 to convert enum array to string array
         String[] enumAsStringArray = Arrays.stream(values).map(mapper).toArray(String[]::new);
         return allOf(
                 Matchers.<String>hasSize(values.length),
-                Matchers.containsInAnyOrder(enumAsStringArray) );
+                Matchers.containsInAnyOrder(enumAsStringArray));
     }
 }

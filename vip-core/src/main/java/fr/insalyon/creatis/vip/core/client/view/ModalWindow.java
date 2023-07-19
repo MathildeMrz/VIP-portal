@@ -4,16 +4,16 @@
  * This software is a web portal for pipeline execution on distributed systems.
  *
  * This software is governed by the CeCILL-B license under French law and
- * abiding by the rules of distribution of free software.  You can  use, 
+ * abiding by the rules of distribution of free software.  You can  use,
  * modify and/ or redistribute the software under the terms of the CeCILL-B
  * license as circulated by CEA, CNRS and INRIA at the following URL
- * "http://www.cecill.info". 
+ * "http://www.cecill.info".
  *
  * As a counterpart to the access to the source code and  rights to copy,
  * modify and redistribute granted by the license, users are provided only
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
- * liability. 
+ * liability.
  *
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
@@ -22,9 +22,9 @@
  * therefore means  that it is reserved for developers  and  experienced
  * professionals having in-depth computer knowledge. Users are therefore
  * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or 
- * data to be ensured and,  more generally, to use and operate it in the 
- * same conditions as regards security. 
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
  *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-B license and that you accept its terms.
@@ -47,9 +47,8 @@ import com.smartgwt.client.widgets.layout.VLayout;
 /**
  * Class that supports masking an entire {@link Canvas} and adds the possibility
  * to display a message during masking and a loading image
- * 
+ *
  * @author Mihai Ile (mihai007)
- * 
  */
 public class ModalWindow {
 
@@ -94,9 +93,8 @@ public class ModalWindow {
      * Creates a new {@link ModalWindow} given the canvas to be masked (an
      * {@link Canvas#addChild(Canvas)} will be called to add the masking layer
      * above the given canvas)
-     * 
-     * @param canvas
-     *            the canvas to be masked
+     *
+     * @param canvas the canvas to be masked
      */
     public ModalWindow(Canvas canvas) {
         this.canvas = canvas;
@@ -107,13 +105,10 @@ public class ModalWindow {
      * Creates a new {@link ModalWindow} given the canvas to be masked (an
      * {@link Canvas#addChild(Canvas)} will be called to add the masking layer
      * above the given canvas)
-     * 
-     * @param canvas
-     *            the canvas to be masked
-     * @param opacity
-     *            the opacity used for modal
-     * @param maskingColor
-     *            the color used for modal
+     *
+     * @param canvas       the canvas to be masked
+     * @param opacity      the opacity used for modal
+     * @param maskingColor the color used for modal
      */
     public ModalWindow(Canvas canvas, int opacity, String maskingColor) {
         this.canvas = canvas;
@@ -124,10 +119,9 @@ public class ModalWindow {
 
     /**
      * Mask the {@link Canvas} with a transparent color
-     * 
-     * @param showLoading
-     *            whether to show a box with a loading indicator above the
-     *            background
+     *
+     * @param showLoading whether to show a box with a loading indicator above the
+     *                    background
      */
     public void show(boolean showLoading) {
         showStartedTime = System.currentTimeMillis();
@@ -142,12 +136,10 @@ public class ModalWindow {
     /**
      * Mask the {@link Canvas} with a transparent color and display a message
      * above it
-     * 
-     * @param message
-     *            the message to display above the background
-     * @param showLoading
-     *            whether to show a box with a loading indicator above the
-     *            background
+     *
+     * @param message     the message to display above the background
+     * @param showLoading whether to show a box with a loading indicator above the
+     *                    background
      */
     public void show(String message, boolean showLoading) {
         showStartedTime = System.currentTimeMillis();
@@ -284,13 +276,12 @@ public class ModalWindow {
 
     /**
      * Optional icon to be used instead of the default one.
-     * <P>
+     * <p>
      * Specify as the partial URL to an image, relative to the imgDir (by
      * default "public/images/") of this component
-     * 
-     * @param loadingIcon
-     *            icon URL of new image icon. Default value is <blockquote> "
-     *            {@link Page#getSkinImgDir()}/loading.gif "
+     *
+     * @param loadingIcon icon URL of new image icon. Default value is <blockquote> "
+     *                    {@link Page#getSkinImgDir()}/loading.gif "
      */
     public void setLoadingIcon(String loadingIcon) {
         this.loadingIcon = loadingIcon;
@@ -300,10 +291,9 @@ public class ModalWindow {
      * The background color for the message/loading box. You can set this
      * property to an RGB value (e.g. #22AAFF) or a named color (e.g. red) from
      * a list of browser supported color names.
-     * 
-     * @param backgroundColor
-     *            new background color to set to the message/loading box.
-     *            Default value is "#fff"
+     *
+     * @param backgroundColor new background color to set to the message/loading box.
+     *                        Default value is "#fff"
      */
     public void setBackgroundColor(String backgroundColor) {
         this.messageBoxBgColor = backgroundColor;

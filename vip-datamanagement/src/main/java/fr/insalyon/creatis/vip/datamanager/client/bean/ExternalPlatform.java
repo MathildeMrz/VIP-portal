@@ -40,7 +40,8 @@ public class ExternalPlatform {
 
     public enum Type {
         GIRDER,
-        SHANOIR
+        SHANOIR,
+        SRM
     }
 
     private String identifier;
@@ -107,4 +108,5 @@ public class ExternalPlatform {
     public void setRefreshTokenUrl(String refreshTokenUrl) {
         this.refreshTokenUrl = refreshTokenUrl;
     }
+
 }

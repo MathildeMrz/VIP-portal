@@ -65,8 +65,8 @@ public class ExternalPlatformData extends JdbcDaoSupport implements ExternalPlat
     @Override
     public ExternalPlatform getById(String identifier) throws DAOException {
         try (PreparedStatement ps = getConnection().prepareStatement(
-                    "SELECT * FROM VIPExternalPlatforms " +
-                    "WHERE identifier=?")) {
+                "SELECT * FROM VIPExternalPlatforms " +
+                        "WHERE identifier=?")) {
             ps.setString(1, identifier);
             ResultSet rs = ps.executeQuery();
 
@@ -96,7 +96,7 @@ public class ExternalPlatformData extends JdbcDaoSupport implements ExternalPlat
     @Override
     public List<ExternalPlatform> getAll() throws DAOException {
         try (PreparedStatement ps = getConnection().prepareStatement(
-                    "SELECT * FROM VIPExternalPlatforms ")) {
+                "SELECT * FROM VIPExternalPlatforms ")) {
 
             ResultSet rs = ps.executeQuery();
             List<ExternalPlatform> externalPlatformsList = new ArrayList<>();

@@ -45,6 +45,59 @@ import java.util.function.Consumer;
 
 public class VisualizationModule extends Module {
 
+    private Visualizer brainBrowserVisualizer =
+            new Visualizer() {
+                @Override
+                public boolean isFileSupported(String filename) {
+                    return BrainBrowserViewTab.isFileSupported(filename);
+                }
+
+                @Override
+                public String fileTypeName() {
+                    return BrainBrowserViewTab.fileTypeName();
+                }
+
+                @Override
+                public Consumer<String> viewStarter() {
+                    return new Consumer<String>() {
+                        @Override
+                        public void accept(String filename) {
+                            AbstractViewTab tab =
+                                    (AbstractViewTab) Layout.getInstance().addTab(
+                                            BrainBrowserViewTab.ID,
+                                            () -> new BrainBrowserViewTab(filename));
+                            tab.load();
+                        }
+                    };
+                }
+            };
+    private Visualizer amiImageVisualizer =
+            new Visualizer() {
+                @Override
+                public boolean isFileSupported(String filename) {
+                    return AmiImageViewTab.isFileSupported(filename);
+                }
+
+                @Override
+                public String fileTypeName() {
+                    return AmiImageViewTab.fileTypeName();
+                }
+
+                @Override
+                public Consumer<String> viewStarter() {
+                    return new Consumer<String>() {
+                        @Override
+                        public void accept(String filename) {
+                            AbstractViewTab tab =
+                                    (AbstractViewTab) Layout.getInstance().addTab(
+                                            AmiImageViewTab.tabIdFrom(filename),
+                                            () -> new AmiImageViewTab(filename));
+                            tab.load();
+                        }
+                    };
+                }
+            };
+
     @Override
     public void load() {
         BrowserContextMenu.addVisualizer(amiImageVisualizer);
@@ -52,62 +105,10 @@ public class VisualizationModule extends Module {
     }
 
     @Override
-    public void postLoading() {}
+    public void postLoading() {
+    }
 
     @Override
-    public void terminate(Set<Tab> removedTabs) {}
-
-    private Visualizer brainBrowserVisualizer =
-        new Visualizer() {
-            @Override
-            public boolean isFileSupported(String filename) {
-                return BrainBrowserViewTab.isFileSupported(filename);
-            }
-
-            @Override
-            public String fileTypeName() {
-                return BrainBrowserViewTab.fileTypeName();
-            }
-
-            @Override
-            public Consumer<String> viewStarter() {
-                return new Consumer<String>() {
-                    @Override
-                    public void accept(String filename) {
-                        AbstractViewTab tab =
-                            (AbstractViewTab) Layout.getInstance().addTab(
-                                BrainBrowserViewTab.ID,
-                                () -> new BrainBrowserViewTab(filename));
-                        tab.load();
-                    }
-                };
-            }
-        };
-
-    private Visualizer amiImageVisualizer =
-        new Visualizer() {
-            @Override
-            public boolean isFileSupported(String filename) {
-                return AmiImageViewTab.isFileSupported(filename);
-            }
-
-            @Override
-            public String fileTypeName() {
-                return AmiImageViewTab.fileTypeName();
-            }
-
-            @Override
-            public Consumer<String> viewStarter() {
-                return new Consumer<String>() {
-                    @Override
-                    public void accept(String filename) {
-                        AbstractViewTab tab =
-                            (AbstractViewTab) Layout.getInstance().addTab(
-                                AmiImageViewTab.tabIdFrom(filename),
-                                () -> new AmiImageViewTab(filename));
-                        tab.load();
-                    }
-                };
-            }
-        };
+    public void terminate(Set<Tab> removedTabs) {
+    }
 }

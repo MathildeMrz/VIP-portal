@@ -35,21 +35,17 @@ import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.Server;
-import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.datamanager.server.business.DataManagerBusiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import static fr.insalyon.creatis.vip.application.client.view.ApplicationException.ApplicationError.WRONG_APPLICATION_DESCRIPTOR;
 
 /**
  * Created by abonnet on 2/21/19.
@@ -111,7 +107,7 @@ public class BoutiquesBusiness {
     private String getJsonLfn(String applicationName, String applicationVersion)
             throws BusinessException {
         AppVersion appVersion = applicationBusiness.getVersion(
-            applicationName, applicationVersion);
+                applicationName, applicationVersion);
         if (appVersion.getJsonLfn() == null) {
             logger.error("No json lfn for this application : {} / {}", applicationName, applicationVersion);
             throw new BusinessException("There is no json lfn for this application version.");
@@ -138,7 +134,7 @@ public class BoutiquesBusiness {
             throws BusinessException {
 
         applicationBusiness.updateDoiForVersion(
-            doi, applicationName, applicationVersion);
+                doi, applicationName, applicationVersion);
     }
 
     private String getDoiFromPublishOutput(List<String> publishOutput) throws BusinessException {
@@ -149,20 +145,6 @@ public class BoutiquesBusiness {
         }
         return publishOutput.get(0);
     }
-
-    private class CommandErrorException extends Exception {
-
-        private List<String> cout;
-
-        public CommandErrorException(List<String> cout) {
-            this.cout = cout;
-        }
-
-        public List<String> getCout() {
-            return cout;
-        }
-    }
-
 
     private List<String> runCommandAndFailOnError(String command) throws BusinessException {
         try {
@@ -182,7 +164,7 @@ public class BoutiquesBusiness {
             logger.info("Executing command : " + command);
             process = builder.start();
             BufferedReader r = new BufferedReader(
-                new InputStreamReader(process.getInputStream()));
+                    new InputStreamReader(process.getInputStream()));
             String s;
             while ((s = r.readLine()) != null) {
                 cout.add(s);
@@ -222,6 +204,19 @@ public class BoutiquesBusiness {
             } catch (IOException ex) {
                 logger.error("Error closing {}", c);
             }
+        }
+    }
+
+    private class CommandErrorException extends Exception {
+
+        private List<String> cout;
+
+        public CommandErrorException(List<String> cout) {
+            this.cout = cout;
+        }
+
+        public List<String> getCout() {
+            return cout;
         }
     }
 }

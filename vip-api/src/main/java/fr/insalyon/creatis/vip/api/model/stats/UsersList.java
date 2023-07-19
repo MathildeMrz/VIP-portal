@@ -6,7 +6,8 @@ public class UsersList {
     private Integer total;
     private List<StatUser> users;
 
-    public UsersList() {}
+    public UsersList() {
+    }
 
     public UsersList(List<StatUser> users) {
         this.total = users.size();

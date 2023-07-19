@@ -34,7 +34,7 @@ knowledge of the CeCILL-B license and that you accept its terms.
 
 <Context path="/vip-portal">
     <ResourceLink
-        name="jdbc/vip"
-        global="jdbc/vip"
-        type="javax.sql.DataSource"/>
+            name="jdbc/vip"
+            global="jdbc/vip"
+            type="javax.sql.DataSource"/>
 </Context>

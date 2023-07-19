@@ -6,15 +6,12 @@ import fr.insalyon.creatis.vip.api.exception.ApiException;
 import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.api.model.stats.UsersList;
 import fr.insalyon.creatis.vip.api.model.stats.UsersNumber;
-import fr.insalyon.creatis.vip.core.client.bean.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/statistics")
@@ -153,7 +150,7 @@ public class StatsController extends ApiController {
     }
 
     private void assertService(String service) throws ApiException {
-        if ( ! "vip".equals(service)) {
+        if (!"vip".equals(service)) {
             logger.error("Looking for stats with wrong service : {}", service);
             throw new ApiException(ApiError.WRONG_STAT_SERVICE, service);
         }

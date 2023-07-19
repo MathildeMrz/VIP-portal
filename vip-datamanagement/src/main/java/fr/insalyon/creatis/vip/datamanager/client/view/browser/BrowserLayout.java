@@ -4,16 +4,16 @@
  * This software is a web portal for pipeline execution on distributed systems.
  *
  * This software is governed by the CeCILL-B license under French law and
- * abiding by the rules of distribution of free software.  You can  use, 
+ * abiding by the rules of distribution of free software.  You can  use,
  * modify and/ or redistribute the software under the terms of the CeCILL-B
  * license as circulated by CEA, CNRS and INRIA at the following URL
- * "http://www.cecill.info". 
+ * "http://www.cecill.info".
  *
  * As a counterpart to the access to the source code and  rights to copy,
  * modify and redistribute granted by the license, users are provided only
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
- * liability. 
+ * liability.
  *
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
@@ -22,15 +22,16 @@
  * therefore means  that it is reserved for developers  and  experienced
  * professionals having in-depth computer knowledge. Users are therefore
  * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or 
- * data to be ensured and,  more generally, to use and operate it in the 
- * same conditions as regards security. 
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
  *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 package fr.insalyon.creatis.vip.datamanager.client.view.browser;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.SelectionAppearance;
@@ -43,12 +44,15 @@ import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
 import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
 import fr.insalyon.creatis.vip.datamanager.client.view.common.BrowserUtil;
 import fr.insalyon.creatis.vip.datamanager.client.view.operation.OperationLayout;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * @author Rafael Silva
  */
 public class BrowserLayout extends VLayout {
@@ -59,18 +63,6 @@ public class BrowserLayout extends VLayout {
     private ListGrid grid;
     private DataUploadWindow dataUploadWindow;
 
-    public static BrowserLayout getInstance() {
-        if (instance == null) {
-            instance = new BrowserLayout();
-        }
-        return instance;
-    }
-
-    public static void terminate() {
-
-        instance = null;
-    }
-
     private BrowserLayout() {
 
         initComplete(this);
@@ -79,7 +71,7 @@ public class BrowserLayout extends VLayout {
         this.setOverflow(Overflow.AUTO);
         this.setShowResizeBar(true);
 
-        grid = BrowserUtil.getListGrid();
+        this.grid = BrowserUtil.getListGrid();
         configureGrid();
 
         modal = new ModalWindow(grid);
@@ -94,6 +86,18 @@ public class BrowserLayout extends VLayout {
         frame.setHeight("1px");
         frame.setWidth("1px");
         this.addMember(frame);
+    }
+
+    public static BrowserLayout getInstance() {
+        if (instance == null) {
+            instance = new BrowserLayout();
+        }
+        return instance;
+    }
+
+    public static void terminate() {
+
+        instance = null;
     }
 
     private void configureGrid() {
@@ -152,17 +156,27 @@ public class BrowserLayout extends VLayout {
     }
 
     public void uploadComplete(String result) {
-        
+
         if (dataUploadWindow != null) {
             dataUploadWindow.destroy();
             dataUploadWindow = null;
         }
         modal.hide();
-        for (String operationID : result.split("##")) {
-            if (!operationID.isEmpty()) {
-                OperationLayout.getInstance().addOperation(operationID);
+
+        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {} // cannot be called
+
+            @Override
+            public void onSuccess(Void v) {
+                loadData(toolStrip.getPath(), true);
             }
-        }
+        };
+
+        String[] operationsIds = result.split("##");
+
+        OperationLayout.getInstance().addOperationsWithCallback(operationsIds, callback);
+
     }
 
     private native void initComplete(BrowserLayout upload) /*-{

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * Overrides original GRIDAPoolClient by a simple version that stores
  * operations in a map and do all operations in a synchronous way with
  * GridaClientLocal.
- *
+ * <p>
  * all the methods are not implemented yet.
  */
 
@@ -45,8 +45,8 @@ public class GRIDAPoolClientLocal extends GRIDAPoolClient {
 
     @Override
     public String uploadFile(String localFile, String remoteDir, String user) throws GRIDAClientException {
-       gridaClientLocal.uploadFile(localFile, remoteDir);
-       return addOperation(localFile, remoteDir, Type.Upload, user);
+        gridaClientLocal.uploadFile(localFile, remoteDir);
+        return addOperation(localFile, remoteDir, Type.Upload, user);
     }
 
     @Override

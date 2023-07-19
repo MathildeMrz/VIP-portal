@@ -32,7 +32,6 @@
 package fr.insalyon.creatis.vip.api.controller;
 
 import fr.insalyon.creatis.vip.api.exception.ApiException;
-import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.datamanager.client.bean.UserApiKey;
 import fr.insalyon.creatis.vip.datamanager.server.business.ApiKeyBusiness;
@@ -46,11 +45,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/user/externalKeys")
-public class ApiKeyController extends ApiController{
+public class ApiKeyController extends ApiController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -82,31 +80,31 @@ public class ApiKeyController extends ApiController{
         logMethodInvocation(logger, "addOrUpdateApiKey");
         try {
             if (externalPlatformBusiness.listAll().stream()
-                .noneMatch(ep -> ep.getIdentifier()
-                          .equals(keyInfo.storageIdentifier))) {
+                    .noneMatch(ep -> ep.getIdentifier()
+                            .equals(keyInfo.storageIdentifier))) {
                 logger.error("Storage does not exist: {}", keyInfo.storageIdentifier);
                 throw new ApiException(
-                    "Storage does not exist: " + keyInfo.storageIdentifier);
+                        "Storage does not exist: " + keyInfo.storageIdentifier);
             }
 
             apiKeyBusiness.addOrUpdateApiKey(
-                keyInfo.storageIdentifier,
-                currentUser().getEmail(),
-                keyInfo.apiKey);
+                    keyInfo.storageIdentifier,
+                    currentUser().getEmail(),
+                    keyInfo.apiKey);
         } catch (BusinessException e) {
             throw new ApiException(e);
         }
     }
 
     @RequestMapping(value = "/{storageIdentifier}",
-                    method = RequestMethod.DELETE)
+            method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteApiKey(@PathVariable String storageIdentifier)
             throws ApiException {
         logMethodInvocation(logger, "deleteApiKey");
         try {
             apiKeyBusiness.deleteApiKey(
-                storageIdentifier, currentUser().getEmail());
+                    storageIdentifier, currentUser().getEmail());
         } catch (BusinessException e) {
             throw new ApiException(e);
         }

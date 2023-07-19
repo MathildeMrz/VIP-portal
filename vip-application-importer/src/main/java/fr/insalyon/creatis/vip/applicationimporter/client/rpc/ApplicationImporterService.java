@@ -31,17 +31,25 @@
  */
 package fr.insalyon.creatis.vip.applicationimporter.client.rpc;
 
-import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
-import fr.insalyon.creatis.vip.applicationimporter.client.ApplicationImporterException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
+import fr.insalyon.creatis.vip.applicationimporter.client.ApplicationImporterException;
 
 import java.util.List;
 
 public interface ApplicationImporterService extends RemoteService {
 
     public static final String SERVICE_URI = "/applicationimporterservice";
+
+    String readAndValidateBoutiquesFile(String fileLFN) throws ApplicationImporterException;
+
+    void createApplication(BoutiquesApplication bt, String type, String tag, boolean isRunOnGrid, boolean overwriteVersion, String fileAccessProtocol) throws ApplicationImporterException;
+
+    String getApplicationImporterRootFolder() throws ApplicationImporterException;
+
+    List<String> getApplicationImporterRequirements() throws ApplicationImporterException;
 
     public static class Util {
 
@@ -53,12 +61,4 @@ public interface ApplicationImporterService extends RemoteService {
         }
     }
 
-    String readAndValidateBoutiquesFile(String fileLFN) throws ApplicationImporterException;
-
-    void createApplication(BoutiquesApplication bt, String type, String tag, boolean isRunOnGrid, boolean overwriteVersion, String fileAccessProtocol) throws ApplicationImporterException;
-
-    String getApplicationImporterRootFolder() throws ApplicationImporterException;
-    
-    List<String> getApplicationImporterRequirements() throws ApplicationImporterException;
-    
 }

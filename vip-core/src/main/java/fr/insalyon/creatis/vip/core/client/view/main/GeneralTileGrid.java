@@ -31,18 +31,17 @@
  */
 package fr.insalyon.creatis.vip.core.client.view.main;
 
-import com.smartgwt.client.widgets.tab.Tab;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationParser;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationTileRecord;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationsTileGrid;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import fr.insalyon.creatis.vip.core.client.view.user.AccountTab;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class GeneralTileGrid extends ApplicationsTileGrid {
@@ -61,7 +60,7 @@ public class GeneralTileGrid extends ApplicationsTileGrid {
 
         if (applicationName.equals(CoreConstants.APP_ACCOUNT)) {
             Layout.getInstance().addTab(
-                CoreConstants.TAB_ACCOUNT, AccountTab::new);
+                    CoreConstants.TAB_ACCOUNT, AccountTab::new);
             return;
         }
 

@@ -18,35 +18,22 @@ public class ValueRange extends ValueSet {
     protected final List<Float> rangeLimits; // start, step, end
 
     /**
-     * @param value String to convert to float
-     * @return      Float representing value, or null if value is ApplicationConstants.INPUT_WITHOUT_VALUE
-     * @throws NumberFormatException if value is neither ApplicationConstants.INPUT_WITHOUT_VALUE nor a valid
-     *                               representation of a float
-     */
-    public static Float floatValue(String value) throws NumberFormatException{
-        if(value.equals(ApplicationConstants.INPUT_WITHOUT_VALUE)){
-            return null;
-        }
-        return Float.parseFloat(value);
-    }
-
-    /**
      * Populate represented list of values from the range represented by masterForm
      *
-     * @param masterForm        DynamicForm containing range values (Start, Step and End values)
+     * @param masterForm DynamicForm containing range values (Start, Step and End values)
      * @throws RuntimeException if masterForm does not have three non-empty fields with names
      *                          NumberInputLayout.RangeItem.names
      */
-    public ValueRange(DynamicForm masterForm) throws RuntimeException{
+    public ValueRange(DynamicForm masterForm) throws RuntimeException {
         this.rangeLimits = NumberInputLayout.RangeItem.names.stream()
                 .map(masterForm::getField)
                 .filter(Objects::nonNull)
                 .map(item -> NumberInputLayout.valueAsFloat(item.getValue()))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        if(this.rangeLimits.size() < 3){
+        if (this.rangeLimits.size() < 3) {
             throw new RuntimeException("Cannot create value range: please ensure provided form has fields with names "
-                                       + NumberInputLayout.RangeItem.names + " and numeric values.");
+                    + NumberInputLayout.RangeItem.names + " and numeric values.");
         }
         initializeValues();
     }
@@ -55,18 +42,18 @@ public class ValueRange extends ValueSet {
      * Initialized this from start, stop and step values represented as Strings
      *
      * @param start String
-     * @param stop String
-     * @param step String
+     * @param stop  String
+     * @param step  String
      * @throws NumberFormatException if at least one of the values is neither a float nor
-     * ApplicationConstants.INPUT_WITHOUT_VALUE
+     *                               ApplicationConstants.INPUT_WITHOUT_VALUE
      */
-    public ValueRange(String start, String stop, String step) throws NumberFormatException{
+    public ValueRange(String start, String stop, String step) throws NumberFormatException {
         this.rangeLimits = new ArrayList<>();
-        try{
+        try {
             this.rangeLimits.add(floatValue(start));
             this.rangeLimits.add(floatValue(step));
             this.rangeLimits.add(floatValue(stop));
-        } catch (NumberFormatException exception){
+        } catch (NumberFormatException exception) {
             throw new NumberFormatException("At least one of range limits is not a valid representation of a float " +
                     "or of an empty value.</br>" + "Received range limits: " + start + ", " + step + " and " + stop);
         }
@@ -74,11 +61,24 @@ public class ValueRange extends ValueSet {
     }
 
     /**
+     * @param value String to convert to float
+     * @return Float representing value, or null if value is ApplicationConstants.INPUT_WITHOUT_VALUE
+     * @throws NumberFormatException if value is neither ApplicationConstants.INPUT_WITHOUT_VALUE nor a valid
+     *                               representation of a float
+     */
+    public static Float floatValue(String value) throws NumberFormatException {
+        if (value.equals(ApplicationConstants.INPUT_WITHOUT_VALUE)) {
+            return null;
+        }
+        return Float.parseFloat(value);
+    }
+
+    /**
      * Initialize all values from range limits
      */
     private void initializeValues() {
         float previousValue = this.rangeLimits.get(0);
-        while(previousValue <= this.rangeLimits.get(2)){
+        while (previousValue <= this.rangeLimits.get(2)) {
             this.values.add(previousValue);
             this.valuesAsStrings.add(String.valueOf(previousValue));
             previousValue += this.rangeLimits.get(1);
@@ -90,10 +90,10 @@ public class ValueRange extends ValueSet {
 
     /**
      * @param comparedValueSet ValueSet to compare this to
-     * @return                 boolean: true if comparedValueSet represents the same value range as this. Return value
-     *                         is always false if comparedValueSet is not a non-null ValueRange. Return value can be
-     *                         true even if comparedValueSet has a slightly different range end value, as long as all
-     *                         values inside the range are equal to those in this
+     * @return boolean: true if comparedValueSet represents the same value range as this. Return value
+     * is always false if comparedValueSet is not a non-null ValueRange. Return value can be
+     * true even if comparedValueSet has a slightly different range end value, as long as all
+     * values inside the range are equal to those in this
      */
     @Override
     public boolean isEqualTo(ValueSet comparedValueSet) {

@@ -42,7 +42,6 @@ import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
 import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
 import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
 import fr.insalyon.creatis.vip.application.client.view.common.AbstractSimulationTab;
-import fr.insalyon.creatis.vip.application.client.view.launch.LaunchTab;
 import fr.insalyon.creatis.vip.application.client.view.launch.RelaunchService;
 import fr.insalyon.creatis.vip.application.client.view.monitor.ChangeSimulationUserLayout;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
@@ -52,10 +51,10 @@ import fr.insalyon.creatis.vip.core.client.CoreModule;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class SimulationsContextMenu extends Menu {
@@ -69,8 +68,8 @@ public class SimulationsContextMenu extends Menu {
     private String simulationUser;
 
     public SimulationsContextMenu(ModalWindow modal, final String simulationID,
-            final String title, final SimulationStatus status, String applicationName,
-            String applicationVersion, String applicationClass, String simulationUser) {
+                                  final String title, final SimulationStatus status, String applicationName,
+                                  String applicationVersion, String applicationClass, String simulationUser) {
 
         this.modal = modal;
         this.simulationID = simulationID;
@@ -90,8 +89,8 @@ public class SimulationsContextMenu extends Menu {
             @Override
             public void onClick(MenuItemClickEvent event) {
                 Layout.getInstance().addTab(
-                    AbstractSimulationTab.tabIdFrom(simulationID),
-                    () -> new SimulationTab(simulationID, title, status));
+                        AbstractSimulationTab.tabIdFrom(simulationID),
+                        () -> new SimulationTab(simulationID, title, status));
             }
         });
 
@@ -318,7 +317,7 @@ public class SimulationsContextMenu extends Menu {
             public void onSuccess(final Map<String, String> result) {
                 modal.hide();
                 String tabId =
-                    ApplicationConstants.getLaunchTabID(applicationName);
+                        ApplicationConstants.getLaunchTabID(applicationName);
                 Layout.getInstance().removeTab(tabId);
                 RelaunchService.getInstance().relaunch(
                         applicationName, applicationVersion, applicationClass, simulationName, result, tabId);

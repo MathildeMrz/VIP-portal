@@ -33,22 +33,12 @@ package fr.insalyon.creatis.vip.application.server.business.simulation.parser;
 
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.datamanager.client.view.DataManagerException;
-import fr.insalyon.creatis.vip.datamanager.server.DataManagerUtil;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -56,9 +46,16 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Parse a m2 input file.
- *
+ * <p>
  * This stores data in fields and this is not threadsafe. So it cannot be used
  * as a spring singleton and this needs prototype scope.
  *
@@ -78,15 +75,15 @@ public class InputM2Parser extends DefaultHandler {
 
     private LfcPathsBusiness lfcPathsBusiness;
 
-    @Autowired
-    public final void setLfcPathsBusiness(LfcPathsBusiness lfcPathsBusiness) {
-        this.lfcPathsBusiness = lfcPathsBusiness;
-    }
-
     public InputM2Parser(String currentUserFolder) {
         this.inputs = new HashMap<String, String>();
         this.parsingItem = false;
         this.currentUserFolder = currentUserFolder;
+    }
+
+    @Autowired
+    public final void setLfcPathsBusiness(LfcPathsBusiness lfcPathsBusiness) {
+        this.lfcPathsBusiness = lfcPathsBusiness;
     }
 
     public Map<String, String> parse(String fileName)
@@ -107,7 +104,7 @@ public class InputM2Parser extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName,
-            Attributes attributes) throws SAXException {
+                             Attributes attributes) throws SAXException {
 
         if (localName.equals("source")) {
 
@@ -176,7 +173,7 @@ public class InputM2Parser extends DefaultHandler {
                         }
                         try {
                             v = lfcPathsBusiness.parseRealDir(
-                                v, currentUserFolder);
+                                    v, currentUserFolder);
                         } catch (DataManagerException ex) {
                             // do nothing
                         }

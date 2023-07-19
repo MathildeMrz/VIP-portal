@@ -45,7 +45,6 @@ import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public abstract class AbstractSimulationTab extends Tab {
@@ -114,6 +113,10 @@ public abstract class AbstractSimulationTab extends Tab {
         });
     }
 
+    public static String tabIdFrom(String simulationId) {
+        return simulationId.replaceAll("[ -]", "_").toLowerCase() + "_tab";
+    }
+
     protected void updateData() {
         ((AbstractCornerTab) tabSet.getSelectedTab()).update();
     }
@@ -122,9 +125,5 @@ public abstract class AbstractSimulationTab extends Tab {
         if (!completed) {
             timer.cancel();
         }
-    }
-
-    public static String tabIdFrom(String simulationId) {
-        return simulationId.replaceAll("[ -]", "_").toLowerCase() + "_tab";
     }
 }

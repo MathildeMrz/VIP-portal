@@ -40,6 +40,7 @@ import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.client.view.CoreException;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
+import fr.insalyon.creatis.vip.core.server.dao.DAOException;
 import fr.insalyon.creatis.vip.core.server.rpc.AbstractRemoteServiceServlet;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
@@ -51,7 +52,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class ApplicationServiceImpl extends AbstractRemoteServiceServlet implements ApplicationService {
@@ -127,7 +127,7 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
             } else {
                 trace(logger, "Removing classes from application '" + name + "'.");
                 applicationBusiness.remove(
-                    getSessionUser().getEmail(), name);
+                        getSessionUser().getEmail(), name);
             }
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
@@ -173,7 +173,7 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
             if (isSystemAdministrator() || isGroupAdministrator()) {
                 trace(logger, "Removing application '" + applicationName + "'.");
                 applicationBusiness.removeVersion(
-                    applicationName, version);
+                        applicationName, version);
             } else {
                 logger.error("Unauthorized to remove version {}/{}",
                         applicationName, version);
@@ -190,7 +190,7 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
             if (isSystemAdministrator() || isGroupAdministrator()) {
                 trace(logger, "Publishing version " + version + "' ('" + applicationName + "').");
                 return boutiquesBusiness.publishVersion(
-                    getSessionUser(), applicationName, version);
+                        getSessionUser(), applicationName, version);
             } else {
                 logger.error("Unauthorized to publish version {}/{}",
                         applicationName, version);
@@ -217,9 +217,9 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
                 return applicationBusiness.getApplications();
             } else if (isDeveloper()) {
                 return applicationBusiness.getApplicationsWithOwner(getSessionUser().getEmail());
-            }  else if (isGroupAdministrator()) {
+            } else if (isGroupAdministrator()) {
                 List<String> classes = classBusiness.getUserClassesName(
-                    getSessionUser().getEmail(), true);
+                        getSessionUser().getEmail(), true);
                 return applicationBusiness.getApplications(classes);
             }
             List<AppClass> classes = classBusiness.getUserClasses(
@@ -244,7 +244,7 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
     public List<String[]> getApplicationsByClass(String applicationClass) throws ApplicationException {
         try {
             return applicationBusiness.getApplications(
-                applicationClass);
+                    applicationClass);
         } catch (BusinessException ex) {
             throw new ApplicationException(ex);
         }
@@ -290,7 +290,7 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
                 return classBusiness.getClasses();
             }
             return classBusiness.getUserClasses(
-                getSessionUser().getEmail(), false);
+                    getSessionUser().getEmail(), false);
         } catch (BusinessException | CoreException ex) {
             throw new ApplicationException(ex);
         }
@@ -304,20 +304,20 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
             if (isSystemAdministrator()) {
                 List<String> classes = classBusiness.getClassesName();
                 return new List[]{
-                    configurationBusiness.getUserNames(
-                        user.getEmail(), false),
-                    applicationBusiness.getApplicationNames(),
-                    classes
+                        configurationBusiness.getUserNames(
+                                user.getEmail(), false),
+                        applicationBusiness.getApplicationNames(),
+                        classes
                 };
             } else {
                 List<String> classes = classBusiness.getUserClassesName(
-                    user.getEmail(), !user.isSystemAdministrator());
+                        user.getEmail(), !user.isSystemAdministrator());
                 classes.removeAll(reservedClasses);
-                return new List[] {
-                    configurationBusiness.getUserNames(
-                        user.getEmail(), true),
-                    applicationBusiness.getApplicationNames(classes),
-                    classes
+                return new List[]{
+                        configurationBusiness.getUserNames(
+                                user.getEmail(), true),
+                        applicationBusiness.getApplicationNames(classes),
+                        classes
                 };
             }
         } catch (BusinessException | CoreException ex) {
@@ -349,14 +349,14 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
     public String getCitation(String applicationName) throws ApplicationException {
         try {
             String citationWithoutHtml = Jsoup
-                .parse(applicationBusiness.getCitation(
-                           applicationName))
-                .text();
+                    .parse(applicationBusiness.getCitation(
+                            applicationName))
+                    .text();
             if (citationWithoutHtml.isEmpty() || citationWithoutHtml == null) {
                 return null;
             } else {
                 return applicationBusiness.getCitation(
-                    applicationName);
+                        applicationName);
             }
         } catch (BusinessException ex) {
             throw new ApplicationException(ex);
@@ -400,7 +400,7 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
             authenticateSystemAdministrator(logger);
             trace(logger, "Removing engine '" + engineName + "'.");
             engineBusiness.remove(engineName);
-        } catch (BusinessException | CoreException ex) {
+        } catch (BusinessException | CoreException | DAOException ex) {
             throw new ApplicationException(ex);
         }
     }
@@ -417,7 +417,7 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
 
     @Override
     public HashMap<String, Integer> getReservedClasses()
-        throws ApplicationException {
+            throws ApplicationException {
         return server.getReservedClasses();
     }
 
@@ -425,7 +425,7 @@ public class ApplicationServiceImpl extends AbstractRemoteServiceServlet impleme
     public AppVersion getVersion(String applicationName, String applicationVersion) throws ApplicationException {
         try {
             return applicationBusiness.getVersion(
-                applicationName, applicationVersion);
+                    applicationName, applicationVersion);
         } catch (BusinessException ex) {
             throw new ApplicationException(ex);
         }

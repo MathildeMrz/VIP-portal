@@ -1,14 +1,10 @@
 package fr.insalyon.creatis.vip.integrationtest;
 
-import fr.insalyon.creatis.vip.application.client.bean.*;
+import fr.insalyon.creatis.vip.application.client.bean.Descriptor;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
 import fr.insalyon.creatis.vip.application.server.business.ApplicationBusiness;
-import fr.insalyon.creatis.vip.application.server.business.ClassBusiness;
-import fr.insalyon.creatis.vip.application.server.business.EngineBusiness;
 import fr.insalyon.creatis.vip.application.server.business.WorkflowBusiness;
-import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
-import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.server.SpringCoreConfig;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
@@ -35,25 +31,23 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Automatic test class that verifies a local configuration and do some
  * tests validating it can run executions.
- *
+ * <p>
  * The local instance location must be configured through the "vipConfigFolder"
  * property in the "$HOME/.vip/local-config-folder.properties" file. It must
  * include a single line "vipConfigFolder = /path/to/vip/local/folder"
- *
+ * <p>
  * The selected folder needs to include the two mandatory files "vip.conf" and
  * "vip-api.conf", and also a third "vip-local.conf" for local test
  * configuration purposes. A archive containing these three files with
  * valid content for local test is available in "src/main/resources/local-config.zip"
- *
+ * <p>
  * Theses tests are disabled because they are not meant to be run in a classic
  * build lifecycle. They are meant to validate a specific local vip
  * installation or to be adapted to add more content in a local vip.
- *
  */
 @SpringJUnitWebConfig(value = SpringCoreConfig.class)
 @ActiveProfiles({"local", "config-file", "local-db"})
@@ -62,6 +56,8 @@ import java.util.concurrent.TimeUnit;
 @TestMethodOrder(OrderAnnotation.class)
 public class VipLocalConfigurationIT {
 
+    // test application data
+    public final Integer TEST_APP_TIMEOUT_IN_SECONDS = 30;
     @Autowired
     private ApplicationBusiness applicationBusiness;
     @Autowired
@@ -76,7 +72,6 @@ public class VipLocalConfigurationIT {
     private DataManagerBusiness dataManagerBusiness;
     @Autowired
     private Server server;
-
     @Value("${local.data.class.name:localClass}")
     private String className;
     @Value("${local.data.application.name}")
@@ -91,10 +86,6 @@ public class VipLocalConfigurationIT {
     private String applicationTextParameter;
     @Value("${local.data.application.output}")
     private String applicationOutput;
-
-    // test application data
-    public final Integer TEST_APP_TIMEOUT_IN_SECONDS = 30;
-
 
     @Test
     @Order(1)
@@ -193,7 +184,7 @@ public class VipLocalConfigurationIT {
         String inputFileName = Paths.get(applicationInputFileLocation).getFileName().toString();
 
         Map<String, String> inputs = new HashMap<>();
-        inputs.put(applicationTextParameter, text );
+        inputs.put(applicationTextParameter, text);
         inputs.put(applicationFileParameter, "/vip/Home/" + inputFileName);
         inputs.put("results-directory", resulFoldertLFN);
         return inputs;
@@ -220,7 +211,7 @@ public class VipLocalConfigurationIT {
     }
 
     private void waitForExecutionToFinish(String simulationID) throws BusinessException, InterruptedException {
-        while (workflowBusiness.getSimulation(simulationID, true).getStatus().equals(SimulationStatus.Running)){
+        while (workflowBusiness.getSimulation(simulationID, true).getStatus().equals(SimulationStatus.Running)) {
             // wait a little
             Thread.sleep(500);
         }

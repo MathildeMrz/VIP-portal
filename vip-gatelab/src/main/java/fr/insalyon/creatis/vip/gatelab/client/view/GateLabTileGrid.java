@@ -32,18 +32,17 @@
 package fr.insalyon.creatis.vip.gatelab.client.view;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.widgets.tab.Tab;
 import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
 import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationsTileGrid;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import fr.insalyon.creatis.vip.gatelab.client.GateLabConstants;
 import fr.insalyon.creatis.vip.gatelab.client.view.launch.GateLabLaunchTab;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class GateLabTileGrid extends ApplicationsTileGrid {
@@ -79,14 +78,14 @@ public class GateLabTileGrid extends ApplicationsTileGrid {
 
     @Override
     public void parse(
-        final String applicationName, final String applicationVersion) {
+            final String applicationName, final String applicationVersion) {
 
         String appName = applicationVersion == null ? applicationName : applicationName + " " + applicationVersion;
         if (applicationNames.contains(appName)) {
             Layout.getInstance().addTab(
-                ApplicationConstants.getLaunchTabID(applicationName),
-                () -> new GateLabLaunchTab(
-                    applicationName, applicationVersion, tileName));
+                    ApplicationConstants.getLaunchTabID(applicationName),
+                    () -> new GateLabLaunchTab(
+                            applicationName, applicationVersion, tileName));
         }
     }
 }

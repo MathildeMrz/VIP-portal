@@ -31,12 +31,10 @@
  */
 package fr.insalyon.creatis.vip.docs.client.view;
 
-import com.smartgwt.client.widgets.tab.Tab;
 import fr.insalyon.creatis.vip.core.client.view.application.ApplicationParser;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class DocsParser extends ApplicationParser {
@@ -53,12 +51,12 @@ public class DocsParser extends ApplicationParser {
 
         if (applicationName.equals(DocsConstants.APP_DOCUMENTATION)) {
             Layout.getInstance().addTab(
-                DocsConstants.TAB_DOCUMENTATION, DocumentationTab::new);
+                    DocsConstants.TAB_DOCUMENTATION, DocumentationTab::new);
             return true;
 
         } else if (applicationName.equals(DocsConstants.APP_GALLERY)) {
             Layout.getInstance().addTab(
-                DocsConstants.TAB_GALLERY, GalleryTab::new);
+                    DocsConstants.TAB_GALLERY, GalleryTab::new);
             return true;
         }
         return false;

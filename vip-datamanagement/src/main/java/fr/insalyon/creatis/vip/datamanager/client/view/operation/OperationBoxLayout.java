@@ -4,16 +4,16 @@
  * This software is a web portal for pipeline execution on distributed systems.
  *
  * This software is governed by the CeCILL-B license under French law and
- * abiding by the rules of distribution of free software.  You can  use, 
+ * abiding by the rules of distribution of free software.  You can  use,
  * modify and/ or redistribute the software under the terms of the CeCILL-B
  * license as circulated by CEA, CNRS and INRIA at the following URL
- * "http://www.cecill.info". 
+ * "http://www.cecill.info".
  *
  * As a counterpart to the access to the source code and  rights to copy,
  * modify and redistribute granted by the license, users are provided only
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
- * liability. 
+ * liability.
  *
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
@@ -22,9 +22,9 @@
  * therefore means  that it is reserved for developers  and  experienced
  * professionals having in-depth computer knowledge. Users are therefore
  * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or 
- * data to be ensured and,  more generally, to use and operate it in the 
- * same conditions as regards security. 
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
  *
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-B license and that you accept its terms.
@@ -54,8 +54,10 @@ import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation.Type;
 import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
 import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class OperationBoxLayout extends HLayout {
@@ -65,6 +67,7 @@ public class OperationBoxLayout extends HLayout {
     private VLayout imgLayout;
     private VLayout mainLayout;
     private VLayout actionLayout;
+    private AsyncCallback<Void> callback;
 
     public OperationBoxLayout(PoolOperation operation) {
 
@@ -103,6 +106,12 @@ public class OperationBoxLayout extends HLayout {
         };
         setTimer();
     }
+
+    public OperationBoxLayout(PoolOperation operation, final AsyncCallback<Void> callback) {
+        this(operation);
+        this.callback = callback;
+    }
+
 
     /**
      * Configures the image layout.
@@ -152,7 +161,7 @@ public class OperationBoxLayout extends HLayout {
         if (operation.getStatus() == Status.Queued || operation.getStatus() == Status.Rescheduled) {
             Label waitingLabel = new Label(
                     "<font color=\"#D9D509\">Waiting</font> <font color=\"#666666\">- "
-                    + operation.getParsedRegistration() + "</font>");
+                            + operation.getParsedRegistration() + "</font>");
             waitingLabel.setHeight(15);
             mainLayout.addMember(waitingLabel);
 
@@ -160,7 +169,7 @@ public class OperationBoxLayout extends HLayout {
             if (operation.getType() == Type.Upload) {
                 Label completedLabel = new Label(
                         "<font color=\"#666666\">Uploaded - "
-                        + operation.getParsedRegistration() + "</font>");
+                                + operation.getParsedRegistration() + "</font>");
                 completedLabel.setHeight(15);
                 mainLayout.addMember(completedLabel);
 
@@ -193,7 +202,7 @@ public class OperationBoxLayout extends HLayout {
         } else if (operation.getStatus() == Status.Failed) {
             Label failedLabel = new Label(
                     "<font color=\"#BF153F\">Failed</font> <font color=\"#666666\">- "
-                    + operation.getParsedRegistration() + "</font>");
+                            + operation.getParsedRegistration() + "</font>");
             failedLabel.setHeight(15);
             mainLayout.addMember(failedLabel);
 
@@ -206,7 +215,7 @@ public class OperationBoxLayout extends HLayout {
                 String text = operation.getType() == Type.Upload ? "Uploading" : "Downloading";
                 Label textLabel = new Label(
                         "<font color=\"#1B9406\">" + text + "</font> <font color=\"#666666\">- "
-                        + operation.getParsedRegistration() + "</font>");
+                                + operation.getParsedRegistration() + "</font>");
                 textLabel.setHeight(15);
                 mainLayout.addMember(textLabel);
             }
@@ -275,11 +284,15 @@ public class OperationBoxLayout extends HLayout {
 
                 if (operation.getStatus() == Status.Done
                         || operation.getStatus() == Status.Failed) {
-
                     timer.cancel();
-
                 } else {
                     setTimer();
+                }
+
+                if (operation.getStatus() == Status.Done) {
+                    if (callback != null) {
+                        callback.onSuccess(null);
+                    }
                 }
             }
         };

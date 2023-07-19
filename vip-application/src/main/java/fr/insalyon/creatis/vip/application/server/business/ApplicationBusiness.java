@@ -46,11 +46,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Service
@@ -91,9 +93,9 @@ public class ApplicationBusiness {
     public List<Application> getPublicApplicationsWithGroups() throws BusinessException {
 
         try {
-            Map<String,AppClass> allClasses = classDAO.getClasses().stream().collect(Collectors.toMap(
-                        AppClass::getName, appClass -> appClass));
-            Map<String,Group> allGroups = groupDAO.getGroups().stream().collect(Collectors.toMap(
+            Map<String, AppClass> allClasses = classDAO.getClasses().stream().collect(Collectors.toMap(
+                    AppClass::getName, appClass -> appClass));
+            Map<String, Group> allGroups = groupDAO.getGroups().stream().collect(Collectors.toMap(
                     Group::getName, group -> group));
             Set<String> allVisibleApplicationNames = applicationDAO.getAllVisibleVersions().stream()
                     .map(AppVersion::getApplicationName).collect(Collectors.toSet());
@@ -111,13 +113,20 @@ public class ApplicationBusiness {
                         .map(group -> group.getName())
                         .collect(Collectors.toSet());
 
-                if (currentAppPublicGroups.isEmpty()){
+
+                List<String> publicClasses = application.getApplicationClasses().stream()
+                        .filter(className -> allClasses.get(className).getGroups().stream()
+                                .map(groupName -> allGroups.get(groupName))
+                                .anyMatch(Group::isPublicGroup))
+                        .collect(Collectors.toList());
+
+                if (currentAppPublicGroups.isEmpty() || publicClasses.isEmpty()){
                     continue;
                 }
 
                 applicationsWithGroups.add(new Application(
                         application.getName(),
-                        application.getApplicationClasses(),
+                        publicClasses,
                         application.getOwner(),
                         application.getFullName(),
                         application.getCitation(),
@@ -137,7 +146,7 @@ public class ApplicationBusiness {
                 throw new BusinessException("Wrong application name");
             }
             // need to fetch all the groups to get their properties
-            Map<String,Group> allGroups = groupDAO.getGroups().stream().collect(
+            Map<String, Group> allGroups = groupDAO.getGroups().stream().collect(
                     Collectors.toMap(Group::getName, group -> group));
             List<Group> appGroups = new ArrayList<>();
             for (String className : application.getApplicationClasses()) {

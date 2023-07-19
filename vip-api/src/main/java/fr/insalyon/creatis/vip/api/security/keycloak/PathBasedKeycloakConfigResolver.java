@@ -16,7 +16,6 @@ import java.io.InputStream;
 
 /**
  * @author khalilKes keycloak path resolver to allow external keycloak.json
- *
  */
 @Configuration
 public class PathBasedKeycloakConfigResolver implements KeycloakConfigResolver {
@@ -34,9 +33,9 @@ public class PathBasedKeycloakConfigResolver implements KeycloakConfigResolver {
             return deployment;
         }
 
-        try(InputStream is = new FileInputStream( vipConfigFolder.getFile().getAbsoluteFile() + "/keycloak.json")){
+        try (InputStream is = new FileInputStream(vipConfigFolder.getFile().getAbsoluteFile() + "/keycloak.json")) {
             deployment = KeycloakDeploymentBuilder.build(is);
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error(e.getMessage());
             throw new RuntimeException("keycloak.json file exception");
 

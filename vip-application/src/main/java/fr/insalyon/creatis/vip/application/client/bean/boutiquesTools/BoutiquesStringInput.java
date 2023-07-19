@@ -34,7 +34,7 @@ public class BoutiquesStringInput extends BoutiquesInput {
     public BoutiquesStringInput(String id, String name, String description, InputType type, boolean isOptional,
                                 Set<String> disablesInputsId, Set<String> requiresInputsId,
                                 Set<String> possibleValues, Map<String, Set<String>> valueDisablesInputsId,
-                                Map<String, Set<String>> valueRequiresInputsId, String defaultValue) throws RuntimeException{
+                                Map<String, Set<String>> valueRequiresInputsId, String defaultValue) throws RuntimeException {
         super(id, name, description, type, isOptional, disablesInputsId, requiresInputsId, possibleValues,
                 valueDisablesInputsId, valueRequiresInputsId);
         this.defaultValue = defaultValue;

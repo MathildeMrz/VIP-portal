@@ -4,11 +4,12 @@
 # documentation.
 env:
   PRE_BUILD_COMMAND: git config --global --add safe.directory /github/workspace
-  
+
 name: code_quality_pmd
 
 on:
   push:
+
     branches: [ "master" ]
    
   pull_request:
@@ -16,14 +17,16 @@ on:
 
 permissions:
   contents: read
-  
+
 jobs:
 
   ##########################################################################################################################################################################################
   ################################################################################# Quality code analysis ##################################################################################
   ##########################################################################################################################################################################################
 
+
    pmd-code-scan: 
+
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
@@ -31,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    
+
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:

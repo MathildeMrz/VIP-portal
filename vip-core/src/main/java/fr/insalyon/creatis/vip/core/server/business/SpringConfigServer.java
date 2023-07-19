@@ -39,28 +39,6 @@ import java.util.stream.Stream;
 public class SpringConfigServer implements Server {
 
     private final Logger logger = LoggerFactory.getLogger(SamlTokenValidator.class);
-
-    /**
-     * using apache config to have a reloadable config file
-     * from https://www.baeldung.com/spring-reloading-properties
-     */
-    public static class ReloadablePropertySource extends PropertySource {
-
-        private PropertiesConfiguration propertiesConfiguration;
-
-        public ReloadablePropertySource(String name, File configFile)
-                throws ConfigurationException {
-            super(name);
-            this.propertiesConfiguration = new PropertiesConfiguration(configFile);
-            this.propertiesConfiguration.setReloadingStrategy(new FileChangedReloadingStrategy());
-        }
-
-        @Override
-        public Object getProperty(String s) {
-            return propertiesConfiguration.getProperty(s);
-        }
-    }
-
     private Environment env;
     private File vipConfigFolder;
     private File proxyFolder;
@@ -70,8 +48,7 @@ public class SpringConfigServer implements Server {
             Resource vipConfigFolder,
             ConfigurableEnvironment env) throws IOException, ConfigurationException {
         File configFile = vipConfigFolder.getFile().toPath().resolve(Server.CONF_FILE).toFile();
-
-        if( ! configFile.exists()) {
+        if (!configFile.exists()) {
             throw new FileNotFoundException(configFile.toString());
         }
 
@@ -84,8 +61,8 @@ public class SpringConfigServer implements Server {
     }
 
     private void createFolderIfNeeded(File folder) {
-        if ( ! folder.exists() &&
-                ! folder.mkdir()) {
+        if (!folder.exists() &&
+                !folder.mkdir()) {
             logger.error("Cannot create VIP config folder : {}", folder);
             throw new BeanInitializationException("Cannot create VIP config folder");
         }
@@ -178,7 +155,6 @@ public class SpringConfigServer implements Server {
             Assert.notNull(env.getProperty(property, type), property + " should not be empty");
         }
     }
-
 
     @Override
     public String getConfigurationFolder() {
@@ -355,13 +331,13 @@ public class SpringConfigServer implements Server {
     @Override
     public String getSamlTrustedCertificate(String issuer) {
         logger.info("Getting trusted certificate for issuer {}", issuer);
-        return env.getRequiredProperty(CoreConstants.SAML_TRUSTED_CERTIFICATE+"."+issuer);
+        return env.getRequiredProperty(CoreConstants.SAML_TRUSTED_CERTIFICATE + "." + issuer);
     }
 
     @Override
     public String getSAMLDefaultGroup(String issuer) {
-        logger.info("Getting default group for issuer "+issuer);
-        return env.getRequiredProperty(CoreConstants.SAML_DEFAULT_GROUP +"."+issuer);
+        logger.info("Getting default group for issuer " + issuer);
+        return env.getRequiredProperty(CoreConstants.SAML_DEFAULT_GROUP + "." + issuer);
     }
 
     @Override
@@ -383,15 +359,15 @@ public class SpringConfigServer implements Server {
     public HashMap<String, Integer> getReservedClasses() {
         HashMap<String, Integer> reservedClasses = new HashMap<>();
         Stream.of(
-                env.getRequiredProperty(
-                        CoreConstants.APPLET_GATELAB_CLASSES,
-                        String[].class))
-                .forEach(className -> reservedClasses.put(className,0));
+                        env.getRequiredProperty(
+                                CoreConstants.APPLET_GATELAB_CLASSES,
+                                String[].class))
+                .forEach(className -> reservedClasses.put(className, 0));
         Stream.of(
-                env.getRequiredProperty(
-                        CoreConstants.APPLET_GATELABTEST_CLASSES,
-                        String[].class))
-                .forEach(className -> reservedClasses.put(className,0));
+                        env.getRequiredProperty(
+                                CoreConstants.APPLET_GATELABTEST_CLASSES,
+                                String[].class))
+                .forEach(className -> reservedClasses.put(className, 0));
         return reservedClasses;
     }
 
@@ -428,6 +404,32 @@ public class SpringConfigServer implements Server {
     @Override
     public boolean useLocalFilesInInputs() {
         return env.getProperty(CoreConstants.USE_LOCAL_FILES_AS_INPUTS, Boolean.class, false);
+    }
+
+    /**
+     * using apache config to have a reloadable config file
+     * from https://www.baeldung.com/spring-reloading-properties
+     */
+    public static class ReloadablePropertySource extends PropertySource {
+
+        private PropertiesConfiguration propertiesConfiguration;
+
+        public ReloadablePropertySource(String name, File configFile)
+                throws ConfigurationException {
+            super(name);
+            this.propertiesConfiguration = new PropertiesConfiguration(configFile);
+            this.propertiesConfiguration.setReloadingStrategy(new FileChangedReloadingStrategy());
+        }
+
+        @Override
+        public Object getProperty(String s) {
+            return propertiesConfiguration.getProperty(s);
+        }
+
+    }
+    @Override
+    public int getApiParallelDownloadNb() {
+        return env.getProperty(CoreConstants.API_PARALLEL_DOWNLOAD_NB, Integer.class, 20);
     }
 
 

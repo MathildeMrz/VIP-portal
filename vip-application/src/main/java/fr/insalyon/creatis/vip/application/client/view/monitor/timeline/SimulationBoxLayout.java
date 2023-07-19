@@ -45,11 +45,9 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.tab.Tab;
 import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
 import fr.insalyon.creatis.vip.application.client.bean.Simulation;
 import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
-import fr.insalyon.creatis.vip.application.client.view.launch.LaunchTab;
 import fr.insalyon.creatis.vip.application.client.view.common.AbstractSimulationTab;
 import fr.insalyon.creatis.vip.application.client.view.launch.RelaunchService;
 import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
@@ -58,11 +56,11 @@ import fr.insalyon.creatis.vip.core.client.CoreModule;
 import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
 import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
 import java.util.Date;
 import java.util.Map;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 public class SimulationBoxLayout extends HLayout {
@@ -74,16 +72,16 @@ public class SimulationBoxLayout extends HLayout {
     protected String applicationClass;
     protected SimulationStatus simulationStatus;
     protected Date launchedDate;
+    protected VLayout mainLayout;
+    protected HandlerRegistration handler;
     private Img img;
     private Label nameLabel;
     private Label actionButton;
     private Timer timer;
-    protected VLayout mainLayout;
-    protected HandlerRegistration handler;
 
     public SimulationBoxLayout(String id, String name, String applicationName,
-            String applicationVersion, String applicationClass, String user,
-            SimulationStatus status, Date launchedDate) {
+                               String applicationVersion, String applicationClass, String user,
+                               SimulationStatus status, Date launchedDate) {
 
         this.simulationID = id;
         this.simulationName = name;
@@ -132,9 +130,9 @@ public class SimulationBoxLayout extends HLayout {
             @Override
             public void onClick(ClickEvent event) {
                 Layout.getInstance().addTab(
-                    AbstractSimulationTab.tabIdFrom(simulationID),
-                    () -> new SimulationTab(
-                        simulationID, simulationName, simulationStatus));
+                        AbstractSimulationTab.tabIdFrom(simulationID),
+                        () -> new SimulationTab(
+                                simulationID, simulationName, simulationStatus));
             }
         });
         this.addMember(mainLayout);
@@ -145,11 +143,11 @@ public class SimulationBoxLayout extends HLayout {
         buttonsLayout.addMember(actionButton);
         buttonsLayout.addMember(WidgetUtil.getIconLabel(ApplicationConstants.ICON_MONITOR_RELAUNCH,
                 "Relaunch simulation", 16, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                relaunchSimulation();
-            }
-        }));
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        relaunchSimulation();
+                    }
+                }));
         this.addMember(buttonsLayout);
     }
 

@@ -33,14 +33,17 @@ package fr.insalyon.creatis.vip.visualization.client.bean;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-/** @author Tristan Glatard */
-public class VisualizationItem implements IsSerializable{
+/**
+ * @author Tristan Glatard
+ */
+public class VisualizationItem implements IsSerializable {
     private String lfn;
 
     // Extension of raw file if url is a mhd file.  Empty string otherwise.
     private String extension;
 
-    public VisualizationItem() {}
+    public VisualizationItem() {
+    }
 
     public VisualizationItem(String lfn, String extension) {
         this.lfn = lfn;

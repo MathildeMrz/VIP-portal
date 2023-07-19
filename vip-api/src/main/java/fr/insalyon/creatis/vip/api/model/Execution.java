@@ -31,11 +31,12 @@
  */
 package fr.insalyon.creatis.vip.api.model;
 
-import java.util.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- *
  * @author Tristan Glatard
  */
 public class Execution {
@@ -139,7 +140,7 @@ public class Execution {
         return returnedFiles;
     }
 
-    public void setReturnedFiles(Map<String, List<java.lang.Object>>  returnedFiles) {
+    public void setReturnedFiles(Map<String, List<java.lang.Object>> returnedFiles) {
         this.returnedFiles = returnedFiles;
     }
 

@@ -9,7 +9,7 @@ import java.util.Set;
  * @author Guillaume Vanel
  * @version %I%, %G%
  */
-public class BoutiquesNumberInput extends BoutiquesInput{
+public class BoutiquesNumberInput extends BoutiquesInput {
     private Double defaultValue;
     private boolean isInteger;
     private boolean isExclusiveMaximum;
@@ -45,7 +45,7 @@ public class BoutiquesNumberInput extends BoutiquesInput{
                                 Set<String> possibleValues, Map<String, Set<String>> valueDisablesInputsId,
                                 Map<String, Set<String>> valueRequiresInputsId, Double defaultValue,
                                 boolean isInteger, boolean isExclusiveMaximum, boolean isExclusiveMinimum,
-                                Double maximum, Double minimum) throws RuntimeException{
+                                Double maximum, Double minimum) throws RuntimeException {
         super(id, name, description, InputType.NUMBER, isOptional, disablesInputsId, requiresInputsId, possibleValues,
                 valueDisablesInputsId, valueRequiresInputsId);
         this.defaultValue = defaultValue;

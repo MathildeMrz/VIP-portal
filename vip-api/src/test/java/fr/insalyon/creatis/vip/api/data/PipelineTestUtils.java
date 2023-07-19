@@ -31,24 +31,28 @@
  */
 package fr.insalyon.creatis.vip.api.data;
 
-import fr.insalyon.creatis.vip.api.model.*;
+import fr.insalyon.creatis.vip.api.model.ParameterType;
+import fr.insalyon.creatis.vip.api.model.Pipeline;
+import fr.insalyon.creatis.vip.api.model.PipelineParameter;
 import fr.insalyon.creatis.vip.api.tools.spring.JsonCustomObjectMatcher;
-import fr.insalyon.creatis.vip.application.client.bean.*;
+import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
 import fr.insalyon.creatis.vip.application.client.bean.Application;
+import fr.insalyon.creatis.vip.application.client.bean.Descriptor;
+import fr.insalyon.creatis.vip.application.client.bean.Source;
 import org.hamcrest.Matcher;
 
-import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.*;
+import java.util.function.Function;
 
 /**
  * Created by abonnet on 8/3/16.
  */
 public class PipelineTestUtils {
 
-    public static final Map<String,Function> pipelineSuppliers;
-    public static final Map<String,Function> pipelineParameterSuppliers;
+    public static final Map<String, Function> pipelineSuppliers;
+    public static final Map<String, Function> pipelineParameterSuppliers;
 
     // sourceParamx and pipelineParamx must be the same
 
@@ -69,8 +73,8 @@ public class PipelineTestUtils {
         pipelineParam2 = new PipelineParameter(sourceParam2.getName(), ParameterType.File,
                 false, false, sourceParam2.getDefaultValue(), sourceParam2.getDescription());
 
-        paramPairs = new Entry[] {new SimpleEntry(sourceParam1, pipelineParam1),
-            new SimpleEntry(sourceParam2, pipelineParam2)};
+        paramPairs = new Entry[]{new SimpleEntry(sourceParam1, pipelineParam1),
+                new SimpleEntry(sourceParam2, pipelineParam2)};
 
 
         pipelineSuppliers = getPipelineSuppliers();
@@ -99,7 +103,7 @@ public class PipelineTestUtils {
         return pipeline;
     }
 
-    public static Map<String,Function> getPipelineSuppliers() {
+    public static Map<String, Function> getPipelineSuppliers() {
         return JsonCustomObjectMatcher.formatSuppliers(
                 Arrays.asList("identifier", "name", "version", "description", "canExecute", "parameters"),
                 Pipeline::getIdentifier,
@@ -110,7 +114,7 @@ public class PipelineTestUtils {
                 Pipeline::getParameters);
     }
 
-    public static Map<String,Function> getPipelineParameterSuppliers() {
+    public static Map<String, Function> getPipelineParameterSuppliers() {
         return JsonCustomObjectMatcher.formatSuppliers(
                 Arrays.asList("name", "type", "isOptional", "isReturnedValue", "defaultValue", "description"),
                 PipelineParameter::getName,
@@ -121,7 +125,7 @@ public class PipelineTestUtils {
                 PipelineParameter::getDescription);
     }
 
-    public static Matcher<Map<String,?>> jsonCorrespondsToPipeline(Pipeline pipeline) {
+    public static Matcher<Map<String, ?>> jsonCorrespondsToPipeline(Pipeline pipeline) {
         Map<Class, Map<String, Function>> suppliersRegistry = new HashMap<>();
         suppliersRegistry.put(PipelineParameter.class, pipelineParameterSuppliers);
         return JsonCustomObjectMatcher.jsonCorrespondsTo(pipeline, pipelineSuppliers, suppliersRegistry);

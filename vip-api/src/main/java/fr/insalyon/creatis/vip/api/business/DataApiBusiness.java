@@ -40,6 +40,7 @@ import fr.insalyon.creatis.vip.api.model.UploadDataType;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.business.Server;
 import fr.insalyon.creatis.vip.datamanager.client.bean.Data;
 import fr.insalyon.creatis.vip.datamanager.client.bean.Data.Type;
 import fr.insalyon.creatis.vip.datamanager.client.bean.PoolOperation;
@@ -77,7 +78,6 @@ import static fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants.*;
 
 /**
  * Created by abonnet on 1/18/17.
- *
  */
 @Service
 public class DataApiBusiness {
@@ -92,21 +92,24 @@ public class DataApiBusiness {
     private final LFCPermissionBusiness lfcPermissionBusiness;
     private final DataManagerBusiness dataManagerBusiness;
 
-    // 2 threads are needed for every download
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2 * 5);
+    private final ScheduledExecutorService scheduler;
 
     @Autowired
     public DataApiBusiness(
             Environment env, Supplier<User> currentUserProvider,
             LFCBusiness lfcBusiness, TransferPoolBusiness transferPoolBusiness,
             LFCPermissionBusiness lfcPermissionBusiness,
-            DataManagerBusiness dataManagerBusiness) {
+            DataManagerBusiness dataManagerBusiness, Server server) {
         this.env = env;
         this.currentUserProvider = currentUserProvider;
         this.lfcBusiness = lfcBusiness;
         this.transferPoolBusiness = transferPoolBusiness;
         this.lfcPermissionBusiness = lfcPermissionBusiness;
         this.dataManagerBusiness = dataManagerBusiness;
+        int parallelDownloadsNb = server.getApiParallelDownloadNb();
+        logger.info("Starting threads for {} parallel downloads", parallelDownloadsNb);
+        // 2 threads are needed for every download
+        this.scheduler = Executors.newScheduledThreadPool(2 * parallelDownloadsNb);
     }
 
     @PreDestroy
@@ -138,7 +141,7 @@ public class DataApiBusiness {
         baseDeletePath(path);
     }
 
-    public PathProperties getPathProperties(String path ) throws ApiException {
+    public PathProperties getPathProperties(String path) throws ApiException {
         checkReadPermission(path);
         if (path.equals(ROOT)) {
             return getRootPathProperties();
@@ -164,7 +167,7 @@ public class DataApiBusiness {
             pathProperties.setIsDirectory(true);
             pathProperties.setSize((long) fileData.size());
             pathProperties.setLastModificationDate(
-                baseGetFileModificationDate(path) / 1000);
+                    baseGetFileModificationDate(path) / 1000);
             pathProperties.setMimeType(env.getProperty(CarminProperties.API_DIRECTORY_MIME_TYPE));
         }
         return pathProperties;
@@ -190,7 +193,7 @@ public class DataApiBusiness {
     public File getFile(String path) throws ApiException {
         checkDownloadPermission(path);
         String downloadOperationId =
-            downloadFileToLocalStorage(path);
+                downloadFileToLocalStorage(path);
         return getDownloadFile(downloadOperationId);
     }
 
@@ -210,7 +213,7 @@ public class DataApiBusiness {
         String uploadDirectory = dataManagerBusiness.getUploadRootDirectory(false);
         // get file name and clean it as in an upload
         String fileName = DataManagerUtil.getCleanFilename(
-                Paths.get(lfcPath).getFileName().toString() );
+                Paths.get(lfcPath).getFileName().toString());
         String localPath = uploadDirectory + fileName;
         logger.debug("storing upload file in :" + localPath);
         boolean isFileEmpty = saveInputStreamToFile(is, localPath);
@@ -245,7 +248,7 @@ public class DataApiBusiness {
         String uploadDirectory = dataManagerBusiness.getUploadRootDirectory(false);
         // get file name and clean it as in an upload
         String fileName = DataManagerUtil.getCleanFilename(
-                Paths.get(lfcPath).getFileName().toString() );
+                Paths.get(lfcPath).getFileName().toString());
         String localPath = uploadDirectory + fileName;
         logger.debug("storing upload file in :" + localPath);
         writeFileFromBase64(uploadData.getBase64Content(), localPath);
@@ -282,8 +285,8 @@ public class DataApiBusiness {
     private void checkPermission(String path, LFCAccessType accessType)
             throws ApiException {
         try {
-            if ( ! lfcPermissionBusiness.isLFCPathAllowed(
-                currentUserProvider.get(), path, accessType, true)) {
+            if (!lfcPermissionBusiness.isLFCPathAllowed(
+                    currentUserProvider.get(), path, accessType, true)) {
                 throw new ApiException(ApiError.UNAUTHORIZED_DATA_ACCESS, path);
             }
         } catch (BusinessException e) {
@@ -318,7 +321,7 @@ public class DataApiBusiness {
         // 'isDownloadOverCall' thread
         User user = currentUserProvider.get();
         Callable<Boolean> isDownloadOverCall =
-            () -> isOperationOver(operationId, user);
+                () -> isOperationOver(operationId, user);
 
         // task that check every x seconds if the operation is over.
         // return true when OK or goes on indefinitly
@@ -337,16 +340,16 @@ public class DataApiBusiness {
         timeoutOperationCompletionFuture(operationId, completionFuture, getTimeout());
     }
 
-    private void timeoutOperationCompletionFuture (
+    private void timeoutOperationCompletionFuture(
             String operationId,
             Future<Boolean> completionFuture, int timeoutInSeconds) throws ApiException {
         try {
             completionFuture.get(timeoutInSeconds, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            logger.error("Waiting for operation completion interrupted : {}", operationId ,e);
+            logger.error("Waiting for operation completion interrupted : {}", operationId, e);
             throw new ApiException("Waiting for operation completion interrupted", e);
         } catch (ExecutionException e) {
-            logger.error("Error waiting for operation completion : {}", operationId ,e);
+            logger.error("Error waiting for operation completion : {}", operationId, e);
             throw new ApiException("Error waiting for operation completion", e);
         } catch (TimeoutException e) {
             completionFuture.cancel(true);
@@ -370,7 +373,7 @@ public class DataApiBusiness {
         switch (operation.getStatus()) {
             case Queued:
             case Running:
-                logger.debug("status of operation {" + operationId + "} : "  + operation.getStatus());
+                logger.debug("status of operation {" + operationId + "} : " + operation.getStatus());
                 return false;
             case Done:
                 return true;
@@ -408,7 +411,7 @@ public class DataApiBusiness {
             fos.flush();
             return isFileEmpty;
         } catch (FileNotFoundException e) {
-            logger.error("Error creating new file {}", path ,e);
+            logger.error("Error creating new file {}", path, e);
             throw new ApiException("Upload error", e);
         } catch (IOException e) {
             logger.error("IO Error storing file {}", path, e);
@@ -525,7 +528,7 @@ public class DataApiBusiness {
     private List<Data> baseGetFileData(String path) throws ApiException {
         try {
             return lfcBusiness.listDir(
-                currentUserProvider.get(), path, true);
+                    currentUserProvider.get(), path, true);
         } catch (BusinessException e) {
             throw new ApiException("Error getting lfc information", e);
         }
@@ -535,7 +538,7 @@ public class DataApiBusiness {
     private String baseDownloadFile(String path) throws ApiException {
         try {
             return transferPoolBusiness.downloadFile(
-                currentUserProvider.get(), path);
+                    currentUserProvider.get(), path);
         } catch (BusinessException e) {
             throw new ApiException("Error download LFC file", e);
         }
@@ -545,7 +548,7 @@ public class DataApiBusiness {
             throws ApiException {
         try {
             return transferPoolBusiness.uploadFile(
-                currentUserProvider.get(), localPath, lfcPath);
+                    currentUserProvider.get(), localPath, lfcPath);
         } catch (BusinessException e) {
             throw new ApiException("Error uploading a lfc file", e);
         }
@@ -573,7 +576,7 @@ public class DataApiBusiness {
     private Long baseGetFileModificationDate(String path) throws ApiException {
         try {
             return lfcBusiness.getModificationDate(
-                currentUserProvider.get(), path);
+                    currentUserProvider.get(), path);
         } catch (BusinessException e) {
             throw new ApiException("Error getting lfc modification", e);
         }

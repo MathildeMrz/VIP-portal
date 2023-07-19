@@ -53,7 +53,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Rafael Ferreira da Silva
  */
 @Service
@@ -137,7 +136,7 @@ public class MessageBusiness {
 
     public void removeGroupMessage(long id) throws BusinessException {
         try {
-           groupMessageDAO.remove(id);
+            groupMessageDAO.remove(id);
         } catch (DAOException ex) {
             throw new BusinessException(ex);
         }
@@ -209,9 +208,9 @@ public class MessageBusiness {
 
             for (User u : usersGroupsDAO.getUsersFromGroup(CoreConstants.GROUP_SUPPORT)) {
                 emailBusiness.sendEmail(
-                    "[VIP Support Copy] " + subject + "(" + subjectInfo + ")",
-                    emailContent,
-                    new String[]{u.getEmail()}, true, sender.getEmail());
+                        "[VIP Support Copy] " + subject + "(" + subjectInfo + ")",
+                        emailContent,
+                        new String[]{u.getEmail()}, true, sender.getEmail());
             }
         } catch (DAOException ex) {
             throw new BusinessException(ex);
@@ -237,9 +236,9 @@ public class MessageBusiness {
 
             for (User u : usersGroupsDAO.getUsersFromGroup(CoreConstants.GROUP_SUPPORT)) {
                 emailBusiness.sendEmail(
-                    "[VIP Contact] " + subject + " (" + user.getFullName() + ")",
-                    emailContent,
-                    new String[]{u.getEmail()}, true, user.getEmail());
+                        "[VIP Contact] " + subject + " (" + user.getFullName() + ")",
+                        emailContent,
+                        new String[]{u.getEmail()}, true, user.getEmail());
             }
         } catch (DAOException ex) {
             throw new BusinessException(ex);

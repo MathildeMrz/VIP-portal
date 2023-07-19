@@ -34,11 +34,6 @@ package fr.insalyon.creatis.vip.gatelab.server.business;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.Server;
 import fr.insalyon.creatis.vip.datamanager.client.view.DataManagerException;
-import fr.insalyon.creatis.vip.datamanager.server.DataManagerUtil;
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
-
 import fr.insalyon.creatis.vip.datamanager.server.business.LfcPathsBusiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +42,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This stores data in fields and this is not threadsafe. So it cannot be used
@@ -67,6 +64,10 @@ public class GateLabInputs {
     private String workflowID;
     private GateLabInputsParser gateLabInputsParser;
 
+    public GateLabInputs(String workflowID) {
+        this.workflowID = workflowID;
+    }
+
     @Autowired
     public final void setServer(Server server) {
         this.server = server;
@@ -83,10 +84,6 @@ public class GateLabInputs {
         this.gateLabInputsParser = gateLabInputsParser;
     }
 
-    public GateLabInputs(String workflowID) {
-        this.workflowID = workflowID;
-    }
-
     @PostConstruct
     public final void init() {
         inputsMap = new HashMap<String, String>();
@@ -95,7 +92,6 @@ public class GateLabInputs {
     }
 
     /**
-     *
      * @param currentUserFolder
      * @return
      * @throws BusinessException
@@ -132,11 +128,11 @@ public class GateLabInputs {
             String phaseSpace = inputsMap.get("phaseSpace");
             Map<String, String> inputMap = new HashMap<String, String>();
             inputMap.put(
-                "inputlink",
+                    "inputlink",
                     lfcPathsBusiness.parseRealDir(input, currentUserFolder));
             //inputMap.put("outputlink", DataManagerUtil.parseRealDir(outputlink));
             inputMap.put(
-                "gate_version",
+                    "gate_version",
                     lfcPathsBusiness.parseRealDir(release, currentUserFolder));
             inputMap.put("particles", particles);
             inputMap.put("simulation", simtype);

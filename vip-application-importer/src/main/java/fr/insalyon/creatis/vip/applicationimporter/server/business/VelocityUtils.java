@@ -33,17 +33,15 @@
 package fr.insalyon.creatis.vip.applicationimporter.server.business;
 
 import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
-
-import java.io.StringWriter;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.tools.generic.EscapeTool;
 import org.springframework.stereotype.Service;
 
+import java.io.StringWriter;
+
 /**
- *
  * @author Tristan Glatard
  */
 @Service
@@ -51,7 +49,7 @@ public class VelocityUtils {
 
     private VelocityEngine velocityEngine;
 
-    private VelocityUtils() {
+    public VelocityUtils() {
         velocityEngine = new VelocityEngine();
         velocityEngine.setProperty("resource.loader", "class");
         velocityEngine.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
@@ -85,7 +83,7 @@ public class VelocityUtils {
         return stringWriter.toString();
     }
 
-    public String createDocument( String tag, BoutiquesApplication bt, Boolean isRunOnGrid, String vmTemplate) {
+    public String createDocument(String tag, BoutiquesApplication bt, Boolean isRunOnGrid, String vmTemplate) {
         VelocityContext context = new VelocityContext();
         context.put("tag", tag);
         context.put("tool", bt);

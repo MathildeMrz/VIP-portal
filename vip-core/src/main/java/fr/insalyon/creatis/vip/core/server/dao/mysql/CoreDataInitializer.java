@@ -13,7 +13,6 @@ import fr.insalyon.creatis.vip.core.server.dao.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
@@ -103,7 +102,7 @@ public class CoreDataInitializer extends JdbcDaoSupport {
                                 true,
                                 UUID.randomUUID().toString(), folder, "",
                                 new Date(), new Date(), UserLevel.Administrator,
-                                CountryCode.fr, 100, null,null,0,false));
+                                CountryCode.fr, 100, null, null, 0, false));
 
             } catch (DAOException | NoSuchAlgorithmException | UnsupportedEncodingException ex) {
                 logger.error("Error creating VIPUsers table", ex);
@@ -138,8 +137,8 @@ public class CoreDataInitializer extends JdbcDaoSupport {
                         + "ON DELETE CASCADE ON UPDATE CASCADE")) {
             try {
                 usersGroupsDAO.add(server.getAdminEmail(),
-                                CoreConstants.GROUP_SUPPORT,
-                                GROUP_ROLE.Admin);
+                        CoreConstants.GROUP_SUPPORT,
+                        GROUP_ROLE.Admin);
             } catch (DAOException ex) {
                 logger.error("Error adding admin user to admin group", ex);
             }
