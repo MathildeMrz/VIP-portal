@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JobFlowChart.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.chart</a> &gt; <span class="el_source">JobFlowChart.java</span></div><h1>JobFlowChart.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.chart;
+
+import com.googlecode.gflot.client.*;
+import com.googlecode.gflot.client.options.*;
+import com.googlecode.gflot.client.options.LegendOptions.LabelFormatter;
+import com.googlecode.gflot.client.options.LegendOptions.LegendPosition;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.view.monitor.job.TaskStatus;
+import fr.insalyon.creatis.vip.core.client.view.property.PropertyRecord;
+
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class JobFlowChart extends AbstractChart {
+
+    public JobFlowChart(List&lt;String&gt; data, VLayout chartLayout, ListGrid grid) {
+<span class="nc" id="L51">        super(data, chartLayout, grid);</span>
+<span class="nc" id="L52">    }</span>
+
+    public void build() {
+
+<span class="nc" id="L56">        chartLayout.removeMembers(chartLayout.getMembers());</span>
+
+<span class="nc" id="L58">        PlotModel model = new PlotModel();</span>
+
+<span class="nc" id="L60">        LineSeriesOptions lineSeriesOptions = LineSeriesOptions.create();</span>
+<span class="nc" id="L61">        lineSeriesOptions.setShow(false);</span>
+<span class="nc" id="L62">        lineSeriesOptions.setFill(true);</span>
+
+<span class="nc" id="L64">        BarSeriesOptions barSeriesOptions = BarSeriesOptions.create();</span>
+<span class="nc" id="L65">        barSeriesOptions.setShow(true);</span>
+<span class="nc" id="L66">        barSeriesOptions.setBarWidth(0.6);</span>
+<span class="nc" id="L67">        barSeriesOptions.setLineWidth(0.5);</span>
+
+<span class="nc" id="L69">        GlobalSeriesOptions globalSeriesOptions = GlobalSeriesOptions.create();</span>
+<span class="nc" id="L70">        globalSeriesOptions.setLineSeriesOptions(lineSeriesOptions);</span>
+<span class="nc" id="L71">        globalSeriesOptions.setBarsSeriesOptions(barSeriesOptions);</span>
+<span class="nc" id="L72">        globalSeriesOptions.setStack(true);</span>
+
+<span class="nc" id="L74">        LegendOptions legendOptions = LegendOptions.create();</span>
+<span class="nc" id="L75">        legendOptions.setPosition(LegendPosition.NORTH_WEST);</span>
+<span class="nc" id="L76">        legendOptions.setBackgroundOpacity(0.75);</span>
+<span class="nc" id="L77">        legendOptions.setLabelFormatter(new LabelFormatter() {</span>
+            @Override
+            public String formatLabel(String label, Series series) {
+<span class="nc" id="L80">                return &quot;&lt;div style=\&quot;font-size:8pt\&quot;&gt;&quot; + label + &quot;&lt;/div&gt;&quot;;</span>
+            }
+        });
+
+<span class="nc" id="L84">        PlotOptions plotOptions = PlotOptions.create();</span>
+<span class="nc" id="L85">        plotOptions.setGlobalSeriesOptions(globalSeriesOptions);</span>
+<span class="nc" id="L86">        plotOptions.setLegendOptions(legendOptions);</span>
+<span class="nc" id="L87">        plotOptions.addXAxisOptions(AxisOptions.create().setLabel(&quot;Jobs&quot;));</span>
+<span class="nc" id="L88">        plotOptions.addYAxisOptions(AxisOptions.create().setLabel(&quot;Time (s)&quot;));</span>
+<span class="nc" id="L89">        plotOptions.setGridOptions(GridOptions.create().setBorderWidth(0));</span>
+
+        // create series
+<span class="nc" id="L92">        SeriesHandler series1 = model.addSeries(Series.of(&quot;Submitted&quot;, &quot;#8C8063&quot;));</span>
+<span class="nc" id="L93">        SeriesHandler series2 = model.addSeries(Series.of(&quot;Queued&quot;, &quot;#FFC682&quot;));</span>
+<span class="nc" id="L94">        SeriesHandler series3 = model.addSeries(Series.of(&quot;Input&quot;, &quot;#2388E8&quot;));</span>
+<span class="nc" id="L95">        SeriesHandler series4 = model.addSeries(Series.of(&quot;Execution&quot;, &quot;#33AA82&quot;));</span>
+<span class="nc" id="L96">        SeriesHandler series5 = model.addSeries(Series.of(&quot;Output&quot;, &quot;#7F667F&quot;));</span>
+<span class="nc" id="L97">        SeriesHandler series6 = model.addSeries(Series.of(&quot;Checkpoint Init&quot;, &quot;#3E6864&quot;));</span>
+<span class="nc" id="L98">        SeriesHandler series7 = model.addSeries(Series.of(&quot;Checkpoint Upload&quot;, &quot;#1F3533&quot;));</span>
+<span class="nc" id="L99">        SeriesHandler series8 = model.addSeries(Series.of(&quot;Error&quot;, &quot;#7F263D&quot;));</span>
+
+        // add data
+<span class="nc" id="L102">        int row = 0;</span>
+<span class="nc" id="L103">        int max = 0;</span>
+<span class="nc" id="L104">        long cpuTime = 0;</span>
+<span class="nc" id="L105">        long waitingTime = 0;</span>
+<span class="nc" id="L106">        long sequentialTime = 0;</span>
+
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        for (String values : data) {</span>
+
+<span class="nc" id="L110">            addRowData(values);</span>
+<span class="nc" id="L111">            String[] v = values.split(&quot;##&quot;);</span>
+<span class="nc" id="L112">            TaskStatus status = TaskStatus.valueOf(v[0]);</span>
+
+<span class="nc" id="L114">            int creation = Integer.parseInt(v[1]);</span>
+<span class="nc" id="L115">            int queued = Integer.parseInt(v[2]);</span>
+<span class="nc" id="L116">            int input = Integer.parseInt(v[3]);</span>
+<span class="nc" id="L117">            int execution = Integer.parseInt(v[4]);</span>
+<span class="nc" id="L118">            int output = Integer.parseInt(v[5]);</span>
+<span class="nc" id="L119">            int checkpointInit = Integer.parseInt(v[6]);</span>
+<span class="nc" id="L120">            int checkpointUpload = Integer.parseInt(v[7]);</span>
+<span class="nc" id="L121">            int failedTime = Integer.parseInt(v[8]);</span>
+
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            if (status == TaskStatus.ERROR) {</span>
+<span class="nc" id="L124">                failedTime = input + execution + output + checkpointInit + checkpointUpload;</span>
+<span class="nc" id="L125">                input = 0;</span>
+<span class="nc" id="L126">                execution = 0;</span>
+<span class="nc" id="L127">                output = 0;</span>
+<span class="nc" id="L128">                checkpointInit = 0;</span>
+<span class="nc" id="L129">                checkpointUpload = 0;</span>
+            }
+
+<span class="nc" id="L132">            series1.add(DataPoint.of(row, creation));</span>
+<span class="nc" id="L133">            series2.add(DataPoint.of(row, queued));</span>
+<span class="nc" id="L134">            series3.add(DataPoint.of(row, input));</span>
+<span class="nc" id="L135">            series4.add(DataPoint.of(row, execution));</span>
+<span class="nc" id="L136">            series5.add(DataPoint.of(row, output));</span>
+<span class="nc" id="L137">            series6.add(DataPoint.of(row, checkpointInit));</span>
+<span class="nc" id="L138">            series7.add(DataPoint.of(row, checkpointUpload));</span>
+<span class="nc" id="L139">            series8.add(DataPoint.of(row, failedTime));</span>
+
+<span class="nc" id="L141">            row++;</span>
+<span class="nc" id="L142">            cpuTime += execution;</span>
+<span class="nc" id="L143">            sequentialTime += input + execution + output;</span>
+<span class="nc" id="L144">            waitingTime += queued;</span>
+
+<span class="nc" id="L146">            int count = creation + queued + input + execution + output</span>
+                    + checkpointInit + checkpointUpload;
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            if (count &gt; max) {</span>
+<span class="nc" id="L149">                max = count;</span>
+            }
+<span class="nc" id="L151">        }</span>
+
+        // create the plot
+<span class="nc" id="L154">        SimplePlot plot = new SimplePlot(model, plotOptions);</span>
+<span class="nc" id="L155">        plot.setWidth(700);</span>
+<span class="nc" id="L156">        plot.setHeight(400);</span>
+
+<span class="nc" id="L158">        chartLayout.addMember(plot);</span>
+<span class="nc" id="L159">        chartLayout.addMember(getRowDataImg());</span>
+
+<span class="nc" id="L161">        grid.setData(new PropertyRecord[]{</span>
+                new PropertyRecord(&quot;Makespan (s)&quot;, max + &quot;&quot;),
+                new PropertyRecord(&quot;Cumulated CPU time (s)&quot;, cpuTime + &quot;&quot;),
+                new PropertyRecord(&quot;Speed-up&quot;, (cpuTime / (float) max) + &quot;&quot;),
+                new PropertyRecord(&quot;Efficiency&quot;, (cpuTime / (float) sequentialTime) + &quot;&quot;),
+<span class="nc" id="L166">                new PropertyRecord(&quot;Mean Waiting Time (s)&quot;, (waitingTime / (float) data.size()) + &quot;&quot;)</span>
+        });
+<span class="nc" id="L168">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
