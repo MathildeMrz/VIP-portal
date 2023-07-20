@@ -45,40 +45,51 @@ jobs:
       - name: Build Maven
         run: mvn clean verify
         
+      - name: Download Test Report
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          name: junit-test-results
+          workflow: ${{ github.event.workflow.id }}
+          run_id: ${{ github.event.workflow_run.id }}
+      
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
         if: success() || failure() # always run even if the previous step fails
         with:
           report_paths: '**/target/*-reports/TEST-*.xml'
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
+#      - name: Setup Pages
+#        uses: actions/configure-pages@v3
+#
+#      - name: Upload artifact
+#        uses: actions/upload-pages-artifact@v1
+#        with:
+#          path: "coverage/target/site/jacoco-aggregate/"
+          
+      #############################################################################################
+      ################################### Deploy github pages #####################################
+      #############################################################################################
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: "coverage/target/site/jacoco-aggregate/"
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+#      - name: Deploy to GitHub Pages
+#        id: deployment
+#        uses: actions/deploy-pages@v2
 
       #############################################################################################
       ################################### Save reports history ####################################
       #############################################################################################
       
-      - name: Commit and Push to History Branch
-        run: |
-          git fetch
-          git branch -a
-          git checkout -- .
-          git checkout -b history_reports origin/history_reports
-          git config --global user.email "mathilde.marza2001@gmail.com"
-          git config --global user.name "MathildeMrz"
-          git add -f "coverage/target/site/jacoco-aggregate/"
-          DATE=$(date +%Y-%m-%d-%H-%M-%S)
-          mkdir -p history/"$DATE"
-          cp -R "coverage/target/site/jacoco-aggregate/." history/"$DATE"/
-          git add -f history/"$DATE"
-          git commit -m "Update Jacoco HTML report"
-          git push origin
+#      - name: Commit and Push to History Branch
+#        run: |
+#          git fetch
+#          git branch -a
+#          git checkout -- .
+#          git checkout -b history_reports origin/history_reports
+#          git config --global user.email "mathilde.marza2001@gmail.com"
+#          git config --global user.name "MathildeMrz"
+#          git add -f "coverage/target/site/jacoco-aggregate/"
+#          DATE=$(date +%Y-%m-%d-%H-%M-%S)
+#          mkdir -p history/"$DATE"
+#          cp -R "coverage/target/site/jacoco-aggregate/." history/"$DATE"/
+#          git add -f history/"$DATE"
+#          git commit -m "Update Jacoco HTML report"
+#          git push origin
