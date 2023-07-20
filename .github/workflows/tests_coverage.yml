@@ -44,7 +44,7 @@ jobs:
 
       - name: Build Maven
         run: mvn clean test
-             | ls target
+             | ls
       
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
