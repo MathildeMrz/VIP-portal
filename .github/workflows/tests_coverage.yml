@@ -44,6 +44,7 @@ jobs:
 
       - name: Build Maven
         run: mvn clean test
+             | ls **/target/**
              | ls **/target/surefire-reports/**
       
       - name: Publish Test Report
