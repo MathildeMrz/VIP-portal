@@ -55,7 +55,7 @@ jobs:
           commit: ${{github.event.workflow_run.head_sha}}
           report_paths: '**/target/*-reports/TEST-*.xml'
           detailed_summary: true
-          summary: '<table><thead><tr><th> Application (src/applications) </th></tr></thead><tbody><tr><td> test </td></tr></tbody></table>'
+          include_passed: true
 
 #      - name: Setup Pages
 #        uses: actions/configure-pages@v3
