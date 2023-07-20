@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GateLabProgressLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-gatelab</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.gatelab.client.view.monitor</a> &gt; <span class="el_source">GateLabProgressLayout.java</span></div><h1>GateLabProgressLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.gatelab.client.view.monitor;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import fr.insalyon.creatis.vip.application.client.bean.Activity;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+import fr.insalyon.creatis.vip.application.client.view.monitor.job.JobStatus;
+import fr.insalyon.creatis.vip.application.client.view.monitor.progress.ProcessorStatus;
+import fr.insalyon.creatis.vip.application.client.view.monitor.progress.ProgressLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class GateLabProgressLayout extends ProgressLayout {
+
+<span class="nc" id="L50">    private final int gateFactor = 25;</span>
+    private double particles;
+    private double runnedParticles;
+
+    public GateLabProgressLayout(String simulationID, SimulationStatus status) {
+
+<span class="nc" id="L56">        super(simulationID, status);</span>
+<span class="nc" id="L57">        particles = 0;</span>
+<span class="nc" id="L58">        runnedParticles = 0;</span>
+<span class="nc" id="L59">    }</span>
+
+    @Override
+    protected void loadData() {
+
+<span class="nc" id="L64">        AsyncCallback&lt;List&lt;Activity&gt;&gt; callback = new AsyncCallback&lt;List&lt;Activity&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L67">                Layout.getInstance().setWarningMessage(&quot;Unable to load progress:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L68">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Activity&gt; result) {
+
+<span class="nc" id="L73">                double completed = 0;</span>
+<span class="nc" id="L74">                double active = 0;</span>
+<span class="nc" id="L75">                boolean singleGateCompleted = false;</span>
+<span class="nc" id="L76">                StringBuilder sb = new StringBuilder();</span>
+
+<span class="nc bnc" id="L78" title="All 2 branches missed.">                for (Activity processor : result) {</span>
+
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                    if (processor.getName().matches(&quot;gate&quot;)) {</span>
+
+<span class="nc bnc" id="L82" title="All 4 branches missed.">                        if (processor.getStatus() == ProcessorStatus.Completed || runnedParticles &gt;= particles) {</span>
+<span class="nc" id="L83">                            completed += gateFactor;</span>
+                        } else {
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                            sb.append(sb.length() == 0 ? &quot;&lt;font color=\&quot;#666666\&quot;&gt;Running gate&quot; : &quot;, gate&quot;);</span>
+<span class="nc" id="L86">                            sb.append(&quot; (&quot;).append(runnedParticles).append(&quot; out of &quot;).append(particles).append(&quot; particles)&quot;);</span>
+<span class="nc" id="L87">                            completed += gateFactor * (runnedParticles / particles);</span>
+<span class="nc" id="L88">                            active += gateFactor * ((particles - runnedParticles) / particles);</span>
+                        }
+
+<span class="nc bnc" id="L91" title="All 2 branches missed.">                    } else if (processor.getName().matches(&quot;singleGate&quot;)) {</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                        if (processor.getStatus() == ProcessorStatus.Completed) {</span>
+<span class="nc" id="L93">                            singleGateCompleted = true;</span>
+                        }
+
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                    } else if (processor.getStatus() == ProcessorStatus.Completed) {</span>
+<span class="nc" id="L97">                        completed++;</span>
+
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                    } else if (processor.getStatus() == ProcessorStatus.Unstarted) {</span>
+<span class="nc" id="L100">                        active++;</span>
+
+<span class="nc bnc" id="L102" title="All 2 branches missed.">                    } else if (processor.getStatus() == ProcessorStatus.Active) {</span>
+
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                        sb.append(sb.length() == 0 ? &quot;&lt;font color=\&quot;#666666\&quot;&gt;Running &quot; : &quot;, &quot;);</span>
+<span class="nc" id="L105">                        sb.append(processor.getName());</span>
+
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                        int factor = processor.getName().toLowerCase().contains(&quot;merge&quot;) ? 2 : 1;</span>
+<span class="nc" id="L108">                        double total = processor.getCompleted() + processor.getQueued() + processor.getFailed();</span>
+<span class="nc" id="L109">                        completed += factor * ((processor.getCompleted() + processor.getFailed()) / total);</span>
+<span class="nc" id="L110">                        active += factor * (processor.getQueued() / total);</span>
+                    }
+<span class="nc" id="L112">                }</span>
+<span class="nc bnc" id="L113" title="All 4 branches missed.">                if (completed &gt; 0 || active &gt; 0) {</span>
+<span class="nc" id="L114">                    int progress = (int) ((completed * 100) / (active + completed));</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                    if (progress == 100) {</span>
+<span class="nc" id="L116">                        barLayout.setBackgroundColor(JobStatus.Completed.getColor());</span>
+<span class="nc" id="L117">                        barLayout.setWidth100();</span>
+<span class="nc" id="L118">                        statusLabel.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;Simulation completed! (&quot;</span>
+                                + runnedParticles + &quot; out of &quot; + particles + &quot; particles)&lt;/font&gt;&quot;);
+<span class="nc bnc" id="L120" title="All 2 branches missed.">                    } else if (singleGateCompleted) {</span>
+<span class="nc" id="L121">                        progress = 100;</span>
+<span class="nc" id="L122">                        barLayout.setBackgroundColor(JobStatus.Completed.getColor());</span>
+<span class="nc" id="L123">                        barLayout.setWidth100();</span>
+<span class="nc" id="L124">                        statusLabel.setContents(&quot;&lt;font color=\&quot;#666666\&quot;&gt;Simulation completed!&lt;/font&gt;&quot;);</span>
+                    } else {
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                        if (status == SimulationStatus.Killed) {</span>
+<span class="nc" id="L127">                            barLayout.setBackgroundColor(JobStatus.Failed.getColor());</span>
+<span class="nc" id="L128">                            sb.append(&quot;. &lt;b&gt;Simulation killed!&lt;/b&gt;&quot;);</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">                        } else if (status == SimulationStatus.Failed) {</span>
+<span class="nc" id="L130">                            barLayout.setBackgroundColor(JobStatus.Failed.getColor());</span>
+<span class="nc" id="L131">                            sb.append(&quot;. &lt;b&gt;Simulation Failed!&lt;/b&gt;&quot;);</span>
+                        }
+<span class="nc" id="L133">                        sb.append(&quot;&lt;/font&gt;&quot;);</span>
+<span class="nc" id="L134">                        barLayout.setWidth(progress + &quot;%&quot;);</span>
+<span class="nc" id="L135">                        statusLabel.setContents(sb.toString());</span>
+                    }
+<span class="nc" id="L137">                    progressLabel.setContents(&quot;&lt;b&gt;&quot; + progress + &quot;%&lt;/b&gt;&quot;);</span>
+                }
+<span class="nc" id="L139">            }</span>
+        };
+<span class="nc" id="L141">        WorkflowService.Util.getInstance().getProcessors(simulationID, callback);</span>
+<span class="nc" id="L142">    }</span>
+
+    public void update(double particles, double runnedParticles) {
+
+<span class="nc" id="L146">        this.runnedParticles = runnedParticles;</span>
+<span class="nc" id="L147">        this.particles = particles;</span>
+<span class="nc" id="L148">        loadData();</span>
+<span class="nc" id="L149">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

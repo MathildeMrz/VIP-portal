@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MessageComposerWindow.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-social</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.social.client.view.message</a> &gt; <span class="el_source">MessageComposerWindow.java</span></div><h1>MessageComposerWindow.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.social.client.view.message;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Cursor;
+import com.smartgwt.client.types.MultipleAppearance;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.RichTextEditor;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.layout.HLayout;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.social.client.SocialConstants;
+import fr.insalyon.creatis.vip.social.client.rpc.SocialService;
+import fr.insalyon.creatis.vip.social.client.rpc.SocialServiceAsync;
+import fr.insalyon.creatis.vip.social.client.view.common.AbstractComposeWindow;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class MessageComposerWindow extends AbstractComposeWindow {
+
+    private SelectItem usersPickList;
+    private TextItem subjectItem;
+
+<span class="nc" id="L65">    private Boolean sendCopyToSupport = false;</span>
+
+    public MessageComposerWindow() {
+
+<span class="nc" id="L69">        super(&quot;Compose New Message&quot;);</span>
+
+<span class="nc" id="L71">        configureForm();</span>
+<span class="nc" id="L72">        loadUsers();</span>
+<span class="nc" id="L73">    }</span>
+
+    private void configureForm() {
+
+<span class="nc" id="L77">        HLayout buttonsLayout = new HLayout(5);</span>
+<span class="nc" id="L78">        Label sendLabel = WidgetUtil.getLabel(&quot;Send Message&quot;, SocialConstants.ICON_SEND, 15, Cursor.HAND);</span>
+<span class="nc" id="L79">        sendLabel.addClickHandler(new ClickHandler() {</span>
+            public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                if (form.validate()) {</span>
+<span class="nc" id="L82">                    sendMessage(usersPickList.getValues(),</span>
+<span class="nc" id="L83">                            subjectItem.getValueAsString().trim(),</span>
+<span class="nc" id="L84">                            richTextEditor.getValue());</span>
+                }
+<span class="nc" id="L86">            }</span>
+        });
+<span class="nc" id="L88">        buttonsLayout.addMember(sendLabel);</span>
+<span class="nc" id="L89">        vLayout.addMember(buttonsLayout);</span>
+
+<span class="nc" id="L91">        usersPickList = new SelectItem();</span>
+<span class="nc" id="L92">        usersPickList.setTitle(&quot;To&quot;);</span>
+<span class="nc" id="L93">        usersPickList.setMultiple(true);</span>
+<span class="nc" id="L94">        usersPickList.setMultipleAppearance(MultipleAppearance.PICKLIST);</span>
+<span class="nc" id="L95">        usersPickList.setWidth(350);</span>
+<span class="nc" id="L96">        usersPickList.setRequired(true);</span>
+
+<span class="nc" id="L98">        subjectItem = FieldUtil.getTextItem(350, true, &quot;Subject&quot;, &quot;[0-9.,A-Za-z-+/_(): ]&quot;);</span>
+
+<span class="nc" id="L100">        form = FieldUtil.getForm(usersPickList, subjectItem);</span>
+<span class="nc" id="L101">        form.setWidth(500);</span>
+<span class="nc" id="L102">        vLayout.addMember(form);</span>
+<span class="nc" id="L103">        richTextEditor = new RichTextEditor();</span>
+<span class="nc" id="L104">        richTextEditor.setHeight100();</span>
+<span class="nc" id="L105">        richTextEditor.setOverflow(Overflow.HIDDEN);</span>
+<span class="nc" id="L106">        richTextEditor.setCanDragResize(true);</span>
+<span class="nc" id="L107">        richTextEditor.setShowEdges(true);</span>
+<span class="nc" id="L108">        richTextEditor.setControlGroups(&quot;fontControls&quot;, &quot;formatControls&quot;,</span>
+                &quot;styleControls&quot;, &quot;editControls&quot;, &quot;colorControls&quot;, &quot;insertControls&quot;);
+<span class="nc" id="L110">        vLayout.addMember(richTextEditor);</span>
+<span class="nc" id="L111">    }</span>
+
+    private void loadUsers() {
+
+<span class="nc" id="L115">        SocialServiceAsync service = SocialService.Util.getInstance();</span>
+<span class="nc" id="L116">        AsyncCallback&lt;List&lt;User&gt;&gt; callback = new AsyncCallback&lt;List&lt;User&gt;&gt;() {</span>
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L118">                modal.hide();</span>
+<span class="nc" id="L119">                Layout.getInstance().setWarningMessage(&quot;Unable to get users list:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L120">            }</span>
+
+            public void onSuccess(List&lt;User&gt; result) {
+
+<span class="nc" id="L124">                LinkedHashMap&lt;String, String&gt; usersMap = new LinkedHashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L125">                usersMap.put(&quot;All&quot;, &quot;All&quot;);</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                for (User user : result) {</span>
+<span class="nc" id="L127">                    usersMap.put(user.getEmail(), user.getFullName());</span>
+
+<span class="nc" id="L129">                }</span>
+<span class="nc" id="L130">                usersPickList.setValueMap(usersMap);</span>
+<span class="nc" id="L131">                modal.hide();</span>
+<span class="nc" id="L132">            }</span>
+        };
+<span class="nc" id="L134">        service.getUsers(callback);</span>
+<span class="nc" id="L135">        modal.show(&quot;Loading users list...&quot;, true);</span>
+<span class="nc" id="L136">    }</span>
+
+    public void setUsersPickerListValue(final String userFullName) {
+
+<span class="nc" id="L140">        SocialServiceAsync service = SocialService.Util.getInstance();</span>
+<span class="nc" id="L141">        AsyncCallback&lt;List&lt;User&gt;&gt; callback = new AsyncCallback&lt;List&lt;User&gt;&gt;() {</span>
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L143">                modal.hide();</span>
+<span class="nc" id="L144">                Layout.getInstance().setWarningMessage(&quot;Unable to get users list:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L145">            }</span>
+
+            public void onSuccess(List&lt;User&gt; result) {
+<span class="nc bnc" id="L148" title="All 2 branches missed.">                for (User user : result) {</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                    if (user.getFullName().equals(userFullName)) {</span>
+<span class="nc" id="L150">                        usersPickList.setValue(user.getEmail());</span>
+                    }
+
+<span class="nc" id="L153">                }</span>
+<span class="nc" id="L154">                modal.hide();</span>
+<span class="nc" id="L155">            }</span>
+        };
+<span class="nc" id="L157">        service.getUsers(callback);</span>
+
+<span class="nc" id="L159">    }</span>
+
+    private void sendMessage(String[] recipients, String subject, String message) {
+
+<span class="nc" id="L163">        SocialServiceAsync service = SocialService.Util.getInstance();</span>
+<span class="nc" id="L164">        AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L166">                modal.hide();</span>
+<span class="nc" id="L167">                Layout.getInstance().setWarningMessage(&quot;Unable to send message:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L168">            }</span>
+
+            public void onSuccess(Void result) {
+<span class="nc" id="L171">                destroy();</span>
+<span class="nc" id="L172">                Layout.getInstance().setNoticeMessage(&quot;Message successfully sent.&quot;);</span>
+<span class="nc" id="L173">            }</span>
+        };
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (sendCopyToSupport) {</span>
+<span class="nc" id="L176">            service.sendMessageWithSupportCopy(recipients, subject, message, callback);</span>
+        } else {
+<span class="nc" id="L178">            service.sendMessage(recipients, subject, message, callback);</span>
+        }
+<span class="nc" id="L180">        modal.show(&quot;Sending message...&quot;, true);</span>
+<span class="nc" id="L181">    }</span>
+
+    public void setSubjectValue(String value) {
+<span class="nc" id="L184">        subjectItem.setValue(value);</span>
+<span class="nc" id="L185">    }</span>
+
+    public void setTextMessage(String message) {
+<span class="nc" id="L188">        richTextEditor.setValue(message);</span>
+<span class="nc" id="L189">    }</span>
+
+    public void setSendCopyToSupport(Boolean sendCopyToSupport) {
+<span class="nc" id="L192">        this.sendCopyToSupport = sendCopyToSupport;</span>
+<span class="nc" id="L193">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SummaryTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor</a> &gt; <span class="el_source">SummaryTab.java</span></div><h1>SummaryTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.googlecode.gflot.client.*;
+import com.googlecode.gflot.client.options.BarSeriesOptions;
+import com.googlecode.gflot.client.options.GlobalSeriesOptions;
+import com.googlecode.gflot.client.options.LegendOptions;
+import com.googlecode.gflot.client.options.PlotOptions;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.GroupStartOpen;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.SelectionAppearance;
+import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
+import com.smartgwt.client.widgets.grid.events.RowContextClickEvent;
+import com.smartgwt.client.widgets.grid.events.RowContextClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.viewer.DetailViewer;
+import com.smartgwt.client.widgets.viewer.DetailViewerField;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.Task;
+import fr.insalyon.creatis.vip.application.client.rpc.JobService;
+import fr.insalyon.creatis.vip.application.client.rpc.JobServiceAsync;
+import fr.insalyon.creatis.vip.application.client.view.common.AbstractCornerTab;
+import fr.insalyon.creatis.vip.application.client.view.monitor.job.TaskStatus;
+import fr.insalyon.creatis.vip.application.client.view.monitor.menu.JobsContextMenu;
+import fr.insalyon.creatis.vip.application.client.view.monitor.record.JobRecord;
+import fr.insalyon.creatis.vip.application.client.view.monitor.record.SummaryRecord;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class SummaryTab extends AbstractCornerTab {
+
+    private ModalWindow detailModal;
+    private String simulationID;
+    private VLayout chartLayout;
+    private SimplePlot plot;
+    private SeriesHandler submittedSeries;
+    private SeriesHandler queuedSeries;
+    private SeriesHandler runningSeries;
+    private SeriesHandler completedSeries;
+    private SeriesHandler failedSeries;
+    private SeriesHandler cancelledSeries;
+    private SeriesHandler stalledSeries;
+    private ListGrid summaryGrid;
+    private ListGrid detailGrid;
+
+<span class="nc" id="L90">    public SummaryTab(String simulationID, boolean completed) {</span>
+
+<span class="nc" id="L92">        this.simulationID = simulationID;</span>
+
+<span class="nc" id="L94">        this.setTitle(Canvas.imgHTML(ApplicationConstants.ICON_SUMMARY));</span>
+<span class="nc" id="L95">        this.setPrompt(&quot;Tasks Summary&quot;);</span>
+
+<span class="nc" id="L97">        chartLayout = new VLayout();</span>
+<span class="nc" id="L98">        chartLayout.setWidth(550);</span>
+<span class="nc" id="L99">        chartLayout.setHeight(250);</span>
+<span class="nc" id="L100">        buildPlot();</span>
+
+<span class="nc" id="L102">        configureSummaryGrid();</span>
+<span class="nc" id="L103">        configureDetailGrid();</span>
+
+<span class="nc" id="L105">        VLayout vLayout = new VLayout();</span>
+<span class="nc" id="L106">        vLayout.setWidth100();</span>
+<span class="nc" id="L107">        vLayout.setHeight100();</span>
+
+<span class="nc" id="L109">        HLayout summaryLayout = new HLayout(10);</span>
+<span class="nc" id="L110">        summaryLayout.setPadding(10);</span>
+<span class="nc" id="L111">        summaryLayout.setHeight(270);</span>
+<span class="nc" id="L112">        summaryLayout.setWidth100();</span>
+<span class="nc" id="L113">        summaryLayout.setOverflow(Overflow.VISIBLE);</span>
+<span class="nc" id="L114">        summaryLayout.addMember(chartLayout);</span>
+<span class="nc" id="L115">        summaryLayout.addMember(summaryGrid);</span>
+
+<span class="nc" id="L117">        vLayout.addMember(summaryLayout);</span>
+
+<span class="nc" id="L119">        detailModal = new ModalWindow(detailGrid);</span>
+
+<span class="nc" id="L121">        vLayout.addMember(new SummaryToolStrip(detailModal, detailGrid, simulationID));</span>
+<span class="nc" id="L122">        vLayout.addMember(detailGrid);</span>
+
+<span class="nc" id="L124">        this.setPane(vLayout);</span>
+
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (completed) {</span>
+<span class="nc" id="L127">            loadData();</span>
+        }
+<span class="nc" id="L129">    }</span>
+
+    private void buildPlot() {
+
+<span class="nc" id="L133">        PlotOptions plotOptions = PlotOptions.create();</span>
+<span class="nc" id="L134">        plotOptions.setGlobalSeriesOptions(GlobalSeriesOptions.create()</span>
+<span class="nc" id="L135">                .setBarsSeriesOptions(BarSeriesOptions.create()</span>
+<span class="nc" id="L136">                        .setShow(true).setLineWidth(1).setBarWidth(1)</span>
+<span class="nc" id="L137">                        .setAlignment(BarSeriesOptions.BarAlignment.CENTER))</span>
+<span class="nc" id="L138">                .setMultipleBars(true));</span>
+<span class="nc" id="L139">        plotOptions.setLegendOptions(LegendOptions.create().setShow(true));</span>
+<span class="nc" id="L140">        plotOptions.setMultipleBars(true);</span>
+<span class="nc" id="L141">        plotOptions.addXAxisOptions(com.googlecode.gflot.client.options.AxisOptions.create().setShow(false));</span>
+<span class="nc" id="L142">        plotOptions.addYAxisOptions(com.googlecode.gflot.client.options.AxisOptions.create().setLabel(&quot;Jobs&quot;));</span>
+
+<span class="nc" id="L144">        PlotModel model = new PlotModel();</span>
+<span class="nc" id="L145">        submittedSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + TaskStatus.SUCCESSFULLY_SUBMITTED.getDescription() + &quot;&lt;/font&gt;&quot;, TaskStatus.SUCCESSFULLY_SUBMITTED.getColor()));</span>
+<span class="nc" id="L146">        queuedSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + TaskStatus.QUEUED.getDescription() + &quot;&lt;/font&gt;&quot;, TaskStatus.QUEUED.getColor()));</span>
+<span class="nc" id="L147">        runningSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + TaskStatus.RUNNING.getDescription() + &quot;&lt;/font&gt;&quot;, TaskStatus.RUNNING.getColor()));</span>
+<span class="nc" id="L148">        completedSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + TaskStatus.COMPLETED.getDescription() + &quot;&lt;/font&gt;&quot;, TaskStatus.COMPLETED.getColor()));</span>
+<span class="nc" id="L149">        failedSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + TaskStatus.ERROR.getDescription() + &quot;&lt;/font&gt;&quot;, TaskStatus.ERROR.getColor()));</span>
+<span class="nc" id="L150">        cancelledSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + TaskStatus.CANCELLED.getDescription() + &quot;&lt;/font&gt;&quot;, TaskStatus.CANCELLED.getColor()));</span>
+<span class="nc" id="L151">        stalledSeries = model.addSeries(Series.of(&quot;&lt;font size=\&quot;1\&quot;&gt;&quot; + TaskStatus.STALLED.getDescription() + &quot;&lt;/font&gt;&quot;, TaskStatus.STALLED.getColor()));</span>
+
+<span class="nc" id="L153">        plot = new SimplePlot(model, plotOptions);</span>
+<span class="nc" id="L154">        plot.setWidth(550);</span>
+<span class="nc" id="L155">        plot.setHeight(250);</span>
+<span class="nc" id="L156">        chartLayout.addMember(plot);</span>
+<span class="nc" id="L157">    }</span>
+
+    private void configureSummaryGrid() {
+
+<span class="nc" id="L161">        summaryGrid = new ListGrid();</span>
+<span class="nc" id="L162">        summaryGrid.setWidth(300);</span>
+<span class="nc" id="L163">        summaryGrid.setHeight(180);</span>
+<span class="nc" id="L164">        summaryGrid.setShowAllRecords(true);</span>
+<span class="nc" id="L165">        summaryGrid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L166">        summaryGrid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+
+<span class="nc" id="L168">        ListGridField statesField = new ListGridField(&quot;states&quot;, &quot;State&quot;);</span>
+<span class="nc" id="L169">        ListGridField jobsField = new ListGridField(&quot;jobs&quot;, &quot;Number of Jobs&quot;);</span>
+
+<span class="nc" id="L171">        summaryGrid.setFields(statesField, jobsField);</span>
+<span class="nc" id="L172">    }</span>
+
+    private void configureDetailGrid() {
+
+<span class="nc" id="L176">        detailGrid = new ListGrid() {</span>
+            @Override
+            protected Canvas getCellHoverComponent(Record record, Integer rowNum, Integer colNum) {
+
+<span class="nc" id="L180">                DetailViewer detailViewer = new DetailViewer();</span>
+<span class="nc" id="L181">                detailViewer.setWidth(400);</span>
+
+<span class="nc" id="L183">                DetailViewerField idField = new DetailViewerField(&quot;jobID&quot;, &quot;Job ID&quot;);</span>
+<span class="nc" id="L184">                DetailViewerField statusField = new DetailViewerField(&quot;status&quot;, &quot;Status&quot;);</span>
+<span class="nc" id="L185">                DetailViewerField parametersField = new DetailViewerField(&quot;parameters&quot;, &quot;Parameters&quot;);</span>
+
+<span class="nc" id="L187">                detailViewer.setFields(idField, statusField, parametersField);</span>
+<span class="nc" id="L188">                detailViewer.setData(new Record[]{record});</span>
+
+<span class="nc" id="L190">                return detailViewer;</span>
+            }
+        };
+<span class="nc" id="L193">        detailGrid.setWidth100();</span>
+<span class="nc" id="L194">        detailGrid.setHeight100();</span>
+<span class="nc" id="L195">        detailGrid.setShowAllRecords(false);</span>
+<span class="nc" id="L196">        detailGrid.setShowRowNumbers(true);</span>
+<span class="nc" id="L197">        detailGrid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L198">        detailGrid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+<span class="nc" id="L199">        detailGrid.setSelectionType(SelectionStyle.SIMPLE);</span>
+<span class="nc" id="L200">        detailGrid.setSelectionAppearance(SelectionAppearance.CHECKBOX);</span>
+<span class="nc" id="L201">        detailGrid.setCanHover(true);</span>
+<span class="nc" id="L202">        detailGrid.setShowHover(true);</span>
+<span class="nc" id="L203">        detailGrid.setShowHoverComponents(true);</span>
+
+<span class="nc" id="L205">        ListGridField jobIDField = new ListGridField(&quot;jobID&quot;, &quot;Job ID&quot;);</span>
+<span class="nc" id="L206">        ListGridField statusField = new ListGridField(&quot;status&quot;, &quot;Status&quot;);</span>
+<span class="nc" id="L207">        ListGridField minorField = new ListGridField(&quot;minorStatus&quot;, &quot;Minor Status&quot;);</span>
+<span class="nc" id="L208">        ListGridField commandField = new ListGridField(&quot;command&quot;, &quot;Command&quot;);</span>
+<span class="nc" id="L209">        commandField.setHidden(true);</span>
+
+<span class="nc" id="L211">        detailGrid.setFields(jobIDField, statusField, minorField, commandField);</span>
+
+<span class="nc" id="L213">        detailGrid.setGroupStartOpen(GroupStartOpen.ALL);</span>
+<span class="nc" id="L214">        detailGrid.setGroupByField(&quot;command&quot;);</span>
+
+<span class="nc" id="L216">        detailGrid.addRowContextClickHandler(new RowContextClickHandler() {</span>
+            @Override
+            public void onRowContextClick(RowContextClickEvent event) {
+<span class="nc" id="L219">                event.cancel();</span>
+<span class="nc" id="L220">                JobRecord job = (JobRecord) event.getRecord();</span>
+<span class="nc" id="L221">                new JobsContextMenu(detailModal, simulationID, job).showContextMenu();</span>
+<span class="nc" id="L222">            }</span>
+        });
+<span class="nc" id="L224">        detailGrid.addCellDoubleClickHandler(new CellDoubleClickHandler() {</span>
+            @Override
+            public void onCellDoubleClick(CellDoubleClickEvent event) {
+<span class="nc" id="L227">                detailGrid.expandRecord(event.getRecord());</span>
+<span class="nc" id="L228">            }</span>
+        });
+<span class="nc" id="L230">    }</span>
+
+    private void loadData() {
+
+<span class="nc" id="L234">        JobServiceAsync service = JobService.Util.getInstance();</span>
+<span class="nc" id="L235">        final AsyncCallback&lt;List&lt;Task&gt;&gt; callback = new AsyncCallback&lt;List&lt;Task&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L238">                detailModal.hide();</span>
+<span class="nc" id="L239">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of jobs:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L240">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Task&gt; result) {
+
+<span class="nc" id="L245">                int submitted = 0;</span>
+<span class="nc" id="L246">                int queued = 0;</span>
+<span class="nc" id="L247">                int running = 0;</span>
+<span class="nc" id="L248">                int completed = 0;</span>
+<span class="nc" id="L249">                int failed = 0;</span>
+<span class="nc" id="L250">                int cancelled = 0;</span>
+<span class="nc" id="L251">                int stalled = 0;</span>
+
+<span class="nc" id="L253">                List&lt;JobRecord&gt; dataList = new ArrayList&lt;JobRecord&gt;();</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">                for (Task task : result) {</span>
+<span class="nc" id="L255">                    dataList.add(new JobRecord(task.getId(), task.getStatus().name(),</span>
+<span class="nc" id="L256">                            task.getCommand(), task.getFileName(), task.getExitCode(),</span>
+<span class="nc" id="L257">                            task.getSiteName(), task.getNodeName(), task.getParameters(),</span>
+<span class="nc" id="L258">                            task.getMinorStatus()));</span>
+
+<span class="nc bnc" id="L260" title="All 8 branches missed.">                    switch (task.getStatus()) {</span>
+                        case SUCCESSFULLY_SUBMITTED:
+<span class="nc" id="L262">                            submitted++;</span>
+<span class="nc" id="L263">                            break;</span>
+                        case QUEUED:
+<span class="nc" id="L265">                            queued++;</span>
+<span class="nc" id="L266">                            break;</span>
+                        case RUNNING:
+                        case KILL:
+                        case KILL_REPLICA:
+                        case REPLICATE:
+                        case REPLICATING:
+                        case REPLICATED:
+                        case RESCHEDULE:
+<span class="nc" id="L274">                            running++;</span>
+<span class="nc" id="L275">                            break;</span>
+                        case COMPLETED:
+<span class="nc" id="L277">                            completed++;</span>
+<span class="nc" id="L278">                            break;</span>
+                        case ERROR:
+                        case UNHOLD_ERROR:
+                        case ERROR_HELD:
+                        case ERROR_FINISHING:
+                        case ERROR_RESUBMITTING:
+<span class="nc" id="L284">                            failed++;</span>
+<span class="nc" id="L285">                            break;</span>
+                        case CANCELLED:
+                        case CANCELLED_REPLICA:
+                        case DELETED:
+                        case DELETED_REPLICA:
+<span class="nc" id="L290">                            cancelled++;</span>
+<span class="nc" id="L291">                            break;</span>
+                        case STALLED:
+                        case UNHOLD_STALLED:
+                        case STALLED_HELD:
+                        case STALLED_FINISHING:
+                        case STALLED_RESUBMITTING:
+<span class="nc" id="L297">                            stalled++;</span>
+                            break;
+                    }
+<span class="nc" id="L300">                }</span>
+<span class="nc" id="L301">                detailGrid.setData(dataList.toArray(new JobRecord[]{}));</span>
+<span class="nc" id="L302">                detailModal.hide();</span>
+
+<span class="nc" id="L304">                summaryGrid.setData(new SummaryRecord[]{</span>
+<span class="nc" id="L305">                        new SummaryRecord(TaskStatus.SUCCESSFULLY_SUBMITTED.getDescription(), submitted),</span>
+<span class="nc" id="L306">                        new SummaryRecord(TaskStatus.QUEUED.getDescription(), queued),</span>
+<span class="nc" id="L307">                        new SummaryRecord(TaskStatus.RUNNING.getDescription(), running),</span>
+<span class="nc" id="L308">                        new SummaryRecord(TaskStatus.COMPLETED.getDescription(), completed),</span>
+<span class="nc" id="L309">                        new SummaryRecord(TaskStatus.ERROR.getDescription(), failed),</span>
+<span class="nc" id="L310">                        new SummaryRecord(TaskStatus.CANCELLED.getDescription(), cancelled),</span>
+<span class="nc" id="L311">                        new SummaryRecord(TaskStatus.STALLED.getDescription(), stalled),});</span>
+
+<span class="nc bnc" id="L313" title="All 2 branches missed.">                if (queuedSeries.getData().isEmpty()) {</span>
+<span class="nc" id="L314">                    submittedSeries.add(DataPoint.of(1, submitted));</span>
+<span class="nc" id="L315">                    queuedSeries.add(DataPoint.of(1, queued));</span>
+<span class="nc" id="L316">                    runningSeries.add(DataPoint.of(1, running));</span>
+<span class="nc" id="L317">                    completedSeries.add(DataPoint.of(1, completed));</span>
+<span class="nc" id="L318">                    failedSeries.add(DataPoint.of(1, failed));</span>
+<span class="nc" id="L319">                    cancelledSeries.add(DataPoint.of(1, cancelled));</span>
+<span class="nc" id="L320">                    stalledSeries.add(DataPoint.of(1, stalled));</span>
+                } else {
+<span class="nc" id="L322">                    submittedSeries.getData().get(0).setY(submitted);</span>
+<span class="nc" id="L323">                    queuedSeries.getData().get(0).setY(queued);</span>
+<span class="nc" id="L324">                    runningSeries.getData().get(0).setY(running);</span>
+<span class="nc" id="L325">                    completedSeries.getData().get(0).setY(completed);</span>
+<span class="nc" id="L326">                    failedSeries.getData().get(0).setY(failed);</span>
+<span class="nc" id="L327">                    cancelledSeries.getData().get(0).setY(cancelled);</span>
+<span class="nc" id="L328">                    stalledSeries.getData().get(0).setY(stalled);</span>
+                }
+<span class="nc" id="L330">                plot.redraw();</span>
+<span class="nc" id="L331">            }</span>
+        };
+<span class="nc" id="L333">        detailModal.show(&quot;Loading data...&quot;, true);</span>
+<span class="nc" id="L334">        service.getJobsList(simulationID, callback);</span>
+<span class="nc" id="L335">    }</span>
+
+    @Override
+    public void update() {
+<span class="nc" id="L339">        loadData();</span>
+<span class="nc" id="L340">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

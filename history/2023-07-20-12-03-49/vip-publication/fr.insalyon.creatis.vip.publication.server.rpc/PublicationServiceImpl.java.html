@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PublicationServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-publication</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.publication.server.rpc</a> &gt; <span class="el_source">PublicationServiceImpl.java</span></div><h1>PublicationServiceImpl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.publication.server.rpc;
+
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.CoreException;
+import fr.insalyon.creatis.vip.core.server.business.BusinessException;
+import fr.insalyon.creatis.vip.core.server.rpc.AbstractRemoteServiceServlet;
+import fr.insalyon.creatis.vip.publication.client.bean.Publication;
+import fr.insalyon.creatis.vip.publication.client.rpc.PublicationService;
+import fr.insalyon.creatis.vip.publication.client.view.PublicationTypes;
+import fr.insalyon.creatis.vip.publication.server.business.PublicationBusiness;
+import org.jbibtex.ParseException;
+import org.jbibtex.TokenMgrException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author Rafael Ferreira da Silva,Nouha boujelben
+ */
+public class PublicationServiceImpl extends AbstractRemoteServiceServlet implements PublicationService {
+
+<span class="nc" id="L60">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+    private PublicationBusiness publicationBusiness;
+
+<span class="nc" id="L63">    public PublicationServiceImpl() {</span>
+<span class="nc" id="L64">        logger.info(&quot;PublicationServiceImpl: Creating PublicationBusiness.&quot;);</span>
+<span class="nc" id="L65">    }</span>
+
+    @Override
+    public void init() throws ServletException {
+<span class="nc" id="L69">        super.init();</span>
+<span class="nc" id="L70">        publicationBusiness = getBean(PublicationBusiness.class);</span>
+<span class="nc" id="L71">    }</span>
+
+    @Override
+    public List&lt;Publication&gt; getPublications() throws CoreException {
+<span class="nc" id="L75">        trace(logger, &quot;Getting publication list.&quot;);</span>
+        try {
+<span class="nc" id="L77">            return publicationBusiness.getPublications();</span>
+<span class="nc" id="L78">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L79">            throw new CoreException(ex);</span>
+        }
+    }
+
+    @Override
+    public void removePublication(Long id) throws CoreException {
+<span class="nc" id="L85">        trace(logger, &quot;Removing publication.&quot;);</span>
+
+        try {
+<span class="nc" id="L88">            User user = getSessionUser();</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">            if (user.isSystemAdministrator() ||</span>
+<span class="nc" id="L90">                    publicationBusiness.getPublication(id).getVipAuthor()</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">                            .equals(user.getEmail())) {</span>
+<span class="nc" id="L92">                publicationBusiness.removePublication(id);</span>
+            } else {
+<span class="nc" id="L94">                logger.error(&quot;{} cannot remove publication {} because it's not his&quot;,</span>
+                        user, id);
+<span class="nc" id="L96">                throw new CoreException(&quot;you can't remove a publication that is not yours&quot;);</span>
+            }
+<span class="nc" id="L98">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L99">            throw new CoreException(ex);</span>
+<span class="nc" id="L100">        }</span>
+<span class="nc" id="L101">    }</span>
+
+    @Override
+    public void addPublication(Publication pub) throws CoreException {
+<span class="nc" id="L105">        trace(logger, &quot;Adding publication.&quot;);</span>
+
+        try {
+<span class="nc" id="L108">            User user = getSessionUser();</span>
+<span class="nc" id="L109">            pub.setVipAuthor(user.getEmail());</span>
+<span class="nc" id="L110">            publicationBusiness.addPublication(pub);</span>
+<span class="nc" id="L111">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L112">            throw new CoreException(ex);</span>
+<span class="nc" id="L113">        }</span>
+<span class="nc" id="L114">    }</span>
+
+    @Override
+    public void updatePublication(Publication pub) throws CoreException {
+<span class="nc" id="L118">        trace(logger, &quot;Updating publication.&quot;);</span>
+
+        try {
+<span class="nc" id="L121">            User user = getSessionUser();</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            if (user.isSystemAdministrator() ||</span>
+<span class="nc" id="L123">                    publicationBusiness.getPublication(pub.getId()).getVipAuthor()</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">                            .equals(user.getEmail())) {</span>
+<span class="nc" id="L125">                pub.setVipAuthor(user.getEmail());</span>
+<span class="nc" id="L126">                publicationBusiness.updatePublication(pub);</span>
+            } else {
+<span class="nc" id="L128">                logger.error(&quot;{} cannot modify publication {} because its not his&quot;,</span>
+<span class="nc" id="L129">                        user.getEmail(), pub.getId());</span>
+<span class="nc" id="L130">                throw new CoreException(&quot;you can't modify a publication that is not yours&quot;);</span>
+            }
+<span class="nc" id="L132">        } catch (BusinessException ex) {</span>
+<span class="nc" id="L133">            throw new CoreException(ex);</span>
+<span class="nc" id="L134">        }</span>
+<span class="nc" id="L135">    }</span>
+
+    @Override
+    public List&lt;Publication&gt; parseBibtexText(String s) throws CoreException {
+<span class="nc" id="L139">        List&lt;Publication&gt; publications = new ArrayList&lt;Publication&gt;();</span>
+        try {
+<span class="nc" id="L141">            Reader reader = new StringReader(s);</span>
+<span class="nc" id="L142">            org.jbibtex.BibTeXParser bibtexParser = new org.jbibtex.BibTeXParser();</span>
+<span class="nc" id="L143">            org.jbibtex.BibTeXDatabase database = bibtexParser.parseFully(reader);</span>
+<span class="nc" id="L144">            Map&lt;org.jbibtex.Key, org.jbibtex.BibTeXEntry&gt; entryMap = database.getEntries();</span>
+<span class="nc" id="L145">            Collection&lt;org.jbibtex.BibTeXEntry&gt; entries = entryMap.values();</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">            for (org.jbibtex.BibTeXEntry entry : entries) {</span>
+<span class="nc" id="L147">                String type = entry.getType().toString();</span>
+<span class="nc" id="L148">                org.jbibtex.Value title = entry.getField(org.jbibtex.BibTeXEntry.KEY_TITLE);</span>
+<span class="nc" id="L149">                org.jbibtex.Value date = entry.getField(org.jbibtex.BibTeXEntry.KEY_YEAR);</span>
+<span class="nc" id="L150">                org.jbibtex.Value doi = entry.getField(org.jbibtex.BibTeXEntry.KEY_DOI);</span>
+<span class="nc" id="L151">                org.jbibtex.Value authors = entry.getField(org.jbibtex.BibTeXEntry.KEY_AUTHOR);</span>
+<span class="nc" id="L152">                org.jbibtex.Value typeName = entry.getField(org.jbibtex.BibTeXEntry.KEY_BOOKTITLE);</span>
+                String doiv;
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                if (doi == null) {</span>
+<span class="nc" id="L155">                    doiv = &quot;&quot;;</span>
+                } else {
+<span class="nc" id="L157">                    doiv = doi.toUserString();</span>
+                }
+                //TODO Sorina : handle VIPApplication in this case
+<span class="nc" id="L160">                String VipApplication = &quot;&quot;;</span>
+<span class="nc" id="L161">                publications.add(new Publication(title.toUserString(), date.toUserString(), doiv, authors.toUserString(), parseTypePublication(type), getTypeName(entry, type), getSessionUser().getEmail(), VipApplication));</span>
+
+<span class="nc" id="L163">            }</span>
+
+<span class="nc" id="L165">        } catch (ParseException | TokenMgrException ex) {</span>
+<span class="nc" id="L166">            logger.error(&quot;Error parsing publication {}&quot;, s, ex);</span>
+<span class="nc" id="L167">            throw new CoreException(ex);</span>
+<span class="nc" id="L168">        }</span>
+<span class="nc" id="L169">        return publications;</span>
+    }
+
+    private String parseTypePublication(String type) {
+<span class="nc bnc" id="L173" title="All 4 branches missed.">        if (type.equalsIgnoreCase(&quot;inproceedings&quot;) || type.equalsIgnoreCase(&quot;conference&quot;)) {</span>
+<span class="nc" id="L174">            return PublicationTypes.ConferenceArticle.toString();</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        } else if (type.equalsIgnoreCase(&quot;article&quot;)) {</span>
+<span class="nc" id="L176">            return PublicationTypes.Journal.toString();</span>
+<span class="nc bnc" id="L177" title="All 4 branches missed.">        } else if (type.equalsIgnoreCase(&quot;inbook&quot;) || type.equalsIgnoreCase(&quot;incollection&quot;)) {</span>
+<span class="nc" id="L178">            return PublicationTypes.BookChapter.toString();</span>
+        } else {
+<span class="nc" id="L180">            return PublicationTypes.Other.toString();</span>
+        }
+
+    }
+
+    private String getTypeName(org.jbibtex.BibTeXEntry entry, String type) {
+<span class="nc bnc" id="L186" title="All 6 branches missed.">        if (type.equalsIgnoreCase(&quot;inproceedings&quot;) || type.equalsIgnoreCase(&quot;conference&quot;) || type.equalsIgnoreCase(&quot;incollection&quot;)) {</span>
+<span class="nc" id="L187">            return entry.getField(org.jbibtex.BibTeXEntry.KEY_BOOKTITLE).toUserString();</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        } else if (type.equalsIgnoreCase(&quot;article&quot;)) {</span>
+<span class="nc" id="L189">            return entry.getField(org.jbibtex.BibTeXEntry.KEY_JOURNAL).toUserString();</span>
+        } else {
+<span class="nc" id="L191">            return &quot;&quot;;</span>
+        }
+
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

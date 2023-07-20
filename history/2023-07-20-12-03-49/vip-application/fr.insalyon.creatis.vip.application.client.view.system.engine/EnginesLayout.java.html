@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EnginesLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.system.engine</a> &gt; <span class="el_source">EnginesLayout.java</span></div><h1>EnginesLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.system.engine;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.ImgButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.Engine;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.common.LabelButton;
+import fr.insalyon.creatis.vip.core.client.view.common.ToolstripLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class EnginesLayout extends VLayout {
+
+    private ModalWindow modal;
+    private ListGrid grid;
+    private HLayout rollOverCanvas;
+    private ListGridRecord rollOverRecord;
+
+<span class="nc" id="L74">    public EnginesLayout() {</span>
+
+<span class="nc" id="L76">        this.setWidth100();</span>
+<span class="nc" id="L77">        this.setHeight100();</span>
+<span class="nc" id="L78">        this.setOverflow(Overflow.AUTO);</span>
+
+<span class="nc" id="L80">        configureToolStrip();</span>
+<span class="nc" id="L81">        configureGrid();</span>
+<span class="nc" id="L82">        modal = new ModalWindow(grid);</span>
+
+<span class="nc" id="L84">        loadData();</span>
+<span class="nc" id="L85">    }</span>
+
+    private void configureToolStrip() {
+
+<span class="nc" id="L89">        ToolstripLayout toolstrip = new ToolstripLayout();</span>
+
+<span class="nc" id="L91">        toolstrip.addMember(WidgetUtil.getSpaceLabel(15));</span>
+
+<span class="nc" id="L93">        LabelButton addButton = new LabelButton(&quot;Add Engine&quot;, CoreConstants.ICON_ADD);</span>
+<span class="nc" id="L94">        addButton.setWidth(150);</span>
+<span class="nc" id="L95">        addButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L98">                ManageEnginesTab enginesTab = (ManageEnginesTab) Layout.getInstance().</span>
+<span class="nc" id="L99">                        getTab(ApplicationConstants.TAB_MANAGE_ENGINE);</span>
+<span class="nc" id="L100">                enginesTab.setEngine(null, null, null);</span>
+<span class="nc" id="L101">            }</span>
+        });
+<span class="nc" id="L103">        toolstrip.addMember(addButton);</span>
+
+<span class="nc" id="L105">        LabelButton refreshButton = new LabelButton(&quot;Refresh&quot;, CoreConstants.ICON_REFRESH);</span>
+<span class="nc" id="L106">        refreshButton.setWidth(150);</span>
+<span class="nc" id="L107">        refreshButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L110">                loadData();</span>
+<span class="nc" id="L111">            }</span>
+        });
+<span class="nc" id="L113">        toolstrip.addMember(refreshButton);</span>
+
+<span class="nc" id="L115">        this.addMember(toolstrip);</span>
+<span class="nc" id="L116">    }</span>
+
+    private void configureGrid() {
+
+<span class="nc" id="L120">        grid = new ListGrid() {</span>
+            @Override
+            protected Canvas getRollOverCanvas(Integer rowNum, Integer colNum) {
+<span class="nc" id="L123">                rollOverRecord = this.getRecord(rowNum);</span>
+
+<span class="nc bnc" id="L125" title="All 2 branches missed.">                if (rollOverCanvas == null) {</span>
+<span class="nc" id="L126">                    rollOverCanvas = new HLayout(3);</span>
+<span class="nc" id="L127">                    rollOverCanvas.setSnapTo(&quot;TR&quot;);</span>
+<span class="nc" id="L128">                    rollOverCanvas.setWidth(50);</span>
+<span class="nc" id="L129">                    rollOverCanvas.setHeight(22);</span>
+
+<span class="nc" id="L131">                    ImgButton loadImg = getImgButton(CoreConstants.ICON_EDIT, &quot;Edit&quot;);</span>
+<span class="nc" id="L132">                    loadImg.addClickHandler(new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L135">                            edit(rollOverRecord.getAttribute(&quot;name&quot;),</span>
+<span class="nc" id="L136">                                    rollOverRecord.getAttribute(&quot;endpoint&quot;),</span>
+<span class="nc" id="L137">                                    rollOverRecord.getAttribute(&quot;status&quot;));</span>
+<span class="nc" id="L138">                        }</span>
+                    });
+<span class="nc" id="L140">                    ImgButton deleteImg = getImgButton(CoreConstants.ICON_DELETE, &quot;Delete&quot;);</span>
+<span class="nc" id="L141">                    deleteImg.addClickHandler(new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L144">                            final String name = rollOverRecord.getAttribute(&quot;name&quot;);</span>
+<span class="nc" id="L145">                            SC.ask(&quot;Do you really want to remove the engine \&quot;&quot;</span>
+<span class="nc" id="L146">                                    + name + &quot;\&quot;?&quot;, new BooleanCallback() {</span>
+                                @Override
+                                public void execute(Boolean value) {
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                                    if (value) {</span>
+<span class="nc" id="L150">                                        remove(name);</span>
+                                    }
+<span class="nc" id="L152">                                }</span>
+                            });
+<span class="nc" id="L154">                        }</span>
+                    });
+<span class="nc" id="L156">                    rollOverCanvas.addMember(loadImg);</span>
+<span class="nc" id="L157">                    rollOverCanvas.addMember(deleteImg);</span>
+                }
+<span class="nc" id="L159">                return rollOverCanvas;</span>
+            }
+
+            private ImgButton getImgButton(String imgSrc, String prompt) {
+<span class="nc" id="L163">                ImgButton button = new ImgButton();</span>
+<span class="nc" id="L164">                button.setShowDown(false);</span>
+<span class="nc" id="L165">                button.setShowRollOver(false);</span>
+<span class="nc" id="L166">                button.setLayoutAlign(Alignment.CENTER);</span>
+<span class="nc" id="L167">                button.setSrc(imgSrc);</span>
+<span class="nc" id="L168">                button.setPrompt(prompt);</span>
+<span class="nc" id="L169">                button.setHeight(16);</span>
+<span class="nc" id="L170">                button.setWidth(16);</span>
+<span class="nc" id="L171">                return button;</span>
+            }
+        };
+<span class="nc" id="L174">        grid.setWidth100();</span>
+<span class="nc" id="L175">        grid.setHeight100();</span>
+<span class="nc" id="L176">        grid.setShowRollOverCanvas(true);</span>
+<span class="nc" id="L177">        grid.setShowAllRecords(false);</span>
+<span class="nc" id="L178">        grid.setShowEmptyMessage(true);</span>
+<span class="nc" id="L179">        grid.setShowRowNumbers(true);</span>
+<span class="nc" id="L180">        grid.setEmptyMessage(&quot;&lt;br&gt;No data available.&quot;);</span>
+<span class="nc" id="L181">        grid.setFields(new ListGridField(&quot;name&quot;, &quot;Engine Name&quot;),</span>
+                new ListGridField(&quot;endpoint&quot;, &quot;End-Point&quot;),
+                new ListGridField(&quot;status&quot;, &quot;Status&quot;));
+<span class="nc" id="L184">        grid.setSortField(&quot;name&quot;);</span>
+<span class="nc" id="L185">        grid.setSortDirection(SortDirection.ASCENDING);</span>
+<span class="nc" id="L186">        grid.addCellDoubleClickHandler(new CellDoubleClickHandler() {</span>
+            @Override
+            public void onCellDoubleClick(CellDoubleClickEvent event) {
+<span class="nc" id="L189">                edit(event.getRecord().getAttribute(&quot;name&quot;),</span>
+<span class="nc" id="L190">                        event.getRecord().getAttribute(&quot;endpoint&quot;),</span>
+<span class="nc" id="L191">                        event.getRecord().getAttribute(&quot;status&quot;));</span>
+<span class="nc" id="L192">            }</span>
+        });
+<span class="nc" id="L194">        this.addMember(grid);</span>
+<span class="nc" id="L195">    }</span>
+
+    public void loadData() {
+
+<span class="nc" id="L199">        final AsyncCallback&lt;List&lt;Engine&gt;&gt; callback = new AsyncCallback&lt;List&lt;Engine&gt;&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L202">                modal.hide();</span>
+<span class="nc" id="L203">                Layout.getInstance().setWarningMessage(&quot;Unable to get list of engines:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L204">            }</span>
+
+            @Override
+            public void onSuccess(List&lt;Engine&gt; result) {
+<span class="nc" id="L208">                modal.hide();</span>
+<span class="nc" id="L209">                List&lt;EngineRecord&gt; dataList = new ArrayList&lt;EngineRecord&gt;();</span>
+
+<span class="nc bnc" id="L211" title="All 2 branches missed.">                for (Engine engine : result) {</span>
+<span class="nc" id="L212">                    dataList.add(new EngineRecord(engine.getName(), engine.getEndpoint(), engine.getStatus()));</span>
+<span class="nc" id="L213">                }</span>
+<span class="nc" id="L214">                grid.setData(dataList.toArray(new EngineRecord[]{}));</span>
+<span class="nc" id="L215">            }</span>
+        };
+<span class="nc" id="L217">        modal.show(&quot;Loading engines...&quot;, true);</span>
+<span class="nc" id="L218">        ApplicationService.Util.getInstance().getEngines(callback);</span>
+<span class="nc" id="L219">    }</span>
+
+    private void remove(String name) {
+
+<span class="nc" id="L223">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L226">                modal.hide();</span>
+<span class="nc" id="L227">                Layout.getInstance().setWarningMessage(&quot;Unable to remove engine:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L228">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L232">                modal.hide();</span>
+<span class="nc" id="L233">                Layout.getInstance().setNoticeMessage(&quot;The engine was successfully removed!&quot;);</span>
+<span class="nc" id="L234">                loadData();</span>
+<span class="nc" id="L235">            }</span>
+        };
+<span class="nc" id="L237">        modal.show(&quot;Removing engine '&quot; + name + &quot;'...&quot;, true);</span>
+<span class="nc" id="L238">        ApplicationService.Util.getInstance().removeEngine(name, callback);</span>
+<span class="nc" id="L239">    }</span>
+
+    private void edit(String name, String endpoint, String status) {
+
+<span class="nc" id="L243">        ManageEnginesTab appsTab = (ManageEnginesTab) Layout.getInstance().</span>
+<span class="nc" id="L244">                getTab(ApplicationConstants.TAB_MANAGE_ENGINE);</span>
+<span class="nc" id="L245">        appsTab.setEngine(name, endpoint, status);</span>
+<span class="nc" id="L246">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

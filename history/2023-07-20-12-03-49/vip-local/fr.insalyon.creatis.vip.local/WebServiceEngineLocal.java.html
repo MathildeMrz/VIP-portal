@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>WebServiceEngineLocal.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-local</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.local</a> &gt; <span class="el_source">WebServiceEngineLocal.java</span></div><h1>WebServiceEngineLocal.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.local;
+
+import fr.insalyon.creatis.vip.application.client.view.monitor.SimulationStatus;
+import fr.insalyon.creatis.vip.application.server.business.simulation.ParameterSweep;
+import fr.insalyon.creatis.vip.application.server.business.simulation.WebServiceEngine;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+import javax.xml.rpc.ServiceException;
+import java.io.File;
+import java.rmi.RemoteException;
+import java.util.List;
+
+/**
+ * local version to override WebServiceEngine and make all executions stuff
+ * by LocalBashEngine
+ */
+
+@Service
+@Scope(&quot;prototype&quot;)
+@Profile(&quot;local&quot;)
+@Primary
+<span class="nc" id="L26">public class WebServiceEngineLocal extends WebServiceEngine {</span>
+
+    @Autowired
+    private LocalBashEngine localBashEngine;
+
+    private String addressWS;
+    private String settings;
+    private List&lt;ParameterSweep&gt; inputs;
+    private File workflow;
+
+    @Override
+    public String getAddressWS() {
+<span class="nc" id="L38">        return addressWS;</span>
+    }
+
+    @Override
+    public void setAddressWS(String addressWS) {
+<span class="nc" id="L43">        this.addressWS = addressWS;</span>
+<span class="nc" id="L44">    }</span>
+
+    @Override
+    public String getSettings() {
+<span class="nc" id="L48">        return settings;</span>
+    }
+
+    @Override
+    public void setSettings(String settings) {
+<span class="nc" id="L53">        this.settings = settings;</span>
+<span class="nc" id="L54">    }</span>
+
+    @Override
+    public String getWorkflow() {
+<span class="nc" id="L58">        return workflow.toString();</span>
+    }
+
+    @Override
+    public void setWorkflow(File workflow) {
+<span class="nc" id="L63">        this.workflow = workflow;</span>
+<span class="nc" id="L64">    }</span>
+
+    @Override
+    public String getInput() {
+<span class="nc" id="L68">        return inputs.toString();</span>
+    }
+
+    @Override
+    public void setInput(List&lt;ParameterSweep&gt; parameters) {
+<span class="nc" id="L73">        this.inputs = parameters;</span>
+<span class="nc" id="L74">    }</span>
+
+    @Override
+    public String launch(String proxyFileName, String userDN) throws RemoteException, ServiceException {
+<span class="nc" id="L78">        return localBashEngine.launch(workflow, inputs);</span>
+    }
+
+    @Override
+    public String getSimulationId(String launchID) {
+<span class="nc" id="L83">        return launchID;</span>
+    }
+
+    @Override
+    public void kill(String workflowID) throws RemoteException, ServiceException {
+<span class="nc" id="L88">        localBashEngine.kill(workflowID);</span>
+<span class="nc" id="L89">    }</span>
+
+    @Override
+    public SimulationStatus getStatus(String workflowID) throws RemoteException, ServiceException {
+<span class="nc" id="L93">        return localBashEngine.getStatus(workflowID);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
