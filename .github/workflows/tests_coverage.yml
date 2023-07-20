@@ -38,12 +38,14 @@ jobs:
         with:
           java-version: "11"
           distribution: "temurin"
+          
+      - name: Checkout Code
+        uses: actions/checkout@v1
 
       - name: Build Maven
         run: mvn clean verify
         
-      - name: Checkout Code
-        uses: actions/checkout@v1
+
         
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
