@@ -51,8 +51,9 @@ jobs:
         uses: mikepenz/action-junit-report@v3
         if: success() || failure() # always run even if the previous step fails
         with:
-          report_paths: '**/target/**/TEST-*.xml'
-          summary: true
+          report_paths: 'coverage/target/failsafe-reports/failsafe-summary.xml'
+          #report_paths: '**/target/**/TEST-*.xml'
+          #summary: true
 
 #      - name: Setup Pages
 #        uses: actions/configure-pages@v3
