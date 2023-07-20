@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ManageCachedFilesToolStrip.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client.view.system.cache</a> &gt; <span class="el_source">ManageCachedFilesToolStrip.java</span></div><h1>ManageCachedFilesToolStrip.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client.view.system.cache;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class ManageCachedFilesToolStrip extends ToolStrip {
+
+<span class="nc" id="L57">    public ManageCachedFilesToolStrip(final ModalWindow modal) {</span>
+
+<span class="nc" id="L59">        this.setWidth100();</span>
+
+<span class="nc" id="L61">        ToolStripButton refreshButton = new ToolStripButton(&quot;Refresh&quot;);</span>
+<span class="nc" id="L62">        refreshButton.setIcon(CoreConstants.ICON_REFRESH);</span>
+<span class="nc" id="L63">        refreshButton.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L66">                ManageCachedFilesTab tab = (ManageCachedFilesTab) Layout.getInstance().getTab(DataManagerConstants.TAB_MANAGE_CACHED_FILES);</span>
+<span class="nc" id="L67">                tab.loadData();</span>
+<span class="nc" id="L68">            }</span>
+        });
+<span class="nc" id="L70">        this.addButton(refreshButton);</span>
+
+<span class="nc" id="L72">        ToolStripButton deleteSelectedFiles = new ToolStripButton(&quot;Delete Selected Files&quot;);</span>
+<span class="nc" id="L73">        deleteSelectedFiles.setIcon(CoreConstants.ICON_DELETE);</span>
+<span class="nc" id="L74">        deleteSelectedFiles.addClickHandler(new ClickHandler() {</span>
+            @Override
+            public void onClick(ClickEvent event) {
+<span class="nc" id="L77">                SC.ask(&quot;Do you really want to delete all selected files?&quot;, new BooleanCallback() {</span>
+                    @Override
+                    public void execute(Boolean value) {
+
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                        if (value) {</span>
+<span class="nc" id="L82">                            final ManageCachedFilesTab tab = (ManageCachedFilesTab) Layout.getInstance().getTab(DataManagerConstants.TAB_MANAGE_CACHED_FILES);</span>
+<span class="nc" id="L83">                            List&lt;String&gt; paths = new ArrayList&lt;String&gt;();</span>
+
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                            for (ListGridRecord record : tab.getGridSelection()) {</span>
+<span class="nc" id="L86">                                CachedFileRecord cf = (CachedFileRecord) record;</span>
+<span class="nc" id="L87">                                paths.add(cf.getPath());</span>
+                            }
+
+<span class="nc" id="L90">                            DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L91">                            AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                                @Override
+                                public void onFailure(Throwable caught) {
+<span class="nc" id="L94">                                    modal.hide();</span>
+<span class="nc" id="L95">                                    Layout.getInstance().setWarningMessage(&quot;Unable to delete cached files:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L96">                                }</span>
+
+                                @Override
+                                public void onSuccess(Void result) {
+<span class="nc" id="L100">                                    modal.hide();</span>
+<span class="nc" id="L101">                                    tab.loadData();</span>
+<span class="nc" id="L102">                                }</span>
+                            };
+<span class="nc" id="L104">                            modal.show(&quot;Deleting cached files...&quot;, true);</span>
+<span class="nc" id="L105">                            service.deleteCachedFiles(paths, callback);</span>
+                        }
+<span class="nc" id="L107">                    }</span>
+                });
+<span class="nc" id="L109">            }</span>
+        });
+<span class="nc" id="L111">        this.addButton(deleteSelectedFiles);</span>
+<span class="nc" id="L112">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

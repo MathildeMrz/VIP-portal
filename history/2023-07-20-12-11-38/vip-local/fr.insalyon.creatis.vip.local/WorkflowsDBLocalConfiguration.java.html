@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>WorkflowsDBLocalConfiguration.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-local</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.local</a> &gt; <span class="el_source">WorkflowsDBLocalConfiguration.java</span></div><h1>WorkflowsDBLocalConfiguration.java</h1><pre class="source lang-java linenums">package fr.insalyon.creatis.vip.local;
+
+import fr.insalyon.creatis.moteur.plugins.workflowsdb.bean.*;
+import fr.insalyon.creatis.moteur.plugins.workflowsdb.dao.*;
+import fr.insalyon.creatis.moteur.plugins.workflowsdb.hibernate.*;
+import org.hibernate.SessionFactory;
+import org.hibernate.dialect.H2Dialect;
+import org.hibernate.internal.SessionFactoryImpl;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
+import org.hibernate.service.jdbc.connections.internal.DriverManagerConnectionProviderImpl;
+import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanInitializationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.Resource;
+
+import javax.annotation.PreDestroy;
+import java.io.IOException;
+
+/**
+ * overrides workflowsdb dao by others configured with a h2 database
+ */
+
+@Configuration
+@Profile(&quot;local&quot;)
+<span class="nc" id="L31">public class WorkflowsDBLocalConfiguration {</span>
+
+<span class="nc" id="L33">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+
+    @Autowired
+    private Resource vipConfigFolder;
+
+    private SessionFactory workflowsDbSessionFactory;
+
+    @PreDestroy
+    public void closeWorkflowsDB() {
+<span class="nc" id="L42">        logger.info(&quot;closing workflowsdb. Already closed : {}&quot;, workflowsDbSessionFactory.isClosed());</span>
+        // close connection pool to close connections and h2 database
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (workflowsDbSessionFactory instanceof SessionFactoryImpl) {</span>
+<span class="nc" id="L45">            SessionFactoryImpl sf = (SessionFactoryImpl) workflowsDbSessionFactory;</span>
+<span class="nc" id="L46">            ConnectionProvider conn = sf.getConnectionProvider();</span>
+<span class="nc" id="L47">            logger.info(&quot;ConnectionProvider : {}&quot;, conn);</span>
+<span class="nc" id="L48">            ((DriverManagerConnectionProviderImpl) conn).stop();</span>
+        }
+<span class="nc" id="L50">        workflowsDbSessionFactory.close();</span>
+<span class="nc" id="L51">        logger.info(&quot;workflowsdb closed &quot;);</span>
+<span class="nc" id="L52">    }</span>
+
+    @Bean(destroyMethod = &quot;&quot;)
+    public SessionFactory workflowsDbSessionFactory() throws IOException {
+<span class="nc" id="L56">        logger.info(&quot;building a new workflowsdb session factory&quot;);</span>
+<span class="nc" id="L57">        String h2URL = &quot;jdbc:h2:&quot; + vipConfigFolder.getFile().getAbsolutePath() + &quot;/workflowsdb&quot;;</span>
+
+        try {
+<span class="nc" id="L60">            org.hibernate.cfg.Configuration cfg = new org.hibernate.cfg.Configuration();</span>
+            //cfg.setProperty(&quot;hibernate.default_schema&quot;, &quot;workflowsdb&quot;);
+<span class="nc" id="L62">            cfg.setProperty(&quot;hibernate.connection.driver_class&quot;, &quot;org.h2.Driver&quot;);</span>
+<span class="nc" id="L63">            cfg.setProperty(&quot;hibernate.connection.url&quot;, h2URL);</span>
+<span class="nc" id="L64">            cfg.setProperty(&quot;hibernate.dialect&quot;, H2Dialect.class.getCanonicalName());</span>
+<span class="nc" id="L65">            cfg.setProperty(&quot;hibernate.connection.username&quot;, &quot;sa&quot;);</span>
+<span class="nc" id="L66">            cfg.setProperty(&quot;hibernate.connection.password&quot;, &quot;&quot;);</span>
+<span class="nc" id="L67">            cfg.setProperty(&quot;javax.persistence.validation.mode&quot;, &quot;none&quot;);</span>
+<span class="nc" id="L68">            cfg.setProperty(&quot;hibernate.validator.apply_to_ddl&quot;, &quot;false&quot;);</span>
+<span class="nc" id="L69">            cfg.setProperty(&quot;hibernate.validator.autoregister_listeners&quot;, &quot;false&quot;);</span>
+<span class="nc" id="L70">            cfg.setProperty(&quot;hibernate.hbm2ddl.auto&quot;, &quot;update&quot;);</span>
+<span class="nc" id="L71">            cfg.addAnnotatedClass(Workflow.class);</span>
+<span class="nc" id="L72">            cfg.addAnnotatedClass(Processor.class);</span>
+<span class="nc" id="L73">            cfg.addAnnotatedClass(ProcessorID.class);</span>
+<span class="nc" id="L74">            cfg.addAnnotatedClass(Input.class);</span>
+<span class="nc" id="L75">            cfg.addAnnotatedClass(InputID.class);</span>
+<span class="nc" id="L76">            cfg.addAnnotatedClass(Output.class);</span>
+<span class="nc" id="L77">            cfg.addAnnotatedClass(OutputID.class);</span>
+<span class="nc" id="L78">            cfg.addAnnotatedClass(Stats.class);</span>
+<span class="nc" id="L79">            ServiceRegistry serviceRegistry = (new ServiceRegistryBuilder()).applySettings(cfg.getProperties()).buildServiceRegistry();</span>
+<span class="nc" id="L80">            workflowsDbSessionFactory = cfg.buildSessionFactory(serviceRegistry);</span>
+<span class="nc" id="L81">            return workflowsDbSessionFactory;</span>
+<span class="nc" id="L82">        } catch (Exception e) {</span>
+<span class="nc" id="L83">            throw new BeanInitializationException(&quot;Error creating workflows db local hibernate session factory&quot;, e);</span>
+        }
+    }
+
+    @Bean
+    public WorkflowDAO getWorkflowDAO() throws IOException {
+<span class="nc" id="L89">        return new WorkflowData(workflowsDbSessionFactory());</span>
+    }
+
+    @Bean
+    public ProcessorDAO getProcessorDAO() throws IOException {
+<span class="nc" id="L94">        return new ProcessorData(workflowsDbSessionFactory());</span>
+    }
+
+    @Bean
+    public OutputDAO getOutputDAO() throws IOException {
+<span class="nc" id="L99">        return new OutputData(workflowsDbSessionFactory());</span>
+    }
+
+    @Bean
+    public InputDAO getInputDAO() throws IOException {
+<span class="nc" id="L104">        return new InputData(workflowsDbSessionFactory());</span>
+    }
+
+    @Bean
+    public StatsDAO getStatsDAO() throws IOException {
+<span class="nc" id="L109">        return new StatsData(workflowsDbSessionFactory());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
