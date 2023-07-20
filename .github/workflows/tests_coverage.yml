@@ -40,7 +40,7 @@ jobs:
           distribution: "temurin"
 
       - name: Build Maven
-        run: mvn clean install
+        run: mvn clean verify
         
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
