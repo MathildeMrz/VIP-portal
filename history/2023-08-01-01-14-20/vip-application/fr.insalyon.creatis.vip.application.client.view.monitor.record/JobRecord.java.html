@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JobRecord.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.record</a> &gt; <span class="el_source">JobRecord.java</span></div><h1>JobRecord.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.record;
+
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class JobRecord extends ListGridRecord {
+
+<span class="nc" id="L41">    public JobRecord() {</span>
+<span class="nc" id="L42">    }</span>
+
+    public JobRecord(String jobID, String status, String command, String fileName,
+                     int exitCode, String siteName, String nodeName, String[] parameters,
+<span class="nc" id="L46">                     int minorStatus) {</span>
+
+<span class="nc" id="L48">        setAttribute(&quot;jobID&quot;, jobID);</span>
+<span class="nc" id="L49">        setAttribute(&quot;status&quot;, status);</span>
+<span class="nc" id="L50">        setAttribute(&quot;command&quot;, command);</span>
+<span class="nc" id="L51">        setAttribute(&quot;fileName&quot;, fileName);</span>
+<span class="nc" id="L52">        setAttribute(&quot;exitCode&quot;, exitCode);</span>
+<span class="nc" id="L53">        setAttribute(&quot;siteName&quot;, siteName);</span>
+<span class="nc" id="L54">        setAttribute(&quot;nodeName&quot;, nodeName);</span>
+<span class="nc" id="L55">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        for (String p : parameters) {</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">            if (!p.isEmpty()) {</span>
+<span class="nc" id="L58">                sb.append(&quot;&lt;br /&gt;&quot;);</span>
+            }
+<span class="nc" id="L60">            sb.append(p);</span>
+        }
+<span class="nc" id="L62">        setAttribute(&quot;parameters&quot;, sb.toString());</span>
+<span class="nc" id="L63">        setMinorStatus(status, exitCode, minorStatus);</span>
+<span class="nc" id="L64">    }</span>
+
+    public String getCommand() {
+<span class="nc" id="L67">        return getAttributeAsString(&quot;command&quot;);</span>
+    }
+
+    public String getExitCode() {
+<span class="nc" id="L71">        return getAttributeAsString(&quot;exitCode&quot;);</span>
+    }
+
+    public String getFileName() {
+<span class="nc" id="L75">        return getAttributeAsString(&quot;fileName&quot;);</span>
+    }
+
+    public String getID() {
+<span class="nc" id="L79">        return getAttributeAsString(&quot;jobID&quot;);</span>
+    }
+
+    public String getNodeName() {
+<span class="nc" id="L83">        return getAttributeAsString(&quot;nodeName&quot;);</span>
+    }
+
+    public String getSiteName() {
+<span class="nc" id="L87">        return getAttributeAsString(&quot;siteName&quot;);</span>
+    }
+
+    public String getStatus() {
+<span class="nc" id="L91">        return getAttributeAsString(&quot;status&quot;);</span>
+    }
+
+    public String getMinorStatus() {
+<span class="nc" id="L95">        return getAttributeAsString(&quot;minorStatus&quot;);</span>
+    }
+
+    public String getParameters() {
+<span class="nc" id="L99">        return getAttributeAsString(&quot;parameters&quot;);</span>
+    }
+
+    private void setMinorStatus(String status, int exitCode, int minorStatus) {
+<span class="nc bnc" id="L103" title="All 4 branches missed.">        if (status.equals(&quot;COMPLETED&quot;) || status.equals(&quot;ERROR&quot;)) {</span>
+<span class="nc bnc" id="L104" title="All 7 branches missed.">            switch (exitCode) {</span>
+                case -1:
+<span class="nc" id="L106">                    setAttribute(&quot;minorStatus&quot;, &quot;Retrieving Status&quot;);</span>
+<span class="nc" id="L107">                    break;</span>
+                case 0:
+<span class="nc" id="L109">                    setAttribute(&quot;minorStatus&quot;, &quot;Execution Completed&quot;);</span>
+<span class="nc" id="L110">                    break;</span>
+                case 1:
+<span class="nc" id="L112">                    setAttribute(&quot;minorStatus&quot;, &quot;Inputs Download Failed&quot;);</span>
+<span class="nc" id="L113">                    break;</span>
+                case 2:
+<span class="nc" id="L115">                    setAttribute(&quot;minorStatus&quot;, &quot;Outputs Upload Failed&quot;);</span>
+<span class="nc" id="L116">                    break;</span>
+                case 6:
+<span class="nc" id="L118">                    setAttribute(&quot;minorStatus&quot;, &quot;Application Execution Failed&quot;);</span>
+<span class="nc" id="L119">                    break;</span>
+                case 7:
+<span class="nc" id="L121">                    setAttribute(&quot;minorStatus&quot;, &quot;Directories Creation Failed&quot;);</span>
+<span class="nc" id="L122">                    break;</span>
+                default:
+<span class="nc" id="L124">                    setAttribute(&quot;minorStatus&quot;, &quot;&quot;);</span>
+            }
+
+        } else {
+<span class="nc bnc" id="L128" title="All 7 branches missed.">            switch (minorStatus) {</span>
+                case 1:
+<span class="nc" id="L130">                    setAttribute(&quot;minorStatus&quot;, &quot;Job Set Up&quot;);</span>
+<span class="nc" id="L131">                    break;</span>
+                case 2:
+<span class="nc" id="L133">                    setAttribute(&quot;minorStatus&quot;, &quot;Downloading Background Script&quot;);</span>
+<span class="nc" id="L134">                    break;</span>
+                case 3:
+<span class="nc" id="L136">                    setAttribute(&quot;minorStatus&quot;, &quot;Downloading Inputs&quot;);</span>
+<span class="nc" id="L137">                    break;</span>
+                case 4:
+<span class="nc" id="L139">                    setAttribute(&quot;minorStatus&quot;, &quot;Application Execution&quot;);</span>
+<span class="nc" id="L140">                    break;</span>
+                case 5:
+<span class="nc" id="L142">                    setAttribute(&quot;minorStatus&quot;, &quot;Uploading Results&quot;);</span>
+<span class="nc" id="L143">                    break;</span>
+                case 6:
+<span class="nc" id="L145">                    setAttribute(&quot;minorStatus&quot;, &quot;Finishing&quot;);</span>
+<span class="nc" id="L146">                    break;</span>
+                default:
+<span class="nc" id="L148">                    setAttribute(&quot;minorStatus&quot;, &quot;&quot;);</span>
+            }
+        }
+<span class="nc" id="L151">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

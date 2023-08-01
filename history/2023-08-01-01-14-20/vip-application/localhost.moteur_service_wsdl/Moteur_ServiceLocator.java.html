@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Moteur_ServiceLocator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">localhost.moteur_service_wsdl</a> &gt; <span class="el_source">Moteur_ServiceLocator.java</span></div><h1>Moteur_ServiceLocator.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package localhost.moteur_service_wsdl;
+
+public class Moteur_ServiceLocator extends org.apache.axis.client.Service implements localhost.moteur_service_wsdl.Moteur_Service {
+
+    // Use to get a proxy class for moteur_service
+<span class="nc" id="L37">    private java.lang.String moteur_service_address = &quot;http://localhost:18000&quot;;</span>
+    // The WSDD service name defaults to the port name.
+<span class="nc" id="L39">    private java.lang.String moteur_serviceWSDDServiceName = &quot;moteur_service&quot;;</span>
+<span class="nc" id="L40">    private java.util.HashSet&lt;javax.xml.namespace.QName&gt; ports = null;</span>
+
+    /**
+     * gSOAP 2.7.13 generated service definition
+     */
+<span class="nc" id="L45">    public Moteur_ServiceLocator() {</span>
+<span class="nc" id="L46">    }</span>
+
+    public Moteur_ServiceLocator(org.apache.axis.EngineConfiguration config) {
+<span class="nc" id="L49">        super(config);</span>
+<span class="nc" id="L50">    }</span>
+
+    public Moteur_ServiceLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
+<span class="nc" id="L53">        super(wsdlLoc, sName);</span>
+<span class="nc" id="L54">    }</span>
+
+    public Moteur_ServiceLocator(String address, org.apache.axis.EngineConfiguration config) {
+<span class="nc" id="L57">        super(config);</span>
+<span class="nc" id="L58">        moteur_service_address = address;</span>
+<span class="nc" id="L59">    }</span>
+
+    public java.lang.String getmoteur_serviceAddress() {
+<span class="nc" id="L62">        return moteur_service_address;</span>
+    }
+
+    public java.lang.String getmoteur_serviceWSDDServiceName() {
+<span class="nc" id="L66">        return moteur_serviceWSDDServiceName;</span>
+    }
+
+    public void setmoteur_serviceWSDDServiceName(java.lang.String name) {
+<span class="nc" id="L70">        moteur_serviceWSDDServiceName = name;</span>
+<span class="nc" id="L71">    }</span>
+
+    public localhost.moteur_service_wsdl.Moteur_servicePortType getmoteur_service() throws javax.xml.rpc.ServiceException {
+        java.net.URL endpoint;
+        try {
+<span class="nc" id="L76">            endpoint = new java.net.URL(moteur_service_address);</span>
+<span class="nc" id="L77">        } catch (java.net.MalformedURLException e) {</span>
+<span class="nc" id="L78">            throw new javax.xml.rpc.ServiceException(e);</span>
+<span class="nc" id="L79">        }</span>
+<span class="nc" id="L80">        return getmoteur_service(endpoint);</span>
+    }
+
+    public localhost.moteur_service_wsdl.Moteur_servicePortType getmoteur_service(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+        try {
+<span class="nc" id="L85">            localhost.moteur_service_wsdl.Moteur_BindingStub _stub = new localhost.moteur_service_wsdl.Moteur_BindingStub(portAddress, this);</span>
+<span class="nc" id="L86">            _stub.setPortName(getmoteur_serviceWSDDServiceName());</span>
+<span class="nc" id="L87">            return _stub;</span>
+<span class="nc" id="L88">        } catch (org.apache.axis.AxisFault e) {</span>
+<span class="nc" id="L89">            return null;</span>
+        }
+    }
+
+    public void setmoteur_serviceEndpointAddress(java.lang.String address) {
+<span class="nc" id="L94">        moteur_service_address = address;</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * For the given interface, get the stub implementation.
+     * If this service has no port for the given interface,
+     * then ServiceException is thrown.
+     */
+    public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
+        try {
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            if (localhost.moteur_service_wsdl.Moteur_servicePortType.class.isAssignableFrom(serviceEndpointInterface)) {</span>
+<span class="nc" id="L105">                localhost.moteur_service_wsdl.Moteur_BindingStub _stub = new localhost.moteur_service_wsdl.Moteur_BindingStub(new java.net.URL(moteur_service_address), this);</span>
+<span class="nc" id="L106">                _stub.setPortName(getmoteur_serviceWSDDServiceName());</span>
+<span class="nc" id="L107">                return _stub;</span>
+            }
+<span class="nc" id="L109">        } catch (java.lang.Throwable t) {</span>
+<span class="nc" id="L110">            throw new javax.xml.rpc.ServiceException(t);</span>
+<span class="nc" id="L111">        }</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        throw new javax.xml.rpc.ServiceException(&quot;There is no stub implementation for the interface:  &quot; + (serviceEndpointInterface == null ? &quot;null&quot; : serviceEndpointInterface.getName()));</span>
+    }
+
+    /**
+     * For the given interface, get the stub implementation.
+     * If this service has no port for the given interface,
+     * then ServiceException is thrown.
+     */
+    public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (portName == null) {</span>
+<span class="nc" id="L122">            return getPort(serviceEndpointInterface);</span>
+        }
+<span class="nc" id="L124">        java.lang.String inputPortName = portName.getLocalPart();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (&quot;moteur_service&quot;.equals(inputPortName)) {</span>
+<span class="nc" id="L126">            return getmoteur_service();</span>
+        } else {
+<span class="nc" id="L128">            java.rmi.Remote _stub = getPort(serviceEndpointInterface);</span>
+<span class="nc" id="L129">            ((org.apache.axis.client.Stub) _stub).setPortName(portName);</span>
+<span class="nc" id="L130">            return _stub;</span>
+        }
+    }
+
+    public javax.xml.namespace.QName getServiceName() {
+<span class="nc" id="L135">        return new javax.xml.namespace.QName(&quot;moteur_service/moteur_service.wsdl&quot;, &quot;moteur_service&quot;);</span>
+    }
+
+    public java.util.Iterator getPorts() {
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (ports == null) {</span>
+<span class="nc" id="L140">            ports = new java.util.HashSet&lt;&gt;();</span>
+<span class="nc" id="L141">            ports.add(new javax.xml.namespace.QName(&quot;moteur_service/moteur_service.wsdl&quot;, &quot;moteur_service&quot;));</span>
+        }
+<span class="nc" id="L143">        return ports.iterator();</span>
+    }
+
+    /**
+     * Set the endpoint address for the specified port name.
+     */
+    public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
+
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        if (&quot;moteur_service&quot;.equals(portName)) {</span>
+<span class="nc" id="L152">            setmoteur_serviceEndpointAddress(address);</span>
+        } else { // Unknown Port Name
+<span class="nc" id="L154">            throw new javax.xml.rpc.ServiceException(&quot; Cannot set Endpoint Address for Unknown Port&quot; + portName);</span>
+        }
+<span class="nc" id="L156">    }</span>
+
+    /**
+     * Set the endpoint address for the specified port name.
+     */
+    public void setEndpointAddress(javax.xml.namespace.QName portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
+<span class="nc" id="L162">        setEndpointAddress(portName.getLocalPart(), address);</span>
+<span class="nc" id="L163">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

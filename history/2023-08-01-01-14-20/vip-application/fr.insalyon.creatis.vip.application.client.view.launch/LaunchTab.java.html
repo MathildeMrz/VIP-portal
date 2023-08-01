@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LaunchTab.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.launch</a> &gt; <span class="el_source">LaunchTab.java</span></div><h1>LaunchTab.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.launch;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
+import fr.insalyon.creatis.vip.application.client.bean.Descriptor;
+import fr.insalyon.creatis.vip.application.client.bean.SimulationInput;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplication;
+import fr.insalyon.creatis.vip.application.client.bean.boutiquesTools.BoutiquesApplicationExtensions;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowServiceAsync;
+import fr.insalyon.creatis.vip.application.client.view.boutiquesParsing.BoutiquesParser;
+import fr.insalyon.creatis.vip.application.client.view.boutiquesParsing.InvalidBoutiquesDescriptorException;
+import fr.insalyon.creatis.vip.application.client.view.monitor.timeline.TimelineLayout;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+
+import java.util.*;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class LaunchTab extends Tab {
+
+    protected String applicationName;
+    protected String applicationVersion;
+    protected String applicationClass;
+    protected String simulationName;
+    protected Map&lt;String, String&gt; inputs;
+
+<span class="nc" id="L72">    protected Boolean mustBeABoutiquesDescriptor = false;</span>
+<span class="nc" id="L73">    protected Boolean showExamples = true;</span>
+<span class="nc" id="L74">    protected boolean showSeparators = true;</span>
+
+    protected HLayout layout;
+    protected LaunchFormLayout launchFormLayout;
+    protected InputsLayout inputsLayout;
+    protected ModalWindow modal;
+    protected IButton launchButton;
+    protected IButton saveInputsButton;
+    protected IButton saveAsExampleButton;
+
+
+    public LaunchTab(String applicationName, String applicationVersion, String applicationClass) {
+<span class="nc" id="L86">        this(applicationName, applicationVersion, applicationClass, null, null);</span>
+<span class="nc" id="L87">    }</span>
+
+    public LaunchTab(
+            String applicationName, String applicationVersion, String applicationClass,
+<span class="nc" id="L91">            String simulationName, Map&lt;String, String&gt; inputs) {</span>
+
+<span class="nc" id="L93">        this.applicationName = applicationName;</span>
+<span class="nc" id="L94">        this.applicationVersion = applicationVersion;</span>
+<span class="nc" id="L95">        this.applicationClass = applicationClass;</span>
+<span class="nc" id="L96">        this.simulationName = simulationName;</span>
+<span class="nc" id="L97">        this.inputs = inputs;</span>
+
+<span class="nc" id="L99">        this.setTitle(Canvas.imgHTML(ApplicationConstants.ICON_APPLICATION) + &quot; &quot;</span>
+                + applicationName + &quot; &quot; + applicationVersion);
+<span class="nc" id="L101">        this.setCanClose(true);</span>
+<span class="nc" id="L102">        this.setAttribute(&quot;paneMargin&quot;, 0);</span>
+<span class="nc" id="L103">        this.setID(ApplicationConstants.getLaunchTabID(applicationName));</span>
+
+<span class="nc" id="L105">        layout = new HLayout(10);</span>
+<span class="nc" id="L106">        layout.setWidth100();</span>
+<span class="nc" id="L107">        layout.setHeight100();</span>
+<span class="nc" id="L108">        layout.setMargin(5);</span>
+
+<span class="nc" id="L110">        modal = new ModalWindow(layout);</span>
+
+<span class="nc" id="L112">        this.configureButtons();</span>
+<span class="nc" id="L113">        this.setPane(layout);</span>
+
+<span class="nc" id="L115">        this.init();</span>
+<span class="nc" id="L116">        this.loadDescriptor();</span>
+<span class="nc" id="L117">    }</span>
+
+    public boolean hasID() {
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        return this.getAttributeAsString(&quot;ID&quot;) != null;</span>
+    }
+
+    protected void init() {
+<span class="nc" id="L124">    }</span>
+
+    protected void loadDescriptor() {
+<span class="nc" id="L127">        modal.show(&quot;Loading launch panel...&quot;, true);</span>
+<span class="nc" id="L128">        ApplicationService.Util.getInstance().getVersion(applicationName, applicationVersion, new AsyncCallback&lt;AppVersion&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L131">                modal.hide();</span>
+<span class="nc" id="L132">                Layout.getInstance().setWarningMessage(&quot;Unable to download application info:&lt;br /&gt;&quot;</span>
+<span class="nc" id="L133">                        + caught.getMessage(), 10);</span>
+<span class="nc" id="L134">            }</span>
+
+            @Override
+            public void onSuccess(AppVersion appVersion) {
+<span class="nc bnc" id="L138" title="All 4 branches missed.">                if (mustBeABoutiquesDescriptor &amp;&amp; !appVersion.isBoutiquesForm()) {</span>
+<span class="nc" id="L139">                    modal.hide();</span>
+<span class="nc" id="L140">                    Layout.getInstance().setWarningMessage(&quot;This application does not have the right format:&lt;br /&gt;&quot;, 10);</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                } else if (appVersion.isBoutiquesForm()) {</span>
+<span class="nc" id="L142">                    loadBoutiquesDescriptor();</span>
+                } else {
+<span class="nc" id="L144">                    loadGwendiaDescriptor();</span>
+                }
+
+<span class="nc" id="L147">            }</span>
+        });
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Loads simulation descriptor content as String.
+     */
+    protected void loadBoutiquesDescriptor() {
+<span class="nc" id="L155">        final AsyncCallback&lt;String&gt; callback = new AsyncCallback&lt;String&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L158">                modal.hide();</span>
+<span class="nc" id="L159">                Layout.getInstance().setWarningMessage(&quot;Unable to download application descriptor:&lt;br /&gt;&quot;</span>
+<span class="nc" id="L160">                        + caught.getMessage(), 10);</span>
+<span class="nc" id="L161">            }</span>
+
+            @Override
+            public void onSuccess(String boutiquesDescriptorString) {
+                try {
+<span class="nc" id="L166">                    BoutiquesApplication applicationTool = new BoutiquesParser().parseApplication(boutiquesDescriptorString);</span>
+<span class="nc" id="L167">                    addExtensionAndCreateForm(applicationTool, true, () -&gt; createForm(applicationTool));</span>
+<span class="nc" id="L168">                } catch (InvalidBoutiquesDescriptorException exception) {</span>
+<span class="nc" id="L169">                    Layout.getInstance().setWarningMessage(&quot;Unable to parse application descriptor:&lt;br /&gt;&quot;</span>
+<span class="nc" id="L170">                            + exception.getMessage(), 10);</span>
+<span class="nc" id="L171">                }</span>
+<span class="nc" id="L172">            }</span>
+        };
+<span class="nc" id="L174">        WorkflowService.Util.getInstance().getApplicationDescriptorString(applicationName, applicationVersion,</span>
+                callback);
+<span class="nc" id="L176">    }</span>
+
+    protected void loadGwendiaDescriptor() {
+<span class="nc" id="L179">        final AsyncCallback&lt;Descriptor&gt; callback = new AsyncCallback&lt;Descriptor&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L182">                modal.hide();</span>
+<span class="nc" id="L183">                Layout.getInstance().setWarningMessage(&quot;Unable to download application descriptor:&lt;br /&gt;&quot;</span>
+<span class="nc" id="L184">                        + caught.getMessage(), 10);</span>
+<span class="nc" id="L185">            }</span>
+
+            @Override
+            public void onSuccess(Descriptor gwendiaDescriptor) {
+<span class="nc" id="L189">                BoutiquesApplication applicationTool = new DescriptorParser().descriptorToBoutiquesApplication(gwendiaDescriptor, applicationName, applicationVersion);</span>
+<span class="nc" id="L190">                addExtensionAndCreateForm(applicationTool, false, () -&gt; createForm(applicationTool));</span>
+<span class="nc" id="L191">            }</span>
+        };
+<span class="nc" id="L193">        WorkflowService.Util.getInstance().getApplicationDescriptor(applicationName, applicationVersion, callback);</span>
+<span class="nc" id="L194">    }</span>
+
+    protected void addExtensionAndCreateForm(
+            BoutiquesApplication applicationTool, Boolean addResultsDirectoryInput, Runnable launchFormCreator) {
+<span class="nc" id="L198">        applicationTool.setBoutiquesExtensions(new BoutiquesApplicationExtensions(addResultsDirectoryInput));</span>
+<span class="nc" id="L199">        launchFormCreator.run();</span>
+<span class="nc" id="L200">    }</span>
+
+    protected void createForm(BoutiquesApplication applicationTool) {
+<span class="nc" id="L203">        launchFormLayout = new LaunchFormLayout(applicationTool, showSeparators);</span>
+<span class="nc" id="L204">        this.createButtons();</span>
+<span class="nc" id="L205">        onLaunchFormCreated();</span>
+<span class="nc" id="L206">        layout.addMember(launchFormLayout);</span>
+<span class="nc" id="L207">        launchFormLayout.configureCitation(applicationName);</span>
+<span class="nc" id="L208">        modal.hide();</span>
+<span class="nc" id="L209">        configureInputsLayout(this.showExamples);</span>
+<span class="nc" id="L210">        onLaunchFormReady();</span>
+<span class="nc" id="L211">    }</span>
+
+    protected void createButtons() {
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (this.showExamples &amp;&amp;</span>
+<span class="nc bnc" id="L215" title="All 4 branches missed.">                (CoreModule.user.isSystemAdministrator() || CoreModule.user.isGroupAdmin())) {</span>
+<span class="nc" id="L216">            launchFormLayout.setButtons(launchButton, saveInputsButton,</span>
+                    saveAsExampleButton);
+        } else {
+<span class="nc" id="L219">            launchFormLayout.setButtons(launchButton, saveInputsButton, null);</span>
+        }
+<span class="nc" id="L221">    }</span>
+
+    protected void onLaunchFormCreated() {
+<span class="nc" id="L224">    }</span>
+
+    protected void onLaunchFormReady() {
+<span class="nc bnc" id="L227" title="All 4 branches missed.">        if ((simulationName != null) &amp;&amp; (inputs != null)) {</span>
+<span class="nc" id="L228">            launchFormLayout.loadInputs(simulationName, inputs, true);</span>
+        }
+<span class="nc" id="L230">    }</span>
+
+    /**
+     * Launches a simulation.
+     */
+    private void launch() {
+<span class="nc" id="L236">        WidgetUtil.setLoadingIButton(launchButton, &quot;Launching...&quot;);</span>
+
+        // Input data verification
+<span class="nc" id="L239">        List&lt;String&gt; inputData = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">        for (String input : getParametersMap().values()) {</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">            if (input.startsWith(DataManagerConstants.ROOT)) {</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">                if (input.contains(ApplicationConstants.SEPARATOR_LIST)) {</span>
+<span class="nc" id="L243">                    inputData.addAll(Arrays.asList(input.split(ApplicationConstants.SEPARATOR_LIST)));</span>
+                } else {
+<span class="nc" id="L245">                    inputData.add(input);</span>
+                }
+            }
+<span class="nc" id="L248">        }</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        if (!inputData.isEmpty()) {</span>
+<span class="nc" id="L250">            WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L251">            final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                @Override
+                public void onFailure(Throwable caught) {
+<span class="nc" id="L254">                    resetLaunchButton();</span>
+<span class="nc" id="L255">                    Layout.getInstance().setWarningMessage(&quot;Error on input data:&lt;br /&gt;&quot; + caught.getMessage(), 10);</span>
+<span class="nc" id="L256">                }</span>
+
+                @Override
+                public void onSuccess(Void result) {
+<span class="nc" id="L260">                    submit();</span>
+<span class="nc" id="L261">                }</span>
+            };
+<span class="nc" id="L263">            service.validateInputs(inputData, callback);</span>
+<span class="nc" id="L264">        } else {</span>
+<span class="nc" id="L265">            submit();</span>
+        }
+<span class="nc" id="L267">    }</span>
+
+    /**
+     * Submits a simulation to the workflow engine.
+     */
+    private void submit() {
+<span class="nc" id="L273">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L276">                resetLaunchButton();</span>
+<span class="nc" id="L277">                Layout.getInstance().setWarningMessage(&quot;Unable to launch the execution:&lt;br /&gt;&quot; + caught.getMessage(), 10);</span>
+<span class="nc" id="L278">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L282">                resetLaunchButton();</span>
+<span class="nc" id="L283">                Layout.getInstance().setNoticeMessage(&quot;Execution '&lt;b&gt;&quot; + getSimulationName() + &quot;&lt;/b&gt;' successfully launched.&quot;, 10);</span>
+<span class="nc" id="L284">                TimelineLayout.getInstance().update();</span>
+<span class="nc" id="L285">            }</span>
+        };
+<span class="nc" id="L287">        WorkflowService.Util.getInstance().launchSimulation(getParametersMap(),</span>
+                applicationName, applicationVersion, applicationClass,
+<span class="nc" id="L289">                getSimulationName(), callback);</span>
+<span class="nc" id="L290">    }</span>
+
+    /**
+     *
+     */
+    public void loadInputsList() {
+
+<span class="nc" id="L297">        inputsLayout.loadData();</span>
+<span class="nc" id="L298">    }</span>
+
+    /**
+     * Loads input values from string.
+     *
+     * @param simulationName Simulation name
+     * @param values         Input values
+     */
+    public void loadInput(String simulationName, String values) {
+
+<span class="nc" id="L308">        Map&lt;String, String&gt; valuesMap = new HashMap&lt;&gt;();</span>
+
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        for (String input : values.split(&quot;&lt;br /&gt;&quot;)) {</span>
+<span class="nc" id="L311">            String[] s = input.split(&quot; = &quot;);</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">            valuesMap.put(s[0], s[1] != null ? s[1] : &quot;&quot;);</span>
+        }
+<span class="nc" id="L314">        loadInput(simulationName, valuesMap);</span>
+<span class="nc" id="L315">    }</span>
+
+    /**
+     * Loads input values from map.
+     *
+     * @param simulationName Simulation name
+     * @param values         Input values map
+     */
+    public void loadInput(String simulationName, Map&lt;String, String&gt; values) {
+<span class="nc" id="L324">        launchFormLayout.loadInputs(simulationName, values, true);</span>
+<span class="nc" id="L325">    }</span>
+
+    /**
+     *
+     */
+    protected void configureInputsLayout(boolean showExamples) {
+
+<span class="nc" id="L332">        inputsLayout = new InputsLayout(getAttribute(&quot;ID&quot;), applicationName, showExamples);</span>
+<span class="nc" id="L333">        layout.addMember(inputsLayout);</span>
+<span class="nc" id="L334">    }</span>
+
+    /**
+     * @return Map of String input IDs to String representing corresponding input values
+     */
+    protected Map&lt;String, String&gt; getParametersMap() {
+
+<span class="nc" id="L341">        return launchFormLayout.getParametersMap();</span>
+    }
+
+    /**
+     * Configures the buttons
+     */
+    protected void configureButtons() {
+
+<span class="nc" id="L349">        launchButton = WidgetUtil.getIButton(&quot;Launch&quot;, ApplicationConstants.ICON_LAUNCH,</span>
+                event -&gt; {
+<span class="nc bnc" id="L351" title="All 2 branches missed.">                    if (validate()) {</span>
+<span class="nc" id="L352">                        launch();</span>
+                    } else {
+<span class="nc" id="L354">                        Layout.getInstance().setWarningMessage(&quot;Cannot launch. Some inputs are not valid.&quot;);</span>
+                    }
+<span class="nc" id="L356">                });</span>
+
+<span class="nc" id="L358">        saveInputsButton = WidgetUtil.getIButton(&quot;Save Inputs&quot;, CoreConstants.ICON_SAVED,</span>
+                event -&gt; {
+<span class="nc bnc" id="L360" title="All 2 branches missed.">                    if (validate()) {</span>
+<span class="nc" id="L361">                        saveInputs();</span>
+                    } else {
+<span class="nc" id="L363">                        Layout.getInstance().setWarningMessage(&quot;Cannot save inputs. Some inputs are not valid.&quot;);</span>
+                    }
+<span class="nc" id="L365">                });</span>
+
+<span class="nc" id="L367">        saveAsExampleButton = WidgetUtil.getIButton(&quot;Save as Example&quot;, CoreConstants.ICON_EXAMPLE,</span>
+                event -&gt; {
+<span class="nc bnc" id="L369" title="All 2 branches missed.">                    if (validate()) {</span>
+<span class="nc" id="L370">                        saveInputsAsExample();</span>
+                    }
+<span class="nc" id="L372">                });</span>
+<span class="nc" id="L373">        saveAsExampleButton.setPrompt(&quot;Save the inputs as a featured example that will &quot;</span>
+                + &quot;be available for all users.&quot;);
+<span class="nc" id="L375">        saveAsExampleButton.setWidth(120);</span>
+<span class="nc" id="L376">    }</span>
+
+    /**
+     * Resets the launch button to its initial state.
+     */
+    protected void resetLaunchButton() {
+<span class="nc" id="L382">        WidgetUtil.resetIButton(launchButton, &quot;Launch&quot;, ApplicationConstants.ICON_LAUNCH);</span>
+<span class="nc" id="L383">        this.launchFormLayout.updateErrorMessages();</span>
+<span class="nc" id="L384">    }</span>
+
+    /**
+     * Resets the save inputs button to its initial state.
+     */
+    protected void resetSaveInputsButton() {
+
+<span class="nc" id="L391">        WidgetUtil.resetIButton(saveInputsButton, &quot;Save Inputs&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L392">        this.launchFormLayout.updateErrorMessages();</span>
+<span class="nc" id="L393">    }</span>
+
+    /**
+     * Resets the save as example button to its initial state.
+     */
+    protected void resetSaveAsExampleButton() {
+<span class="nc" id="L399">        WidgetUtil.resetIButton(saveAsExampleButton, &quot;Save as Example&quot;, CoreConstants.ICON_EXAMPLE);</span>
+<span class="nc" id="L400">        this.launchFormLayout.updateErrorMessages();</span>
+<span class="nc" id="L401">    }</span>
+
+    /**
+     * Gets the name of the simulation.
+     *
+     * @return String
+     */
+    protected String getSimulationName() {
+<span class="nc" id="L409">        return launchFormLayout.getSimulationName();</span>
+    }
+
+    /**
+     * Validates the form before launch a simulation.
+     *
+     * @return Result of the validation
+     */
+    protected boolean validate() {
+<span class="nc" id="L418">        return launchFormLayout.validate();</span>
+    }
+
+    /**
+     * Verifies if the simulation name already exists and save the inputs.
+     */
+    private void saveInputs() {
+
+<span class="nc" id="L426">        WidgetUtil.setLoadingIButton(saveInputsButton, &quot;Saving...&quot;);</span>
+<span class="nc" id="L427">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L428">        final AsyncCallback&lt;SimulationInput&gt; callback = new AsyncCallback&lt;SimulationInput&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L431">                resetSaveInputsButton();</span>
+<span class="nc" id="L432">                Layout.getInstance().setWarningMessage(&quot;Unable to verify execution name:&lt;br /&gt;&quot; + caught.getMessage(), 10);</span>
+<span class="nc" id="L433">            }</span>
+
+            @Override
+            public void onSuccess(SimulationInput result) {
+<span class="nc bnc" id="L437" title="All 2 branches missed.">                if (result != null) {</span>
+<span class="nc" id="L438">                    SC.ask(&quot;A simulation entitled \&quot;&quot; + getSimulationName() + &quot;\&quot; &quot;</span>
+                            + &quot;already exists. &lt;br /&gt;Do you want to overwrite the input data?&quot;, value -&gt; {
+<span class="nc bnc" id="L440" title="All 2 branches missed.">                        if (value) {</span>
+<span class="nc" id="L441">                            saveInputs(true);</span>
+                        } else {
+<span class="nc" id="L443">                            resetSaveInputsButton();</span>
+                        }
+<span class="nc" id="L445">                    });</span>
+                } else {
+<span class="nc" id="L447">                    saveInputs(false);</span>
+                }
+<span class="nc" id="L449">            }</span>
+        };
+<span class="nc" id="L451">        service.getInputByNameUserApp(getSimulationName(), applicationName, callback);</span>
+<span class="nc" id="L452">    }</span>
+
+    private void saveInputs(boolean update) {
+
+<span class="nc" id="L456">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L457">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L460">                resetSaveInputsButton();</span>
+<span class="nc" id="L461">                Layout.getInstance().setWarningMessage(&quot;Unable to save simulation inputs:&lt;br /&gt;&quot; + caught.getMessage(), 10);</span>
+<span class="nc" id="L462">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L466">                LaunchTab launchTab = (LaunchTab) Layout.getInstance().</span>
+<span class="nc" id="L467">                        getTab(ApplicationConstants.getLaunchTabID(applicationName));</span>
+<span class="nc" id="L468">                launchTab.loadInputsList();</span>
+<span class="nc" id="L469">                resetSaveInputsButton();</span>
+<span class="nc" id="L470">                Layout.getInstance().setNoticeMessage(&quot;Input values were successfully saved!&quot;, 10);</span>
+<span class="nc" id="L471">            }</span>
+        };
+<span class="nc bnc" id="L473" title="All 2 branches missed.">        if (update) {</span>
+<span class="nc" id="L474">            service.updateSimulationInput(getSimulationInput(), callback);</span>
+        } else {
+<span class="nc" id="L476">            service.addSimulationInput(getSimulationInput(), callback);</span>
+        }
+<span class="nc" id="L478">    }</span>
+
+    private void saveInputsAsExample() {
+
+<span class="nc" id="L482">        WidgetUtil.setLoadingIButton(saveAsExampleButton, &quot;Saving...&quot;);</span>
+<span class="nc" id="L483">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L484">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L487">                resetSaveAsExampleButton();</span>
+<span class="nc" id="L488">                Layout.getInstance().setWarningMessage(&quot;Unable to save example inputs:&lt;br /&gt;&quot; + caught.getMessage(), 10);</span>
+<span class="nc" id="L489">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L493">                LaunchTab launchTab = (LaunchTab) Layout.getInstance().</span>
+<span class="nc" id="L494">                        getTab(ApplicationConstants.getLaunchTabID(applicationName));</span>
+<span class="nc" id="L495">                launchTab.loadInputsList();</span>
+<span class="nc" id="L496">                resetSaveAsExampleButton();</span>
+<span class="nc" id="L497">                Layout.getInstance().setNoticeMessage(&quot;Examples input values were successfully saved!&quot;, 10);</span>
+<span class="nc" id="L498">            }</span>
+        };
+<span class="nc" id="L500">        service.saveInputsAsExamples(getSimulationInput(), callback);</span>
+<span class="nc" id="L501">    }</span>
+
+    private SimulationInput getSimulationInput() {
+
+<span class="nc" id="L505">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L506" title="All 2 branches missed.">        for (String k : getParametersMap().keySet()) {</span>
+<span class="nc" id="L507">            sb.append(k);</span>
+<span class="nc" id="L508">            sb.append(&quot;=&quot;);</span>
+<span class="nc" id="L509">            String value = getParametersMap().get(k);</span>
+<span class="nc bnc" id="L510" title="All 2 branches missed.">            if (value == null) {</span>
+<span class="nc" id="L511">                value = &quot;&quot;;</span>
+<span class="nc bnc" id="L512" title="All 2 branches missed.">            } else if (value.contains(&quot;null&quot;)) {</span>
+<span class="nc" id="L513">                value = value.replaceAll(&quot;null&quot;, &quot;&quot;);</span>
+            }
+<span class="nc" id="L515">            sb.append(value);</span>
+<span class="nc" id="L516">            sb.append(&quot;--&quot;);</span>
+<span class="nc" id="L517">        }</span>
+
+<span class="nc" id="L519">        return new SimulationInput(applicationName, getSimulationName(), sb.toString());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

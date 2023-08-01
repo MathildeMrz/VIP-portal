@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractRemoteServiceServlet.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-core</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.core.server.rpc</a> &gt; <span class="el_source">AbstractRemoteServiceServlet.java</span></div><h1>AbstractRemoteServiceServlet.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.core.server.rpc;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import fr.insalyon.creatis.vip.core.client.bean.Group;
+import fr.insalyon.creatis.vip.core.client.bean.User;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants.GROUP_ROLE;
+import fr.insalyon.creatis.vip.core.client.view.CoreException;
+import fr.insalyon.creatis.vip.core.server.business.Server;
+import fr.insalyon.creatis.vip.core.server.business.VipSessionBusiness;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.Map;
+
+/**
+ * Parent for all vip GWT RPC servlet.
+ * &lt;p&gt;
+ * Includes the mechanism to access spring managed beans in all subclasses,
+ * as the Server bean here.
+ *
+ * @author Rafael Silva
+ */
+<span class="nc" id="L59">public abstract class AbstractRemoteServiceServlet extends RemoteServiceServlet {</span>
+
+<span class="nc" id="L61">    private final Logger logger = LoggerFactory.getLogger(getClass());</span>
+
+    protected Server server;
+    private ApplicationContext applicationContext;
+    private VipSessionBusiness vipSessionBusiness;
+
+    @Override
+    public void init() throws ServletException {
+<span class="nc" id="L69">        super.init();</span>
+<span class="nc" id="L70">        applicationContext = WebApplicationContextUtils.findWebApplicationContext(getServletContext());</span>
+<span class="nc" id="L71">        server = applicationContext.getBean(Server.class);</span>
+<span class="nc" id="L72">        vipSessionBusiness = getBean(VipSessionBusiness.class);</span>
+<span class="nc" id="L73">    }</span>
+
+    /*
+        allows spring beans injection in all subclass
+     */
+    protected final &lt;T&gt; T getBean(Class&lt;T&gt; requiredType) {
+<span class="nc" id="L79">        return applicationContext.getBean(requiredType);</span>
+    }
+
+    // see http://blog.excilys.com/2011/05/12/gwt-google-wont-throw/
+    @Override
+    protected void doUnexpectedFailure(Throwable e) {
+        try {
+<span class="nc" id="L86">            super.doUnexpectedFailure(e);</span>
+        } finally {
+            // log the error (otherwise only logged in container log files)
+<span class="nc" id="L89">            logger.error(&quot;Unexpected exception caught in a GWT service impl &quot;, e);</span>
+            // do not silence Error because some should stop the JVM
+<span class="nc bnc" id="L91" title="All 2 branches missed.">            if (e instanceof Error) {</span>
+<span class="nc" id="L92">                throw (Error) e;</span>
+            }
+        }
+<span class="nc" id="L95">    }</span>
+
+    @Override
+    protected void checkPermutationStrongName() throws SecurityException {
+
+        // Content-Type text/x-gwt-rpc; charset=utf-8
+        // X-GWT-Permutation F1AEC601C5D8E4490E7096AB58EB
+<span class="nc" id="L102">        HttpServletRequest req = this.getThreadLocalRequest();</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (!req.getContentType().contains(&quot;text/x-gwt-rpc&quot;)) {</span>
+<span class="nc" id="L104">            super.checkPermutationStrongName();</span>
+        }
+<span class="nc" id="L106">    }</span>
+
+    protected HttpSession getSession() {
+<span class="nc" id="L109">        return this.getThreadLocalRequest().getSession();</span>
+    }
+
+    protected User getSessionUser() throws CoreException {
+<span class="nc" id="L113">        return vipSessionBusiness.getUserFromSession(this.getThreadLocalRequest());</span>
+    }
+
+    protected Map&lt;Group, GROUP_ROLE&gt; getUserGroupsFromSession() throws CoreException {
+<span class="nc" id="L117">        return vipSessionBusiness.getUserGroupsFromSession(this.getThreadLocalRequest());</span>
+    }
+
+    protected User setUserInSession(User user) throws CoreException {
+<span class="nc" id="L121">        return vipSessionBusiness.setUserInSession(user, getSession());</span>
+    }
+
+    protected void authenticateSystemAdministrator(Logger logger) throws CoreException {
+
+<span class="nc" id="L126">        User user = getSessionUser();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (!user.isSystemAdministrator()) {</span>
+<span class="nc" id="L128">            logger.error(&quot;The user has no system administrator rights: &quot; + user.getEmail());</span>
+<span class="nc" id="L129">            throw new CoreException(&quot;The user has no system administrator rights.&quot;);</span>
+        }
+<span class="nc" id="L131">    }</span>
+
+    protected void authenticateDeveloper(Logger logger) throws CoreException {
+
+<span class="nc" id="L135">        User user = getSessionUser();</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (!user.isDeveloper()) {</span>
+<span class="nc" id="L137">            logger.error(&quot;The user has no system administrator rights: &quot; + user.getEmail());</span>
+<span class="nc" id="L138">            throw new CoreException(&quot;The user has no system developer rights.&quot;);</span>
+        }
+<span class="nc" id="L140">    }</span>
+
+    protected void authenticateGroupAdministrator(Logger logger) throws CoreException {
+
+<span class="nc" id="L144">        User user = getSessionUser();</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (!user.isGroupAdmin()) {</span>
+<span class="nc" id="L146">            logger.error(&quot;The user has no group administrator rights: &quot; + user.getEmail());</span>
+<span class="nc" id="L147">            throw new CoreException(&quot;The user has no group administrator rights.&quot;);</span>
+        }
+<span class="nc" id="L149">    }</span>
+
+    protected boolean isSystemAdministrator() throws CoreException {
+<span class="nc" id="L152">        return getSessionUser().isSystemAdministrator();</span>
+    }
+
+    protected boolean isGroupAdministrator() throws CoreException {
+<span class="nc" id="L156">        return getSessionUser().isGroupAdmin();</span>
+    }
+
+    protected boolean isDeveloper() throws CoreException {
+<span class="nc" id="L160">        return getSessionUser().isDeveloper();</span>
+    }
+
+    protected boolean isUserConnected() {
+<span class="nc" id="L164">        return vipSessionBusiness.isUserConnected(this.getThreadLocalRequest());</span>
+    }
+
+    protected void trace(Logger logger, String message) throws CoreException {
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (vipSessionBusiness.isUserConnected(this.getThreadLocalRequest())) {</span>
+<span class="nc" id="L169">            logger.info(&quot;(&quot; + getSessionUser().getEmail() + &quot;) &quot; + message);</span>
+        } else {
+<span class="nc" id="L171">            logger.info(&quot;(Anonymous) &quot; + message);</span>
+        }
+<span class="nc" id="L173">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

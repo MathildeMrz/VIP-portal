@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OperationToolStrip.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-datamanager</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.datamanager.client.view.operation</a> &gt; <span class="el_source">OperationToolStrip.java</span></div><h1>OperationToolStrip.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.datamanager.client.view.operation;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerService;
+import fr.insalyon.creatis.vip.datamanager.client.rpc.DataManagerServiceAsync;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class OperationToolStrip extends ToolStrip {
+
+    private ToolStripButton clearButton;
+
+<span class="nc" id="L55">    public OperationToolStrip() {</span>
+
+<span class="nc" id="L57">        this.setWidth100();</span>
+<span class="nc" id="L58">        this.setPadding(2);</span>
+
+<span class="nc" id="L60">        Label titleLabel = new Label(&quot;Pool of Transfers&quot;);</span>
+<span class="nc" id="L61">        titleLabel.setWidth(150);</span>
+<span class="nc" id="L62">        this.addMember(titleLabel);</span>
+
+        // Clear Button
+<span class="nc" id="L65">        this.addFill();</span>
+<span class="nc" id="L66">        clearButton = WidgetUtil.getToolStripButton(&quot;Clear List&quot;,</span>
+                DataManagerConstants.OP_ICON_CLEAR,
+<span class="nc" id="L68">                &quot;Remove all operations from this list&quot;, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L71">                        SC.ask(&quot;Do you want to clear all operations?&quot;, new BooleanCallback() {</span>
+                            @Override
+                            public void execute(Boolean value) {
+
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                                if (value) {</span>
+<span class="nc" id="L76">                                    DataManagerServiceAsync service = DataManagerService.Util.getInstance();</span>
+<span class="nc" id="L77">                                    AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                                        @Override
+                                        public void onFailure(Throwable caught) {
+<span class="nc" id="L80">                                            WidgetUtil.resetToolStripButton(clearButton, &quot;Clear List&quot;, DataManagerConstants.OP_ICON_CLEAR);</span>
+<span class="nc" id="L81">                                            Layout.getInstance().setWarningMessage(&quot;Unable to remove operations:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L82">                                        }</span>
+
+                                        @Override
+                                        public void onSuccess(Void result) {
+<span class="nc" id="L86">                                            WidgetUtil.resetToolStripButton(clearButton, &quot;Clear List&quot;, DataManagerConstants.OP_ICON_CLEAR);</span>
+<span class="nc" id="L87">                                            OperationLayout.getInstance().clearOperations();</span>
+<span class="nc" id="L88">                                        }</span>
+                                    };
+<span class="nc" id="L90">                                    WidgetUtil.setLoadingToolStripButton(clearButton, &quot;Clearing...&quot;);</span>
+<span class="nc" id="L91">                                    service.removeUserOperations(callback);</span>
+                                }
+<span class="nc" id="L93">                            }</span>
+                        });
+<span class="nc" id="L95">                    }</span>
+                });
+<span class="nc" id="L97">        this.addButton(clearButton);</span>
+<span class="nc" id="L98">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
