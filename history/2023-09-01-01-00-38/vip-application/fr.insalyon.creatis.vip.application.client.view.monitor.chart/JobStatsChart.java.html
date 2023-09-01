@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JobStatsChart.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor.chart</a> &gt; <span class="el_source">JobStatsChart.java</span></div><h1>JobStatsChart.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor.chart;
+
+import com.google.gwt.i18n.client.NumberFormat;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.layout.VLayout;
+import fr.insalyon.creatis.vip.core.client.view.property.PropertyRecord;
+
+import java.util.List;
+
+/**
+ * @author camarasu
+ */
+public class JobStatsChart extends AbstractChart {
+
+    public JobStatsChart(List&lt;String&gt; data, VLayout chartLayout, ListGrid grid) {
+<span class="nc" id="L51">        super(data, chartLayout, grid);</span>
+<span class="nc" id="L52">    }</span>
+
+    public void build() {
+
+<span class="nc" id="L56">        chartLayout.removeMembers(chartLayout.getMembers());</span>
+<span class="nc" id="L57">        int completedJobs = 0;</span>
+<span class="nc" id="L58">        int cancelledJobs = 0;</span>
+<span class="nc" id="L59">        int failedJobs = 0;</span>
+<span class="nc" id="L60">        int stalledJobs = 0;</span>
+<span class="nc" id="L61">        int totalJobs = 0;</span>
+<span class="nc" id="L62">        long completedJobsExec = 0, cancelledJobsExec = 0, failedJobsExec = 0, stalledJobsExec = 0, totalJobsExec = 0;</span>
+
+        // add data
+        /*
+        grid.setData(new PropertyRecord[]{
+        new PropertyRecord(&quot;Completed Jobs&quot;, data.get(0) + &quot;&quot;),
+        new PropertyRecord(&quot;completed WaitingTime&quot;, data.get(1) + &quot;&quot;),
+        new PropertyRecord(&quot;completed ExecutionTime&quot;, data.get(2) + &quot;&quot;),
+        new PropertyRecord(&quot;completed InputTime&quot;, data.get(3) + &quot;&quot;),
+        new PropertyRecord(&quot;completed OutputTime&quot;, data.get(4) + &quot;&quot;),
+        new PropertyRecord(&quot;Cancelled Jobs&quot;, data.get(5) + &quot;&quot;),
+        new PropertyRecord(&quot;Cancelled WaitingTime&quot;, data.get(6) + &quot;&quot;),
+        new PropertyRecord(&quot;Cancelled ExecutionTime&quot;, data.get(7) + &quot;&quot;),
+        new PropertyRecord(&quot;Cancelled InputTime&quot;, data.get(8) + &quot;&quot;),
+        new PropertyRecord(&quot;Cancelled OutputTime&quot;, data.get(9) + &quot;&quot;),
+        new PropertyRecord(&quot;failedApplication Jobs&quot;, data.get(10) + &quot;&quot;),
+        new PropertyRecord(&quot;failedApplication WaitingTime&quot;, data.get(11) + &quot;&quot;),
+        new PropertyRecord(&quot;failedApplication ExecutionTime&quot;, data.get(12) + &quot;&quot;),
+        new PropertyRecord(&quot;failedApplication InputTime&quot;, data.get(13) + &quot;&quot;),
+        new PropertyRecord(&quot;failedApplication OutputTime&quot;, data.get(14) + &quot;&quot;),
+        new PropertyRecord(&quot;failedInput Jobs&quot;, data.get(15) + &quot;&quot;),
+        new PropertyRecord(&quot;failedInput WaitingTime&quot;, data.get(16) + &quot;&quot;),
+        new PropertyRecord(&quot;failedInput ExecutionTime&quot;, data.get(17) + &quot;&quot;),
+        new PropertyRecord(&quot;failedInput InputTime&quot;, data.get(18) + &quot;&quot;),
+        new PropertyRecord(&quot;failedInput OutputTime&quot;, data.get(19) + &quot;&quot;),
+        new PropertyRecord(&quot;failedInput Jobs&quot;, data.get(15) + &quot;&quot;),
+        new PropertyRecord(&quot;failedInput WaitingTime&quot;, data.get(16) + &quot;&quot;),
+        new PropertyRecord(&quot;failedInput ExecutionTime&quot;, data.get(17) + &quot;&quot;),
+        new PropertyRecord(&quot;failedInput InputTime&quot;, data.get(18) + &quot;&quot;),
+        new PropertyRecord(&quot;failedInput OutputTime&quot;, data.get(19) + &quot;&quot;),
+        new PropertyRecord(&quot;failedOutput Jobs&quot;, data.get(20) + &quot;&quot;),
+        new PropertyRecord(&quot;failedOutput WaitingTime&quot;, data.get(21) + &quot;&quot;),
+        new PropertyRecord(&quot;failedOutput ExecutionTime&quot;, data.get(22) + &quot;&quot;),
+        new PropertyRecord(&quot;failedOutput InputTime&quot;, data.get(23) + &quot;&quot;),
+        new PropertyRecord(&quot;failedOutput OutputTime&quot;, data.get(24) + &quot;&quot;),
+        new PropertyRecord(&quot;failedStalled Jobs&quot;, data.get(25) + &quot;&quot;),
+        new PropertyRecord(&quot;failedStalled WaitingTime&quot;, data.get(26) + &quot;&quot;),
+        new PropertyRecord(&quot;failedStalled ExecutionTime&quot;, data.get(27) + &quot;&quot;),
+        new PropertyRecord(&quot;failedStalled InputTime&quot;, data.get(28) + &quot;&quot;),
+        new PropertyRecord(&quot;failedStalled OutputTime&quot;, data.get(29) + &quot;&quot;)
+        });
+         * 
+         */
+        //PropertyRecord[] p = new PropertyRecord[data.size()];
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        for (int i = 0; i &lt; data.size(); i++) {</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">            if (data.get(i) != null) {</span>
+<span class="nc" id="L108">                addRowData(data.get(i));</span>
+<span class="nc" id="L109">                String[] v = data.get(i).split(&quot;##&quot;);</span>
+                //p[i] = new PropertyRecord(v[0], v[1]);
+<span class="nc bnc" id="L111" title="All 13 branches missed.">                switch (i) {</span>
+                    case 0:
+<span class="nc" id="L113">                        completedJobs = completedJobs + Integer.parseInt(v[1]);</span>
+<span class="nc" id="L114">                        break;</span>
+                    case 2:
+<span class="nc" id="L116">                        completedJobsExec = completedJobsExec + Integer.parseInt(v[1]);</span>
+<span class="nc" id="L117">                        break;</span>
+                    case 5:
+<span class="nc" id="L119">                        cancelledJobs = cancelledJobs + Integer.parseInt(v[1]);</span>
+<span class="nc" id="L120">                        break;</span>
+                    case 7:
+<span class="nc" id="L122">                        cancelledJobsExec = cancelledJobsExec + Integer.parseInt(v[1]);</span>
+<span class="nc" id="L123">                        break;</span>
+                    case 10:
+<span class="nc" id="L125">                        failedJobs = failedJobs + Integer.parseInt(v[1]);</span>
+<span class="nc" id="L126">                        break;</span>
+                    case 12:
+<span class="nc" id="L128">                        failedJobsExec = failedJobsExec + Integer.parseInt(v[1]);</span>
+<span class="nc" id="L129">                        break;</span>
+                    case 15:
+<span class="nc" id="L131">                        failedJobs = failedJobs + Integer.parseInt(v[1]);</span>
+<span class="nc" id="L132">                        break;</span>
+                    case 17:
+<span class="nc" id="L134">                        failedJobsExec = failedJobsExec + Integer.parseInt(v[1]);</span>
+<span class="nc" id="L135">                        break;</span>
+                    case 20:
+<span class="nc" id="L137">                        failedJobs = failedJobs + Integer.parseInt(v[1]);</span>
+<span class="nc" id="L138">                        break;</span>
+                    case 22:
+<span class="nc" id="L140">                        failedJobsExec = failedJobsExec + Integer.parseInt(v[1]);</span>
+<span class="nc" id="L141">                        break;</span>
+                    case 25:
+<span class="nc" id="L143">                        stalledJobs = stalledJobs + Integer.parseInt(v[1]);</span>
+                    case 27:
+<span class="nc" id="L145">                        stalledJobsExec = stalledJobsExec + Integer.parseInt(v[1]);</span>
+
+                }
+            }
+
+        }
+<span class="nc" id="L151">        totalJobs = completedJobs + cancelledJobs + failedJobs + stalledJobs;</span>
+
+<span class="nc" id="L153">        grid.setData(new PropertyRecord[]{</span>
+                new PropertyRecord(&quot;Completed Jobs&quot;, completedJobs + &quot;&quot;),
+                new PropertyRecord(&quot;Cancelled Jobs&quot;, cancelledJobs + &quot;&quot;),
+                new PropertyRecord(&quot;Failed Jobs&quot;, failedJobs + &quot;&quot;),
+                new PropertyRecord(&quot;Stalled Jobs&quot;, stalledJobs + &quot;&quot;),
+                new PropertyRecord(&quot;Total Jobs&quot;, totalJobs + &quot;&quot;)
+        });
+        //grid.setCursor(Cursor.TEXT);
+
+
+<span class="nc" id="L163">        ListGrid gridExecution = new ListGrid();</span>
+<span class="nc" id="L164">        gridExecution.setWidth(280);</span>
+<span class="nc" id="L165">        gridExecution.setHeight(145);</span>
+<span class="nc" id="L166">        gridExecution.setShowAllRecords(true);</span>
+
+<span class="nc" id="L168">        ListGridField propertyField = new ListGridField(&quot;property&quot;, &quot;Job Types&quot;);</span>
+<span class="nc" id="L169">        ListGridField valueField = new ListGridField(&quot;value&quot;, &quot;Execution Times (sec)&quot;);</span>
+<span class="nc" id="L170">        valueField.setAlign(Alignment.RIGHT);</span>
+<span class="nc" id="L171">        valueField.setCellFormatter(new CellFormatter() {</span>
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+
+<span class="nc bnc" id="L176" title="All 2 branches missed.">                if (value == null) {</span>
+<span class="nc" id="L177">                    return null;</span>
+                }
+                try {
+<span class="nc" id="L180">                    NumberFormat nf = NumberFormat.getDecimalFormat();</span>
+<span class="nc" id="L181">                    return nf.format(Double.parseDouble((String) value));</span>
+<span class="nc" id="L182">                } catch (Exception e) {</span>
+<span class="nc" id="L183">                    return value.toString();</span>
+                }
+            }
+        });
+
+<span class="nc" id="L188">        gridExecution.setFields(propertyField, valueField);</span>
+<span class="nc" id="L189">        totalJobsExec = completedJobsExec + cancelledJobsExec + failedJobsExec + stalledJobsExec;</span>
+<span class="nc" id="L190">        gridExecution.setData(new PropertyRecord[]{</span>
+                new PropertyRecord(&quot;Completed-jobs execution time&quot;, completedJobsExec + &quot;&quot;),
+                new PropertyRecord(&quot;Cancelled-jobs execution time&quot;, cancelledJobsExec + &quot;&quot;),
+                new PropertyRecord(&quot;Failed-jobs execution time&quot;, failedJobsExec + &quot;&quot;),
+                new PropertyRecord(&quot;Stalled-jobs execution time&quot;, stalledJobsExec + &quot;&quot;),
+                new PropertyRecord(&quot;Total execution time&quot;, totalJobsExec + &quot;&quot;)
+        });
+<span class="nc" id="L197">        chartLayout.addMember(gridExecution);</span>
+<span class="nc" id="L198">        gridExecution.setCanSelectCells(true);</span>
+<span class="nc" id="L199">        gridExecution.setCanSelectText(true);</span>
+<span class="nc" id="L200">        gridExecution.setCanEdit(true);</span>
+<span class="nc" id="L201">        chartLayout.addMember(getRowDataImg());</span>
+<span class="nc" id="L202">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

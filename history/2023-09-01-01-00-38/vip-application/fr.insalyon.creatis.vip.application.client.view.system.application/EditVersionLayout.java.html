@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EditVersionLayout.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.system.application</a> &gt; <span class="el_source">EditVersionLayout.java</span></div><h1>EditVersionLayout.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.system.application;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.CheckboxItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
+import fr.insalyon.creatis.vip.application.client.rpc.ApplicationService;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.common.AbstractFormLayout;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.FieldUtil;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class EditVersionLayout extends AbstractFormLayout {
+
+    private boolean newVersion;
+    private String applicationName;
+    private Label applicationLabel;
+    private TextItem versionField;
+    private TextItem lfnField;
+    private TextItem jsonLfnField;
+    private CheckboxItem isVisibleField;
+    private CheckboxItem isBoutiquesFormField;
+    private IButton saveButton;
+    private IButton removeButton;
+
+    public EditVersionLayout() {
+
+<span class="nc" id="L70">        super(480, 200);</span>
+<span class="nc" id="L71">        addTitle(&quot;Add/Edit Version&quot;, ApplicationConstants.ICON_APPLICATION);</span>
+
+<span class="nc" id="L73">        configure();</span>
+<span class="nc" id="L74">    }</span>
+
+    private void configure() {
+
+<span class="nc" id="L78">        newVersion = true;</span>
+<span class="nc" id="L79">        applicationLabel = WidgetUtil.getLabel(&quot;&quot;, 15);</span>
+
+<span class="nc" id="L81">        versionField = FieldUtil.getTextItem(450, null);</span>
+<span class="nc" id="L82">        versionField.setDisabled(true);</span>
+
+<span class="nc" id="L84">        lfnField = FieldUtil.getTextItem(450, null);</span>
+<span class="nc" id="L85">        lfnField.setDisabled(true);</span>
+
+<span class="nc" id="L87">        jsonLfnField = FieldUtil.getTextItem(450, null);</span>
+<span class="nc" id="L88">        jsonLfnField.setDisabled(true);</span>
+<span class="nc" id="L89">        jsonLfnField.setRequired(false);</span>
+
+<span class="nc" id="L91">        isVisibleField = new CheckboxItem();</span>
+<span class="nc" id="L92">        isVisibleField.setTitle(&quot;Visible&quot;);</span>
+<span class="nc" id="L93">        isVisibleField.setWidth(450);</span>
+<span class="nc" id="L94">        isVisibleField.setValue(true);</span>
+
+<span class="nc" id="L96">        isBoutiquesFormField = new CheckboxItem();</span>
+<span class="nc" id="L97">        isBoutiquesFormField.setTitle(&quot;Use Boutiques Form&quot;);</span>
+<span class="nc" id="L98">        isBoutiquesFormField.setWidth(450);</span>
+<span class="nc" id="L99">        isBoutiquesFormField.setValue(true);</span>
+
+<span class="nc" id="L101">        saveButton = WidgetUtil.getIButton(&quot;Save&quot;, CoreConstants.ICON_SAVED,</span>
+<span class="nc" id="L102">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc bnc" id="L105" title="All 6 branches missed.">                        if (versionField.validate() &amp;&amp; lfnField.validate() &amp;&amp; jsonLfnField.validate()) {</span>
+<span class="nc" id="L106">                            String jsonLfn = jsonLfnField.getValueAsString();</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                            if (jsonLfn != null) jsonLfn.trim();</span>
+<span class="nc" id="L108">                            save(new AppVersion(applicationName, versionField.getValueAsString().trim(),</span>
+<span class="nc" id="L109">                                    lfnField.getValueAsString().trim(), jsonLfn,</span>
+<span class="nc" id="L110">                                    isVisibleField.getValueAsBoolean(), isBoutiquesFormField.getValueAsBoolean()));</span>
+                        }
+<span class="nc" id="L112">                    }</span>
+                });
+<span class="nc" id="L114">        saveButton.setDisabled(true);</span>
+
+<span class="nc" id="L116">        removeButton = WidgetUtil.getIButton(&quot;Remove&quot;, CoreConstants.ICON_DELETE,</span>
+<span class="nc" id="L117">                new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L120">                        SC.ask(&quot;Do you really want to remove this version?&quot;, new BooleanCallback() {</span>
+                            @Override
+                            public void execute(Boolean value) {
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                                if (value) {</span>
+<span class="nc" id="L124">                                    remove(applicationName, versionField.getValueAsString().trim());</span>
+                                }
+<span class="nc" id="L126">                            }</span>
+                        });
+<span class="nc" id="L128">                    }</span>
+                });
+<span class="nc" id="L130">        removeButton.setDisabled(true);</span>
+
+<span class="nc" id="L132">        this.addMember(applicationLabel);</span>
+<span class="nc" id="L133">        addField(&quot;Version&quot;, versionField);</span>
+<span class="nc" id="L134">        addField(&quot;Gwendia LFN&quot;, lfnField);</span>
+<span class="nc" id="L135">        addField(&quot;JSON LFN&quot;, jsonLfnField);</span>
+<span class="nc" id="L136">        this.addMember(FieldUtil.getForm(isVisibleField));</span>
+<span class="nc" id="L137">        this.addMember(FieldUtil.getForm(isBoutiquesFormField));</span>
+<span class="nc" id="L138">        addButtons(saveButton, removeButton);</span>
+<span class="nc" id="L139">    }</span>
+
+    /**
+     * @param version
+     */
+    private void save(AppVersion version) {
+
+<span class="nc" id="L146">        WidgetUtil.setLoadingIButton(saveButton, &quot;Saving...&quot;);</span>
+
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (newVersion) {</span>
+<span class="nc" id="L149">            ApplicationService.Util.getInstance().addVersion(version, getCallback(&quot;add&quot;));</span>
+        } else {
+<span class="nc" id="L151">            ApplicationService.Util.getInstance().updateVersion(version, getCallback(&quot;update&quot;));</span>
+        }
+<span class="nc" id="L153">    }</span>
+
+    /**
+     * Removes an application.
+     *
+     * @param applicationName Application name
+     * @param version         Application version
+     */
+    private void remove(String applicationName, String version) {
+
+<span class="nc" id="L163">        WidgetUtil.setLoadingIButton(removeButton, &quot;Removing...&quot;);</span>
+<span class="nc" id="L164">        ApplicationService.Util.getInstance().removeVersion(applicationName, version, getCallback(&quot;remove&quot;));</span>
+<span class="nc" id="L165">    }</span>
+
+    /**
+     * @param text
+     * @return
+     */
+    private AsyncCallback&lt;Void&gt; getCallback(final String text) {
+
+<span class="nc" id="L173">        return new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L176">                WidgetUtil.resetIButton(saveButton, &quot;Save&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L177">                WidgetUtil.resetIButton(removeButton, &quot;Remove&quot;, CoreConstants.ICON_DELETE);</span>
+<span class="nc" id="L178">                Layout.getInstance().setWarningMessage(&quot;Unable to &quot; + text + &quot; application:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L179">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L183">                WidgetUtil.resetIButton(saveButton, &quot;Save&quot;, CoreConstants.ICON_SAVED);</span>
+<span class="nc" id="L184">                WidgetUtil.resetIButton(removeButton, &quot;Remove&quot;, CoreConstants.ICON_DELETE);</span>
+<span class="nc" id="L185">                setVersion(null, null, null, true, true);</span>
+<span class="nc" id="L186">                ManageApplicationsTab tab = (ManageApplicationsTab) Layout.getInstance().</span>
+<span class="nc" id="L187">                        getTab(ApplicationConstants.TAB_MANAGE_APPLICATION);</span>
+<span class="nc" id="L188">                tab.loadVersions(applicationName);</span>
+<span class="nc" id="L189">            }</span>
+        };
+    }
+
+    /**
+     * @param applicationName
+     */
+    public void setApplication(String applicationName) {
+<span class="nc" id="L197">        setVersion(null, null, null, true, true);</span>
+<span class="nc" id="L198">        this.applicationName = applicationName;</span>
+<span class="nc" id="L199">        this.applicationLabel.setContents(&quot;&lt;b&gt;Application:&lt;/b&gt; &quot; + applicationName);</span>
+<span class="nc" id="L200">        this.versionField.setDisabled(false);</span>
+<span class="nc" id="L201">        this.lfnField.setDisabled(false);</span>
+<span class="nc" id="L202">        this.jsonLfnField.setDisabled(false);</span>
+<span class="nc" id="L203">        this.saveButton.setDisabled(false);</span>
+<span class="nc" id="L204">    }</span>
+
+    /**
+     * Sets a version to edit or creates a blank form.
+     *
+     * @param version
+     * @param lfn
+     * @param isVisible
+     */
+    public void setVersion(String version, String lfn, String jsonLfn, boolean isVisible, boolean isBoutiquesForm) {
+
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        if (version != null) {</span>
+<span class="nc" id="L216">            this.versionField.setValue(version);</span>
+<span class="nc" id="L217">            this.versionField.setDisabled(true);</span>
+<span class="nc" id="L218">            this.lfnField.setValue(lfn);</span>
+<span class="nc" id="L219">            this.jsonLfnField.setValue(jsonLfn);</span>
+<span class="nc" id="L220">            this.isVisibleField.setValue(isVisible);</span>
+<span class="nc" id="L221">            this.isBoutiquesFormField.setValue(isBoutiquesForm);</span>
+<span class="nc" id="L222">            this.newVersion = false;</span>
+<span class="nc" id="L223">            this.removeButton.setDisabled(false);</span>
+
+        } else {
+
+<span class="nc" id="L227">            this.versionField.setValue(&quot;&quot;);</span>
+<span class="nc" id="L228">            this.versionField.setDisabled(false);</span>
+<span class="nc" id="L229">            this.lfnField.setValue(&quot;&quot;);</span>
+<span class="nc" id="L230">            this.jsonLfnField.setValue(&quot;&quot;);</span>
+<span class="nc" id="L231">            this.isVisibleField.setValue(true);</span>
+<span class="nc" id="L232">            this.isBoutiquesFormField.setValue(true);</span>
+<span class="nc" id="L233">            this.newVersion = true;</span>
+<span class="nc" id="L234">            this.removeButton.setDisabled(true);</span>
+        }
+<span class="nc" id="L236">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

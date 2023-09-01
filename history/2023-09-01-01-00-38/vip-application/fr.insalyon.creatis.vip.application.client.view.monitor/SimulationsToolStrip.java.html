@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimulationsToolStrip.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">coverage</a> &gt; <a href="../index.html" class="el_bundle">vip-application</a> &gt; <a href="index.source.html" class="el_package">fr.insalyon.creatis.vip.application.client.view.monitor</a> &gt; <span class="el_source">SimulationsToolStrip.java</span></div><h1>SimulationsToolStrip.java</h1><pre class="source lang-java linenums">/*
+ * Copyright and authors: see LICENSE.txt in base repository.
+ *
+ * This software is a web portal for pipeline execution on distributed systems.
+ *
+ * This software is governed by the CeCILL-B license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL-B
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * &quot;http://www.cecill.info&quot;.
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-B license and that you accept its terms.
+ */
+package fr.insalyon.creatis.vip.application.client.view.monitor;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import fr.insalyon.creatis.vip.application.client.ApplicationConstants;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowService;
+import fr.insalyon.creatis.vip.application.client.rpc.WorkflowServiceAsync;
+import fr.insalyon.creatis.vip.application.client.view.monitor.record.SimulationRecord;
+import fr.insalyon.creatis.vip.core.client.CoreModule;
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import fr.insalyon.creatis.vip.core.client.view.ModalWindow;
+import fr.insalyon.creatis.vip.core.client.view.layout.Layout;
+import fr.insalyon.creatis.vip.core.client.view.util.WidgetUtil;
+import fr.insalyon.creatis.vip.social.client.view.message.MessageComposerWindow;
+import fr.insalyon.creatis.vip.social.client.view.message.MessageComposerWindowToReportIssue;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Rafael Ferreira da Silva
+ */
+public class SimulationsToolStrip extends ToolStrip {
+
+    private ModalWindow modal;
+
+<span class="nc" id="L63">    public SimulationsToolStrip(ModalWindow modal) {</span>
+
+<span class="nc" id="L65">        this.modal = modal;</span>
+<span class="nc" id="L66">        this.setWidth100();</span>
+
+        // Refresh Button
+<span class="nc" id="L69">        this.addButton(WidgetUtil.getToolStripButton(&quot;Refresh&quot;,</span>
+<span class="nc" id="L70">                CoreConstants.ICON_REFRESH, null, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L73">                        getSimulationsTab().loadData();</span>
+<span class="nc" id="L74">                    }</span>
+                }));
+
+        // Search Button
+<span class="nc" id="L78">        this.addButton(WidgetUtil.getToolStripButton(&quot;Search&quot;,</span>
+<span class="nc" id="L79">                ApplicationConstants.ICON_SEARCH, null, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L82">                        getSimulationsTab().expandSearchSection();</span>
+<span class="nc" id="L83">                    }</span>
+                }));
+
+        //Kill Executions Button
+<span class="nc" id="L87">        this.addButton(WidgetUtil.getToolStripButton(&quot;Kill Executions&quot;,</span>
+<span class="nc" id="L88">                ApplicationConstants.ICON_KILL, null, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L91">                        SC.ask(&quot;Do you really want to kill the selected running executions?&quot;, new BooleanCallback() {</span>
+                            @Override
+                            public void execute(Boolean value) {
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                                if (value) {</span>
+<span class="nc" id="L95">                                    killSimulations();</span>
+                                }
+<span class="nc" id="L97">                            }</span>
+                        });
+<span class="nc" id="L99">                    }</span>
+                }));
+
+        // Clean Executions Button
+<span class="nc" id="L103">        this.addButton(WidgetUtil.getToolStripButton(&quot;Clean Executions&quot;,</span>
+<span class="nc" id="L104">                ApplicationConstants.ICON_CLEAN, null, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L107">                        SC.confirm(&quot;Do you really want to clean the selected completed/killed executions?&quot;, new BooleanCallback() {</span>
+                            @Override
+                            public void execute(Boolean value) {
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                                if (value) {</span>
+<span class="nc" id="L111">                                    cleanSimulations();</span>
+                                }
+<span class="nc" id="L113">                            }</span>
+                        });
+<span class="nc" id="L115">                    }</span>
+                }));
+        //Report issue Button
+<span class="nc" id="L118">        this.addButton(WidgetUtil.getToolStripButton(&quot;Report Issue About This Execution&quot;,</span>
+<span class="nc" id="L119">                ApplicationConstants.ICON_REPORT_ISSUE, null, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L122">                        ListGridRecord[] records = getSimulationsTab().getGridSelection();</span>
+<span class="nc" id="L123">                        List&lt;String&gt; simulationIDs = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L124">                        List&lt;String&gt; simulationNames = new ArrayList&lt;String&gt;();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">                        for (ListGridRecord record : records) {</span>
+<span class="nc" id="L126">                            SimulationRecord data = (SimulationRecord) record;</span>
+<span class="nc" id="L127">                            SimulationStatus status = SimulationStatus.valueOf(data.getStatus());</span>
+<span class="nc" id="L128">                            simulationIDs.add(data.getSimulationId());</span>
+<span class="nc" id="L129">                            simulationNames.add(data.getSimulationName());</span>
+                        }
+<span class="nc" id="L131">                        sendMailToVIP(simulationIDs, simulationNames);</span>
+<span class="nc" id="L132">                    }</span>
+                }));
+
+
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (CoreModule.user.isSystemAdministrator()) {</span>
+<span class="nc" id="L137">            this.addSeparator();</span>
+            // Purge Executions
+<span class="nc" id="L139">            this.addButton(WidgetUtil.getToolStripButton(&quot;Purge Executions&quot;,</span>
+<span class="nc" id="L140">                    CoreConstants.ICON_CLEAR, null, new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L143">                            SC.ask(&quot;Do you really want to purge the selected cleaned executions?&quot;, new BooleanCallback() {</span>
+                                @Override
+                                public void execute(Boolean value) {
+<span class="nc bnc" id="L146" title="All 2 branches missed.">                                    if (value) {</span>
+<span class="nc" id="L147">                                        purgeSimulations();</span>
+                                    }
+<span class="nc" id="L149">                                }</span>
+                            });
+<span class="nc" id="L151">                        }</span>
+                    }));
+
+            // kill Simulation With Reason
+<span class="nc" id="L155">            this.addButton(WidgetUtil.getToolStripButton(&quot;Kill Execution With Reason&quot;,</span>
+<span class="nc" id="L156">                    ApplicationConstants.ICON_KILLWR, null, new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L159">                            SC.ask(&quot;Do you really want to kill the selected running executions?&quot;, new BooleanCallback() {</span>
+                                @Override
+                                public void execute(Boolean value) {
+<span class="nc bnc" id="L162" title="All 2 branches missed.">                                    if (value) {</span>
+<span class="nc" id="L163">                                        killSimulationWithReason();</span>
+                                    }
+<span class="nc" id="L165">                                }</span>
+                            });
+<span class="nc" id="L167">                        }</span>
+                    }));
+
+            // Mark Simulation as Completed
+<span class="nc" id="L171">            this.addButton(WidgetUtil.getToolStripButton(&quot;Mark Executions Completed&quot;,</span>
+<span class="nc" id="L172">                    ApplicationConstants.ICON_MARK_COMPLETED, null, new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L175">                            SC.ask(&quot;Do you really want to mark as completed the selected killed executions?&quot;, new BooleanCallback() {</span>
+                                @Override
+                                public void execute(Boolean value) {
+<span class="nc bnc" id="L178" title="All 2 branches missed.">                                    if (value) {</span>
+<span class="nc" id="L179">                                        markSimulationsCompleted();</span>
+                                    }
+<span class="nc" id="L181">                                }</span>
+                            });
+<span class="nc" id="L183">                        }</span>
+                    }));
+
+
+            // Stats Button
+<span class="nc" id="L188">            this.addSeparator();</span>
+<span class="nc" id="L189">            this.addButton(WidgetUtil.getToolStripButton(&quot;Performance Statistics&quot;,</span>
+<span class="nc" id="L190">                    ApplicationConstants.ICON_CHART, null, new ClickHandler() {</span>
+                        @Override
+                        public void onClick(ClickEvent event) {
+<span class="nc" id="L193">                            StatsTab statsTab = (StatsTab) Layout.getInstance().addTab(</span>
+                                    ApplicationConstants.TAB_STATS, StatsTab::new);
+<span class="nc" id="L195">                            statsTab.setSimulationsList(getSimulationsTab().getSimulationsList());</span>
+<span class="nc" id="L196">                        }</span>
+                    }));
+        }
+
+        // Status Button
+<span class="nc" id="L201">        this.addFill();</span>
+<span class="nc" id="L202">        this.addButton(WidgetUtil.getToolStripButton(&quot;System Load&quot;,</span>
+<span class="nc" id="L203">                ApplicationConstants.ICON_STATUS, &quot;Current status of the system.&quot;, new ClickHandler() {</span>
+                    @Override
+                    public void onClick(ClickEvent event) {
+<span class="nc" id="L206">                        new SystemLoadLayout(event.getX(), event.getY()).show();</span>
+<span class="nc" id="L207">                    }</span>
+                }));
+<span class="nc" id="L209">    }</span>
+
+    /**
+     * Sends a request to kill the selected running simulations
+     */
+    private void killSimulations() {
+
+<span class="nc" id="L216">        ListGridRecord[] records = getSimulationsTab().getGridSelection();</span>
+<span class="nc" id="L217">        List&lt;String&gt; simulationIDs = new ArrayList&lt;String&gt;();</span>
+
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        for (ListGridRecord record : records) {</span>
+<span class="nc" id="L220">            SimulationRecord data = (SimulationRecord) record;</span>
+<span class="nc" id="L221">            SimulationStatus status = SimulationStatus.valueOf(data.getStatus());</span>
+
+<span class="nc bnc" id="L223" title="All 2 branches missed.">            if (status == SimulationStatus.Running) {</span>
+<span class="nc" id="L224">                simulationIDs.add(data.getSimulationId());</span>
+            }
+        }
+
+<span class="nc" id="L228">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L229">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L232">                modal.hide();</span>
+<span class="nc" id="L233">                Layout.getInstance().setWarningMessage(&quot;Unable to kill executions:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L234">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L238">                modal.hide();</span>
+<span class="nc" id="L239">                getSimulationsTab().loadData();</span>
+<span class="nc" id="L240">            }</span>
+        };
+<span class="nc" id="L242">        service.killSimulations(simulationIDs, callback);</span>
+<span class="nc" id="L243">        modal.show(&quot;Sending killing signal to selected executions...&quot;, true);</span>
+<span class="nc" id="L244">    }</span>
+
+    private void killSimulationWithReason() {
+        final String applicationName;
+        final String user;
+        final String date;
+        final String simulationName;
+
+<span class="nc" id="L252">        ListGridRecord[] records = getSimulationsTab().getGridSelection();</span>
+<span class="nc" id="L253">        List&lt;String&gt; simulationIDs = new ArrayList&lt;String&gt;();</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">        if (records.length &gt; 1) {</span>
+<span class="nc" id="L255">            SC.say(&quot;there is more than one selected execution&quot;);</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">        } else if (records.length == 1) {</span>
+<span class="nc" id="L257">            applicationName = records[0].getAttribute(&quot;application&quot;);</span>
+<span class="nc" id="L258">            user = records[0].getAttribute(&quot;user&quot;);</span>
+<span class="nc" id="L259">            date = records[0].getAttribute(&quot;date&quot;);</span>
+<span class="nc" id="L260">            simulationName = records[0].getAttribute(&quot;simulationName&quot;);</span>
+<span class="nc" id="L261">            SimulationRecord data = (SimulationRecord) records[0];</span>
+<span class="nc" id="L262">            SimulationStatus status = SimulationStatus.valueOf(data.getStatus());</span>
+
+<span class="nc bnc" id="L264" title="All 2 branches missed.">            if (status == SimulationStatus.Running) {</span>
+<span class="nc" id="L265">                simulationIDs.add(data.getSimulationId());</span>
+            }
+
+<span class="nc" id="L268">            WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L269">            final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+                @Override
+                public void onFailure(Throwable caught) {
+<span class="nc" id="L272">                    modal.hide();</span>
+<span class="nc" id="L273">                    Layout.getInstance().setWarningMessage(&quot;Unable to kill executions:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L274">                }</span>
+
+                @Override
+                public void onSuccess(Void result) {
+<span class="nc" id="L278">                    modal.hide();</span>
+<span class="nc" id="L279">                    getSimulationsTab().loadData();</span>
+<span class="nc" id="L280">                    openWindowToSendMail(&quot;Your &quot; + &quot;\&quot;&quot; + applicationName + &quot;\&quot;&quot; + &quot; execution&quot;,</span>
+                            &quot;Dear &quot; + user + &quot;,&lt;br /&gt;&lt;br /&gt;&quot;
+                                    + &quot; I had to kill your &quot; + &quot;\&quot;&quot; + applicationName + &quot;\&quot;&quot; + &quot; execution &quot;
+                                    + &quot;\&quot;&quot; + simulationName + &quot;\&quot;&quot; + &quot; submitted on &quot; + date
+                                    + &quot; because all the jobs were failing with the following error:&quot;
+                                    + &quot;&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&quot;, user);
+
+
+<span class="nc" id="L288">                }</span>
+            };
+<span class="nc" id="L290">            service.killSimulations(simulationIDs, callback);</span>
+<span class="nc" id="L291">            modal.show(&quot;Sending killing signal to selected executions...&quot;, true);</span>
+        }
+<span class="nc" id="L293">    }</span>
+
+    /**
+     * Sends a request to clean the selected completed/killed simulations
+     */
+    private void cleanSimulations() {
+
+<span class="nc" id="L300">        ListGridRecord[] records = getSimulationsTab().getGridSelection();</span>
+<span class="nc" id="L301">        List&lt;String&gt; simulationIDs = new ArrayList&lt;String&gt;();</span>
+
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        for (ListGridRecord record : records) {</span>
+<span class="nc" id="L304">            SimulationRecord data = (SimulationRecord) record;</span>
+<span class="nc" id="L305">            SimulationStatus status = SimulationStatus.valueOf(data.getStatus());</span>
+
+<span class="nc bnc" id="L307" title="All 6 branches missed.">            if (status == SimulationStatus.Completed</span>
+                    || status == SimulationStatus.Killed || status == SimulationStatus.Failed) {
+
+<span class="nc" id="L310">                simulationIDs.add(data.getSimulationId());</span>
+            }
+        }
+
+<span class="nc" id="L314">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L315">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L318">                modal.hide();</span>
+<span class="nc" id="L319">                Layout.getInstance().setWarningMessage(&quot;Unable to clean executions:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L320">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L324">                modal.hide();</span>
+<span class="nc" id="L325">                getSimulationsTab().loadData();</span>
+<span class="nc" id="L326">            }</span>
+        };
+<span class="nc" id="L328">        service.cleanSimulations(simulationIDs, callback);</span>
+<span class="nc" id="L329">        modal.show(&quot;Cleaning selected executions...&quot;, true);</span>
+<span class="nc" id="L330">    }</span>
+
+    /**
+     * Sends a request to purge the selected cleaned simulations
+     */
+    private void purgeSimulations() {
+
+<span class="nc" id="L337">        ListGridRecord[] records = getSimulationsTab().getGridSelection();</span>
+<span class="nc" id="L338">        List&lt;String&gt; simulationIDs = new ArrayList&lt;String&gt;();</span>
+
+<span class="nc bnc" id="L340" title="All 2 branches missed.">        for (ListGridRecord record : records) {</span>
+<span class="nc" id="L341">            SimulationRecord data = (SimulationRecord) record;</span>
+<span class="nc" id="L342">            SimulationStatus status = SimulationStatus.valueOf(data.getStatus());</span>
+
+<span class="nc bnc" id="L344" title="All 2 branches missed.">            if (status == SimulationStatus.Cleaned) {</span>
+<span class="nc" id="L345">                simulationIDs.add(data.getSimulationId());</span>
+            }
+        }
+
+<span class="nc" id="L349">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L350">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L353">                modal.hide();</span>
+<span class="nc" id="L354">                Layout.getInstance().setWarningMessage(&quot;Unable to purge executions:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L355">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L359">                modal.hide();</span>
+<span class="nc" id="L360">                getSimulationsTab().loadData();</span>
+<span class="nc" id="L361">            }</span>
+        };
+<span class="nc" id="L363">        service.purgeSimulations(simulationIDs, callback);</span>
+<span class="nc" id="L364">        modal.show(&quot;Purging selected executions...&quot;, true);</span>
+<span class="nc" id="L365">    }</span>
+
+    private void markSimulationsCompleted() {
+<span class="nc" id="L368">        ListGridRecord[] records = getSimulationsTab().getGridSelection();</span>
+<span class="nc" id="L369">        List&lt;String&gt; simulationIDs = new ArrayList&lt;String&gt;();</span>
+
+<span class="nc bnc" id="L371" title="All 2 branches missed.">        for (ListGridRecord record : records) {</span>
+<span class="nc" id="L372">            SimulationRecord data = (SimulationRecord) record;</span>
+<span class="nc" id="L373">            SimulationStatus status = SimulationStatus.valueOf(data.getStatus());</span>
+
+<span class="nc bnc" id="L375" title="All 4 branches missed.">            if (status == SimulationStatus.Killed || status == SimulationStatus.Failed) {</span>
+<span class="nc" id="L376">                simulationIDs.add(data.getSimulationId());</span>
+            }
+        }
+
+<span class="nc" id="L380">        WorkflowServiceAsync service = WorkflowService.Util.getInstance();</span>
+<span class="nc" id="L381">        final AsyncCallback&lt;Void&gt; callback = new AsyncCallback&lt;Void&gt;() {</span>
+            @Override
+            public void onFailure(Throwable caught) {
+<span class="nc" id="L384">                modal.hide();</span>
+<span class="nc" id="L385">                Layout.getInstance().setWarningMessage(&quot;Unable to mark executions completed:&lt;br /&gt;&quot; + caught.getMessage());</span>
+<span class="nc" id="L386">            }</span>
+
+            @Override
+            public void onSuccess(Void result) {
+<span class="nc" id="L390">                modal.hide();</span>
+<span class="nc" id="L391">                getSimulationsTab().loadData();</span>
+<span class="nc" id="L392">            }</span>
+        };
+<span class="nc" id="L394">        service.markSimulationsCompleted(simulationIDs, callback);</span>
+<span class="nc" id="L395">        modal.show(&quot;Marking selected executions completed...&quot;, true);</span>
+<span class="nc" id="L396">    }</span>
+
+    private SimulationsTab getSimulationsTab() {
+<span class="nc" id="L399">        return (SimulationsTab) Layout.getInstance().getTab(ApplicationConstants.TAB_MONITOR);</span>
+    }
+
+    private void openWindowToSendMail(String subjectValue, String message, String userFullName) {
+<span class="nc" id="L403">        MessageComposerWindow messageWindow = new MessageComposerWindow();</span>
+<span class="nc" id="L404">        messageWindow.show();</span>
+<span class="nc" id="L405">        messageWindow.setSubjectValue(subjectValue);</span>
+<span class="nc" id="L406">        messageWindow.setUsersPickerListValue(userFullName);</span>
+<span class="nc" id="L407">        messageWindow.setTextMessage(message);</span>
+<span class="nc" id="L408">        messageWindow.setSendCopyToSupport(true);</span>
+
+<span class="nc" id="L410">    }</span>
+
+    private void sendMailToVIP(List&lt;String&gt; workflowID, List&lt;String&gt; simulationNames) {
+
+
+<span class="nc" id="L415">        MessageComposerWindowToReportIssue messageWindow = new MessageComposerWindowToReportIssue(workflowID, simulationNames);</span>
+<span class="nc" id="L416">        messageWindow.show();</span>
+<span class="nc" id="L417">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
